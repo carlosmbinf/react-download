@@ -1,0 +1,350 @@
+import React from "react";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
+import Card from "@material-ui/core/Card";
+import CardActions from "@material-ui/core/CardActions";
+import CardContent from "@material-ui/core/CardContent";
+import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography";
+import {
+  Paper,
+  Box,
+  Grid,
+  Icon,
+  Divider,
+  Zoom,
+  IconButton,
+} from "@material-ui/core";
+import { Meteor } from "meteor/meteor";
+import { Tracker } from "meteor/tracker";
+import { useTracker } from "meteor/react-meteor-data";
+import Badge from "@material-ui/core/Badge";
+import Avatar from "@material-ui/core/Avatar";
+import { Link, useParams } from "react-router-dom";
+//icons
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
+import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
+import PermContactCalendarRoundedIcon from "@material-ui/icons/PermContactCalendarRounded";
+import MailIcon from "@material-ui/icons/Mail";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import AnyChart from "anychart-react";
+import {
+  ResponsiveContainer,
+  ComposedChart,
+  Line,
+  Area,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  PieChart,
+  Pie,
+} from "recharts";
+
+const StyledBadge = withStyles((theme) => ({
+  badge: {
+    backgroundColor: "#44b700",
+    color: "#44b700",
+    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+    "&::after": {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      borderRadius: "50%",
+      animation: "$ripple 1.2s infinite ease-in-out",
+      border: "1px solid currentColor",
+      content: '""',
+    },
+  },
+  "@keyframes ripple": {
+    "0%": {
+      transform: "scale(.8)",
+      opacity: 1,
+    },
+    "100%": {
+      transform: "scale(2.4)",
+      opacity: 0,
+    },
+  },
+}))(Badge);
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    minWidth: 300,
+    maxWidth: "100%",
+    borderRadius: 20,
+    padding: "2em",
+  },
+  primary: {
+    minWidth: 370,
+    width: "100%",
+    borderRadius: 20,
+    padding: "2em",
+    background:
+      "linear-gradient(0deg, rgba(36,83,162,1) 15%, rgba(245,0,87,0) 100%)",
+  },
+  secundary: {
+    minWidth: 370,
+    width: "100%",
+    borderRadius: 20,
+    padding: "2em",
+    background:
+      "linear-gradient(0deg, rgba(245,0,87,1) 15%, rgba(245,0,87,0) 100%)",
+  },
+  boton: {
+    borderRadius: 20,
+    padding: 0,
+  },
+  rootADD: {
+    minWidth: 275,
+    maxWidth: 275,
+    borderRadius: 20,
+    padding: "2em",
+  },
+  bullet: {
+    display: "inline-block",
+    margin: "0 2px",
+    transform: "scale(0.8)",
+  },
+  title: {
+    fontSize: 14,
+  },
+  pos: {
+    marginBottom: 12,
+  },
+  createUsers: {
+    color: "#114c84",
+  },
+  link: {
+    borderRadius: 20,
+    textDecoration: "none",
+    color: "#8b8b8b",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  root2: {
+    display: "flex",
+    alignItems: "center",
+  },
+  large: {
+    width: theme.spacing(7),
+    height: theme.spacing(7),
+  },
+  padding10: {
+    margin: "13px 0",
+  },
+  drawerHeader: {
+    display: "flex",
+    alignItems: "center",
+    padding: theme.spacing(0, 1),
+    // necessary for content to be below app bar
+    ...theme.mixins.toolbar,
+    justifyContent: "flex-start",
+  },
+  margin: {
+    margin: theme.spacing(2),
+  },
+}));
+
+export default function DashboardInit() {
+  const classes = useStyles();
+  const bull = <span className={classes.bullet}>•</span>;
+
+  
+
+  const data = [
+    {
+      name: "Page A",
+      uv: 590,
+      pv: 800,
+      amt: 1400,
+    },
+    {
+      name: "Page B",
+      uv: 868,
+      pv: 967,
+      amt: 1506,
+    },
+    {
+      name: "Page C",
+      uv: 1397,
+      pv: 1098,
+      amt: 989,
+    },
+    {
+      name: "Page D",
+      uv: 1480,
+      pv: 1200,
+      amt: 1228,
+    },
+    {
+      name: "Page E",
+      uv: 1520,
+      pv: 1108,
+      amt: 1100,
+    },
+    {
+      name: "Page F",
+      uv: 1400,
+      pv: 680,
+      amt: 1700,
+    },
+  ];
+  
+
+  const data02 = [
+    { name: "Group A", value: 2400 },
+    { name: "Group B", value: 4567 },
+    { name: "Group C", value: 1398 },
+    { name: "Group D", value: 9800 },
+    { name: "Group E", value: 3908 },
+    { name: "Group F", value: 4800 },
+  ];
+
+  const datausers = useTracker(() => {
+
+    let data01 = [
+        // { name: "Group A", value: 400 },
+        // { name: "Group B", value: 300 },
+        // { name: "Group C", value: 300 },
+        // { name: "Group D", value: 200 },
+        // { name: "Group E", value: 278 },
+        // { name: "Group F", value: 189 },
+      ];
+    Meteor.subscribe("user");
+    let users = Meteor.users.find({});
+    let adminsCount = 0
+    let usersCount = 0
+    users.map((usersGeneral) => (
+        
+       (usersGeneral.profile.role == "admin")?adminsCount ++ : usersCount ++
+       
+    ));
+    data01.push({name: "Admin",value: adminsCount}) 
+    data01.push({name: "Users",value: usersCount}) 
+    return data01;
+  });
+
+  const datausersEdad = useTracker(() => {
+    let data01 = [];
+    Meteor.subscribe("user");
+     Meteor.users.find({}).map(
+        (usersGeneral) =>
+
+          data01.push({
+            name:
+              usersGeneral.profile.firstName +
+              " " +
+              usersGeneral.profile.lastName,
+            value: 26,
+          })
+      );
+    return data01;
+    
+  });
+  
+  return (
+    <>
+      <div className={classes.drawerHeader}></div>
+
+      <Zoom in={true}>
+        <Paper
+          elevation={5}
+          className={
+            Meteor.user().profile.role !== "admin"
+              ? classes.primary
+              : classes.secundary
+          }
+        >
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <AnyChart
+                type="column"
+                data={[
+                  { x: "John", value: 10000 },
+                  { x: "Jake", value: 12000 },
+                  {
+                    x: "Peter",
+                    value: 13000,
+                    normal: {
+                      fill: "#5cd65c",
+                      stroke: null,
+                      label: { enabled: true },
+                    },
+                    hovered: {
+                      fill: "#4554",
+                      stroke: null,
+                      label: { enabled: true },
+                    },
+                    selected: {
+                      fill: "#5cd65c",
+                      stroke: null,
+                      label: { enabled: true },
+                    },
+                  },
+                  { x: "James", value: 10000 },
+                  { x: "Mary", value: 9000 },
+                ]}
+                title="Simple pie chart"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <div style={{ width: "100%", height: 300 }}>
+                <ResponsiveContainer>
+                  <ComposedChart
+                    width={500}
+                    height={400}
+                    data={data}
+                    margin={{
+                      top: 20,
+                      right: 20,
+                      bottom: 20,
+                      left: 20,
+                    }}
+                  >
+                    <CartesianGrid stroke="#f5f5f5" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Area
+                      type="monotone"
+                      dataKey="amt"
+                      fill="#8884d8"
+                      stroke="#8884d8"
+                    />
+                    <Bar dataKey="pv" barSize={20} fill="#413ea0" />
+                    <Line type="monotone" dataKey="uv" stroke="#ff7300" />
+                  </ComposedChart>
+                </ResponsiveContainer>
+              </div>
+            </Grid>
+
+            <Grid item xs={12}>
+            
+              <PieChart width={500} height={400}>
+              
+                <Pie
+                  dataKey="value"
+                  isAnimationActive={false}
+                  data={datausers}
+                  cx={200}
+                  cy={200}
+                  innerRadius={40}
+                  outerRadius={80}
+                  fill="#82ca9d"
+                  label
+
+                />
+                <Tooltip />
+              </PieChart>
+            </Grid>
+          </Grid>
+        </Paper>
+      </Zoom>
+    </>
+  );
+}

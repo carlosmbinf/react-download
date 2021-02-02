@@ -1,0 +1,3 @@
+AccountsTemplates.configure({
+    forbidClientAccountCreation: true,
+}); 
