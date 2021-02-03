@@ -29,7 +29,7 @@ import LoginPage from "../ui/pages/login/index";
 import DashboardInit from "../ui/pages/dashboard/DashboardInit";
 import Archivo from "../ui/pages/archivo/Archivo";
 import CreateArchivo from "../ui/pages/archivo/CreateArchivo";
-import Download from "../ui/pages/download/Download";
+import AddDescargas from "../ui/pages/download/AddDescargas";
 import { Grid, Zoom } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
@@ -70,7 +70,7 @@ export default function Main() {
           <DashboardInit />
         </Route>
         <Route path="/downloads">
-          <Download />
+          <AddDescargas/>
         </Route>
         <Route path="/offer"></Route>
         <Route path="/guest">
