@@ -29,7 +29,7 @@ import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import "primeflex/primeflex.css";
 import "./TableDescarga.css";
-import { Dropdown } from 'primereact/dropdown';
+import { Dropdown } from "primereact/dropdown";
 //icons
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
@@ -97,13 +97,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Archivo() {
+export default function TableDescarga() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const [selectedStatus, setSelectedStatus] = React.useState(null);
   const dt = React.useRef(null);
 
-  const archivoRegister = useTracker(() => {
+  const descargaRegister = useTracker(() => {
     Meteor.subscribe("descargas");
     let a = [];
 
@@ -117,6 +117,9 @@ export default function Archivo() {
           tamanoFile: data.tamanoFile,
           comentarios: data.comentarios,
           descargadoPor: data.descargadoPor,
+          urlReal: data.urlReal,
+          thumbnail: data.thumbnail,
+          createdAt: data.createdAt.toString(),
         })
     );
     return a;
@@ -128,82 +131,129 @@ export default function Archivo() {
   const paginatorRight = (
     <Button type="button" icon="pi pi-cloud" className="p-button-text" />
   );
-
-  const idFileBodyTemplate = (rowData) => {
-  return (
-      <React.Fragment>
-          <span className="p-column-title">Code</span>
-          {rowData.idFile}
-      </React.Fragment>
-  );
-  }
   const iDBodyTemplate = (rowData) => {
     return (
-        <React.Fragment>
-            <span className="p-column-title">ID</span>
-            {rowData.id}
-        </React.Fragment>
-    );
-}
-const idFileBodyTemplate = (rowData) => {
-  return (
       <React.Fragment>
-          <span className="p-column-title">Code</span>
-          {rowData.idFile}
+        <span className="p-column-title">ID</span>
+        {rowData.id}
       </React.Fragment>
-  );
-}
+    );
+  };
+  const idFileBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">ID de Youtube</span>
+        {rowData.idFile}
+      </React.Fragment>
+    );
+  };
   const nombreFileBodyTemplate = (rowData) => {
     return (
-        <React.Fragment>
-            <span className="p-column-title">Code</span>
-            {rowData.nombreFile}
-        </React.Fragment>
+      <React.Fragment>
+        <span className="p-column-title">Nombre del Archivo</span>
+        {rowData.nombreFile}
+      </React.Fragment>
     );
-}
-const tamanoFileBodyTemplate = (rowData) => {
-  return (
+  };
+  const tamanoFileBodyTemplate = (rowData) => {
+    return (
       <React.Fragment>
-          <span className="p-column-title">Code</span>
-          {rowData.tamanoFile}
+        <span className="p-column-title">Tamaño</span>
+        {rowData.tamanoFile + "kb"}
       </React.Fragment>
-  );
-}
-const comentariosBodyTemplate = (rowData) => {
-  return (
+    );
+  };
+  const comentariosBodyTemplate = (rowData) => {
+    return (
       <React.Fragment>
-          <span className="p-column-title">Code</span>
-          {rowData.comentarios}
+        <span className="p-column-title">Comentarios</span>
+        {rowData.comentarios}
       </React.Fragment>
-  );
-}
-const createdAtBodyTemplate = (rowData) => {
-  return (
+    );
+  };
+  const createdAtBodyTemplate = (rowData) => {
+    return (
       <React.Fragment>
-          <span className="p-column-title">Code</span>
-          {rowData.createdAt}
+        <span className="p-column-title">Fecha de Descarga</span>
+        <h3>{rowData.createdAt}</h3>
       </React.Fragment>
-  );
-}
-const descargadoPorBodyTemplate = (rowData) => {
-  return (
+    );
+  };
+  const descargadoPorBodyTemplate = (rowData) => {
+    return (
       <React.Fragment>
-          <span className="p-column-title">Code</span>
-          {rowData.descargadoPor}
+        <span className="p-column-title">Code</span>
+        {rowData.descargadoPor}
       </React.Fragment>
+    );
+  };
+  function eliminarVideo(data) {
+    console.log(data)
+    var http = require("http");
+    http.post = require("http-post");
+    http.post("/eliminar", data, (opciones, res, body) => {
+      if (!opciones.headers.error) {
+        // console.log(`statusCode: ${res.statusCode}`);
+        console.log("error " + JSON.stringify(opciones.headers));
+        return;
+      } else {
+        console.log(opciones.headers);
+        return;
+      }
+    });
+  }
+  const eliminarBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <Button 
+        // onClick={eliminarVideo}
+        >Eliminar</Button>
+      </React.Fragment>
+    );
+  };
+  const urlRealBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">URL</span>
+        <a href={rowData.urlReal}>Descargar</a>
+      </React.Fragment>
+    );
+  };
+  const thumbnailBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">Code</span>
+        <img
+          src={rowData.thumbnail}
+          alt="No se pudo cargar la imagen"
+          width="100%"
+        />
+      </React.Fragment>
+    );
+  };
+  const statuses = ["true", "false"];
+  const onStatusChange = (e) => {
+    dt.current.filter(e.value, "clasificado", "equals");
+    setSelectedStatus(e.value);
+  };
+  const statusItemTemplate = (option) => {
+    return (
+      <span className={`customer-badge status-${option}`}>
+        {option == "true" ? "Clasificado" : "No Clasificado"}
+      </span>
+    );
+  };
+  const statusFilter = (
+    <Dropdown
+      value={selectedStatus}
+      options={statuses}
+      onChange={onStatusChange}
+      itemTemplate={statusItemTemplate}
+      placeholder="Seleccione la clasificación"
+      className="p-column-filter"
+      showClear
+    />
   );
-}
-const statuses = [
-  'true', 'false'
-];
-const onStatusChange = (e) => {
-  dt.current.filter(e.value, 'clasificado', 'equals');
-  setSelectedStatus(e.value);
-}
-const statusItemTemplate = (option) => {
-  return <span className={`customer-badge status-${option}`}>{option=="true"?"Clasificado":"No Clasificado"}</span>;
-}
-const statusFilter = <Dropdown value={selectedStatus} options={statuses} onChange={onStatusChange} itemTemplate={statusItemTemplate} placeholder="Seleccione la clasificación" className="p-column-filter" showClear />;
   return (
     <>
       <div className={classes.drawerHeader}></div>
@@ -215,7 +265,7 @@ const statusFilter = <Dropdown value={selectedStatus} options={statuses} onChang
               <DataTable
                 ref={dt}
                 className="p-shadow-5 p-datatable-responsive-demo"
-                value={archivoRegister}
+                value={descargaRegister}
                 paginator
                 paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
                 currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
@@ -224,6 +274,11 @@ const statusFilter = <Dropdown value={selectedStatus} options={statuses} onChang
                 paginatorLeft={paginatorLeft}
                 paginatorRight={paginatorRight}
               >
+                <Column
+                  field="img"
+                  header="Comentarios"
+                  body={thumbnailBodyTemplate}
+                />
                 <Column
                   field="id"
                   body={iDBodyTemplate}
@@ -267,21 +322,22 @@ const statusFilter = <Dropdown value={selectedStatus} options={statuses} onChang
                 />
                 <Column
                   field="createdAt"
-                  header="Comentarios"
+                  header="Fecha de Descarga"
                   body={createdAtBodyTemplate}
                   filter
                   filterPlaceholder="Buscar en comentarios"
                   filterMatchMode="contains"
                 />
                 <Column
-                  field="descargadoPor"
-                  header="Comentarios"
-                  body={descargadoPorBodyTemplate}
-                  filter
-                  filterPlaceholder="Buscar en comentarios"
-                  filterMatchMode="contains"
+                  field="urlReal"
+                  header="URL Real"
+                  body={urlRealBodyTemplate}
                 />
-                
+                <Column
+                  field="eliminar"
+                  header="Eliminar"
+                  body={eliminarBodyTemplate}
+                />
               </DataTable>
             </div>
           </div>

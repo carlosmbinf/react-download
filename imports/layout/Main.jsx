@@ -30,6 +30,7 @@ import DashboardInit from "../ui/pages/dashboard/DashboardInit";
 import Archivo from "../ui/pages/archivo/Archivo";
 import CreateArchivo from "../ui/pages/archivo/CreateArchivo";
 import AddDescargas from "../ui/pages/download/AddDescargas";
+import TableDescarga from "../ui/pages/download/TableDescarga";
 import { Grid, Zoom } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
@@ -70,7 +71,14 @@ export default function Main() {
           <DashboardInit />
         </Route>
         <Route path="/downloads">
-          <AddDescargas/>
+        {useractual &&
+          useractual.profile &&
+          useractual.profile.role == "admin" ? (
+            <AddDescargas />
+          ) : (
+            ""
+          )}
+          <TableDescarga/>
         </Route>
         <Route path="/offer"></Route>
         <Route path="/guest">
