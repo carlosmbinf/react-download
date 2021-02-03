@@ -29,6 +29,7 @@ import LoginPage from "../ui/pages/login/index";
 import DashboardInit from "../ui/pages/dashboard/DashboardInit";
 import Archivo from "../ui/pages/archivo/Archivo";
 import CreateArchivo from "../ui/pages/archivo/CreateArchivo";
+import Download from "../ui/pages/download/Download";
 import { Grid, Zoom } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
@@ -67,6 +68,9 @@ export default function Main() {
       <Switch>
         <Route path="/dashboard">
           <DashboardInit />
+        </Route>
+        <Route path="/downloads">
+          <Download />
         </Route>
         <Route path="/offer"></Route>
         <Route path="/guest">

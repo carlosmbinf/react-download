@@ -4,6 +4,8 @@ import { ArchivoCollection } from '../collections/collections';
 import { WebApp } from "meteor/webapp"
 import bodyParser from "body-parser"
 import router from "router"
+import youtubeDownload from './downloader'
+
 const endpoint = router()
 
 function insertLink({ title, url }) {
@@ -78,7 +80,18 @@ ServiceConfiguration.configurations.insert({
 }
 
 Meteor.startup(() => {
+  // const youtubedl = require('youtube-dl')
+  // const url = 'http://www.youtube.com/watch?v=WKsjaOqDXgg'
+  // youtubedl.exec(url, ['-x', '--audio-format', 'mp3'], {}, function(err, output) {
+  //   if (err) throw err
   
+  //   console.log(output.join('\n'))
+  // })
+
+  youtubeDownload("90AiXO1pAiA", () => {
+   console.log("LISTO, DESCARGADO")
+})
+
 })
   // If the Links collection is empty, add some data.
  

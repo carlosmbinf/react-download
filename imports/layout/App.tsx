@@ -169,7 +169,8 @@ export default function PersistentDrawerLeft() {
     "login",
     "create-user",
     "archivo",
-    "create-archivo"
+    "create-archivo",
+    "downloads",
   ];
 
   const handleDrawerOpen = () => {
@@ -185,7 +186,7 @@ export default function PersistentDrawerLeft() {
     setError("");
 
     Meteor.logout((error) => {
-      error ? setError(error.message) : history.push("/login");
+      error && error ? setError(error.message):""
     });
   };
   return (
