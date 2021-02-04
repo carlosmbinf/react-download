@@ -178,31 +178,38 @@ if (Meteor.isServer) {
   Meteor.publish("user", function () {
     return Meteor.users.find({});
   });
-  Meteor.publish("user", function (id) {
-    return Meteor.users.find({ _id: id });
+  Meteor.startup(() => {
+    if(Meteor.users.find().count()==0){
+      
+      const user = {
+        email: "carlosmbinf@nauta.cu",
+        password: "lastunas123",
+        firstName: "Carlos",
+        lastName: "Medina",
+        role: "Admin",
+        creadoPor: "N/A",
+        edad: 26,
+      };
+      try {
+        Accounts.createUser(user);
+         console.log("CREAdo USER ADMIN")
+      } catch (error) {
+        console.log("NO SE PUDO CREAR EL USER ADMIN")
+      }
+     
+      
+    }
+    console.log("YA HAY UN USER ADMIN")    
+    // const youtubedl = require('youtube-dl')
+    // const url = 'http://www.youtube.com/watch?v=WKsjaOqDXgg'
+    // youtubedl.exec(url, ['-x', '--audio-format', 'mp3'], {}, function(err, output) {
+    //   if (err) throw err
+    //   // console.log(output.join('\n'))
+    // })
   });
 }
 
-Meteor.startup(() => {
-  if(!Meteor.users.find().count()==0){
-    const user = {
-      email: "carlosmbinf@nauta.cu",
-      password: "lastunas123",
-      firstName: "Carlos",
-      lastName: "Medina",
-      role: "Admin",
-      creadoPor: "N/A",
-      edad: 26,
-    };
-    Accounts.createUser(user);
-  }
-  // const youtubedl = require('youtube-dl')
-  // const url = 'http://www.youtube.com/watch?v=WKsjaOqDXgg'
-  // youtubedl.exec(url, ['-x', '--audio-format', 'mp3'], {}, function(err, output) {
-  //   if (err) throw err
-  //   // console.log(output.join('\n'))
-  // })
-});
+
 // If the Links collection is empty, add some data.
 
 // Meteor.users.allow({
