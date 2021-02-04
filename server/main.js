@@ -186,7 +186,7 @@ if (Meteor.isServer) {
         password: "lastunas123",
         firstName: "Carlos",
         lastName: "Medina",
-        role: "Admin",
+        role: "admin",
         creadoPor: "N/A",
         edad: 26,
       };
