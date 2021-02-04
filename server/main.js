@@ -184,6 +184,18 @@ if (Meteor.isServer) {
 }
 
 Meteor.startup(() => {
+  if(!Meteor.users.find().count()==0){
+    const user = {
+      email: "carlosmbinf@nauta.cu",
+      password: "lastunas123",
+      firstName: "Carlos",
+      lastName: "Medina",
+      role: "Admin",
+      creadoPor: "N/A",
+      edad: 26,
+    };
+    Accounts.createUser(user);
+  }
   // const youtubedl = require('youtube-dl')
   // const url = 'http://www.youtube.com/watch?v=WKsjaOqDXgg'
   // youtubedl.exec(url, ['-x', '--audio-format', 'mp3'], {}, function(err, output) {
