@@ -1,5 +1,5 @@
 import { Meteor } from "meteor/meteor";
-import { ArchivoCollection } from "../imports/ui/pages/collections/collections";
+import { PelisCollection } from "../imports/ui/pages/collections/collections";
 import { DescargasCollection } from "../imports/ui/pages/collections/collections";
 import { WebApp } from "meteor/webapp";
 import bodyParser from "body-parser";
@@ -130,7 +130,7 @@ if (Meteor.isServer) {
         DescargasCollection.insert({
           idFile: req.body.idVideo,
           nombreFile: info.title,
-          tamanoFile: info.filesize + "kb",
+          tamanoFile: info.filesize,
           comentarios: info.description,
           descargadoPor: req.body.creadoPor,
           thumbnail: info.thumbnail,
@@ -169,8 +169,8 @@ if (Meteor.isServer) {
     secret: "673d28587327a13cc6dbb0b760aef805",
   });
 
-  Meteor.publish("archivo", function () {
-    return ArchivoCollection.find({});
+  Meteor.publish("pelis", function () {
+    return PelisCollection.find({});
   });
   Meteor.publish("descargas", function () {
     return DescargasCollection.find({});
@@ -180,7 +180,7 @@ if (Meteor.isServer) {
   });
   Meteor.startup(() => {
     if(Meteor.users.find().count()==0){
-      
+      console.log("CREANDO USER ADMIN")
       const user = {
         email: "carlosmbinf@nauta.cu",
         password: "lastunas123",
@@ -192,7 +192,7 @@ if (Meteor.isServer) {
       };
       try {
         Accounts.createUser(user);
-         console.log("CREAdo USER ADMIN")
+         console.log("ADD OK")
       } catch (error) {
         console.log("NO SE PUDO CREAR EL USER ADMIN")
       }

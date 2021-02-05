@@ -168,8 +168,8 @@ export default function PersistentDrawerLeft() {
     "calendar",
     "login",
     "create-user",
-    "archivo",
-    "create-archivo",
+    "pelis",
+    "create-pelis",
     "downloads",
   ];
 

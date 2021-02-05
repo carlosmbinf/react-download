@@ -3,24 +3,31 @@ import SimpleSchema from 'simpl-schema';
 
 SimpleSchema.extendOptions(['autoform']);
 
-export const ArchivoCollection = new Mongo.Collection('archivoRegister');
+export const PelisCollection = new Mongo.Collection('pelisRegister');
 export const DescargasCollection = new Mongo.Collection('descargasRegister');
 
-export const SchemaArchivoCollection = new SimpleSchema({
-  regEntrada: {
-    type: Number,
-  },
-  regSalida: {
-    type: Number,
-  },
-  estante: {
-    type: Number,
-  },
-  comentarios: {
+export const SchemaPelisCollection = new SimpleSchema({
+  nombrePeli:{
     type: String,
   },
-  clasificado: {
-    type: Boolean,
+  urlPeli: {
+    type: String,
+  },
+  urlBackground: {
+    type: String,
+  },
+  descripcion: {
+    type: String,
+  },
+  urlTrailer: {
+    type: String,
+    defaultValue: "",
+  },
+  tamano:{
+    type: String,
+  },
+  mostrar:{
+    type: String,
   },
   createdAt: {
     type: Date,
@@ -28,7 +35,7 @@ export const SchemaArchivoCollection = new SimpleSchema({
   },
 });
 
-ArchivoCollection.attachSchema(SchemaArchivoCollection);
+PelisCollection.attachSchema(SchemaPelisCollection);
 
 export const SchemaDescargaCollection = new SimpleSchema({
   idFile: {
@@ -63,7 +70,7 @@ export const SchemaDescargaCollection = new SimpleSchema({
 
 DescargasCollection.attachSchema(SchemaDescargaCollection)
 
-ArchivoCollection.allow({
+PelisCollection.allow({
     insert(doc) {
         // The user must be logged in and the document must be owned by the user.
         return true;

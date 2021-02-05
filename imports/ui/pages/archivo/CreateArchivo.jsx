@@ -30,7 +30,7 @@ import Rotate from "react-reveal/Rotate";
 
 //Collections
 import {
-  ArchivoCollection,
+  PelisCollection,
 } from "../collections/collections";
 
 //icons
@@ -97,11 +97,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function CreateArchivo() {
-  const [regEntrada, setRegEntrada] = useState("");
-  const [regSalida, setRegSalida] = useState("");
-  const [estante, setEstante] = useState("");
-  const [comentarios, setComentarios] = useState("");
-  const [clasificado, setClasificado] = React.useState(false);
+  const [nombrePeli, setnombrePeli] = useState("");
+  const [urlPeli, seturlPeli] = useState("");
+  const [urlBackground, seturlBackground] = useState("");
+  const [descripcion, setdescripcion] = useState("");
+  const [tamano, settamano] = useState("");
+  const [mostrar, setmostrar] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [message, setMessage] = React.useState("");
   const [transition, setTransition] = React.useState(undefined);
@@ -118,50 +119,16 @@ export default function CreateArchivo() {
     setOpen(false);
     setMessage("");
   };
-  async function makePostRequest() {
-    setLoad(true);
-    const user = {
-      email: email,
-      password: password,
-      firstName: firstName,
-      lastName: lastName,
-      role: role,
-      creadoPor: Meteor.userId(),
-      edad: CI,
-    };
-
-    var http = require("http");
-    http.post = require("http-post");
-    http.post("/hello", user, (opciones, res, body) => {
-      if (!opciones.headers.error) {
-        // console.log(`statusCode: ${res.statusCode}`);
-        console.log("error " + JSON.stringify(opciones.headers));
-
-        setMessage(opciones.headers.message);
-        handleClick(TransitionUp);
-        setLoad(false);
-        setOpen(true);
-
-        return;
-      } else {
-        console.log(opciones.headers);
-        setMessage(opciones.headers.message);
-        handleClick(TransitionUp);
-        setLoad(false);
-        setOpen(true);
-        return;
-      }
-    });
-  }
 
   async function createArch() {
     // Meteor.subscribe("archivo");
-    ArchivoCollection.insert({
-      regEntrada: regEntrada,
-      regSalida: regSalida,
-      estante: estante,
-      comentarios: comentarios,
-      clasificado: clasificado,
+    PelisCollection.insert({
+      nombrePeli:nombrePeli,
+      urlPeli: urlPeli,
+      urlBackground: urlBackground,
+      descripcion: descripcion,
+      tamano: tamano,
+      mostrar: mostrar,
     });
   }
 
@@ -173,26 +140,19 @@ export default function CreateArchivo() {
     // ..code to submit form to backend here...
 
     createArch();
-    setRegEntrada("")
-    setRegSalida("")
-    setEstante("")
-    setComentarios("")
-    setClasificado(false)
+    seturlPeli("")
+    seturlBackground("")
+    setdescripcion("")
+    settamano("")
+    setmostrar(false)
     // makePostRequest();
   }
 
   const handleChange = (event) => {
-    setClasificado(event.target.checked);
+    setmostrar(event.target.checked);
   };
 
   const classes = useStyles();
-
-  const users = useTracker(() => {
-    Meteor.subscribe("user");
-    return Meteor.users.find({}, { fields: {} });
-  });
-
-  console.log(users);
 
   return (
     <>
@@ -247,68 +207,91 @@ export default function CreateArchivo() {
                       autoComplete="true"
                     >
                       <Grid container className={classes.margin}>
-                        Datos del Archivo
+                        Datos de la Peli
                       </Grid>
                       <Grid container>
-                        <Grid item xs={12} sm={4} lg={3}>
+                      <Grid item xs={12} sm={4} lg={3}>
                           <FormControl required variant="outlined">
                             <TextField
                               required
                               className={classes.margin}
-                              id="RegEntrada"
-                              name="RegEntrada"
-                              label="RegEntrada"
-                              variant="outlined"
-                              color="secondary"
-                              type="number"
-                              value={regEntrada}
-                              onInput={(e) => setRegEntrada(e.target.value)}
-                              InputProps={{
-                                startAdornment: (
-                                  <InputAdornment position="start">
-                                    <AccountCircle />
-                                  </InputAdornment>
-                                ),
-                              }}
-                            />
-                          </FormControl>
-                        </Grid>
-                        <Grid item xs={12} sm={4} lg={3}>
-                          <FormControl required variant="outlined">
-                            <TextField
-                              required
-                              className={classes.margin}
-                              id="RegSalida"
-                              name="RegSalida"
-                              label="RegSalida"
-                              variant="outlined"
-                              color="secondary"
-                              type="number"
-                              value={regSalida}
-                              onInput={(e) => setRegSalida(e.target.value)}
-                              InputProps={{
-                                startAdornment: (
-                                  <InputAdornment position="start">
-                                    <AccountCircle />
-                                  </InputAdornment>
-                                ),
-                              }}
-                            />
-                          </FormControl>
-                        </Grid>
-                        <Grid item xs={12} sm={4} lg={3}>
-                          <FormControl required variant="outlined">
-                            <TextField
-                              required
-                              className={classes.margin}
-                              id="Estante"
-                              name="Estante"
-                              label="Estante"
+                              id="nombrePeli"
+                              name="nombrePeli"
+                              label="Nombre de la Peli"
                               variant="outlined"
                               color="secondary"
                               type="text"
-                              value={estante}
-                              onInput={(e) => setEstante(e.target.value)}
+                              value={nombrePeli}
+                              onInput={(e) => setnombrePeli(e.target.value)}
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    <AccountCircle />
+                                  </InputAdornment>
+                                ),
+                              }}
+                            />
+                          </FormControl>
+                        </Grid>
+                        <Grid item xs={12} sm={4} lg={3}>
+                          <FormControl required variant="outlined">
+                            <TextField
+                              required
+                              className={classes.margin}
+                              id="urlPeli"
+                              name="urlPeli"
+                              label="URL de la Peli"
+                              variant="outlined"
+                              color="secondary"
+                              type="text"
+                              value={urlPeli}
+                              onInput={(e) => seturlPeli(e.target.value)}
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    <AccountCircle />
+                                  </InputAdornment>
+                                ),
+                              }}
+                            />
+                          </FormControl>
+                        </Grid>
+                        <Grid item xs={12} sm={4} lg={3}>
+                          <FormControl required variant="outlined">
+                            <TextField
+                              required
+                              className={classes.margin}
+                              id="urlBackground"
+                              name="URL de la Imagen"
+                              label="urlBackground"
+                              variant="outlined"
+                              color="secondary"
+                              type="text"
+                              value={urlBackground}
+                              onInput={(e) => seturlBackground(e.target.value)}
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    <AccountCircle />
+                                  </InputAdornment>
+                                ),
+                              }}
+                            />
+                          </FormControl>
+                        </Grid>
+                        <Grid item xs={12} sm={4} lg={3}>
+                          <FormControl required variant="outlined">
+                            <TextField
+                              required
+                              className={classes.margin}
+                              id="descripcion"
+                              name="descripcion"
+                              label="Descripcion"
+                              variant="outlined"
+                              color="secondary"
+                              type="text"
+                              value={descripcion}
+                              onInput={(e) => setdescripcion(e.target.value)}
                               InputProps={{
                                 startAdornment: (
                                   <InputAdornment position="start">
@@ -324,16 +307,16 @@ export default function CreateArchivo() {
                             <TextField
                               required
                               className={classes.margin}
-                              id="email"
-                              name="email"
-                              label="Comentarios"
+                              id="tamano"
+                              name="tamano"
+                              label="Tamano"
                               variant="outlined"
                               color="secondary"
                               type="text"
                               multiline
                               rows={4}
-                              value={comentarios}
-                              onInput={(e) => setComentarios(e.target.value)}
+                              value={tamano}
+                              onInput={(e) => settamano(e.target.value)}
                               // InputProps={{
                               //   startAdornment: (
                               //     // <InputAdornment position="start">
@@ -348,12 +331,12 @@ export default function CreateArchivo() {
                           <FormControlLabel
                             control={
                               <Switch
-                                checked={clasificado}
+                                checked={mostrar}
                                 onChange={handleChange}
                                 name="checkedA"
                               />
                             }
-                            label="Clasificado"
+                            label="mostrar"
                           />
                         </Grid>
                       </Grid>

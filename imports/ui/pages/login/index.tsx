@@ -1,26 +1,21 @@
 import React from "react";
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import LoginForm from "../../components/login/LoginForm";
-import {
-  Grid,
-  Typography,
-  Link,
-  ThemeProvider,
-  Fade,
-} from "@material-ui/core";
+import { Grid, Typography, Link, ThemeProvider, Fade } from "@material-ui/core";
 import { theme } from "../../../startup/client/theme";
 import {
   BrowserRouter as Router,
   Route,
   useRouteMatch,
-  useParams
+  useParams,
 } from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
+      height:"100vh",
       overflow: "hidden",
-      backgroundImage: 'url("/bg_home.png")',
+      backgroundImage: 'radial-gradient(circle, rgba(238,174,174,0.8323704481792717) 0%, rgba(112,96,255,0.958420868347339) 100%)',
       backgroundPosition: "center",
       backgroundSize: "cover",
     },
@@ -70,11 +65,36 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     form: {
       transitionDelay: `600ms !important`,
-      borderRadius: "50%",
-      background: "#fafafac2",
+      borderRadius: "13%",
+      background: "#0ebaf775",
       opacity: 1,
-      padding: "140px",
-      width: "100%",
+      padding: "25px",
+    },
+    background:{
+      position: "absolute";
+      top:0,
+      left:0,
+      width:"100%",
+      height:"100vh",
+      // zIndex:-1,
+      backgroundImage: 'url("/img/marcoTVLuces.png")',
+      backgroundPosition: "center",
+      backgroundSize: "contain",
+      backgroundRepeat: "no-repeat",
+
+      [theme.breakpoints.down("sm")]: {
+        backgroundImage: 'none',
+      },
+      [theme.breakpoints.up("md")]: {
+        // backgroundColor: theme.palette.primary.main,
+      },
+      [theme.breakpoints.up("lg")]: {
+        // backgroundColor: "green",
+      },
+      
+    },
+    marco:{
+
     },
   })
 );
@@ -88,18 +108,38 @@ const LoginPage = () => {
   };
 
   const handleLoginFacebook = () => {
-    Meteor.loginWithFacebook({requestPermissions: ['public_profile', 'email']}, function(err){
-      if (err) {
-          console.log('Handle errors here: ', err);
-      }else{
-        Router.go("/")
+    Meteor.loginWithFacebook(
+      { requestPermissions: ["public_profile", "email"] },
+      function (err) {
+        if (err) {
+          console.log("Handle errors here: ", err);
+        } else {
+          Router.go("/");
+        }
       }
-  });
-  
+    );
   };
-  
+
   return (
     <ThemeProvider theme={theme}>
+      <Grid
+        container
+        direction="row"
+        alignItems="center"
+        className={classes.background}
+        justify="center">
+          <Grid container
+        direction="row"
+        alignItems="center"
+        className={classes.marco}
+        justify="center" >
+          <Grid item className={classes.form}>
+                <LoginForm />
+
+                {/* <button onClick={handleLoginFacebook}>loguin to facebook</button> */}
+              </Grid>
+          </Grid>
+      </Grid>
       <Grid
         container
         direction="row"
@@ -107,11 +147,6 @@ const LoginPage = () => {
         className={classes.root}
         justify="center"
       >
-        <Grid item xs={5} className={classes.form}>
-          <LoginForm />
-          
-<button onClick={handleLoginFacebook}>loguin to facebook</button>
-        </Grid>
         {/* <Slide direction="up" in={checked} mountOnEnter>
 
             </Slide> */}
@@ -124,6 +159,7 @@ const LoginPage = () => {
               direction="column"
               alignItems="center"
             >
+              
               <Grid item>
                 {/* <img src="/bg_home.png" className={classes.img} /> */}
               </Grid>
@@ -152,8 +188,6 @@ const LoginPage = () => {
               </Grid> */}
             </Grid>
           </Fade>
-          <div className={classes.path}></div>
-          <div className={classes.pathSecondary}></div>
         </Grid>
       </Grid>
     </ThemeProvider>

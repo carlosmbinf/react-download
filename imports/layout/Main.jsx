@@ -23,6 +23,8 @@ import {
 
 import UserCard from "../ui/pages/users/UserCard";
 import UserCardDetails from "../ui/pages/users/UserCardDetails";
+import PelisCard from "../ui/pages/archivo/PeliCard";
+import PelisDetails from "../ui/pages/archivo/PeliDetails";
 import CreateUsers from "../ui/pages/users/CreateUsers";
 import GuestCard from "../ui/pages/guest/GuestCard";
 import LoginPage from "../ui/pages/login/index";
@@ -40,8 +42,8 @@ const useStyles = makeStyles((theme) => ({
     flexWrap: "nowrap",
     "& > *": {
       margin: theme.spacing(5),
-      width: 330,
-      height: 323,
+      // width: 330,
+      // height: 323,
     },
   },
   toolbar: theme.mixins.toolbar,
@@ -103,7 +105,6 @@ export default function Main() {
             <UserCard />
           </div>
         </Route>
-
         <Route path="/calendar"></Route>
         <Route path="/login">
           <LoginPage />
@@ -128,27 +129,22 @@ export default function Main() {
           )}
           
         </Route>
-        <Route path="/archivo">
-        {useractual &&
+        <Route path="/pelis/:id">
+          <UserCardDetails />
+        </Route>
+        <Route path="/pelis">
+          <div className={classes.root}>
+          {useractual &&
           useractual.profile &&
           useractual.profile.role == "admin" ? (
-            <CreateArchivo />
+            <PelisCard withCreate="true" />
           ) : (
-            <Zoom in={true}>
-              <Grid container
-           direction="row"
-           justify="center"
-           alignItems="center">
-            <h1>SIN ACCESO PARA CREAR</h1>
-           </Grid>
-              
-            </Zoom>
-           
-            
+            ""
           )}
-          <Archivo />
+            <PelisCard />
+          </div>
         </Route>
-        <Route path="/create-archivo">
+        <Route path="/create-pelis">
           {useractual &&
           useractual.profile &&
           useractual.profile.role == "admin" ? (
