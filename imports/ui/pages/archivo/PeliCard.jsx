@@ -127,11 +127,11 @@ const useStyles = makeStyles((theme) => ({
     margin: "13px 0",
     marginTop: "300px",
   },
-  elementosBotom:{
+  elementosBotom: {
     maxHeight: 76,
     minHeight: 76,
     borderRadius: 20,
-    background: "linear-gradient(0deg, rgb(245 0 87) 15%, rgba(245,0,87,0) 100%)",
+    background: "linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(63,81,181,1) 82%);",
   },
 }));
 
@@ -141,7 +141,7 @@ export default function PeliCard(withAdd) {
 
   const peli = useTracker(() => {
     Meteor.subscribe("pelis");
-    return PelisCollection.find({}, { fields: {} });
+    return PelisCollection.find({}, { fields: {} }).fetch();
   });
 
   // console.log(peli);
@@ -151,9 +151,9 @@ export default function PeliCard(withAdd) {
       <Fade top
       >
         <Grid className={classes.root2}>
-        <Link to={"/create-pelis"} className={classes.link}>
-          <Button color="inherit" className={classes.boton}>
-            
+          <Link to={"/create-pelis"} className={classes.link}>
+            <Button color="inherit" className={classes.boton}>
+
               <Paper elevation={5} className={classes.rootADD}>
                 <Grid container spacing={3}>
                   <Grid item xs={12}>
@@ -178,24 +178,24 @@ export default function PeliCard(withAdd) {
                   </Grid>
                 </Grid>
               </Paper>
-              </Button>
-            </Link>
-          
+            </Button>
+          </Link>
+
         </Grid>
       </Fade>
     );
   }
   return (
     <>
+
       {peli &&
-        peli.map((peliGeneral) => (
+        peli.map((peliGeneral, i) => (
           <Fade top>
-            
-              <Link to={"/pelis/" + peliGeneral._id} className={classes.link}>
+            <Link key={i} to={"/pelis/" + peliGeneral._id} className={classes.link}>
               <Button
-              color="inherit"
-              className={classes.boton}
-            >
+                color="inherit"
+                className={classes.boton}
+              >
                 <Paper
                   elevation={5}
                   className={
@@ -203,31 +203,30 @@ export default function PeliCard(withAdd) {
                       ? classes.primary
                       : classes.secundary
                   }
-                  style={{backgroundImage: "url("+peliGeneral.urlBackground+")"}}
+                  style={{ backgroundImage: "url(" + peliGeneral.urlBackground + ")" }}
                 >
                   <Grid container spacing={3}>
-                    
+
                     <Grid item xs={12}>
-                      
+
                       <Divider className={classes.padding10} />
                       <Grid item xs={12}>
                         <Grid container className={classes.elementosBotom} container
                           direction="row"
                           justify="center"
                           alignItems="center">
-                        <Typography color="white">
-                          <strong>
-                            {peliGeneral.nombrePeli}
-                          </strong>
-                        </Typography>
+                          <Typography style={{ color: "white", fontSize: 20, fontFamily: "cursive" }}>
+                            <strong>
+                              {peliGeneral.nombrePeli}
+                            </strong>
+                          </Typography>
+                        </Grid>
                       </Grid>
-                    </Grid>
                     </Grid>
                   </Grid>
                 </Paper>
-                </Button>
-              </Link>
-            
+              </Button>
+            </Link>
           </Fade>
         ))}
     </>

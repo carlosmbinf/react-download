@@ -34,4 +34,5 @@ body {
   .datatable-responsive-demo .p-datatable.p-datatable-responsive-demo .p-datatable-tbody > tr > td:last-child {
       border-bottom: 1px solid var(--surface-d);
   }
+  
 }

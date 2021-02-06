@@ -50,7 +50,6 @@ const useStyles = makeStyles((theme) => ({
   content: {
     overflowX: "auto",
     flexGrow: 1,
-    backgroundColor: theme.palette.background.default,
     padding: theme.spacing(3),
     marginLeft: 0,
   },
@@ -130,7 +129,7 @@ export default function Main() {
           
         </Route>
         <Route path="/pelis/:id">
-          <UserCardDetails />
+          <PelisDetails />
         </Route>
         <Route path="/pelis">
           <div className={classes.root}>

@@ -162,7 +162,7 @@ export default function CreateArchivo() {
           aria-label="delete"
           className={classes.margin}
         >
-          <Link to={"/users"}>
+          <Link to={"/pelis"}>
             <ArrowBackIcon fontSize="large" color="secondary" />
           </Link>
         </IconButton>

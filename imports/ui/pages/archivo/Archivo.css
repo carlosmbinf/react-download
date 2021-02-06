@@ -108,3 +108,8 @@ width: 100%;
     background-color: #3f51b5;
     color: black;
 }
+
+.vplayer{
+    max-width: inherit !important;
+    max-height: 45em !important;
+  }

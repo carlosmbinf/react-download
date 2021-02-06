@@ -18,6 +18,8 @@ import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
 import PermContactCalendarRoundedIcon from "@material-ui/icons/PermContactCalendarRounded";
 import MailIcon from "@material-ui/icons/Mail";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import { PelisCollection } from "../collections/collections";
+import VPlayer from 'react-vplayer';
 
 const StyledBadge = withStyles((theme) => ({
   badge: {
@@ -130,106 +132,70 @@ export default function PeliDetails() {
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
 
-  const users = useTracker(() => {
-    Meteor.subscribe("user", useParams().id);
-    return Meteor.users.find({ _id: useParams().id });
+  const peliDetails = useTracker(() => {
+    Meteor.subscribe("peli", useParams().id);
+    return PelisCollection.findOne({ _id: useParams().id });
   });
-
-  console.log(users);
+  // peliDetails&&console.log(peliDetails);
   return (
     <>
       <div className={classes.drawerHeader}>
-      <Link to={"/users"}>
-        <IconButton
-          color="primary"
-          aria-label="delete"
-          className={classes.margin}
-        >
-          
-            <ArrowBackIcon fontSize="large" color="secondary"/>
-         
-        </IconButton>
+        <Link to={"/pelis"}>
+          <IconButton
+            color="primary"
+            aria-label="delete"
+            className={classes.margin}
+          >
+
+            <ArrowBackIcon fontSize="large" color="secondary" />
+
+          </IconButton>
         </Link>
       </div>
 
-      {users &&
-        users.map((userDetails) => (
-          <Zoom in={true}>
-            <Paper
-              elevation={5}
-              className={
-                userDetails.profile.role !== "admin"
-                  ? classes.primary
-                  : classes.secundary
-              }
-            >
-              <Grid container spacing={3}>
-                <Grid item xs={12}>
-                  <Grid container direction="row" justify="center">
-                    <Avatar
-                      className={classes.large}
-                      alt={
-                        userDetails && userDetails.profile.firstName
-                          ? userDetails.profile.firstName
-                          : userDetails.profile.name
-                      }
-                      src={
-                        userDetails.services &&
-                        userDetails.services.facebook &&
-                        userDetails.services.facebook.picture.data.url
-                          ? userDetails.services.facebook.picture.data.url
-                          : "/"
-                      }
-                    />
-                  </Grid>
-                  <Grid container direction="row">
-                    <AccountCircleIcon />
-                    <Typography color="textSecondary">
-                      <strong>
-                        {userDetails.profile.firstName}{" "}
-                        {userDetails.profile.lastName}
-                      </strong>
-                    </Typography>
-                  </Grid>
-                </Grid>
-                <Grid item xs={12}>
-                  <Grid container direction="row">
-                    <PermContactCalendarRoundedIcon />
-                    <Typography color="textSecondary">
-                      <strong>{userDetails.profile.role}</strong>
-                    </Typography>
-                  </Grid>
-                </Grid>
-                <Grid item xs={12}>
-                  <Grid container direction="row">
-                    <MailIcon />
-                    <Typography color="textSecondary">
-                      <strong>
-                        {userDetails.emails && userDetails.emails[0].address}
-                      </strong>
-                    </Typography>
-                  </Grid>
-                </Grid>
-                <Grid item xs={12}>
-                  <Divider className={classes.padding10} />
-                  <Grid container direction="row" justify="center">
-                    <Typography
-                      variant="h5"
-                      color={
-                        userDetails.profile.role == "admin"
-                          ? "primary"
-                          : "secondary"
-                      }
-                    >
-                      <PermContactCalendarRoundedIcon />{" "}
-                      {userDetails.profile.role}
-                    </Typography>
-                  </Grid>
-                </Grid>
+      {peliDetails && <Zoom in={true} >
+        <Paper
+          elevation={5}
+          className={
+            peliDetails.mostrar !== "true"
+              ? classes.primary
+              : classes.secundary
+          }
+        >
+          <Grid container
+            direction="row"
+            justify="center"
+            alignItems="center" spacing={3}>
+            <Grid style={{ width: "100%" }}>
+              {/* INSERTAR VIDEO */}
+              <video controls style={{width:"100%", maxHeight: "60vh"}} poster={peliDetails.urlBackground} preload="metadata" autoplay>
+                <source src={peliDetails.urlPeli} type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
+                <track default kind="subtitles" label="Español" src={peliDetails.subtitulo} srcLang="es"/>
+                {/* <track default kind="descriptions" label="Español" src="https://visuales.uclv.cu/Peliculas/Extranjeras/2020/2020_Ava/sinopsis.txt" srcLang="es"/> */}
+              </video>
+            </Grid>
+            <Grid item xs={12}>
+              <Divider className={classes.padding10} />
+              <Grid container direction="row" justify="center">
+                <Typography
+                  variant="h5"
+                  color={
+                    peliDetails.mostrar == "true"
+                      ? "primary"
+                      : "secondary"
+                  }
+                >
+                  <PermContactCalendarRoundedIcon />{" "}
+                  {peliDetails.nombrePeli}
+                </Typography>
               </Grid>
-            </Paper>
-          </Zoom>
-        ))}
+            </Grid>
+          </Grid>
+        </Paper>
+      </Zoom>
+      }
+
+
     </>
   );
 }

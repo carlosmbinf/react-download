@@ -33,6 +33,10 @@ export const SchemaPelisCollection = new SimpleSchema({
     type: Date,
     defaultValue: new Date(),
   },
+  subtitulo: {
+    type: String,
+    defaultValue: "",
+  },
 });
 
 PelisCollection.attachSchema(SchemaPelisCollection);

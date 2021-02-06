@@ -118,6 +118,8 @@ const useStyles = makeStyles((theme) =>
     },
     drawerPaper: {
       width: drawerWidth,
+      background: 'linear-gradient(270deg, rgba(0,0,0,0) 0%, rgba(63,81,181,1) 82%);',
+      borderRight: 0,
     },
     drawerHeader: {
       display: "flex",
@@ -162,15 +164,33 @@ export default function PersistentDrawerLeft() {
   });
 
   const listaDeLinks = [
-    "dashboard",
-    "guest",
-    "users",
-    "calendar",
-    "login",
-    "create-user",
-    "pelis",
-    "create-pelis",
-    "downloads",
+    {title: "dashboard",
+    icon: <InboxIcon />,
+  },
+  {title: "guest",
+    icon: <InboxIcon />,
+  },
+  {title: "users",
+    icon: <InboxIcon />,
+  },
+  {title: "calendar",
+    icon: <InboxIcon />,
+  },
+  {title: "login",
+    icon: <InboxIcon />,
+  },
+  {title: "create-user",
+    icon: <InboxIcon />,
+  },
+  {title: "pelis",
+    icon: <InboxIcon />,
+  },
+  {title: "create-pelis",
+    icon: <InboxIcon />,
+  },
+  {title: "downloads",
+    icon: <InboxIcon />,
+  },
   ];
 
   const handleDrawerOpen = () => {
@@ -191,7 +211,7 @@ export default function PersistentDrawerLeft() {
   };
   return (
     <>
-      <div className={classes.root}>
+      <div className={classes.root} style={{background: "rgb(29 47 62)",}}>
         <CssBaseline />
         <Slide
                       direction="down"
@@ -310,12 +330,12 @@ export default function PersistentDrawerLeft() {
           <Divider />
           <List>
             {listaDeLinks.map((text, index) => (
-              <Link to={"/" + text} className={classes.link}>
-                <ListItem button key={text} className={classes.item}>
+              <Link key={index} to={"/" + text.title} className={classes.link}>
+                <ListItem button  className={classes.item}>
                   <ListItemIcon>
                     {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                   </ListItemIcon>
-                  <strong style={{ textTransform: "uppercase" }}>{text}</strong>
+                  <strong style={{ textTransform: "uppercase",color: "#e3f3fe" }}>{text.title}</strong>
                 </ListItem>
               </Link>
             ))}
@@ -323,7 +343,7 @@ export default function PersistentDrawerLeft() {
           <Divider />
           <List>
             {["All mail", "Trash", "Spam"].map((text, index) => (
-              <ListItem button key={text}>
+              <ListItem button key={index}>
                 <ListItemIcon>
                   {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                 </ListItemIcon>
@@ -332,7 +352,7 @@ export default function PersistentDrawerLeft() {
             ))}
           </List>
         </Drawer>
-        <main
+        <main 
           className={clsx(classes.content, {
             [classes.contentShift]: open,
           })}

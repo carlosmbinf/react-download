@@ -172,6 +172,9 @@ if (Meteor.isServer) {
   Meteor.publish("pelis", function () {
     return PelisCollection.find({});
   });
+  Meteor.publish("peli", function (id) {
+    return PelisCollection.find({_id:id});
+  });
   Meteor.publish("descargas", function () {
     return DescargasCollection.find({});
   });
