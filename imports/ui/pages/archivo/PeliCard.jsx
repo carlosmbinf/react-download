@@ -150,7 +150,11 @@ export default function PeliCard(withAdd) {
     return (
       <Fade top
       >
-        <Grid className={classes.root2}>
+        <Grid container
+                      direction="column"
+                      justify="center"
+                      alignItems="center" 
+                      className={classes.root2}>
           <Link to={"/create-pelis"} className={classes.link}>
             <Button color="inherit" className={classes.boton}>
 

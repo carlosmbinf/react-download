@@ -124,7 +124,6 @@ export default function UserCard(withAdd) {
     return Meteor.users.find({}, { fields: {} });
   });
 
-  console.log(users);
 
   if (withAdd.withCreate == "true") {
     return (

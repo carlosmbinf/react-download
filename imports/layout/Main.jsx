@@ -30,7 +30,7 @@ import GuestCard from "../ui/pages/guest/GuestCard";
 import LoginPage from "../ui/pages/login/index";
 import DashboardInit from "../ui/pages/dashboard/DashboardInit";
 import Archivo from "../ui/pages/archivo/Archivo";
-import CreateArchivo from "../ui/pages/archivo/CreateArchivo";
+import CreateArchivo from "../ui/pages/archivo/CreatePeli";
 import AddDescargas from "../ui/pages/download/AddDescargas";
 import TableDescarga from "../ui/pages/download/TableDescarga";
 import { Grid, Zoom } from "@material-ui/core";

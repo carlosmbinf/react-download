@@ -80,7 +80,7 @@ PelisCollection.allow({
         return true;
       },
     
-      update(userId, doc, fields, modifier) {
+      update() {
         // Can only change your own documents.
         return true;
       },

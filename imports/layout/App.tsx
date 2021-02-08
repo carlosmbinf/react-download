@@ -32,7 +32,7 @@ import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import Badge from "@material-ui/core/Badge";
 import Avatar from "@material-ui/core/Avatar";
 import { Meteor } from "meteor/meteor";
-import Fade from 'react-reveal/Fade';
+import Fade from "react-reveal/Fade";
 
 const drawerWidth = 240;
 const StyledBadge = withStyles((theme) => ({
@@ -118,7 +118,8 @@ const useStyles = makeStyles((theme) =>
     },
     drawerPaper: {
       width: drawerWidth,
-      background: 'linear-gradient(270deg, rgba(0,0,0,0) 0%, rgba(63,81,181,1) 82%);',
+      background:
+        "linear-gradient(270deg, rgba(0,0,0,0) 0%, rgba(63,81,181,1) 82%);",
       borderRight: 0,
     },
     drawerHeader: {
@@ -131,7 +132,7 @@ const useStyles = makeStyles((theme) =>
     },
     content: {
       minHeight: "100vh",
-      minWidth: "100vw",
+      minWidth: "98vw",
       flexGrow: 1,
       padding: theme.spacing(3),
       transition: theme.transitions.create("margin", {
@@ -164,33 +165,25 @@ export default function PersistentDrawerLeft() {
   });
 
   const listaDeLinks = [
-    {title: "dashboard",
-    icon: <InboxIcon />,
-  },
-  // {title: "guest",
-  //   icon: <InboxIcon />,
-  // },
-  {title: "users",
-    icon: <InboxIcon />,
-  },
-  // {title: "calendar",
-  //   icon: <InboxIcon />,
-  // },
-  // {title: "login",
-  //   icon: <InboxIcon />,
-  // },
-  // {title: "create-user",
-  //   icon: <InboxIcon />,
-  // },
-  {title: "pelis",
-    icon: <InboxIcon />,
-  },
-  // {title: "create-pelis",
-  //   icon: <InboxIcon />,
-  // },
-  {title: "downloads",
-    icon: <InboxIcon />,
-  },
+    { title: "dashboard", icon: <InboxIcon /> },
+    // {title: "guest",
+    //   icon: <InboxIcon />,
+    // },
+    { title: "users", icon: <InboxIcon /> },
+    // {title: "calendar",
+    //   icon: <InboxIcon />,
+    // },
+    // {title: "login",
+    //   icon: <InboxIcon />,
+    // },
+    // {title: "create-user",
+    //   icon: <InboxIcon />,
+    // },
+    { title: "pelis", icon: <InboxIcon /> },
+    // {title: "create-pelis",
+    //   icon: <InboxIcon />,
+    // },
+    { title: "downloads", icon: <InboxIcon /> },
   ];
 
   const handleDrawerOpen = () => {
@@ -206,109 +199,104 @@ export default function PersistentDrawerLeft() {
     setError("");
 
     Meteor.logout((error) => {
-      error && error ? setError(error.message):""
+      error && error ? setError(error.message) : "";
     });
   };
   return (
     <>
-      <div className={classes.root} style={{background: "rgb(29 47 62)",}}>
+      <div className={classes.root} style={{ background: "rgb(29 47 62)" }}>
         <CssBaseline />
         <Slide
-                      direction="down"
-                      in={true}
-                      mountOnEnter
-                      unmountOnExit
-                      style={{ transformOrigin: '0 0 0' }}
-                      {...(true ? { timeout: 1000 } : {})}
-                    >
-
-        <AppBar
-          position="fixed"
-          className={clsx(classes.appBar, {
-            [classes.appBarShift]: open,
-          })}
+          direction="down"
+          in={true}
+          mountOnEnter
+          unmountOnExit
+          style={{ transformOrigin: "0 0 0" }}
+          {...(true ? { timeout: 1000 } : {})}
         >
-          <Toolbar>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              onClick={handleDrawerOpen}
-              edge="start"
-              className={clsx(classes.menuButton, open && classes.hide)}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Grid container justify="flex-end">
-            <Slide
-                      direction="right"
-                      in={true}
-                      mountOnEnter
-                      unmountOnExit
-                      style={{ transformOrigin: '0 0 0' }}
-                      {...(true ? { timeout: 2000 } : {})}
-                    >
-                      <Grid item>
-                <Typography
-                  variant="h6"
-                  className={classes.textTittle}
-                  color="textSecondary"
-                  noWrap
+          <AppBar
+            position="fixed"
+            className={clsx(classes.appBar, {
+              [classes.appBarShift]: open,
+            })}
+          >
+            <Toolbar>
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                onClick={handleDrawerOpen}
+                edge="start"
+                className={clsx(classes.menuButton, open && classes.hide)}
+              >
+                <MenuIcon />
+              </IconButton>
+              <Grid container justify="flex-end">
+                <Slide
+                  direction="right"
+                  in={true}
+                  mountOnEnter
+                  unmountOnExit
+                  style={{ transformOrigin: "0 0 0" }}
+                  {...(true ? { timeout: 2000 } : {})}
                 >
-                  
-                  <StyledBadge
-                    overlap="circle"
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "right",
-                    }}
-                    variant="dot"
-                  >
-                    
-                    <Avatar
-                      alt={
-                        userActual &&
-                        userActual.profile &&
-                        userActual.profile.firstName
-                          ? userActual.profile.firstName
-                          : userActual.profile.name
-                      }
-                      src={
-                        userActual.services &&
-                        userActual.services.facebook &&
-                        userActual.services.facebook.picture.data.url
-                      }
-                    />
-                  </StyledBadge>
+                  <Grid item>
+                    <Typography
+                      variant="h6"
+                      className={classes.textTittle}
+                      color="textSecondary"
+                      noWrap
+                    >
+                      <StyledBadge
+                        overlap="circle"
+                        anchorOrigin={{
+                          vertical: "bottom",
+                          horizontal: "right",
+                        }}
+                        variant="dot"
+                      >
+                        <Avatar
+                          alt={
+                            userActual &&
+                            userActual.profile &&
+                            userActual.profile.firstName
+                              ? userActual.profile.firstName
+                              : userActual.profile.name
+                          }
+                          src={
+                            userActual.services &&
+                            userActual.services.facebook &&
+                            userActual.services.facebook.picture.data.url
+                          }
+                        />
+                      </StyledBadge>
 
-                  {
-                    <strong>
-                      {userActual &&
-                      userActual.profile &&
-                      userActual.profile.firstName
-                        ? " " +
-                          userActual.profile.firstName +
-                          " " +
-                          userActual.profile.lastName
-                        : " " + userActual.profile.name + " "}
-                    </strong>
-                  }
+                      {
+                        <strong>
+                          {userActual &&
+                          userActual.profile &&
+                          userActual.profile.firstName
+                            ? " " +
+                              userActual.profile.firstName +
+                              " " +
+                              userActual.profile.lastName
+                            : " " + userActual.profile.name + " "}
+                        </strong>
+                      }
 
-                  {userActual && (
-                    <Button color="secondary" onClick={handleLogOut}>
-                      <ExitToAppIcon />
-                      LogOut
-                    </Button>
-                  )}
-                </Typography>
+                      {userActual && (
+                        <Button color="secondary" onClick={handleLogOut}>
+                          <ExitToAppIcon />
+                          LogOut
+                        </Button>
+                      )}
+                    </Typography>
+                  </Grid>
+                </Slide>
               </Grid>
-                    </Slide>
-              
-            </Grid>
-          </Toolbar>
-        </AppBar>
-
+            </Toolbar>
+          </AppBar>
         </Slide>
-        
+
         <Drawer
           className={classes.drawer}
           variant="persistent"
@@ -318,8 +306,8 @@ export default function PersistentDrawerLeft() {
             paper: classes.drawerPaper,
           }}
         >
-          <div className={classes.drawerHeader}>
-            <IconButton onClick={handleDrawerClose}>
+          <div className={classes.drawerHeader} >
+            <IconButton style={{color:"white", background:"radial-gradient(circle, rgba(245,0,87,1) 0%, rgba(63,81,181,0) 82%)"}} onClick={handleDrawerClose}>
               {theme.direction === "ltr" ? (
                 <ChevronLeftIcon />
               ) : (
@@ -331,11 +319,15 @@ export default function PersistentDrawerLeft() {
           <List>
             {listaDeLinks.map((text, index) => (
               <Link key={index} to={"/" + text.title} className={classes.link}>
-                <ListItem button  className={classes.item}>
+                <ListItem button className={classes.item}>
                   <ListItemIcon>
                     {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                   </ListItemIcon>
-                  <strong style={{ textTransform: "uppercase",color: "#e3f3fe" }}>{text.title}</strong>
+                  <strong
+                    style={{ textTransform: "uppercase", color: "#e3f3fe" }}
+                  >
+                    {text.title}
+                  </strong>
                 </ListItem>
               </Link>
             ))}
@@ -352,7 +344,7 @@ export default function PersistentDrawerLeft() {
             ))}
           </List>
         </Drawer>
-        <main 
+        <main
           className={clsx(classes.content, {
             [classes.contentShift]: open,
           })}
