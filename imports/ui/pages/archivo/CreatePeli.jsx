@@ -29,9 +29,7 @@ import { Link, useParams } from "react-router-dom";
 import Rotate from "react-reveal/Rotate";
 
 //Collections
-import {
-  PelisCollection,
-} from "../collections/collections";
+import { PelisCollection } from "../collections/collections";
 
 //icons
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
@@ -45,8 +43,8 @@ import CloseIcon from "@material-ui/icons/Close";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 
 const useStyles = makeStyles((theme) => ({
-  w100:{
-    width:"100%",
+  w100: {
+    width: "100%",
   },
   root: {
     minWidth: 275,
@@ -124,9 +122,9 @@ export default function CreateArchivo() {
   async function createArch() {
     var http = require("http");
     http.post = require("http-post");
-    // Meteor.subscribe("archivo");
-   idPeli = PelisCollection.insert({
-      nombrePeli:nombrePeli,
+    
+    idPeli = PelisCollection.insert({
+      nombrePeli: nombrePeli,
       urlPeli: urlPeli,
       urlBackground: urlBackground,
       descripcion: descripcion,
@@ -134,28 +132,32 @@ export default function CreateArchivo() {
       subtitulo: subtitulo,
       mostrar: mostrar,
     });
-    console.log(idPeli)
-      
-      http.post("/convertsrttovtt", {idPeli: idPeli}, (opciones, res, body) => {
-        if (!opciones.headers.error) {
-          // console.log(`statusCode: ${res.statusCode}`);
-          console.log("error " + JSON.stringify(opciones.headers));
+    subtitulo
+      ? http.post(
+          "/convertsrttovtt",
+          { idPeli: idPeli },
+          (opciones, res, body) => {
+            if (!opciones.headers.error) {
+              // console.log(`statusCode: ${res.statusCode}`);
+              console.log("error " + JSON.stringify(opciones.headers));
 
-          setMessage(opciones.headers.message);
-          handleClick(TransitionUp);
-          setLoad(false);
-          setOpen(true);
-          
-          return;
-        } else {
-          console.log(opciones.headers);
-          setMessage(opciones.headers.message);
-          handleClick(TransitionUp);
-          setLoad(false);
-          setOpen(true);
-          return;
-        }
-      });
+              setMessage(opciones.headers.message);
+              handleClick(TransitionUp);
+              setLoad(false);
+              setOpen(true);
+
+              return;
+            } else {
+              console.log(opciones.headers);
+              setMessage(opciones.headers.message);
+              handleClick(TransitionUp);
+              setLoad(false);
+              setOpen(true);
+              return;
+            }
+          }
+        )
+      : "";
   }
 
   function handleSubmit(event) {
@@ -166,12 +168,12 @@ export default function CreateArchivo() {
     // ..code to submit form to backend here...
 
     createArch();
-    seturlPeli("")
-    seturlBackground("")
-    setdescripcion("")
-    settamano("")
-    setsubtitulo("")
-    setmostrar(false)
+    seturlPeli("");
+    seturlBackground("");
+    setdescripcion("");
+    settamano("");
+    setsubtitulo("");
+    setmostrar(false);
     // makePostRequest();
   }
 
@@ -237,7 +239,7 @@ export default function CreateArchivo() {
                         Datos de la Peli
                       </Grid>
                       <Grid container>
-                      <Grid item xs={12} sm={4} lg={3}>
+                        <Grid item xs={12} sm={4} lg={3}>
                           <FormControl required variant="outlined">
                             <TextField
                               required
@@ -250,13 +252,15 @@ export default function CreateArchivo() {
                               type="text"
                               value={nombrePeli}
                               onInput={(e) => setnombrePeli(e.target.value)}
-                              InputProps={{
-                                // startAdornment: (
-                                //   // <InputAdornment position="start">
-                                //   //   <AccountCircle />
-                                //   // </InputAdornment>
-                                // ),
-                              }}
+                              InputProps={
+                                {
+                                  // startAdornment: (
+                                  //   // <InputAdornment position="start">
+                                  //   //   <AccountCircle />
+                                  //   // </InputAdornment>
+                                  // ),
+                                }
+                              }
                             />
                           </FormControl>
                         </Grid>
@@ -273,13 +277,15 @@ export default function CreateArchivo() {
                               type="text"
                               value={urlPeli}
                               onInput={(e) => seturlPeli(e.target.value)}
-                              InputProps={{
-                                // startAdornment: (
-                                //   // <InputAdornment position="start">
-                                //   //   <AccountCircle />
-                                //   // </InputAdornment>
-                                // ),
-                              }}
+                              InputProps={
+                                {
+                                  // startAdornment: (
+                                  //   // <InputAdornment position="start">
+                                  //   //   <AccountCircle />
+                                  //   // </InputAdornment>
+                                  // ),
+                                }
+                              }
                             />
                           </FormControl>
                         </Grid>
@@ -296,18 +302,24 @@ export default function CreateArchivo() {
                               type="text"
                               value={urlBackground}
                               onInput={(e) => seturlBackground(e.target.value)}
-                              InputProps={{
-                                // startAdornment: (
-                                //   // <InputAdornment position="start">
-                                //   //   <AccountCircle />
-                                //   // </InputAdornment>
-                                // ),
-                              }}
+                              InputProps={
+                                {
+                                  // startAdornment: (
+                                  //   // <InputAdornment position="start">
+                                  //   //   <AccountCircle />
+                                  //   // </InputAdornment>
+                                  // ),
+                                }
+                              }
                             />
                           </FormControl>
                         </Grid>
                         <Grid item xs={12} sm={4} lg={3}>
-                          <FormControl required className={classes.w100} variant="outlined">
+                          <FormControl
+                            required
+                            className={classes.w100}
+                            variant="outlined"
+                          >
                             <TextField
                               required
                               className={classes.margin}
@@ -344,20 +356,25 @@ export default function CreateArchivo() {
                               rows={4}
                               value={descripcion}
                               onInput={(e) => setdescripcion(e.target.value)}
-                              InputProps={{
-                                // startAdornment: (
-                                //   // <InputAdornment position="start">
-                                //   //   <AccountCircle />
-                                //   // </InputAdornment>
-                                // ),
-                              }}
+                              InputProps={
+                                {
+                                  // startAdornment: (
+                                  //   // <InputAdornment position="start">
+                                  //   //   <AccountCircle />
+                                  //   // </InputAdornment>
+                                  // ),
+                                }
+                              }
                             />
                           </FormControl>
                         </Grid>
                         <Grid item xs={12} sm={4} lg={3}>
-                          <FormControl required className={classes.w100} variant="outlined">
+                          <FormControl
+                            required
+                            className={classes.w100}
+                            variant="outlined"
+                          >
                             <TextField
-                              required
                               className={classes.margin}
                               id="subtitulo"
                               name="subtitulo"
