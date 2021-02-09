@@ -1,23 +1,25 @@
 {
-  "appName": "todos",
+  "appName": "react-download",
   "appLocation": {
-    "git": "https://github.com/carlosmbinf/react-download.git",
-    "branch": "main"
+    "local": "./"
   },
-  "meteorSettingsLocation": "settings/production.json",
-  "prebuildScript": "mrt install",
+  "meteorSettingsLocation": "/home/cloud/proyects/meteor/react-download/settings.json",
+  "meteorSettingsInRepo": false,
+  "prebuildScript": "",
   "meteorBuildFlags": "--architecture os.linux.x86_64",
   "env": {
+    "ROOT_URL": "",
     "PORT": 3000,
-    "MONGO_URL": "mongodb://localhost:3002/todos",
-    "ROOT_URL": "http://localhost"
+    "MONGO_URL": ""
   },
   "server": {
-    "host": "localhost",
-    "username": "nodejs",
-    "pem": "~/.ssh/id_rsa",
-    "deploymentDir": "/home/nodejs/",
+    "host": "",
+    "username": "cloud",
+    "password": "Lastunas@123",
+    "deploymentDir": "/opt/meteor-apps",
+    "loadProfile": "",
+    "interpreter": "",
     "exec_mode": "cluster_mode",
-    "instances": 2
+    "instances": 1
   }
 }
