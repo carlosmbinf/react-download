@@ -6,13 +6,16 @@ import CardContent from "@material-ui/core/CardContent";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import { Paper, Box, Grid, Icon, Divider, Zoom, Slide } from "@material-ui/core";
+
+import Fade from 'react-reveal/Fade';
+
 import { Meteor } from "meteor/meteor";
 import { Tracker } from "meteor/tracker";
 import { useTracker } from "meteor/react-meteor-data";
 import Badge from "@material-ui/core/Badge";
 import Avatar from "@material-ui/core/Avatar";
 import { Link } from "react-router-dom";
-
+import { TVCollection } from "../collections/collections";
 //icons
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
@@ -58,18 +61,28 @@ const useStyles = makeStyles((theme) => ({
   primary: {
     minWidth: 370,
     maxWidth: 400,
+    maxHeight: "390px",
+    minHeight: "390px",
     borderRadius: 20,
-    padding: "2em",
+    // padding: "2em",
     background:
       "linear-gradient(0deg, rgba(36,83,162,1) 15%, rgba(245,0,87,0) 100%)",
+    backgroundPosition: "center",
+    backgroundSize: "cover",
+    backgroundRepeat: "no-repeat",
   },
   secundary: {
     minWidth: 370,
     maxWidth: 400,
+    maxHeight: "390px",
+    minHeight: "390px",
     borderRadius: 20,
-    padding: "2em",
+    // padding: "2em",
     background:
       "linear-gradient(0deg, rgba(245,0,87,1) 15%, rgba(245,0,87,0) 100%)",
+    backgroundPosition: "center",
+    backgroundSize: "cover",
+    backgroundRepeat: "no-repeat",
   },
   boton: {
     borderRadius: 20,
@@ -92,7 +105,7 @@ const useStyles = makeStyles((theme) => ({
   pos: {
     marginBottom: 12,
   },
-  createUsers: {
+  createpeli: {
     color: "#114c84",
   },
   link: {
@@ -112,30 +125,38 @@ const useStyles = makeStyles((theme) => ({
   },
   padding10: {
     margin: "13px 0",
+    marginTop: "300px",
+  },
+  elementosBotom: {
+    maxHeight: 76,
+    minHeight: 76,
+    borderRadius: 20,
+    background: "linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(63,81,181,1) 82%);",
   },
 }));
 
-export default function UserCard(withAdd) {
+export default function TVonline(withAdd) {
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
 
-  const users = useTracker(() => {
-    Meteor.subscribe("user");
-    return Meteor.users.find({}, { fields: {} }).fetch();
+  const tv = useTracker(() => {
+    Meteor.subscribe("tvs");
+    return TVCollection.find({}, { fields: {} }).fetch();
   });
 
 
   if (withAdd.withCreate == "true") {
     return (
-      <Slide
-      direction="down"
-      in={true}
-      mountOnEnter
-      unmountOnExit>
-        <Grid className={classes.root2}>
-        <Link to={"/create-user"} className={classes.link}>
-          <Button color="inherit" className={classes.boton}>
-            
+      <Fade top
+      >
+        <Grid container
+                      direction="column"
+                      justify="center"
+                      alignItems="center" 
+                      className={classes.root2}>
+          <Link to={"/create-tv"} className={classes.link}>
+            <Button color="inherit" className={classes.boton}>
+
               <Paper elevation={5} className={classes.rootADD}>
                 <Grid container spacing={3}>
                   <Grid item xs={12}>
@@ -152,121 +173,64 @@ export default function UserCard(withAdd) {
                         />
                       </Grid>
                       <Grid item>
-                        <Typography className={classes.createUsers}>
-                          <strong>CREATE USER</strong>
+                        <Typography className={classes.createpeli}>
+                          <strong>AGREGAR TV</strong>
                         </Typography>
                       </Grid>
                     </Grid>
                   </Grid>
                 </Grid>
               </Paper>
-              </Button>
-            </Link>
-          
+            </Button>
+          </Link>
+
         </Grid>
-      </Slide>
+      </Fade>
     );
   }
   return (
     <>
-      {users &&
-        users.map((usersGeneral,index) => (
-          <Slide
-          key={index}
-      direction="down"
-      in={true}
-      mountOnEnter
-      unmountOnExit>
-            
-              <Link to={"/users/" + usersGeneral._id} className={classes.link}>
+
+      {tv &&
+        tv.map((tvGeneral, i) => (
+          <Fade top>
+            <Link key={i} to={"/tv/" + tvGeneral._id} className={classes.link}>
               <Button
-              color="inherit"
-              className={classes.boton}
-            >
+                color="inherit"
+                className={classes.boton}
+              >
                 <Paper
                   elevation={5}
                   className={
-                    usersGeneral.profile.role !== "admin"
+                    tvGeneral.mostrar !== "true"
                       ? classes.primary
                       : classes.secundary
                   }
+                  style={{ backgroundImage: "url(" + tvGeneral.urlBackground + ")" }}
                 >
                   <Grid container spacing={3}>
+
                     <Grid item xs={12}>
-                      <Grid container direction="row">
-                        <AccountCircleIcon />
-                        <Typography color="textSecondary">
-                          <strong>
-                            {usersGeneral.profile &&
-                              usersGeneral.profile.firstName}{" "}
-                            {usersGeneral.profile &&
-                              usersGeneral.profile.lastName}
-                          </strong>
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Grid container direction="row">
-                        <PermContactCalendarRoundedIcon />
-                        <Typography color="textSecondary">
-                          <strong>
-                            {usersGeneral.profile && usersGeneral.profile.role}
-                          </strong>
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Grid container direction="row">
-                        <MailIcon />
-                        <Typography color="textSecondary">
-                          <strong>
-                            {usersGeneral.emails &&
-                              usersGeneral.emails[0].address}
-                          </strong>
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Grid container direction="row" justify="center">
-                        <Avatar
-                          className={classes.large}
-                          alt={
-                            usersGeneral &&
-                            usersGeneral.profile &&
-                            usersGeneral.profile.firstName
-                              ? usersGeneral.profile.firstName
-                              : usersGeneral.profile.name
-                          }
-                          src={
-                            usersGeneral.services &&
-                            usersGeneral.services.facebook &&
-                            usersGeneral.services.facebook.picture.data.url
-                              ? usersGeneral.services.facebook.picture.data.url
-                              : "/"
-                          }
-                        />
-                      </Grid>
+
                       <Divider className={classes.padding10} />
-                      <Grid container direction="row" justify="center">
-                        <Typography
-                          variant="h5"
-                          color={
-                            usersGeneral.profile.role == "admin"
-                              ? "primary"
-                              : "secondary"
-                          }
-                        >
-                          <PermContactCalendarRoundedIcon />{" "}
-                          {usersGeneral.profile && usersGeneral.profile.role}
-                        </Typography>
+                      <Grid item xs={12}>
+                        <Grid container className={classes.elementosBotom} container
+                          direction="row"
+                          justify="center"
+                          alignItems="center">
+                          <Typography style={{ color: "white", fontSize: 20, fontFamily: "cursive" }}>
+                            <strong>
+                              {tvGeneral.nombreTV}
+                            </strong>
+                          </Typography>
+                        </Grid>
                       </Grid>
                     </Grid>
                   </Grid>
                 </Paper>
-                </Button>
-              </Link>
-            
-          </Slide>
+              </Button>
+            </Link>
+          </Fade>
         ))}
     </>
   );

@@ -23,17 +23,20 @@ import {
 
 import UserCard from "../ui/pages/users/UserCard";
 import UserCardDetails from "../ui/pages/users/UserCardDetails";
-import PelisCard from "../ui/pages/archivo/PeliCard";
-import PelisDetails from "../ui/pages/archivo/PeliDetails";
+import PelisCard from "../ui/pages/pelis/PeliCard";
+import PelisDetails from "../ui/pages/pelis/PeliDetails";
 import CreateUsers from "../ui/pages/users/CreateUsers";
 import GuestCard from "../ui/pages/guest/GuestCard";
 import LoginPage from "../ui/pages/login/index";
 import DashboardInit from "../ui/pages/dashboard/DashboardInit";
-import Archivo from "../ui/pages/archivo/Archivo";
-import CreateArchivo from "../ui/pages/archivo/CreatePeli";
+import Archivo from "../ui/pages/pelis/Archivo";
+import CreateArchivo from "../ui/pages/pelis/CreatePeli";
 import AddDescargas from "../ui/pages/download/AddDescargas";
 import TableDescarga from "../ui/pages/download/TableDescarga";
 import { Grid, Zoom } from "@material-ui/core";
+import CreateTV from "../ui/pages/tv/CreateTV";
+import TVonline from "../ui/pages/tv/TVCard";
+import TV from "../ui/pages/tv/TVDetails";
 
 const useStyles = makeStyles((theme) => ({
   // necessary for content to be below app bar
@@ -127,6 +130,40 @@ export default function Main() {
             
           )}
           
+        </Route>
+        <Route path="/tv/:id">
+          <TV />
+        </Route>
+        <Route path="/tv">
+          <div className={classes.root}>
+          {useractual &&
+          useractual.profile &&
+          useractual.profile.role == "admin" ? (
+            <TVonline withCreate="true" />
+          ) : (
+            ""
+          )}
+            <TVonline />
+          </div>
+        </Route>
+        <Route path="/create-tv">
+          {useractual &&
+          useractual.profile &&
+          useractual.profile.role == "admin" ? (
+            <CreateTV />
+          ) : (
+            <Zoom in={true}>
+              <Grid container
+           direction="row"
+           justify="center"
+           alignItems="center">
+            <h1>SIN ACCESO</h1>
+           </Grid>
+              
+            </Zoom>
+           
+            
+          )}
         </Route>
         <Route path="/pelis/:id">
           <PelisDetails />

@@ -5,6 +5,33 @@ SimpleSchema.extendOptions(['autoform']);
 
 export const PelisCollection = new Mongo.Collection('pelisRegister');
 export const DescargasCollection = new Mongo.Collection('descargasRegister');
+export const TVCollection = new Mongo.Collection('tvRegister');
+
+export const SchemaTVCollection = new SimpleSchema({
+  nombreTV:{
+    type: String,
+  },
+  urlTV: {
+    type: String,
+  },
+  urlBackground: {
+    type: String,    
+    defaultValue: "",
+  },
+  descripcion: {
+    type: String,
+    defaultValue: "",
+  },
+  mostrar:{
+    type: String,
+  },
+  createdAt: {
+    type: Date,
+    defaultValue: new Date(),
+  },
+});
+
+TVCollection.attachSchema(SchemaTVCollection);
 
 export const SchemaPelisCollection = new SimpleSchema({
   nombrePeli:{
@@ -74,6 +101,22 @@ export const SchemaDescargaCollection = new SimpleSchema({
 
 DescargasCollection.attachSchema(SchemaDescargaCollection)
 
+TVCollection.allow({
+  insert(doc) {
+      // The user must be logged in and the document must be owned by the user.
+      return true;
+    },
+  
+    update() {
+      // Can only change your own documents.
+      return true;
+    },
+  
+    remove(userId, doc) {
+      // Can only remove your own documents.
+      return true;
+    },
+})
 PelisCollection.allow({
     insert(doc) {
         // The user must be logged in and the document must be owned by the user.

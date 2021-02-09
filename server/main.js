@@ -1,5 +1,6 @@
 import { Meteor } from "meteor/meteor";
 import { PelisCollection } from "../imports/ui/pages/collections/collections";
+import { TVCollection } from "../imports/ui/pages/collections/collections";
 import { DescargasCollection } from "../imports/ui/pages/collections/collections";
 import { WebApp } from "meteor/webapp";
 import bodyParser from "body-parser";
@@ -228,6 +229,12 @@ if (Meteor.isServer) {
   });
   Meteor.publish("peli", function (id) {
     return PelisCollection.find({ _id: id });
+  });
+  Meteor.publish("tvs", function () {
+    return TVCollection.find({});
+  });
+  Meteor.publish("tv", function (id) {
+    return TVCollection.find({ _id: id });
   });
   Meteor.publish("descargas", function () {
     return DescargasCollection.find({});

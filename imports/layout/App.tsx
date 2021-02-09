@@ -165,11 +165,11 @@ export default function PersistentDrawerLeft() {
   });
 
   const listaDeLinks = [
-    { title: "dashboard", icon: <InboxIcon /> },
+    { title: "dashboard", icon: <InboxIcon /> , url:"dashboard"},
     // {title: "guest",
     //   icon: <InboxIcon />,
     // },
-    { title: "users", icon: <InboxIcon /> },
+    { title: "USUARIOS", icon: <InboxIcon /> , url:"users"},
     // {title: "calendar",
     //   icon: <InboxIcon />,
     // },
@@ -179,11 +179,12 @@ export default function PersistentDrawerLeft() {
     // {title: "create-user",
     //   icon: <InboxIcon />,
     // },
-    { title: "pelis", icon: <InboxIcon /> },
+    { title: "Television en VIVO", icon: <InboxIcon /> , url:"tv"},
+    { title: "Peliculas", icon: <InboxIcon /> , url:"pelis" },
     // {title: "create-pelis",
     //   icon: <InboxIcon />,
     // },
-    { title: "downloads", icon: <InboxIcon /> },
+    { title: "Descargas Youtube", icon: <InboxIcon /> , url:"downloads"},
   ];
 
   const handleDrawerOpen = () => {
@@ -318,7 +319,7 @@ export default function PersistentDrawerLeft() {
           <Divider />
           <List>
             {listaDeLinks.map((text, index) => (
-              <Link key={index} to={"/" + text.title} className={classes.link}>
+              <Link key={index} to={"/" + text.url} className={classes.link}>
                 <ListItem button className={classes.item}>
                   <ListItemIcon>
                     {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
