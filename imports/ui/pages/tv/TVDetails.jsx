@@ -174,7 +174,7 @@ export default function TV() {
               style={{width:"100%", maxHeight: "60vh",minHeight: "60vh"}}></iframe>
             </Grid>
             <Grid item xs={12}>
-              <Divider className={classes.padding10} />
+              {/* <Divider className={classes.padding10} /> */}
               <Grid container direction="row" justify="center">
                 <Typography
                   variant="h5"
