@@ -250,7 +250,7 @@ export default function PeliCard(withAdd) {
   }
   return (
     <>
-    <Fade top>
+    <Fade left>
     <div style={{ width: "100%" }}>
         <Carousel items={items} />
       </div>

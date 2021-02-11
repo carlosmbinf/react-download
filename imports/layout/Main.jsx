@@ -75,14 +75,14 @@ export default function Main() {
           <DashboardInit />
         </Route>
         <Route path="/downloads">
-        {useractual &&
-          useractual.profile &&
-          useractual.profile.role == "admin" ? (
-            <AddDescargas />
-          ) : (
-            ""
-          )}
-          <TableDescarga/>
+          {useractual &&
+            useractual.profile &&
+            useractual.profile.role == "admin" ? (
+              <AddDescargas />
+            ) : (
+              ""
+            )}
+          <TableDescarga />
         </Route>
         <Route path="/offer"></Route>
         <Route path="/guest">
@@ -95,109 +95,139 @@ export default function Main() {
           <UserCardDetails />
         </Route>
         <Route path="/users">
-          <div className={classes.root}>
-          {useractual &&
-          useractual.profile &&
-          useractual.profile.role == "admin" ? (
-            <UserCard withCreate="true" />
-          ) : (
-            ""
-          )}
-           
-            <UserCard />
-          </div>
+          <Grid
+            container
+            direction="row"
+            justify="center"
+            alignItems="center"
+          >
+            <Grid item xs={12} className={classes.root}>
+              {useractual &&
+                useractual.profile &&
+                useractual.profile.role == "admin" ? (
+                  <UserCard withCreate="true" />
+                ) : (
+                  ""
+                )}
+
+            </Grid>
+            <Grid item xs={12}>
+              <UserCard />
+            </Grid>
+          </Grid>
         </Route>
         <Route path="/calendar"></Route>
         <Route path="/login">
           <LoginPage />
         </Route>
         <Route path="/create-user">
-        {useractual &&
-          useractual.profile &&
-          useractual.profile.role == "admin" ? (
-            <CreateUsers />
-          ) : (
-            <Zoom in={true}>
-              <Grid container
-           direction="row"
-           justify="center"
-           alignItems="center">
-            <h1>SIN ACCESO</h1>
-           </Grid>
-              
-            </Zoom>
-           
-            
-          )}
-          
+          {useractual &&
+            useractual.profile &&
+            useractual.profile.role == "admin" ? (
+              <CreateUsers />
+            ) : (
+              <Zoom in={true}>
+                <Grid container
+                  direction="row"
+                  justify="center"
+                  alignItems="center">
+                  <h1>SIN ACCESO</h1>
+                </Grid>
+
+              </Zoom>
+
+
+            )}
+
         </Route>
         <Route path="/tv/:id">
           <TV />
         </Route>
         <Route path="/tv">
-          <div className={classes.root}>
-          {useractual &&
-          useractual.profile &&
-          useractual.profile.role == "admin" ? (
-            <TVonline withCreate="true" />
-          ) : (
-            ""
-          )}
-            <TVonline />
-          </div>
+          <Grid
+            container
+            direction="row"
+            justify="center"
+            alignItems="center"
+          >
+            <Grid item xs={12} className={classes.root}>
+              {useractual &&
+                useractual.profile &&
+                useractual.profile.role == "admin" ? (
+                  <TVonline withCreate="true" />
+                ) : (
+                  ""
+                )}
+
+            </Grid>
+            <Grid item xs={12}>
+              <TVonline />
+            </Grid>
+          </Grid>
         </Route>
         <Route path="/create-tv">
           {useractual &&
-          useractual.profile &&
-          useractual.profile.role == "admin" ? (
-            <CreateTV />
-          ) : (
-            <Zoom in={true}>
-              <Grid container
-           direction="row"
-           justify="center"
-           alignItems="center">
-            <h1>SIN ACCESO</h1>
-           </Grid>
-              
-            </Zoom>
-           
-            
-          )}
+            useractual.profile &&
+            useractual.profile.role == "admin" ? (
+              <CreateTV />
+            ) : (
+              <Zoom in={true}>
+                <Grid container
+                  direction="row"
+                  justify="center"
+                  alignItems="center">
+                  <h1>SIN ACCESO</h1>
+                </Grid>
+
+              </Zoom>
+
+
+            )}
         </Route>
         <Route path="/pelis/:id">
           <PelisDetails />
         </Route>
         <Route path="/pelis">
-          <div className={classes.root}>
-          {useractual &&
-          useractual.profile &&
-          useractual.profile.role == "admin" ? (
-            <PelisCard withCreate="true" />
-          ) : (
-            ""
-          )}
-            <PelisCard />
-          </div>
+          <Grid
+            container
+            direction="row"
+            justify="center"
+            alignItems="center"
+          >
+            <Grid item xs={12} className={classes.root}>
+              {useractual &&
+                useractual.profile &&
+                useractual.profile.role == "admin" ? (
+                  <PelisCard withCreate="true" />
+                ) : (
+                  ""
+                )}
+
+            </Grid>
+            <Grid item xs={12}>
+              <PelisCard />
+            </Grid>
+          </Grid>
+
         </Route>
         <Route path="/create-pelis">
           {useractual &&
-          useractual.profile &&
-          useractual.profile.role == "admin" ? (
-            <CreateArchivo />
-          ) : (
-            <Zoom in={true}>
-              <Grid container
-           direction="row"
-           justify="center"
-           alignItems="center">
-            <h1>SIN ACCESO</h1>
-           </Grid>
-              
-            </Zoom>
-           
-            
-          )}
+            useractual.profile &&
+            useractual.profile.role == "admin" ? (
+              <CreateArchivo />
+            ) : (
+              <Zoom in={true}>
+                <Grid container
+                  direction="row"
+                  justify="center"
+                  alignItems="center">
+                  <h1>SIN ACCESO</h1>
+                </Grid>
+
+              </Zoom>
+
+
+            )}
         </Route>
         <Route path="/"></Route>
       </Switch>
