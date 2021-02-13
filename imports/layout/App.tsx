@@ -206,7 +206,7 @@ export default function PersistentDrawerLeft() {
   };
   return (
     <>
-      <div className={classes.root} style={{ background: "rgb(29 47 62)", backdropFilter: "blur(30px)"}}>
+      <div className={classes.root} style={{ background: "rgb(29 47 62)", }}>
         <CssBaseline />
         <Slide
           direction="down"
