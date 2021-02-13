@@ -132,7 +132,8 @@ const useStyles = makeStyles((theme) =>
     },
     content: {
       minHeight: "100vh",
-      minWidth: "98vw",
+      minWidth: "100vw",
+      maxWidth: "100vw",
       flexGrow: 1,
       padding: theme.spacing(3),
       transition: theme.transitions.create("margin", {
@@ -205,7 +206,7 @@ export default function PersistentDrawerLeft() {
   };
   return (
     <>
-      <div className={classes.root} style={{ background: "rgb(29 47 62)" }}>
+      <div className={classes.root} style={{ background: "rgb(29 47 62)", backdropFilter: "blur(30px)"}}>
         <CssBaseline />
         <Slide
           direction="down"

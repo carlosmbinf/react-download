@@ -68,10 +68,11 @@ const useStyles = makeStyles((theme) => ({
     padding: "2em",
   },
   primary: {
-    minWidth: 370,
-    maxWidth: 400,
-    maxHeight: "390px",
-    minHeight: "390px",
+    margin: "15px",
+    minWidth: 200,
+    maxWidth: 200,
+    maxHeight: 263,
+    minHeight: 263,
     borderRadius: 20,
     // padding: "2em",
     background:
@@ -81,10 +82,11 @@ const useStyles = makeStyles((theme) => ({
     backgroundRepeat: "no-repeat",
   },
   secundary: {
-    minWidth: 370,
-    maxWidth: 400,
-    maxHeight: "390px",
-    minHeight: "390px",
+    margin: "15px",
+    minWidth: 200,
+    maxWidth: 200,
+    maxHeight: 263,
+    minHeight: 263,
     borderRadius: 20,
     // padding: "2em",
     background:
@@ -132,13 +134,11 @@ const useStyles = makeStyles((theme) => ({
     width: theme.spacing(7),
     height: theme.spacing(7),
   },
-  padding10: {
-    margin: "13px 0",
-    marginTop: "300px",
-  },
   elementosBotom: {
     maxHeight: 76,
     minHeight: 76,
+    minWidth: 200,
+    maxWidth: 200,
     borderRadius: 20,
     background:
       "linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(63,81,181,1) 82%);",
@@ -172,8 +172,9 @@ export default function PeliCard(withAdd) {
             >
               <Grid container spacing={3}>
                 <Grid item xs={12}>
-                  <Divider className={classes.padding10} />
-                  <Grid item xs={12}>
+                  {/* <Divider className={classes.padding10} /> */}
+                  <Grid item xs={12} style={{position: "absolute",
+    bottom: 15}}>
                     <Grid
                       container
                       className={classes.elementosBotom}
@@ -185,7 +186,7 @@ export default function PeliCard(withAdd) {
                       <Typography
                         style={{
                           color: "white",
-                          fontSize: 20,
+                          fontSize: 14,
                           fontFamily: "cursive",
                         }}
                       >
