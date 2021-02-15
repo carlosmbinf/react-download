@@ -159,9 +159,9 @@ export default function UserCard(withAdd) {
                   <Grid container spacing={3}>
                     <Grid item xs={12}>
                       <Grid container direction="row">
-                        <Grid item>
+                        <Grid item xs={12}>
                           <AccountCircleIcon />
-                        <Typography color="textSecondary">
+                        <Typography color="textSecondary" noWrap>
                           <strong>
                             {usersGeneral.profile &&
                               usersGeneral.profile.firstName}{" "}
