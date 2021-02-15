@@ -13,6 +13,8 @@ import Badge from "@material-ui/core/Badge";
 import Avatar from "@material-ui/core/Avatar";
 import { Link } from "react-router-dom";
 import Fade from 'react-reveal/Fade';
+import Carousel from "../../components/carousel/Carousel";
+
 //icons
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
@@ -56,22 +58,35 @@ const useStyles = makeStyles((theme) => ({
     padding: "2em",
   },
   primary: {
-    minWidth: 370,
-    maxWidth: 400,
+    padding: "15px",
+    minWidth: 220,
+    maxWidth: 220,
+    maxHeight: 263,
+    minHeight: 263,
     borderRadius: 20,
-    padding: "2em",
+    // padding: "2em",
     background:
       "linear-gradient(0deg, rgba(36,83,162,1) 15%, rgba(245,0,87,0) 100%)",
+    backgroundPosition: "center",
+    backgroundSize: "cover",
+    backgroundRepeat: "no-repeat",
   },
   secundary: {
-    minWidth: 370,
-    maxWidth: 400,
+    padding: "15px",
+    minWidth: 220,
+    maxWidth: 220,
+    maxHeight: 263,
+    minHeight: 263,
     borderRadius: 20,
-    padding: "2em",
+    // padding: "2em",
     background:
       "linear-gradient(0deg, rgba(245,0,87,1) 15%, rgba(245,0,87,0) 100%)",
+    backgroundPosition: "center",
+    backgroundSize: "cover",
+    backgroundRepeat: "no-repeat",
   },
   boton: {
+    margin: 15,
     borderRadius: 20,
     padding: 0,
   },
@@ -112,6 +127,7 @@ const useStyles = makeStyles((theme) => ({
   },
   padding10: {
     margin: "13px 0",
+    marginTop: "300px",
   },
 }));
 
@@ -124,6 +140,94 @@ export default function UserCard(withAdd) {
     return Meteor.users.find({}, { fields: {} }).fetch();
   });
 
+  const items = users.map((usersGeneral, i) => {
+    return (
+      <>
+        <Link to={"/users/" + usersGeneral._id} className={classes.link}>
+              <Button
+              color="inherit"
+              className={classes.boton}
+            >
+                <Paper
+                  elevation={5}
+                  className={
+                    usersGeneral.profile.role !== "admin"
+                      ? classes.primary
+                      : classes.secundary
+                  }
+                >
+                  <Grid container spacing={3}>
+                    <Grid item xs={12}>
+                      <Grid container direction="row">
+                        <Grid item>
+                          <AccountCircleIcon />
+                        <Typography color="textSecondary">
+                          <strong>
+                            {usersGeneral.profile &&
+                              usersGeneral.profile.firstName}{" "}
+                            {usersGeneral.profile &&
+                              usersGeneral.profile.lastName}
+                          </strong>
+                        </Typography>
+                        </Grid>                        
+                      </Grid>
+                    </Grid>
+                   
+                    <Grid item xs={12}>
+                      <Grid container direction="row">
+                        <Grid item xs={12}>
+                          <MailIcon />
+                        <Typography color="textSecondary" noWrap>
+                          <strong>
+                            {usersGeneral.emails &&
+                              usersGeneral.emails[0].address}
+                          </strong>
+                        </Typography>
+                        </Grid>                        
+                      </Grid>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Grid container direction="row" justify="center">
+                        <Avatar
+                          className={classes.large}
+                          alt={
+                            usersGeneral &&
+                            usersGeneral.profile &&
+                            usersGeneral.profile.firstName
+                              ? usersGeneral.profile.firstName
+                              : usersGeneral.profile.name
+                          }
+                          src={
+                            usersGeneral.services &&
+                            usersGeneral.services.facebook &&
+                            usersGeneral.services.facebook.picture.data.url
+                              ? usersGeneral.services.facebook.picture.data.url
+                              : "/"
+                          }
+                        />
+                      </Grid>
+                      {/* <Divider className={classes.padding10} /> */}
+                      <Grid container direction="row" justify="center">
+                        <Typography
+                          variant="h5"
+                          color={
+                            usersGeneral.profile.role == "admin"
+                              ? "primary"
+                              : "secondary"
+                          }
+                        >
+                          <PermContactCalendarRoundedIcon />{" "}
+                          {usersGeneral.profile && usersGeneral.profile.role}
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </Paper>
+                </Button>
+              </Link>
+        </>
+    );
+  });
 
   if (withAdd.withCreate == "true") {
     return (
@@ -166,101 +270,11 @@ export default function UserCard(withAdd) {
   }
   return (
     <>
-      {users &&
-        users.map((usersGeneral,index) => (
-          <Fade top key={index}
-      >
-            
-              <Link to={"/users/" + usersGeneral._id} className={classes.link}>
-              <Button
-              color="inherit"
-              className={classes.boton}
-            >
-                <Paper
-                  elevation={5}
-                  className={
-                    usersGeneral.profile.role !== "admin"
-                      ? classes.primary
-                      : classes.secundary
-                  }
-                >
-                  <Grid container spacing={3}>
-                    <Grid item xs={12}>
-                      <Grid container direction="row">
-                        <AccountCircleIcon />
-                        <Typography color="textSecondary">
-                          <strong>
-                            {usersGeneral.profile &&
-                              usersGeneral.profile.firstName}{" "}
-                            {usersGeneral.profile &&
-                              usersGeneral.profile.lastName}
-                          </strong>
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Grid container direction="row">
-                        <PermContactCalendarRoundedIcon />
-                        <Typography color="textSecondary">
-                          <strong>
-                            {usersGeneral.profile && usersGeneral.profile.role}
-                          </strong>
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Grid container direction="row">
-                        <MailIcon />
-                        <Typography color="textSecondary">
-                          <strong>
-                            {usersGeneral.emails &&
-                              usersGeneral.emails[0].address}
-                          </strong>
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Grid container direction="row" justify="center">
-                        <Avatar
-                          className={classes.large}
-                          alt={
-                            usersGeneral &&
-                            usersGeneral.profile &&
-                            usersGeneral.profile.firstName
-                              ? usersGeneral.profile.firstName
-                              : usersGeneral.profile.name
-                          }
-                          src={
-                            usersGeneral.services &&
-                            usersGeneral.services.facebook &&
-                            usersGeneral.services.facebook.picture.data.url
-                              ? usersGeneral.services.facebook.picture.data.url
-                              : "/"
-                          }
-                        />
-                      </Grid>
-                      <Divider className={classes.padding10} />
-                      <Grid container direction="row" justify="center">
-                        <Typography
-                          variant="h5"
-                          color={
-                            usersGeneral.profile.role == "admin"
-                              ? "primary"
-                              : "secondary"
-                          }
-                        >
-                          <PermContactCalendarRoundedIcon />{" "}
-                          {usersGeneral.profile && usersGeneral.profile.role}
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                </Paper>
-                </Button>
-              </Link>
-            
-          </Fade>
-        ))}
+     <Fade left>
+    <div style={{ width: "100%" }}>
+        <Carousel items={items} />
+      </div>
+    </Fade>
     </>
   );
 }

@@ -9,7 +9,7 @@ type Props = {
 const responsive = {
   0: { items: 1 },
   960: { items: 2 },
-  1280: { items: 3 },
+  1280: { items: 5 },
 };
 
 const Wrapper = styled.div`
@@ -79,7 +79,7 @@ export default function Carousel({ items }: Props) {
       //trigger synthetic resize event to force carousel
       //to recalculate items width
       window.dispatchEvent(new Event('resize'));
-    }, 500);
+    }, 1000);
   }, []);
 
   return (
