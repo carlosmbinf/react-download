@@ -207,7 +207,9 @@ export default function PersistentDrawerLeft() {
   };
   return (
     <>
-      <div className={classes.root} style={{ background: "rgb(29 47 62)" }}>
+      <div className={classes.root} 
+      // style={{ background: "rgb(29 47 62)" }}
+      >
         <CssBaseline />
         <Slide
           direction="down"
@@ -219,9 +221,11 @@ export default function PersistentDrawerLeft() {
         >
           <AppBar
             position="fixed"
-            className={clsx(classes.appBar, {
-              [classes.appBarShift]: open,
-            })}
+            className={clsx(classes.appBar, 
+            //   {
+            //   [classes.appBarShift]: open,
+            // }
+            )}
           >
             <Toolbar>
               <IconButton
@@ -334,7 +338,7 @@ export default function PersistentDrawerLeft() {
                     {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                   </ListItemIcon>
                   <strong
-                    style={{ textTransform: "uppercase", color: "#e3f3fe" }}
+                    style={{ textTransform: "uppercase", color: "rgba(0, 0, 0, 0.54)" }}
                   >
                     {text.title}
                   </strong>
