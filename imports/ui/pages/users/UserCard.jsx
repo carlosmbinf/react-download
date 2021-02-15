@@ -91,8 +91,8 @@ const useStyles = makeStyles((theme) => ({
     padding: 0,
   },
   rootADD: {
-    minWidth: 275,
-    maxWidth: 275,
+    minWidth: 220,
+    maxWidth: 220,
     borderRadius: 20,
     padding: "2em",
   },

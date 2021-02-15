@@ -5,9 +5,17 @@ import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import { Paper, Box, Grid, Icon, Divider, Zoom, Slide } from "@material-ui/core";
+import {
+  Paper,
+  Box,
+  Grid,
+  Icon,
+  Divider,
+  Zoom,
+  Slide,
+} from "@material-ui/core";
 
-import Fade from 'react-reveal/Fade';
+import Fade from "react-reveal/Fade";
 
 import { Meteor } from "meteor/meteor";
 import { Tracker } from "meteor/tracker";
@@ -21,6 +29,7 @@ import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
 import PermContactCalendarRoundedIcon from "@material-ui/icons/PermContactCalendarRounded";
 import MailIcon from "@material-ui/icons/Mail";
+import Carousel from "../../components/carousel/Carousel";
 
 const StyledBadge = withStyles((theme) => ({
   badge: {
@@ -59,10 +68,10 @@ const useStyles = makeStyles((theme) => ({
     padding: "2em",
   },
   primary: {
-    minWidth: 370,
-    maxWidth: 400,
-    maxHeight: "390px",
-    minHeight: "390px",
+    minWidth: 220,
+    maxWidth: 220,
+    maxHeight: 263,
+    minHeight: 263,
     borderRadius: 20,
     // padding: "2em",
     background:
@@ -72,10 +81,10 @@ const useStyles = makeStyles((theme) => ({
     backgroundRepeat: "no-repeat",
   },
   secundary: {
-    minWidth: 370,
-    maxWidth: 400,
-    maxHeight: "390px",
-    minHeight: "390px",
+    minWidth: 220,
+    maxWidth: 220,
+    maxHeight: 263,
+    minHeight: 263,
     borderRadius: 20,
     // padding: "2em",
     background:
@@ -85,12 +94,13 @@ const useStyles = makeStyles((theme) => ({
     backgroundRepeat: "no-repeat",
   },
   boton: {
+    margin:15,
     borderRadius: 20,
     padding: 0,
   },
   rootADD: {
-    minWidth: 275,
-    maxWidth: 275,
+    minWidth: 220,
+    maxWidth: 220,
     borderRadius: 20,
     padding: "2em",
   },
@@ -123,15 +133,14 @@ const useStyles = makeStyles((theme) => ({
     width: theme.spacing(7),
     height: theme.spacing(7),
   },
-  padding10: {
-    margin: "13px 0",
-    marginTop: "300px",
-  },
   elementosBotom: {
     maxHeight: 76,
     minHeight: 76,
+    minWidth: 220,
+    maxWidth: 220,
     borderRadius: 20,
-    background: "linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(63,81,181,1) 82%);",
+    background:
+      "linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(63,81,181,1) 82%);",
   },
 }));
 
@@ -144,19 +153,72 @@ export default function TVonline(withAdd) {
     return TVCollection.find({}, { fields: {} }).fetch();
   });
 
+  const items = tv.map((tvGeneral, i) => {
+    return (
+      <>
+        <Link key={i} to={"/tv/" + tvGeneral._id} className={classes.link}>
+          <Button color="inherit" className={classes.boton}>
+            <Paper
+              elevation={5}
+              className={
+                tvGeneral.mostrar !== "true"
+                  ? classes.primary
+                  : classes.secundary
+              }
+              style={{
+                backgroundImage: "url(" + tvGeneral.urlBackground + ")",
+              }}
+            >
+              <Grid container spacing={3}>
+                <Grid item xs={12}>
+                  {/* <Divider className={classes.padding10} /> */}
+                  <Grid item xs={12} style={{position: "absolute",
+    bottom: 0}}>
+                    <Grid
+                      container
+                      className={classes.elementosBotom}
+                      container
+                      direction="row"
+                      justify="center"
+                      alignItems="center"
+                    >
+                      <Typography
+                        style={{
+                          color: "white",
+                          fontSize: 14,
+                          fontFamily: "cursive",
+                        }}
+                      >
+                        <strong>{tvGeneral.nombreTV}</strong>
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Paper>
+          </Button>
+        </Link>
+        </>
+    );
+  });
+
+  
+
+  // console.log(peli);
 
   if (withAdd.withCreate == "true") {
     return (
-      <Fade top
-      >
-        <Grid container
-                      direction="column"
-                      justify="center"
-                      alignItems="center" 
-                      className={classes.root2}>
+    <>
+      <Fade top >
+        <Grid
+          container
+          direction="column"
+          justify="center"
+          alignItems="center"
+          className={classes.root2}
+        >
           <Link to={"/create-tv"} className={classes.link}>
             <Button color="inherit" className={classes.boton}>
-
               <Paper elevation={5} className={classes.rootADD}>
                 <Grid container spacing={3}>
                   <Grid item xs={12}>
@@ -183,55 +245,19 @@ export default function TVonline(withAdd) {
               </Paper>
             </Button>
           </Link>
-
         </Grid>
       </Fade>
+      </>
     );
   }
   return (
     <>
-
-      {tv &&
-        tv.map((tvGeneral, i) => (
-          <Fade top>
-            <Link key={i} to={"/tv/" + tvGeneral._id} className={classes.link}>
-              <Button
-                color="inherit"
-                className={classes.boton}
-              >
-                <Paper
-                  elevation={5}
-                  className={
-                    tvGeneral.mostrar !== "true"
-                      ? classes.primary
-                      : classes.secundary
-                  }
-                  style={{ backgroundImage: "url(" + tvGeneral.urlBackground + ")" }}
-                >
-                  <Grid container spacing={3}>
-
-                    <Grid item xs={12}>
-
-                      <Divider className={classes.padding10} />
-                      <Grid item xs={12}>
-                        <Grid container className={classes.elementosBotom} container
-                          direction="row"
-                          justify="center"
-                          alignItems="center">
-                          <Typography style={{ color: "white", fontSize: 20, fontFamily: "cursive" }}>
-                            <strong>
-                              {tvGeneral.nombreTV}
-                            </strong>
-                          </Typography>
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                </Paper>
-              </Button>
-            </Link>
-          </Fade>
-        ))}
+    <Fade left>
+    <div style={{ width: "100%" }}>
+        <Carousel items={items} />
+      </div>
+    </Fade>
+      
     </>
   );
 }

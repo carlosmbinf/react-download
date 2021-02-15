@@ -68,9 +68,8 @@ const useStyles = makeStyles((theme) => ({
     padding: "2em",
   },
   primary: {
-    margin: "15px",
-    minWidth: 200,
-    maxWidth: 200,
+    minWidth: 220,
+    maxWidth: 220,
     maxHeight: 263,
     minHeight: 263,
     borderRadius: 20,
@@ -82,9 +81,8 @@ const useStyles = makeStyles((theme) => ({
     backgroundRepeat: "no-repeat",
   },
   secundary: {
-    margin: "15px",
-    minWidth: 200,
-    maxWidth: 200,
+    minWidth: 220,
+    maxWidth: 220,
     maxHeight: 263,
     minHeight: 263,
     borderRadius: 20,
@@ -96,12 +94,13 @@ const useStyles = makeStyles((theme) => ({
     backgroundRepeat: "no-repeat",
   },
   boton: {
+    margin:15,
     borderRadius: 20,
     padding: 0,
   },
   rootADD: {
-    minWidth: 275,
-    maxWidth: 275,
+    minWidth: 220,
+    maxWidth: 220,
     borderRadius: 20,
     padding: "2em",
   },
@@ -137,8 +136,8 @@ const useStyles = makeStyles((theme) => ({
   elementosBotom: {
     maxHeight: 76,
     minHeight: 76,
-    minWidth: 200,
-    maxWidth: 200,
+    minWidth: 220,
+    maxWidth: 220,
     borderRadius: 20,
     background:
       "linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(63,81,181,1) 82%);",
@@ -174,7 +173,7 @@ export default function PeliCard(withAdd) {
                 <Grid item xs={12}>
                   {/* <Divider className={classes.padding10} /> */}
                   <Grid item xs={12} style={{position: "absolute",
-    bottom: 15}}>
+    bottom: 0}}>
                     <Grid
                       container
                       className={classes.elementosBotom}
@@ -209,7 +208,8 @@ export default function PeliCard(withAdd) {
 
   if (withAdd.withCreate == "true") {
     return (
-      <Fade top>
+    <>
+      <Fade top >
         <Grid
           container
           direction="column"
@@ -247,6 +247,7 @@ export default function PeliCard(withAdd) {
           </Link>
         </Grid>
       </Fade>
+      </>
     );
   }
   return (

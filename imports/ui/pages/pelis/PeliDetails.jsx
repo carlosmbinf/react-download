@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
     padding: "2em",
   },
   primary: {
-    minWidth: 370,
+    // minWidth: 370,
     width: "100%",
     borderRadius: 20,
     padding: "2em",
@@ -66,7 +66,7 @@ const useStyles = makeStyles((theme) => ({
       "linear-gradient(0deg, rgba(36,83,162,1) 15%, rgba(245,0,87,0) 100%)",
   },
   secundary: {
-    minWidth: 370,
+    // minWidth: 370,
     width: "100%",
     borderRadius: 20,
     padding: "2em",

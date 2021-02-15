@@ -223,7 +223,7 @@ export default function CreateArchivo() {
                 <Grid container spacing={3}>
                   <Grid item xs={12}>
                     <Typography variant="h4" color="primary" component="h2">
-                      Agregar Archivos
+                      Agregar Película
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
