@@ -1,7 +1,7 @@
 module.exports = {
   apps : [{
     name: "app",
-    script: "meteor run --allow-superuser",
+    script: "meteor run",
     env: {
       NODE_ENV: "development",
     },

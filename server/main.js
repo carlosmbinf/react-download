@@ -282,7 +282,7 @@ if (Meteor.isServer) {
   });
   var appRoot = require("app-root-path");
   SSLProxy({
-    port: 443, //or 443 (normal port/requires sudo)
+    port: 6000, //or 443 (normal port/requires sudo)
     ssl : {
       key: fs.readFileSync(appRoot.path + '/server/conf/key.pem'),
       cert: fs.readFileSync(appRoot.path + '/server/conf/cert.pem')
