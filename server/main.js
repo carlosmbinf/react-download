@@ -280,19 +280,42 @@ if (Meteor.isServer) {
     //   // console.log(output.join('\n'))
     // })
   });
-  var appRoot = require("app-root-path");
-  SSLProxy({
-    port: 3002, //or 443 (normal port/requires sudo)
-    ssl : {
-      key: fs.readFileSync(appRoot.path + '/server/conf/key.pem'),
-      cert: fs.readFileSync(appRoot.path + '/server/conf/cert.pem')
-
-         //Optional CA
-         //Assets.getText("ca.pem")
-    }
- });
+  
+  
 
 }
+
+var appRoot = require("app-root-path");
+//   try{
+//     SSLProxy({
+//         port: 8080, //or 443 (normal port/requires sudo)
+//         ssl : {
+//           key: fs.readFileSync(appRoot.path + '/server/conf/key.pem'),
+//           cert: fs.readFileSync(appRoot.path + '/server/conf/cert.pem')
+
+//             //Optional CA
+//             //Assets.getText("ca.pem")
+//         }
+//     });
+//   }catch(error){
+//     console.error(error)
+//   }
+
+var PATH_TO_KEY = appRoot.path + '/server/conf/key.pem';
+ var PATH_TO_CERT = appRoot.path + '/server/conf/cert.pem';
+ var httpProxy = require('http-proxy');
+var options = {
+ ssl: {
+ key: fs.readFileSync(PATH_TO_KEY, 'utf8'),
+ cert: fs.readFileSync(PATH_TO_CERT, 'utf8')
+ },
+ target : 'http://localhost:3000',
+ ws: true,
+ xfwd: true
+};
+var server = httpProxy.createProxyServer(options).listen(443);
+console.log('httpProxy running with target at ' + options.target);
+
 
 // If the Links collection is empty, add some data.
 
