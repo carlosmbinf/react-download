@@ -221,17 +221,17 @@ if (Meteor.isServer) {
 
   ServiceConfiguration.configurations.insert({
     service: "facebook",
-    appId: "756947628359503",
-    secret: "772eee7ed08e9f303c98fa1baa41e34d",
+    appId: "1062947454216548",
+    secret: "dcaf7178a57c9431681977b77ccb60d1",
   });
-  ServiceConfiguration.configurations.remove({
-    service: "google"
-  });
-  ServiceConfiguration.configurations.insert({
-    service: "google",
-    clientId: "????????????????.apps.googleusercontent.com",
-    secret: "????????????????"
-  });
+  // ServiceConfiguration.configurations.remove({
+  //   service: "google"
+  // });
+  // ServiceConfiguration.configurations.insert({
+  //   service: "google",
+  //   clientId: "????????????????.apps.googleusercontent.com",
+  //   secret: "????????????????"
+  // });
 
   Meteor.publish("pelis", function () {
     return PelisCollection.find({});
