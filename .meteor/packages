@@ -33,3 +33,4 @@ accounts-facebook
 service-configuration
 http
 insecure
+tarang:ssl

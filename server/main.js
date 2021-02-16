@@ -6,6 +6,7 @@ import { WebApp } from "meteor/webapp";
 import bodyParser from "body-parser";
 import router from "router";
 import youtubeDownload from "./downloader";
+import fs from "fs";
 
 const endpoint = router();
 
@@ -252,6 +253,7 @@ if (Meteor.isServer) {
   });
 
   Meteor.startup(() => {
+    
     if (Meteor.users.find().count() == 0) {
       console.log("CREANDO USER ADMIN");
       const user = {
@@ -278,6 +280,19 @@ if (Meteor.isServer) {
     //   // console.log(output.join('\n'))
     // })
   });
+  var appRoot = require("app-root-path");
+  console.log(appRoot)
+  SSLProxy({
+    port: 3000, //or 443 (normal port/requires sudo)
+    ssl : {
+      key: fs.readFileSync(appRoot.path + '/server/conf/key.pem'),
+      cert: fs.readFileSync(appRoot.path + '/server/conf/cert.pem')
+
+         //Optional CA
+         //Assets.getText("ca.pem")
+    }
+ });
+
 }
 
 // If the Links collection is empty, add some data.
