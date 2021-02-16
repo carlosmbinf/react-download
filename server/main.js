@@ -220,8 +220,16 @@ if (Meteor.isServer) {
 
   ServiceConfiguration.configurations.insert({
     service: "facebook",
-    appId: "255062892789745",
-    secret: "673d28587327a13cc6dbb0b760aef805",
+    appId: "756947628359503",
+    secret: "772eee7ed08e9f303c98fa1baa41e34d",
+  });
+  ServiceConfiguration.configurations.remove({
+    service: "google"
+  });
+  ServiceConfiguration.configurations.insert({
+    service: "google",
+    clientId: "????????????????.apps.googleusercontent.com",
+    secret: "????????????????"
   });
 
   Meteor.publish("pelis", function () {
@@ -242,6 +250,7 @@ if (Meteor.isServer) {
   Meteor.publish("user", function () {
     return Meteor.users.find({});
   });
+
   Meteor.startup(() => {
     if (Meteor.users.find().count() == 0) {
       console.log("CREANDO USER ADMIN");

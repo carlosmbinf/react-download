@@ -46,7 +46,7 @@ export default function App() {
       <div className={classes.root}>
         <CssBaseline />
 
-        {!userActual && <LoginPage/>}
+        {!userActual && <Login/>}
         {userActual && (
           
             <PersistentDrawerLeft />
