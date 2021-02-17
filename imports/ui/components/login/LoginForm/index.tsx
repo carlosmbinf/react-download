@@ -70,14 +70,13 @@ const LoginForm = ({ className }: Props) => {
         <Typography
               variant="body1"
               component="h1"
-              style={{fontSize:25,textAlign:"center"}}
+              style={{fontSize:25,textAlign:"center",paddingBottom:2}}
             >
               <strong>
                 VIDKAR
               </strong>
               <br/>
-              Una Vida saludable!!!
-              <br/>
+             
             </Typography>
           
         
@@ -143,7 +142,7 @@ const LoginForm = ({ className }: Props) => {
         <Typography
               variant="body1"
               component="h1"
-              style={{fontSize:20,textAlign:"center",paddingTop:5}}
+              style={{fontSize:20,textAlign:"center",paddingTop:2}}
             >
               <br/>
               Una Vida saludable!!!
