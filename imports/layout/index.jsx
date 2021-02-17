@@ -45,8 +45,17 @@ export default function App() {
     <Router>
       <div className={classes.root}>
         <CssBaseline />
-
-        {!userActual && <Login/>}
+        
+        {!userActual && 
+        <Switch>
+        <Route path="/login">
+        <Login />
+        </Route>
+        <Route path="/">
+          <LoginPage />
+        </Route>
+        </Switch>
+        }
         {userActual && (
           
             <PersistentDrawerLeft />

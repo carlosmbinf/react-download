@@ -64,58 +64,95 @@ const LoginForm = ({ className }: Props) => {
   };
   
   return (
-    <form onSubmit={handleSubmit} className={className}>
-      <Grid container direction="column" justify="center" alignContent="center">
-        {error && (
-          <Typography
-            className={classes.errorContainer}
-            variant="body1"
-            component="p"
-          >
-            {error}
-          </Typography>
-        )}
-        <TextField
-          required
-          label="email"
-          variant="outlined"
-          className={classes.input}
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <AccountCircleIcon />
-              </InputAdornment>
-            ),
-          }}
-        />
-        <TextField
-          required
-          label="Password"
-          variant="outlined"
-          className={classes.input}
-          type="password"
-          onChange={(e) => setPassword(e.target.value)}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <LockIcon />
-              </InputAdornment>
-            ),
-          }}
-        />
-        <Button
-          variant="contained"
-          color="primary"
-          type="submit"
-          className={classes.button}
-          startIcon={<ExitToAppIcon />}
-        >
-          Login
-        </Button>
+    <>
+      <Grid container direction="row" justify="center" alignItems="center">
+        
+        <Typography
+              variant="body1"
+              component="h1"
+              style={{fontSize:25,textAlign:"center"}}
+            >
+              <strong>
+                VIDKAR
+              </strong>
+              <br/>
+              Una Vida saludable!!!
+              <br/>
+            </Typography>
+          
+        
       </Grid>
-    </form>
+      <form onSubmit={handleSubmit} className={className}>
+        <Grid
+          container
+          direction="column"
+          justify="center"
+          alignContent="center"
+        >
+          {error && (
+            <Typography
+              className={classes.errorContainer}
+              variant="body1"
+              component="p"
+            >
+              {error}
+            </Typography>
+          )}
+          <TextField
+            required
+            label="email"
+            variant="outlined"
+            className={classes.input}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <AccountCircleIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+          <TextField
+            required
+            label="Password"
+            variant="outlined"
+            className={classes.input}
+            type="password"
+            onChange={(e) => setPassword(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <LockIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            type="submit"
+            className={classes.button}
+            startIcon={<ExitToAppIcon />}
+          >
+            Login
+          </Button>
+        </Grid>
+      </form>
+      <Grid container direction="row" justify="center" alignItems="center">
+        <Typography
+              variant="body1"
+              component="h1"
+              style={{fontSize:20,textAlign:"center",paddingTop:5}}
+            >
+              <br/>
+              Una Vida saludable!!!
+              <br/>
+            </Typography>
+          
+        
+      </Grid>
+    </>
   );
 };
 
