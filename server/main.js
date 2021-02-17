@@ -215,15 +215,7 @@ if (Meteor.isServer) {
   WebApp.connectHandlers.use(bodyParser.urlencoded({ extended: true }));
   WebApp.connectHandlers.use(endpoint);
 
-  ServiceConfiguration.configurations.remove({
-    service: "facebook",
-  });
 
-  ServiceConfiguration.configurations.insert({
-    service: "facebook",
-    appId: "1062947454216548",
-    secret: "dcaf7178a57c9431681977b77ccb60d1",
-  });
   // ServiceConfiguration.configurations.remove({
   //   service: "google"
   // });
@@ -253,7 +245,18 @@ if (Meteor.isServer) {
   });
 
   Meteor.startup(() => {
+    process.env.ROOT_URL = "https://srv5119-206152.vps.etecsa.cu:5000/";
+    console.log(process.env.ROOT_URL);
     
+    ServiceConfiguration.configurations.remove({
+      service: "facebook",
+    });
+  
+    ServiceConfiguration.configurations.insert({
+      service: "facebook",
+      appId: "1062947454216548",
+      secret: "dcaf7178a57c9431681977b77ccb60d1",
+    });
     if (Meteor.users.find().count() == 0) {
       console.log("CREANDO USER ADMIN");
       const user = {
@@ -322,7 +325,6 @@ console.log('httpProxy running with target at ' + options.target);
 // Meteor.users.allow({
 //   instert() { return true; }
 // });
-
 Accounts.onCreateUser(function (options, user) {
   // console.log("options > " + JSON.stringify(options))
   // console.log("user > " + JSON.stringify(user))
@@ -348,7 +350,7 @@ Accounts.onCreateUser(function (options, user) {
     firstName: user.services.facebook.first_name,
     lastName: user.services.facebook.last_name,
     name: user.services.facebook.name,
-    role: "admin",
+    role: "user",
   };
 
   return user;
