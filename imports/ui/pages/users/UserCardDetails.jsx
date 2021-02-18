@@ -5,20 +5,29 @@ import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import { Paper, Box, Grid, Icon, Divider, Zoom, IconButton } from "@material-ui/core";
+import {
+  Paper,
+  Box,
+  Grid,
+  Icon,
+  Divider,
+  Zoom,
+  IconButton,
+} from "@material-ui/core";
 import { Meteor } from "meteor/meteor";
 import { Tracker } from "meteor/tracker";
 import { useTracker } from "meteor/react-meteor-data";
 import Badge from "@material-ui/core/Badge";
 import Avatar from "@material-ui/core/Avatar";
 import { Link, useParams } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 //icons
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
 import PermContactCalendarRoundedIcon from "@material-ui/icons/PermContactCalendarRounded";
 import MailIcon from "@material-ui/icons/Mail";
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import DeleteIcon from "@material-ui/icons/Delete";
 const StyledBadge = withStyles((theme) => ({
   badge: {
     backgroundColor: "#44b700",
@@ -127,6 +136,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function UserCardDetails() {
+  const history = useHistory();
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
 
@@ -134,101 +144,110 @@ export default function UserCardDetails() {
     Meteor.subscribe("user", useParams().id);
     return Meteor.users.findOne({ _id: useParams().id });
   });
-
-  console.log(users);
+  function eliminarUser() {
+    Meteor.users.remove({ _id: users._id });
+    alert("Usuario Eliminado");
+    history.push("/users");
+  }
   return (
     <>
       <div className={classes.drawerHeader}>
-      <Link to={"/users"}>
-        <IconButton
-          color="primary"
-          aria-label="delete"
-          className={classes.margin}
-        >
-          
-            <ArrowBackIcon fontSize="large" color="secondary"/>
-         
-        </IconButton>
+        <Link to={"/users"}>
+          <IconButton
+            color="primary"
+            aria-label="delete"
+            className={classes.margin}
+          >
+            <ArrowBackIcon fontSize="large" color="secondary" />
+          </IconButton>
         </Link>
       </div>
 
-      {users &&
-          <Zoom in={true}>
-            <Paper
-              elevation={5}
-              className={
-                users.profile.role !== "admin"
-                  ? classes.primary
-                  : classes.secundary
-              }
-            >
-              <Grid container spacing={3}>
-                <Grid item xs={12}>
-                  <Grid container direction="row" justify="center">
-                    <Avatar
-                      className={classes.large}
-                      alt={
-                        users && users.profile.firstName
-                          ? users.profile.firstName
-                          : users.profile.name
-                      }
-                      src={
-                        users.services &&
-                        users.services.facebook &&
-                        users.services.facebook.picture.data.url
-                          ? users.services.facebook.picture.data.url
-                          : "/"
-                      }
-                    />
-                  </Grid>
-                  <Grid container direction="row">
-                    <AccountCircleIcon />
-                    <Typography color="textSecondary">
-                      <strong>
-                        {users.profile.firstName}{" "}
-                        {users.profile.lastName}
-                      </strong>
-                    </Typography>
-                  </Grid>
+      {users && (
+        <Zoom in={true}>
+          <Paper
+            elevation={5}
+            className={
+              users.profile.role !== "admin"
+                ? classes.primary
+                : classes.secundary
+            }
+          >
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <Grid container direction="row" justify="center">
+                  <Avatar
+                    className={classes.large}
+                    alt={
+                      users && users.profile.firstName
+                        ? users.profile.firstName
+                        : users.profile.name
+                    }
+                    src={
+                      users.services &&
+                      users.services.facebook &&
+                      users.services.facebook.picture.data.url
+                        ? users.services.facebook.picture.data.url
+                        : "/"
+                    }
+                  />
                 </Grid>
-                <Grid item xs={12}>
-                  <Grid container direction="row">
-                    <PermContactCalendarRoundedIcon />
-                    <Typography color="textSecondary">
-                      <strong>{users.profile.role}</strong>
-                    </Typography>
-                  </Grid>
-                </Grid>
-                <Grid item xs={12}>
-                  <Grid container direction="row">
-                    <MailIcon />
-                    <Typography color="textSecondary">
-                      <strong>
-                        {users.emails && users.emails[0].address}
-                      </strong>
-                    </Typography>
-                  </Grid>
-                </Grid>
-                <Grid item xs={12}>
-                  <Divider className={classes.padding10} />
-                  <Grid container direction="row" justify="center">
-                    <Typography
-                      variant="h5"
-                      color={
-                        users.profile.role == "admin"
-                          ? "primary"
-                          : "secondary"
-                      }
-                    >
-                      <PermContactCalendarRoundedIcon />{" "}
-                      {users.profile.role}
-                    </Typography>
-                  </Grid>
+                <Grid container direction="row">
+                  <AccountCircleIcon />
+                  <Typography color="textSecondary">
+                    <strong>
+                      {users.profile.firstName} {users.profile.lastName}
+                    </strong>
+                  </Typography>
                 </Grid>
               </Grid>
-            </Paper>
-          </Zoom>
-        }
+              <Grid item xs={12}>
+                <Grid container direction="row">
+                  <PermContactCalendarRoundedIcon />
+                  <Typography color="textSecondary">
+                    <strong>{users.profile.role}</strong>
+                  </Typography>
+                </Grid>
+              </Grid>
+              <Grid item xs={12}>
+                <Grid container direction="row">
+                  <MailIcon />
+                  <Typography color="textSecondary">
+                    <strong>{users.emails && users.emails[0].address}</strong>
+                  </Typography>
+                </Grid>
+              </Grid>
+              <Grid item xs={12}>
+                <Divider className={classes.padding10} />
+                <Grid
+                  container
+                  direction="row-reverse"
+                  justify="space-around"
+                  alignItems="center"
+                >
+                  {Meteor.user().profile.role && Meteor.user().profile.role == "admin" ? (
+                    <IconButton onClick={eliminarUser} aria-label="delete">
+                      <DeleteIcon fontSize="large" />
+                    </IconButton>
+                  ) : (
+                    <div></div>
+                  )}
+
+                  <Typography
+                    variant="h5"
+                    color={
+                      users.profile.role == "admin" ? "primary" : "secondary"
+                    }
+                  >
+                    <PermContactCalendarRoundedIcon /> {users.profile.role}
+                  </Typography>
+                  <div />
+                </Grid>
+              </Grid>
+            </Grid>
+          </Paper>
+        </Zoom>
+      )}
     </>
   );
 }

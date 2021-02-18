@@ -9,7 +9,7 @@ type Props = {
 const responsive = {
   0: { items: 1 },
   960: { items: 2 },
-  1280: { items: 5 },
+  1280: { items: 3 },
 };
 
 const Wrapper = styled.div`

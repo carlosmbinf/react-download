@@ -12,6 +12,8 @@ import { useTracker } from "meteor/react-meteor-data";
 import Badge from "@material-ui/core/Badge";
 import Avatar from "@material-ui/core/Avatar";
 import { Link, useParams } from "react-router-dom";
+import { useHistory } from "react-router-dom";
+
 //icons
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
@@ -20,6 +22,7 @@ import MailIcon from "@material-ui/icons/Mail";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { PelisCollection } from "../collections/collections";
 import VPlayer from 'react-vplayer';
+import DeleteIcon from "@material-ui/icons/Delete";
 
 const StyledBadge = withStyles((theme) => ({
   badge: {
@@ -129,6 +132,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function PeliDetails() {
+  const history = useHistory();
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
 
@@ -136,7 +140,13 @@ export default function PeliDetails() {
     Meteor.subscribe("peli", useParams().id);
     return PelisCollection.findOne({ _id: useParams().id });
   });
-  // peliDetails&&console.log(peliDetails);
+
+  function eliminarPeli() {
+    PelisCollection.remove({ _id: peliDetails._id });
+    alert("Pelicula Eliminada");
+    history.push("/pelis");
+  }
+  
   return (
     <>
       <div className={classes.drawerHeader}>
@@ -168,7 +178,7 @@ export default function PeliDetails() {
             alignItems="center" spacing={3}>
             <Grid style={{ width: "100%" }}>
               {/* INSERTAR VIDEO */}
-              <video controls style={{width:"100%", maxHeight: "60vh"}} poster={peliDetails.urlBackground} preload="metadata" autoplay>
+              <video controls style={{width:"100%", maxHeight: "60vh"}} poster={peliDetails.urlBackground} preload="metadata">
                 <source src={peliDetails.urlPeli} type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
                 <track default kind="subtitles" label="Español" src={peliDetails.subtitulo} srcLang="es"/>
                 {/* <track default kind="descriptions" label="Español" src="https://visuales.uclv.cu/Peliculas/Extranjeras/2020/2020_Ava/sinopsis.txt" srcLang="es"/> */}
@@ -176,7 +186,17 @@ export default function PeliDetails() {
             </Grid>
             <Grid item xs={12}>
               {/* <Divider className={classes.padding10} /> */}
-              <Grid container direction="row" justify="center">
+              <Grid container
+                  direction="row-reverse"
+                  justify="space-around"
+                  alignItems="center">
+                    {Meteor.user().profile.role && Meteor.user().profile.role == "admin" ? (
+                    <IconButton onClick={eliminarPeli} aria-label="delete">
+                      <DeleteIcon fontSize="large" />
+                    </IconButton>
+                  ) : (
+                    <div/>
+                  )}
                 <Typography
                   variant="h5"
                   color={
@@ -185,9 +205,10 @@ export default function PeliDetails() {
                       : "secondary"
                   }
                 >
-                  <PermContactCalendarRoundedIcon />{" "}
+                  
                   {peliDetails.nombrePeli}
                 </Typography>
+                <div />
               </Grid>
             </Grid>
           </Grid>

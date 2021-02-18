@@ -75,7 +75,7 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundImage: "radial-gradient(circle, rgba(2,0,36,0) 0%, rgba(112,96,255,0.7727901158707865) 67%)",
       opacity: 1,
       padding: "25px",
-      backdropFilter: "blur(5px)",
+      // backdropFilter: "blur(5px)",
     },
     background:{
       position: "absolute",

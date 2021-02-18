@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   toolbar: theme.mixins.toolbar,
-  content: {
+  contents: {
     overflowX: "auto",
     flexGrow: 1,
     padding: theme.spacing(3),
@@ -64,7 +64,7 @@ export default function Main() {
     return Meteor.user();
   });
   return (
-    <main className={classes.content}>
+    <div className={classes.contents}>
       <div className={classes.toolbar} />
 
       {/* A <Switch> looks through its children <Route>s and
@@ -221,6 +221,6 @@ export default function Main() {
         </Route>
         <Route path="/"></Route>
       </Switch>
-    </main>
+    </div>
   );
 }

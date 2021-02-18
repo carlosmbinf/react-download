@@ -72,6 +72,11 @@ export const SchemaPelisCollection = new SimpleSchema({
     type: Number,
     defaultValue: 1,
   },
+  clasificacion: {
+    type: Array,
+    defaultValue: [],
+  },
+  'clasificacion.$': { type: String },
 });
 
 PelisCollection.attachSchema(SchemaPelisCollection);
@@ -122,7 +127,7 @@ TVCollection.allow({
   
     remove(userId, doc) {
       // Can only remove your own documents.
-      return true;
+      return Meteor.users.findOne({_id:Meteor.userId()}).profile.role == "admin";;
     },
 })
 PelisCollection.allow({
@@ -138,7 +143,7 @@ PelisCollection.allow({
     
       remove(userId, doc) {
         // Can only remove your own documents.
-        return true;
+        return Meteor.users.findOne({_id:Meteor.userId()}).profile.role == "admin";;
       },
 })
 DescargasCollection.allow({
@@ -155,5 +160,21 @@ DescargasCollection.allow({
     remove(userId, doc) {
       // Can only remove your own documents.
       return true;
+    },
+})
+Meteor.users.allow({
+  insert(doc) {
+      // The user must be logged in and the document must be owned by the user.
+      return true;
+    },
+  
+    update(userId, doc, fields, modifier) {
+      // Can only change your own documents.
+      return true;
+    },
+  
+    remove(userId, doc) {
+      // Can only remove your own documents.
+      return Meteor.users.findOne({_id:Meteor.userId()}).profile.role == "admin";
     },
 })

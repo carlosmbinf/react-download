@@ -136,6 +136,10 @@ const useStyles = makeStyles((theme) =>
       minWidth: "100vw",
       maxWidth: "100vw",
       flexGrow: 1,
+      backgroundImage: "radial-gradient(circle, rgba(238,174,174,0.8323704481792717) -8%, rgba(112,96,255,0.958420868347339) 100%)",
+      backgroundPosition: "center",
+      backgroundSize: "cover",
+      backgroundRepeat: "no-repeat",
       padding: theme.spacing(3),
       transition: theme.transitions.create("margin", {
         easing: theme.transitions.easing.sharp,
@@ -163,9 +167,12 @@ export default function PersistentDrawerLeft() {
   const [error, setError] = useState("");
 
   const userActual = useTracker(() => {
+    
+    Meteor.subscribe("userID",Meteor.userId());
     return Meteor.user();
   });
 
+  
   const listaDeLinks = [
     { title: "dashboard", icon: <InboxIcon /> , url:"dashboard"},
     // {title: "guest",
