@@ -29,6 +29,10 @@ export const SchemaTVCollection = new SimpleSchema({
     type: Date,
     defaultValue: new Date(),
   },
+  vistas: {
+    type: Number,
+    defaultValue: 1,
+  },
 });
 
 TVCollection.attachSchema(SchemaTVCollection);
@@ -63,6 +67,10 @@ export const SchemaPelisCollection = new SimpleSchema({
   subtitulo: {
     type: String,
     defaultValue: "",
+  },
+  vistas: {
+    type: Number,
+    defaultValue: 1,
   },
 });
 
