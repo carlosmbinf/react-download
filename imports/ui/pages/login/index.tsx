@@ -10,6 +10,10 @@ import {
   useParams,
 } from "react-router-dom";
 
+// icons
+import HomeIcon from '@material-ui/icons/Home';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -70,7 +74,7 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundImage: "radial-gradient(circle, rgba(2,0,36,0) 0%, rgba(112,96,255,0.7727901158707865) 67%)",
       opacity: 1,
       padding: "25px",
-      backdropDilter: "blur(51px)",
+      backdropFilter: "blur(5px)",
     },
     background:{
       position: "absolute";
@@ -109,18 +113,7 @@ const LoginPage = () => {
     setChecked((prev) => !prev);
   };
 
-  const handleLoginFacebook = () => {
-    Meteor.loginWithFacebook(
-      { requestPermissions: ["public_profile", "email"] },
-      function (err) {
-        if (err) {
-          console.log("Handle errors here: ", err);
-        } else {
-          Router.go("/");
-        }
-      }
-    );
-  };
+  
 
   return (
     <ThemeProvider theme={theme}>
@@ -130,6 +123,34 @@ const LoginPage = () => {
         alignItems="center"
         className={classes.background}
         justify="center">
+        <Grid item xs={12} style={{position: "absolute",top: "5em",}}>
+          <Grid container direction="row" justify="center" alignItems="center">
+                  <Typography
+                    variant="body1"
+                    component="h1"
+                    style={{ fontSize: "4em", textAlign: "center", paddingBottom: 2 }}
+                  >
+                    <strong>🅥🅘🅓🅚🅐🅡</strong>
+                  </Typography>
+                </Grid>
+              
+              <Grid container direction="row" justify="center" alignItems="center">
+                <Typography
+                  variant="body1"
+                  component="h1"
+                  style={{ fontSize: "1.5em", textAlign: "center", paddingTop: 2 }}
+                >
+                  Por una mas vida saludable!!!
+                  <br />
+                  Quedate en:
+                  <br/>
+                  <ChevronRightIcon/>
+                  <HomeIcon/>
+                  <ChevronLeftIcon/>
+                </Typography>
+              </Grid>
+        </Grid>
+        
           <Grid container
         direction="row"
         alignItems="center"

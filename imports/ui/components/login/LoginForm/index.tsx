@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import { colors, Typography } from '@material-ui/core';
-import Grid from '@material-ui/core/Grid';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import LockIcon from '@material-ui/icons/Lock';
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
+import { colors, Divider, Typography } from "@material-ui/core";
+import Grid from "@material-ui/core/Grid";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
+import LockIcon from "@material-ui/icons/Lock";
+import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
+import FacebookIcon from "@material-ui/icons/Facebook";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -21,7 +22,7 @@ const useStyles = makeStyles((theme: Theme) =>
     errorContainer: {
       marginBottom: theme.spacing(2),
       color: colors.red[500],
-      textAlign: 'center',
+      textAlign: "center",
     },
   })
 );
@@ -32,55 +33,47 @@ type Props = {
 
 const LoginForm = ({ className }: Props) => {
   const classes = useStyles();
-  const [error, setError] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [error, setError] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const history = useHistory();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setError('');
+    setError("");
 
-    if (!email || !password) setError('Wrong credentials');
+    !email || !password
+      ? setError("Wrong credentials")
+      : Meteor.loginWithPassword(email, password, (error) =>
+          error
+            ? setError(`Login failed, please try again`)
+            : history.push("/pelis")
+        );
 
-    Meteor.loginWithPassword(email, password, (error) =>
-      error
-        ? setError(`Login failed, please try again`)
-        : history.push('/users')
+  };
+
+  const handleLoginFacebook = () => {
+    setError("");
+    Meteor.loginWithFacebook(
+      { requestPermissions: ["public_profile", "email"] },
+      function (err) {
+        err ? setError(err.message) : history.push("/pelis");
+      }
     );
   };
 
   const handleOauth = (event) => {
     event.preventDefault();
-    setError('');
+    setError("");
 
     //@ts-ignore
-    Meteor.loginWithFusionAuth({ requestPermissions: ['email'] }, (error) => {
-      error
-        ? setError(error.message)
-        : history.push('/dashboard')
-    }
-    );
+    Meteor.loginWithFusionAuth({ requestPermissions: ["email"] }, (error) => {
+      error ? setError(error.message) : history.push("/dashboard");
+    });
   };
-  
+
   return (
     <>
-      <Grid container direction="row" justify="center" alignItems="center">
-        
-        <Typography
-              variant="body1"
-              component="h1"
-              style={{fontSize:25,textAlign:"center",paddingBottom:2}}
-            >
-              <strong>
-                VIDKAR
-              </strong>
-              <br/>
-             
-            </Typography>
-          
-        
-      </Grid>
       <form onSubmit={handleSubmit} className={className}>
         <Grid
           container
@@ -138,18 +131,21 @@ const LoginForm = ({ className }: Props) => {
           </Button>
         </Grid>
       </form>
-      <Grid container direction="row" justify="center" alignItems="center">
-        <Typography
-              variant="body1"
-              component="h1"
-              style={{fontSize:20,textAlign:"center",paddingTop:2}}
-            >
-              <br/>
-              Una Vida saludable!!!
-              <br/>
-            </Typography>
-          
-        
+      <br/>
+      <Divider/>
+      <Grid container direction="column" justify="center" alignContent="center">
+        <Grid item xs={12}>
+          <Button
+            onClick={handleLoginFacebook}
+            variant="contained"
+            color="primary"
+            type="submit"
+            className={classes.button}
+            startIcon={<FacebookIcon />}
+          >
+            Login with Facebook
+          </Button>
+        </Grid>
       </Grid>
     </>
   );
