@@ -1,7 +1,8 @@
 import React from "react";
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import LoginForm from "../../components/login/LoginForm";
-import { Grid, Typography, Link, ThemeProvider, Fade } from "@material-ui/core";
+import { Grid, Typography, Link, ThemeProvider} from "@material-ui/core";
+import Fade from 'react-reveal/Fade';
 import { theme } from "../../../startup/client/theme";
 import {
   BrowserRouter as Router,
@@ -77,7 +78,7 @@ const useStyles = makeStyles((theme: Theme) =>
       backdropFilter: "blur(5px)",
     },
     background:{
-      position: "absolute";
+      position: "absolute",
       top:0,
       left:0,
       width:"100%",
@@ -102,6 +103,24 @@ const useStyles = makeStyles((theme: Theme) =>
     marco:{
 
     },
+    vidKarText:{
+      
+      [theme.breakpoints.down('sm')]: {
+        position: "absolute",top: "5em",
+      },
+      [theme.breakpoints.up('sm')]: {
+        position: "initial",
+      },
+      [theme.breakpoints.up('md')]: {
+        position: "absolute",top: "0em",
+      },
+    },
+    vidKarTitle:{
+
+    },
+    vidKarSubTitle:{
+
+    }
   })
 );
 
@@ -113,7 +132,7 @@ const LoginPage = () => {
     setChecked((prev) => !prev);
   };
 
-  
+ 
 
   return (
     <ThemeProvider theme={theme}>
@@ -123,12 +142,15 @@ const LoginPage = () => {
         alignItems="center"
         className={classes.background}
         justify="center">
-        <Grid item xs={12} style={{position: "absolute",top: "5em",}}>
+          
+            <Grid item xs={12} className={classes.vidKarText} >
+            <Fade top>
           <Grid container direction="row" justify="center" alignItems="center">
                   <Typography
                     variant="body1"
                     component="h1"
-                    style={{ fontSize: "4em", textAlign: "center", paddingBottom: 2 }}
+                    className={classes.vidKarTitle}
+                    style={{ fontSize: "36px", textAlign: "center", paddingBottom: 2 }}
                   >
                     <strong>🅥🅘🅓🅚🅐🅡</strong>
                   </Typography>
@@ -138,7 +160,8 @@ const LoginPage = () => {
                 <Typography
                   variant="body1"
                   component="h1"
-                  style={{ fontSize: "1.5em", textAlign: "center", paddingTop: 2 }}
+                  className={classes.vidKarSubTitle}
+                  style={{ fontSize: "18px", textAlign: "center", paddingTop: 2 }}
                 >
                   Por una mas vida saludable!!!
                   <br />
@@ -149,19 +172,27 @@ const LoginPage = () => {
                   <ChevronLeftIcon/>
                 </Typography>
               </Grid>
+              </Fade>
         </Grid>
         
-          <Grid container
+        <Grid>
+        <Fade bottom>
+        <Grid container
         direction="row"
         alignItems="center"
         className={classes.marco}
         justify="center" >
           <Grid item className={classes.form}>
+          
                 <LoginForm />
 
                 {/* <button onClick={handleLoginFacebook}>loguin to facebook</button> */}
               </Grid>
           </Grid>
+          </Fade>
+        </Grid>
+        
+          
       </Grid>
       <Grid
         container
