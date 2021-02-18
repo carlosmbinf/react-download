@@ -84,13 +84,6 @@ export default function Main() {
             )}
           <TableDescarga />
         </Route>
-        <Route path="/offer"></Route>
-        <Route path="/guest">
-          <div className={classes.root}>
-            <GuestCard withCreate="true" />
-            <GuestCard />
-          </div>
-        </Route>
         <Route path="/users/:id">
           <UserCardDetails />
         </Route>
@@ -117,9 +110,6 @@ export default function Main() {
           </Grid>
         </Route>
         <Route path="/calendar"></Route>
-        <Route path="/login">
-          <LoginPage />
-        </Route>
         <Route path="/create-user">
           {useractual &&
             useractual.profile &&
