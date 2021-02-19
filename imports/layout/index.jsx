@@ -17,6 +17,8 @@ import {
 
 import PersistentDrawerLeft from './App'
 
+import Loading from '../ui/components/loading/loading'
+
 import LoginPage from '../ui/pages/login/index'
 import {Login} from '../ui/pages/login/Login'
 
@@ -48,8 +50,8 @@ export default function App() {
         
         {!userActual && 
         <Switch>
-        <Route path="/login">
-        <Login />
+        <Route path="/loading">
+        <Loading />
         </Route>
         <Route path="/">
           <LoginPage />

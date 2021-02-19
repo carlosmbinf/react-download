@@ -102,24 +102,40 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     marco:{
 
-    },
-    vidKarText:{
-      
+    },    
+    vidKarTitle:{
+      position: "absolute",top: "2em",
+      '@media ( max-height: 500px)': {
+        position: "relative",
+        top: "0.5em",
+        paddingBottom: "0.5em",
+      },
+      '@media ( max-height: 500px)': {
+        position: "relative",
+        top: "0.5em",
+        paddingBottom: "0.5em",
+      },
       [theme.breakpoints.down('sm')]: {
-        position: "absolute",top: "5em",
+
       },
       [theme.breakpoints.up('sm')]: {
-        position: "initial",
       },
       [theme.breakpoints.up('md')]: {
-        position: "absolute",top: "0em",
       },
     },
-    vidKarTitle:{
 
-    },
     vidKarSubTitle:{
+      position: "absolute",bottom: "1em",
 
+      '@media ( max-height: 500px)': {
+        display: "none",
+      },
+      [theme.breakpoints.down('sm')]: {
+      },
+      [theme.breakpoints.up('sm')]: {
+      },
+      [theme.breakpoints.up('md')]: {
+      },
     }
   })
 );
@@ -143,27 +159,29 @@ const LoginPage = () => {
         className={classes.background}
         justify="center">
           
-            <Grid item xs={12} className={classes.vidKarText} >
+            <Grid item xs={12} className={classes.vidKarTitle} >
             <Fade top>
           <Grid container direction="row" justify="center" alignItems="center">
                   <Typography
                     variant="body1"
                     component="h1"
-                    className={classes.vidKarTitle}
                     style={{ fontSize: "36px", textAlign: "center", paddingBottom: 2 }}
                   >
                     <strong>🅥🅘🅓🅚🅐🅡</strong>
                   </Typography>
                 </Grid>
+              </Fade>
               
-              <Grid container direction="row" justify="center" alignItems="center">
+        </Grid>
+        <Grid item xs={12} className={classes.vidKarSubTitle} >
+        <Fade bottom>
+        <Grid container direction="row" justify="center" alignItems="center">
                 <Typography
                   variant="body1"
                   component="h1"
-                  className={classes.vidKarSubTitle}
                   style={{ fontSize: "18px", textAlign: "center", paddingTop: 2 }}
                 >
-                  Por una mas vida saludable!!!
+                  Por una vida mas saludable!!!
                   <br />
                   Quedate en:
                   <br/>
@@ -172,9 +190,8 @@ const LoginPage = () => {
                   <ChevronLeftIcon/>
                 </Typography>
               </Grid>
-              </Fade>
+        </Fade>
         </Grid>
-        
         <Grid>
         <Fade bottom>
         <Grid container
