@@ -53,7 +53,7 @@ const useStyles = makeStyles((theme) => ({
   contents: {
     overflowX: "auto",
     flexGrow: 1,
-    padding: theme.spacing(3),
+    padding: 5,
     marginLeft: 0,
   },
 }));

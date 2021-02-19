@@ -16,6 +16,7 @@ import {
 } from "@material-ui/core";
 
 import Fade from "react-reveal/Fade";
+import Carousel from "../../components/carousel/Carousel";
 
 import { Meteor } from "meteor/meteor";
 import { Tracker } from "meteor/tracker";
@@ -29,7 +30,7 @@ import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
 import PermContactCalendarRoundedIcon from "@material-ui/icons/PermContactCalendarRounded";
 import MailIcon from "@material-ui/icons/Mail";
-import Carousel from "../../components/carousel/Carousel";
+import RemoveRedEyeIcon from '@material-ui/icons/RemoveRedEye';
 
 const StyledBadge = withStyles((theme) => ({
   badge: {
@@ -191,6 +192,22 @@ export default function TVonline(withAdd) {
                       >
                         <strong>{tvGeneral.nombreTV}</strong>
                       </Typography>
+                      <Grid
+                          container
+                          direction="row"
+                          justify="flex-end"
+                          alignItems="center"
+                          style={{
+                            color: "white",
+                            fontSize: 14,
+                            fontFamily: "cursive",
+                          }}
+                        >
+                          <RemoveRedEyeIcon />{" "}
+                          <Typography>
+                            <strong>{tvGeneral.vistas}</strong>
+                          </Typography>
+                        </Grid>
                     </Grid>
                   </Grid>
                 </Grid>

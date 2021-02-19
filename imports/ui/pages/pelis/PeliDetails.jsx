@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
@@ -136,6 +136,8 @@ export default function PeliDetails() {
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
 
+  PelisCollection.update(useParams().id, { $inc: {vistas: 0.5 }})
+ 
   const peliDetails = useTracker(() => {
     Meteor.subscribe("peli", useParams().id);
     return PelisCollection.findOne({ _id: useParams().id });
@@ -146,7 +148,7 @@ export default function PeliDetails() {
     alert("Pelicula Eliminada");
     history.push("/pelis");
   }
-  
+
   return (
     <>
       <div className={classes.drawerHeader}>

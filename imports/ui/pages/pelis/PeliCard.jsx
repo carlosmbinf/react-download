@@ -16,6 +16,7 @@ import {
 } from "@material-ui/core";
 
 import Fade from "react-reveal/Fade";
+import Carousel from "../../components/carousel/Carousel";
 
 import { Meteor } from "meteor/meteor";
 import { Tracker } from "meteor/tracker";
@@ -24,13 +25,13 @@ import Badge from "@material-ui/core/Badge";
 import Avatar from "@material-ui/core/Avatar";
 import { Link } from "react-router-dom";
 import { PelisCollection } from "../collections/collections";
+
 //icons
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
 import PermContactCalendarRoundedIcon from "@material-ui/icons/PermContactCalendarRounded";
 import MailIcon from "@material-ui/icons/Mail";
-import Carousel from "../../components/carousel/Carousel";
-
+import RemoveRedEyeIcon from '@material-ui/icons/RemoveRedEye';
 const StyledBadge = withStyles((theme) => ({
   badge: {
     backgroundColor: "#44b700",
@@ -172,8 +173,11 @@ export default function PeliCard(withAdd) {
               <Grid container spacing={3}>
                 <Grid item xs={12}>
                   {/* <Divider className={classes.padding10} /> */}
-                  <Grid item xs={12} style={{position: "absolute",
-    bottom: 0}}>
+                  <Grid
+                    item
+                    xs={12}
+                    style={{ position: "absolute", bottom: 0 }}
+                  >
                     <Grid
                       container
                       className={classes.elementosBotom}
@@ -182,15 +186,33 @@ export default function PeliCard(withAdd) {
                       justify="center"
                       alignItems="center"
                     >
-                      <Typography
-                        style={{
-                          color: "white",
-                          fontSize: 14,
-                          fontFamily: "cursive",
-                        }}
-                      >
-                        <strong>{peliGeneral.nombrePeli}</strong>
-                      </Typography>
+                      <Grid item>
+                        <Typography
+                          style={{
+                            color: "white",
+                            fontSize: 14,
+                            fontFamily: "cursive",
+                          }}
+                        >
+                          <strong>{peliGeneral.nombrePeli}</strong>
+                        </Typography>
+                        <Grid
+                          container
+                          direction="row"
+                          justify="flex-end"
+                          alignItems="center"
+                          style={{
+                            color: "white",
+                            fontSize: 14,
+                            fontFamily: "cursive",
+                          }}
+                        >
+                          <RemoveRedEyeIcon />{" "}
+                          <Typography>
+                            <strong>{peliGeneral.vistas}</strong>
+                          </Typography>
+                        </Grid>
+                      </Grid>
                     </Grid>
                   </Grid>
                 </Grid>
@@ -198,7 +220,7 @@ export default function PeliCard(withAdd) {
             </Paper>
           </Button>
         </Link>
-        </>
+      </>
     );
   });
 

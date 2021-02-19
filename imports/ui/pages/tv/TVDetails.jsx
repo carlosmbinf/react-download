@@ -132,6 +132,8 @@ export default function TV() {
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
 
+  TVCollection.update(useParams().id, { $inc: {vistas: 0.5 }})
+
   const tvDetails = useTracker(() => {
     Meteor.subscribe("tv", useParams().id);
     return TVCollection.findOne({ _id: useParams().id });
