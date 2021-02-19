@@ -186,7 +186,7 @@ export default function PeliCard(withAdd) {
                       justify="center"
                       alignItems="center"
                     >
-                      <Grid item>
+                      <Grid item xs={10}>
                         <Typography
                           style={{
                             color: "white",

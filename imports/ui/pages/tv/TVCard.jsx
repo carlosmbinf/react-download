@@ -183,6 +183,7 @@ export default function TVonline(withAdd) {
                       justify="center"
                       alignItems="center"
                     >
+                      <Grid item xs={10}>
                       <Typography
                         style={{
                           color: "white",
@@ -208,6 +209,7 @@ export default function TVonline(withAdd) {
                             <strong>{tvGeneral.vistas}</strong>
                           </Typography>
                         </Grid>
+                      </Grid>
                     </Grid>
                   </Grid>
                 </Grid>
