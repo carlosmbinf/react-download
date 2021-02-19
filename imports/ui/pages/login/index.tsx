@@ -88,7 +88,9 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundPosition: "center",
       backgroundSize: "contain",
       backgroundRepeat: "no-repeat",
-
+      '@media ( max-height: 600px)': {
+        backgroundImage: 'none',
+      },
       [theme.breakpoints.down("sm")]: {
         backgroundImage: 'none',
       },
@@ -110,11 +112,6 @@ const useStyles = makeStyles((theme: Theme) =>
         top: "0.5em",
         paddingBottom: "0.5em",
       },
-      '@media ( max-height: 500px)': {
-        position: "relative",
-        top: "0.5em",
-        paddingBottom: "0.5em",
-      },
       [theme.breakpoints.down('sm')]: {
 
       },
@@ -126,7 +123,6 @@ const useStyles = makeStyles((theme: Theme) =>
 
     vidKarSubTitle:{
       position: "absolute",bottom: "1em",
-
       '@media ( max-height: 500px)': {
         display: "none",
       },
