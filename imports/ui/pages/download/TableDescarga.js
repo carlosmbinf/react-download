@@ -187,17 +187,18 @@ export default function TableDescarga() {
       </React.Fragment>
     );
   };
-  function eliminarVideo(data) {
-    console.log(data)
+  const eliminarVideo = (id) => {
+    console.log(id)
+    const data = {id:id}
     var http = require("http");
     http.post = require("http-post");
     http.post("/eliminar", data, (opciones, res, body) => {
       if (!opciones.headers.error) {
         // console.log(`statusCode: ${res.statusCode}`);
-        console.log("error " + JSON.stringify(opciones.headers));
+        console.log("TODO OK: " + JSON.stringify(opciones.headers));
         return;
       } else {
-        console.log(opciones.headers);
+        console.log("ERRORS: " + opciones.headers);
         return;
       }
     });
@@ -206,7 +207,7 @@ export default function TableDescarga() {
     return (
       <React.Fragment>
         <Button 
-        // onClick={eliminarVideo}
+        onClick={() => { eliminarVideo(rowData.idFile) }}
         >Eliminar</Button>
       </React.Fragment>
     );

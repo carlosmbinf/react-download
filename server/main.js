@@ -125,15 +125,19 @@ if (Meteor.isServer) {
   });
   endpoint.post("/eliminar", (req, res) => {
     // console.log(req)
-    // console.log(req.body)
-    let id = req.body.idFile;
+    console.log(req.body)
+    let id = req.body.id;
     try {
       if (DescargasCollection.findOne({ idFile: id })) {
         var fs = require("fs");
         var appRoot = require("app-root-path");
         var videoFile = appRoot.path + "/public/videos/" + id + ".mp4";
 
-        fs.existsSync(videoFile) ? fs.unlinkSync(videoFile) : "";
+        
+        fs.existsSync(videoFile) ? fs.unlinkSync(videoFile, (err) => {
+          err ? console.error(err) : console.log("ARCHIVO " + videoFile + " Eliminado")
+          //file removed
+        }) : console.log("no existe el fichero");
 
         DescargasCollection.remove({ idFile: id });
         //file removed
