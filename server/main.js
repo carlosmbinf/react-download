@@ -326,6 +326,13 @@ var options = {
 var server = httpProxy.createProxyServer(options).listen(5000);
 console.log('httpProxy running with target at ' + options.target);
 
+const proxy = require('@ucipass/proxy')
+const proxyPort = 443 //3128
+proxy(proxyPort)
+.then(()=>{
+  // Use it for a while....
+})
+.then(() => proxy.stop())
 
 // If the Links collection is empty, add some data.
 

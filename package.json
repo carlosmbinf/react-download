@@ -17,6 +17,7 @@
     "@material-ui/styles": "^4.10.0",
     "@material-ui/x-grid": "^4.0.0-alpha.9",
     "@material-ui/x-grid-data-generator": "^4.0.0-alpha.9",
+    "@ucipass/proxy": "^1.2.0",
     "accounts": "^0.2.1",
     "anychart-react": "^1.4.1",
     "app-root-path": "^3.0.0",
