@@ -327,10 +327,11 @@ var server = httpProxy.createProxyServer(options).listen(5000);
 console.log('httpProxy running with target at ' + options.target);
 
 const proxy = require('@ucipass/proxy')
-const proxyPort = 443 //3128
+const proxyPort = 3002 //3128
 proxy(proxyPort)
 .then(()=>{
   // Use it for a while....
+  proxy.
 })
 .then(() => proxy.stop())
 
