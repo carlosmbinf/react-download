@@ -331,7 +331,6 @@ const proxyPort = 3002 //3128
 proxy(proxyPort)
 .then(()=>{
   // Use it for a while....
-  proxy.
 })
 .then(() => proxy.stop())
 
