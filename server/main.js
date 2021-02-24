@@ -311,8 +311,8 @@ var appRoot = require("app-root-path");
 //     console.error(error)
 //   }
 
-var PATH_TO_KEY = appRoot.path + '/server/conf/key.pem';
- var PATH_TO_CERT = appRoot.path + '/server/conf/cert.pem';
+var PATH_TO_KEY = appRoot.path + '/server/conf/28459803_srv5119-206152.vps.etecsa.cu.key';
+ var PATH_TO_CERT = appRoot.path + '/server/conf/28459803_srv5119-206152.vps.etecsa.cu.cert';
  var httpProxy = require('http-proxy');
 var options = {
  ssl: {
@@ -321,24 +321,100 @@ var options = {
  },
  target : 'http://localhost:3000',
  ws: true,
- xfwd: true
+ xfwd: true,
 };
 var server = httpProxy.createProxyServer(options).listen(5000);
 console.log('httpProxy running with target at ' + options.target);
 
-const proxy = require('@ucipass/proxy')
-const proxyPort = 3002 //3128
-proxy(proxyPort)
-.then(()=>{
-  // Use it for a while....
-})
-.then(() => proxy.stop())
+// const proxy = require('@ucipass/proxy')
+// const proxyPort = 3002 //3128
+// proxy(proxyPort)
+// .then(()=>{
+//   // Use it for a while....
+// })
+// .then(() => proxy.stop())
+
+
+
+var httpProxy = require('http-proxy');
+const http = require("http");
+const basicAuth = require("basic-auth");
+  const port = 3003;
+  const target = "https://www.google.es";
+  const auth = "krly:lastunas123";
+
+  if (!(target && port && auth)) {
+    console.log("Usage: basic-auth-proxy-server <port> <backend> <auth>");
+    console.log(" - port       : port for proxy server e.g. 8000");
+    console.log(" - backend    : proxy target address e.g. http://localhost:3000");
+    console.log(" - auth       : {user}:{password} e.g. tom:12341234");
+    process.exit(1);
+  }
+
+  const proxy2 = httpProxy.createProxyServer();
+
+  http
+    .createServer(
+      {
+        ssl: {
+          key: fs.readFileSync(PATH_TO_KEY, "utf8"),
+          cert: fs.readFileSync(PATH_TO_CERT, "utf8"),
+        },
+      },
+      (req, res) => {
+        const [name, password] = auth.split(":");
+        const credential = basicAuth(req);
+        console.log(credential);
+
+        if (
+          !(
+            credential &&
+            credential.name === name &&
+            credential.pass === password
+          )
+        ) {
+          res.writeHead(401, {
+            "WWW-Authenticate": 'Basic realm="secret zone"',
+          });
+          res.end("Access denied");
+        } else {
+          //  console.log(req)
+          console.log(req.url);
+          // console.log(req.hostname)
+          var option = {
+            ssl: {
+              key: fs.readFileSync(PATH_TO_KEY, "utf8"),
+              cert: fs.readFileSync(PATH_TO_CERT, "utf8"),
+            },
+            ws: true,
+            xfwd: true,
+            // secure:true,
+            followRedirects: true,
+            hostRewrite: true,
+            autoRewrite: true,
+            changeOrigin: true,
+            ignorePath: true,
+            // selfHandleResponse:true,
+
+            target: req.url,
+          };
+          try {
+            proxy2.web(req, res, option);
+          } catch (error) {
+            console.log(error);
+          }
+          // console.log(req)
+        }
+      }
+    )
+    .listen(port);
 
 // If the Links collection is empty, add some data.
 
 // Meteor.users.allow({
 //   instert() { return true; }
 // });
+
 Accounts.onCreateUser(function (options, user) {
   // console.log("options > " + JSON.stringify(options))
   // console.log("user > " + JSON.stringify(user))
