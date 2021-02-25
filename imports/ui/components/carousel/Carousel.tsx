@@ -51,6 +51,11 @@ const Wrapper = styled.div`
       height: 30px;
       width: 30px;
       transition: 500ms;
+      @media only screen and (min-width: 960px) {
+      }
+      @media only screen and (max-width: 959.95px) {
+        display: none;
+      }
       :hover {
         background-color: #cc3366;
         p {
@@ -88,6 +93,7 @@ export default function Carousel({ items }: Props) {
         autoWidth
         // autoHeight
         // infinite
+        // disableButtonsControls={true}
         mouseTracking
         controlsStrategy="responsive"
         responsive={responsive}
