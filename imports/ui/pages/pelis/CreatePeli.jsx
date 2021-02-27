@@ -120,10 +120,10 @@ export default function CreateArchivo() {
   };
 
   async function createArch() {
-    var http = require("http");
-    http.post = require("http-post");
+    // var http = require("http");
+    // http.post = require("http-post");
     
-    idPeli = PelisCollection.insert({
+   let idPeli = PelisCollection.insert({
       nombrePeli: nombrePeli,
       urlPeli: urlPeli,
       urlBackground: urlBackground,
@@ -132,32 +132,49 @@ export default function CreateArchivo() {
       subtitulo: subtitulo,
       mostrar: mostrar,
     });
-    subtitulo
-      ? http.post(
-          "/convertsrttovtt",
-          { idPeli: idPeli },
-          (opciones, res, body) => {
-            if (!opciones.headers.error) {
-              // console.log(`statusCode: ${res.statusCode}`);
-              console.log("error " + JSON.stringify(opciones.headers));
-
-              setMessage(opciones.headers.message);
-              handleClick(TransitionUp);
-              setLoad(false);
-              setOpen(true);
-
-              return;
-            } else {
-              console.log(opciones.headers);
-              setMessage(opciones.headers.message);
-              handleClick(TransitionUp);
-              setLoad(false);
-              setOpen(true);
-              return;
-            }
-          }
-        )
+    subtitulo ?
+    $.post("convertsrttovtt", { idPeli: idPeli })
+    .done(function (data) {
+      setMessage("Película Agregada => " + idPeli);
+      handleClick(TransitionUp);
+      setLoad(false);
+      setOpen(true);
+    })
+    .fail(function (data) {
+      setMessage("Ocurrió un Error");
+      handleClick(TransitionUp);
+      setLoad(false);
+      setOpen(true);
+    })
       : "";
+
+      
+    // subtitulo
+    //   ? http.post(
+    //       "/convertsrttovtt",
+    //       { idPeli: idPeli },
+    //       (opciones, res, body) => {
+    //         if (!opciones.headers.error) {
+    //           // console.log(`statusCode: ${res.statusCode}`);
+    //           console.log("error " + JSON.stringify(opciones.headers));
+
+    //           setMessage(opciones.headers.message);
+    //           handleClick(TransitionUp);
+    //           setLoad(false);
+    //           setOpen(true);
+
+    //           return;
+    //         } else {
+    //           console.log(opciones.headers);
+    //           setMessage(opciones.headers.message);
+    //           handleClick(TransitionUp);
+    //           setLoad(false);
+    //           setOpen(true);
+    //           return;
+    //         }
+    //       }
+    //     )
+    //   : "";
   }
 
   function handleSubmit(event) {

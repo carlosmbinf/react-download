@@ -130,29 +130,42 @@ export default function AddDescargas() {
         idVideo: idVideo,
         creadoPor: Meteor.userId(),
       };
-
-      var http = require("http");
-      http.post = require("http-post");
-      http.post("/descarga", video, (opciones, res, body) => {
-        if (!opciones.headers.error) {
-          // console.log(`statusCode: ${res.statusCode}`);
-          console.log("error " + JSON.stringify(opciones.headers));
-
-          setMessage(opciones.headers.message);
+      
+      $.post("descarga", video)
+        .done(function (data) {
+          setMessage("Descargando Video => " + video.idVideo);
           handleClick(TransitionUp);
           setLoad(false);
           setOpen(true);
+        })
+        .fail(function (data) {
+          setMessage("Ocurrió un Error");
+          handleClick(TransitionUp);
+          setLoad(false);
+          setOpen(true);
+        });
+      // var http = require("http");
+      // http.post = require("http-post");
+      // http.post("/descarga", video, (opciones, res, body) => {
+      //   if (!opciones.headers.error) {
+      //     // console.log(`statusCode: ${res.statusCode}`);
+      //     console.log("error " + JSON.stringify(opciones.headers));
+
+      //     setMessage(opciones.headers.message);
+      //     handleClick(TransitionUp);
+      //     setLoad(false);
+      //     setOpen(true);
           
-          return;
-        } else {
-          console.log(opciones.headers);
-          setMessage(opciones.headers.message);
-          handleClick(TransitionUp);
-          setLoad(false);
-          setOpen(true);
-          return;
-        }
-      });
+      //     return;
+      //   } else {
+      //     console.log(opciones.headers);
+      //     setMessage(opciones.headers.message);
+      //     handleClick(TransitionUp);
+      //     setLoad(false);
+      //     setOpen(true);
+      //     return;
+      //   }
+      // });
     }
 
     makePostRequest();

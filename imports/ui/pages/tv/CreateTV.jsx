@@ -119,10 +119,8 @@ export default function CreateTV() {
     setMessage("");
   };
 
-  async function createArch() {
-    var http = require("http");
-    http.post = require("http-post");
-    
+  function createArch() {
+       
     idPeli = TVCollection.insert({
       nombreTV: nombreTV,
       urlTV: urlTV,
