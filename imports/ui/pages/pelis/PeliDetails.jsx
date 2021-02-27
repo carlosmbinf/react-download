@@ -201,11 +201,7 @@ export default function PeliDetails() {
                   )}
                 <Typography
                   variant="h5"
-                  color={
-                    peliDetails.mostrar == "true"
-                      ? "primary"
-                      : "secondary"
-                  }
+                  style={{color: "white",fontFamily: "cursive"}}
                 >
                   
                   {peliDetails.nombrePeli}

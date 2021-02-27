@@ -12,6 +12,7 @@ import { useTracker } from "meteor/react-meteor-data";
 import Badge from "@material-ui/core/Badge";
 import Avatar from "@material-ui/core/Avatar";
 import { Link, useParams } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 //icons
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
@@ -20,6 +21,7 @@ import MailIcon from "@material-ui/icons/Mail";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { TVCollection } from "../collections/collections";
 import VPlayer from 'react-vplayer';
+import DeleteIcon from "@material-ui/icons/Delete";
 
 const StyledBadge = withStyles((theme) => ({
   badge: {
@@ -129,6 +131,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function TV() {
+  const history = useHistory();
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
 
@@ -138,7 +141,14 @@ export default function TV() {
     Meteor.subscribe("tv", useParams().id);
     return TVCollection.findOne({ _id: useParams().id });
   });
+
   tvDetails&&console.log(tvDetails);
+  
+  function eliminarPeli() {
+    TVCollection.remove({ _id: tvDetails._id });
+    alert("Pelicula Eliminada");
+    history.push("/tv");
+  }
   return (
     <>
       <div className={classes.drawerHeader}>
@@ -167,7 +177,7 @@ export default function TV() {
           <Grid container
             direction="row"
             justify="center"
-            alignItems="center" spacing={3}>
+            alignItems="center" spacing={1}>
             <Grid style={{ width: "100%" }}>
               {/* INSERTAR VIDEO */}
               <iframe
@@ -175,18 +185,32 @@ export default function TV() {
               src={tvDetails.urlTV} 
               style={{width:"100%", maxHeight: "60vh",minHeight: "60vh"}}></iframe>
             </Grid>
+
             <Grid item xs={12}>
               {/* <Divider className={classes.padding10} /> */}
-              <Grid container direction="row" justify="center">
+              <Grid container
+                  direction="row-reverse"
+                  justify="space-around"
+                  alignItems="center">
+                    {Meteor.user().profile.role && Meteor.user().profile.role == "admin" ? (
+                    <IconButton onClick={eliminarPeli} aria-label="delete">
+                      <DeleteIcon fontSize="large" />
+                    </IconButton>
+                  ) : (
+                    <div/>
+                  )}
                 <Typography
                   variant="h5"
-                  color={"primary"}
+                  style={{color: "white",fontFamily: "cursive"}}
                 >
-                  <PermContactCalendarRoundedIcon />{" "}
+                  
                   {tvDetails.nombreTV}
                 </Typography>
+                <div />
               </Grid>
             </Grid>
+
+
           </Grid>
         </Paper>
       </Zoom>
