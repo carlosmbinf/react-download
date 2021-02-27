@@ -190,18 +190,27 @@ export default function TableDescarga() {
   const eliminarVideo = (id) => {
     console.log(id)
     const data = {id:id}
-    var http = require("http");
-    http.post = require("http-post");
-    http.post("/eliminar", data, (opciones, res, body) => {
-      if (!opciones.headers.error) {
-        // console.log(`statusCode: ${res.statusCode}`);
-        console.log("TODO OK: " + JSON.stringify(opciones.headers));
-        return;
-      } else {
-        console.log("ERRORS: " + opciones.headers);
-        return;
-      }
-    });
+    // var http = require("http");
+    // http.post = require("http-post");
+    // http.post("/eliminar", data, (opciones, res, body) => {
+    //   if (!opciones.headers.error) {
+    //     // console.log(`statusCode: ${res.statusCode}`);
+    //     console.log("TODO OK: " + JSON.stringify(opciones.headers));
+    //     return;
+    //   } else {
+    //     console.log("ERRORS: " + opciones.headers);
+    //     return;
+    //   }
+    // });
+    $.post("/eliminar", data)
+        .done(function (data) {
+          console.log("TODO OK: " + data);
+        })
+        .fail(function (data) {
+          console.log("ERRORS " + data);
+        });
+
+
   }
   const eliminarBodyTemplate = (rowData) => {
     return (
