@@ -5,7 +5,7 @@ import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import { Paper, Box, Grid, Icon, Divider, Zoom, IconButton, Switch, Chip } from "@material-ui/core";
+import { Paper, Box, Grid, Icon, Divider, Zoom, IconButton, Switch, Chip, FormControl, TextField } from "@material-ui/core";
 import { Meteor } from "meteor/meteor";
 import { Tracker } from "meteor/tracker";
 import { useTracker } from "meteor/react-meteor-data";
@@ -24,6 +24,9 @@ import { PelisCollection } from "../collections/collections";
 import VPlayer from 'react-vplayer';
 import DeleteIcon from "@material-ui/icons/Delete";
 import DoneIcon from '@material-ui/icons/Done';
+import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
+import SendIcon from '@material-ui/icons/Send';
+import RemoveRedEyeIcon from '@material-ui/icons/RemoveRedEye';
 
 const StyledBadge = withStyles((theme) => ({
   badge: {
@@ -130,20 +133,49 @@ const useStyles = makeStyles((theme) => ({
   margin: {
     margin: theme.spacing(2),
   },
+  paper: {
+    display: 'flex',
+    border: `1px solid ${theme.palette.divider}`,
+    flexWrap: 'wrap',
+  },
+  w100:{
+    width:"100%"
+  }
 }));
+const StyledToggleButtonGroup = withStyles((theme) => ({
+  grouped: {
+    margin: theme.spacing(0.5),
+    // border: 'none',
+    '&:not(:first-child)': {
+      borderRadius: theme.shape.borderRadius,
+    },
+    '&:first-child': {
+      borderRadius: theme.shape.borderRadius,
+    },
+  },
+}))(ToggleButtonGroup);
 
 export default function PeliDetails() {
   const history = useHistory();
+  var [edit, setEdit] = React.useState(false)
+  const [nombrePeli, setnombrePeli] = useState("");
+  const [urlPeli, seturlPeli] = useState("");
+  const [urlBackground, seturlBackground] = useState("");
+  const [descripcion, setdescripcion] = useState("");
+  const [tamano, settamano] = useState("");
+  const [subtitulo, setsubtitulo] = useState("");
+
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
-  
+
+
   const peliDetails = useTracker(() => {
     Meteor.subscribe("peli", useParams().id);
     return PelisCollection.findOne({ _id: useParams().id });
   });
 
   const handleChange = (event) => {
-    PelisCollection.update(peliDetails._id, { $set: {mostrar: !(peliDetails.mostrar=="true") }})
+    PelisCollection.update(peliDetails._id, { $set: { mostrar: !(peliDetails.mostrar == "true") } })
   };
 
   function eliminarPeli() {
@@ -152,16 +184,41 @@ export default function PeliDetails() {
     history.push("/pelis");
   }
 
-  function addVistas(){
-    PelisCollection.update(peliDetails._id, { $inc: {vistas: 1 }})
+  function addVistas() {
+    PelisCollection.update(peliDetails._id, { $inc: { vistas: 1 } })
   }
 
-  function handleDeleteClasificacion(event){
-    console.log(event)
-    var clasificacionactual = array
-    clasificacionactual.splice(position,1)
-    PelisCollection.update(peliDetails._id, { $set: {clasificacion: clasificacionactual }})
+  function handleEdit(event) {
+    setEdit(!edit)
+    setnombrePeli(peliDetails.nombrePeli)
+    seturlPeli(peliDetails.urlPeli)
+    seturlBackground(peliDetails.urlBackground)
+    setdescripcion(peliDetails.descripcion)
+    settamano(peliDetails.tamano)
+    setsubtitulo(peliDetails.subtitulo)
   }
+  const handleFormat = (event, newFormats) => {
+    // setFormats(newFormats);
+    PelisCollection.update(peliDetails._id, { $set: { clasificacion: newFormats } })
+  };
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    let peli
+    
+     peli = {
+      nombrePeli: nombrePeli,
+      urlPeli: urlPeli,
+      urlBackground: urlBackground,
+      descripcion: descripcion,
+      tamano: tamano,
+      subtitulo:subtitulo,
+    }
+    PelisCollection.update(peliDetails._id, { $set: peli })
+
+    // makePostRequest();
+  }
+
   return (
     <>
       <div className={classes.drawerHeader}>
@@ -180,68 +237,341 @@ export default function PeliDetails() {
         <Paper
           elevation={5}
           className={
-            peliDetails.mostrar !== "true"
-              ? classes.primary
-              : classes.secundary
+            peliDetails.mostrar !== "false"
+              ? classes.secundary
+              : classes.primary
           }
         >
-          <Grid container
-            direction="row"
-            justify="center"
-            alignItems="center" spacing={3}>
-            <Grid style={{ width: "100%" }}>
-              {/* INSERTAR VIDEO */}
-              <video onLoadedMetadata={addVistas}  controls width="100%" style={{width:"100%", maxHeight: "60vh"}} poster={peliDetails.urlBackground} preload="metadata">
-                <source src={peliDetails.urlPeli} type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
-                <track default kind="subtitles" label="Español" src={peliDetails.subtitulo} srcLang="es"/>
-                {/* <track default kind="descriptions" label="Español" src="https://visuales.uclv.cu/Peliculas/Extranjeras/2020/2020_Ava/sinopsis.txt" srcLang="es"/> */}
-              </video>
+          {edit ?
+            <Grid container
+              direction="row"
+              justify="center"
+              alignItems="center" spacing={3}>
+
+              <Grid item xs={12}>
+                <Button onClick={handleEdit} variant="contained" color="primary">
+                  Cancelar Edicion
+                </Button>
+              </Grid>
+              <Grid item xs={12}>
+                <Grid container
+                  direction="row"
+                  justify="center"
+                  alignItems="center"
+                >
+                  <Grid item xs={12}>
+                  <form
+                      // action="/hello"
+                      // method="post"
+                      // className={classes.root}
+                      onSubmit={handleSubmit}
+                      // noValidate
+                      autoComplete="false"
+                    >
+                      <Grid container className={classes.margin}>
+                        Datos de la Peli
+                      </Grid>
+                      <Grid container>
+                        <Grid item xs={12} sm={4} lg={3}>
+                          <FormControl required variant="outlined">
+                            <TextField
+                              required
+                              className={classes.margin}
+                              id="nombrePeli"
+                              name="nombrePeli"
+                              label="Nombre de la Peli"
+                              variant="outlined"
+                              color="secondary"
+                              type="text"
+                              value={nombrePeli}
+                              onInput={(e) => setnombrePeli(e.target.value)}
+                              InputProps={
+                                {
+                                  // startAdornment: (
+                                  //   // <InputAdornment position="start">
+                                  //   //   <AccountCircle />
+                                  //   // </InputAdornment>
+                                  // ),
+                                }
+                              }
+                            />
+                          </FormControl>
+                        </Grid>
+                        <Grid item xs={12} sm={4} lg={3}>
+                          <FormControl required variant="outlined">
+                            <TextField
+                              required
+                              className={classes.margin}
+                              id="urlPeli"
+                              name="urlPeli"
+                              label="URL de la Peli"
+                              variant="outlined"
+                              color="secondary"
+                              type="text"
+                              value={urlPeli}
+                              onInput={(e) => seturlPeli(e.target.value)}
+                              InputProps={
+                                {
+                                  // startAdornment: (
+                                  //   // <InputAdornment position="start">
+                                  //   //   <AccountCircle />
+                                  //   // </InputAdornment>
+                                  // ),
+                                }
+                              }
+                            />
+                          </FormControl>
+                        </Grid>
+                        <Grid item xs={12} sm={4} lg={3}>
+                          <FormControl required variant="outlined">
+                            <TextField
+                              required
+                              className={classes.margin}
+                              id="urlBackground"
+                              name="URL de la Imagen"
+                              label="urlBackground"
+                              variant="outlined"
+                              color="secondary"
+                              type="text"
+                              value={urlBackground}
+                              onInput={(e) => seturlBackground(e.target.value)}
+                              InputProps={
+                                {
+                                  // startAdornment: (
+                                  //   // <InputAdornment position="start">
+                                  //   //   <AccountCircle />
+                                  //   // </InputAdornment>
+                                  // ),
+                                }
+                              }
+                            />
+                          </FormControl>
+                        </Grid>
+                        <Grid item xs={12} sm={4} lg={3}>
+                          <FormControl
+                            required
+                            className={classes.w100}
+                            variant="outlined"
+                          >
+                            <TextField
+                              required
+                              className={classes.margin}
+                              id="tamano"
+                              name="tamano"
+                              label="Tamaño"
+                              variant="outlined"
+                              color="secondary"
+                              type="text"
+                              value={tamano}
+                              onInput={(e) => settamano(e.target.value)}
+                              // InputProps={{
+                              //   startAdornment: (
+                              //     // <InputAdornment position="start">
+                              //     //   <AccountCircle />
+                              //     // </InputAdornment>
+                              //   ),
+                              // }}
+                            />
+                          </FormControl>
+                        </Grid>
+                        <Grid item xs={12} sm={4} lg={3}>
+                          <FormControl
+                            className={classes.w100}
+                            variant="outlined"
+                          >
+                            <TextField
+                              className={classes.margin}
+                              id="subtitulo"
+                              name="subtitulo"
+                              label="Subtitulo"
+                              variant="outlined"
+                              color="secondary"
+                              type="text"
+                              value={subtitulo}
+                              onInput={(e) => setsubtitulo(e.target.value)}
+                              InputProps={{
+                                // startAdornment: (
+                                //   // <InputAdornment position="start">
+                                //   //   <AccountCircle />
+                                //   // </InputAdornment>
+                                // ),
+                              }}
+                            />
+                          </FormControl>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <FormControl required variant="outlined">
+                            <TextField
+                              required
+                              className={classes.margin}
+                              id="descripcion"
+                              name="descripcion"
+                              label="Descripcion"
+                              variant="outlined"
+                              color="secondary"
+                              type="text"
+                              multiline
+                              rows={4}
+                              value={descripcion}
+                              onInput={(e) => setdescripcion(e.target.value)}
+                              InputProps={
+                                {
+                                  // startAdornment: (
+                                  //   // <InputAdornment position="start">
+                                  //   //   <AccountCircle />
+                                  //   // </InputAdornment>
+                                  // ),
+                                }
+                              }
+                            />
+                          </FormControl>
+                        </Grid>
+                      </Grid>
+
+                      <Grid item xs={12} className={classes.flex}>
+                        <Button
+                          variant="contained"
+                          type="submit"
+                          color="secondary"
+                        >
+                          <SendIcon />
+                          Send
+                        </Button>
+                      </Grid>
+                    </form>
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid item xs={12}>
+                <StyledToggleButtonGroup
+                  size="small"
+                  value={peliDetails.clasificacion}
+                  onChange={handleFormat}
+                  aria-label="text alignment"
+                >
+                  <ToggleButton value="ACCION" aria-label="bold">
+                    accion
+                  </ToggleButton>
+                  <ToggleButton value="TERROR" aria-label="italic">
+                    terror
+                  </ToggleButton>
+                  <ToggleButton value="CIENCIA Y FICCION" aria-label="underlined">
+                    Ciencia y Ficcion
+                  </ToggleButton>
+                  <ToggleButton value="AVENTURA" aria-label="color">
+                    Aventura
+                  </ToggleButton>
+                </StyledToggleButtonGroup>
+              </Grid>
+
             </Grid>
-            <Grid item xs={12}>
-              {/* <Divider className={classes.padding10} /> */}
-              <Grid container
+            :
+            <Grid container
+              direction="row"
+              justify="center"
+              alignItems="center" spacing={3}>
+              <Grid style={{ width: "100%" }}>
+                {/* INSERTAR VIDEO */}
+                <video onLoadedMetadata={addVistas} controls width="100%" style={{ width: "100%", maxHeight: "60vh" }} poster={peliDetails.urlBackground} preload="metadata">
+                  <source src={peliDetails.urlPeli} type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
+                  <track default kind="subtitles" label="Español" src={peliDetails.subtitulo} srcLang="es" />
+                  {/* <track default kind="descriptions" label="Español" src="https://visuales.uclv.cu/Peliculas/Extranjeras/2020/2020_Ava/sinopsis.txt" srcLang="es"/> */}
+                </video>
+              </Grid>
+              <Grid item xs={12}>
+                <Divider className={classes.padding10} />
+                <Grid container
                   direction="row-reverse"
                   justify="space-around"
                   alignItems="center">
-                    {Meteor.user().profile.role && Meteor.user().profile.role == "admin" ? (
+                  {Meteor.user().profile.role && Meteor.user().profile.role == "admin" ? (
                     <IconButton onClick={eliminarPeli} aria-label="delete">
                       <DeleteIcon fontSize="large" />
                     </IconButton>
                   ) : (
-                    <div/>
-                  )}
-                <Typography
-                  variant="h5"
-                  style={{color: "white",fontFamily: "cursive"}}
-                >
-                  
-                  {peliDetails.nombrePeli}
-                </Typography>
-                {Meteor.user().profile.role && Meteor.user().profile.role == "admin" ? (
-                    <Switch
-                    checked={peliDetails.mostrar=="true"}
-                    onChange={handleChange}
-                    name="Mostrar"
-                    color="primary"
-                  />
-                  ) : (
-                    <div/>
-                  )}
-                  
-              </Grid>
-            </Grid>
-            <Divider variant="middle"/>
-            <Grid item xs={12} >
-            
-            {peliDetails.clasificacion.map((clasi,index) =>
-            <Chip key={index} style={{margin:5}} label={clasi} deleteIcon={<DeleteIcon />} onDelete={handleDeleteClasificacion} />
-  )
-  }
-            </Grid>
-            <Grid item xs={12}>
+                      <div />
+                    )}
+                  <Typography
+                    variant="h5"
+                    style={{ color: "#ffffff99", fontFamily: "cursive" }}
+                  >
 
+                    {peliDetails.nombrePeli}
+                  </Typography>
+                  {Meteor.user().profile.role && Meteor.user().profile.role == "admin" ? (
+                    <Switch
+                      checked={peliDetails.mostrar == "true"}
+                      onChange={handleChange}
+                      name="Mostrar"
+                      color="primary"
+                    />
+                  ) : (
+                      <div />
+                    )}
+
+                </Grid>
+              </Grid>
+              <Divider variant="middle" />
+              <Grid item xs={12} >
+                <Grid container
+                  direction="row"
+                  justify="center"
+                  alignItems="center">
+                  <Grid item xs={12} sm={8}>
+                    {peliDetails.clasificacion.map((clasi, index) =>
+                      <Chip key={index} color="primary" style={{ margin: 5, color: "#ffffff99" }} label={clasi} />
+                    )
+                    }
+                  </Grid>
+                  <Grid item xs={12} sm={4}>
+                  <Grid
+                          container
+                          direction="row"
+                          justify="flex-end"
+                          alignItems="center"
+                          style={{
+                            color: "white",
+                            fontSize: 14,
+                            fontFamily: "cursive",
+                          }}
+                        >
+                          <RemoveRedEyeIcon />{" "}
+                          <Typography>
+                            <strong>{peliDetails.vistas.toFixed()}</strong>
+                          </Typography>
+                        </Grid>
+                  </Grid>
+                </Grid>
+
+              </Grid>
+              <Divider variant="middle" />
+              <Grid item xs={12}>
+                <Paper elevation={3} style={{ backgroundColor: "#3f4b5b", padding: 10 }}>
+                  <Grid container
+                    direction="row"
+                    justify="center"
+                    alignItems="center">
+                    <Grid item xs={12}>
+                      <Typography variant="subtitle2" style={{ color: "#ffffff99" }} gutterBottom>
+                        {peliDetails.descripcion}
+                      </Typography>
+                    </Grid>
+
+                  </Grid>
+
+                </Paper>
+              </Grid>
+              {Meteor.user().profile.role && Meteor.user().profile.role == "admin" ? (
+                <Grid item xs={12}>
+                  <Button onClick={handleEdit} variant="contained" color="primary">Editar</Button>
+                </Grid>
+              ) : (
+                  ""
+                )}
             </Grid>
-          </Grid>
+
+          }
+
         </Paper>
       </Zoom>
       }

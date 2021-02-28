@@ -67,6 +67,7 @@ export const SchemaPelisCollection = new SimpleSchema({
   subtitulo: {
     type: String,
     defaultValue: "",
+    optional: true,
   },
   vistas: {
     type: Number,

@@ -145,13 +145,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function PeliCard(withAdd) {
+export default function PeliCard(options) {
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
 
   const peli = useTracker(() => {
     Meteor.subscribe("pelis");
-    return PelisCollection.find({}, { fields: {} }).fetch();
+    if (options.clasificacion == "admin") {
+      return PelisCollection.find({}, { fields: {} }).fetch();
+    } else {
+      return PelisCollection.find({ clasificacion: options.clasificacion }, { fields: {} }).fetch();
+    }
   });
 
   const items = peli.map((peliGeneral, i) => {
@@ -228,7 +232,7 @@ export default function PeliCard(withAdd) {
 
   // console.log(peli);
 
-  if (withAdd.withCreate == "true") {
+  if (options.withCreate == "true") {
     return (
     <>
       <Fade top >
@@ -274,11 +278,29 @@ export default function PeliCard(withAdd) {
   }
   return (
     <>
-    <Fade left>
-    <div style={{ width: "100%" }}>
-        <Carousel items={items} />
-      </div>
-    </Fade>
+      {peli.length ?
+        <Fade left>
+          <Grid
+            container
+            direction="row"
+            justify="flex-start"
+            alignItems="center"
+            style={{padding:60,paddingBottom:0,paddingRight:0}}
+          >
+            <Grid item xs={12}>
+              <Typography variant="h4" gutterBottom style={{fontFamily:"cursive"}}>
+                {options.clasificacion}
+              </Typography>
+
+            </Grid>
+          </Grid>
+          <div style={{ width: "100%" }}>
+            <Carousel items={items} />
+          </div>
+        </Fade>
+        : ""
+    }
+    
       
     </>
   );

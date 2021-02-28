@@ -188,14 +188,24 @@ export default function Main() {
               {useractual &&
                 useractual.profile &&
                 useractual.profile.role == "admin" ? (
-                  <PelisCard withCreate="true" />
+                  <PelisCard withCreate="true"/>
                 ) : (
                   ""
                 )}
 
             </Grid>
             <Grid item xs={12}>
-              <PelisCard />
+            {useractual &&
+                useractual.profile &&
+                useractual.profile.role == "admin" ? (
+                  <PelisCard clasificacion="admin"/>
+                ) : (
+                  ""
+                )}
+              <PelisCard clasificacion="AVENTURA"/>
+              <PelisCard clasificacion="ACCION"/>
+              <PelisCard clasificacion="CIENCIA Y FICCION"/>
+              <PelisCard clasificacion="TERROR"/>
             </Grid>
           </Grid>
 
