@@ -206,7 +206,7 @@ export default function TVonline(withAdd) {
                         >
                           <RemoveRedEyeIcon />{" "}
                           <Typography>
-                            <strong>{tvGeneral.vistas}</strong>
+                            <strong>{tvGeneral.vistas.toFixed()}</strong>
                           </Typography>
                         </Grid>
                       </Grid>

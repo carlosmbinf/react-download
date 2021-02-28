@@ -5,7 +5,7 @@ import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import { Paper, Box, Grid, Icon, Divider, Zoom, IconButton } from "@material-ui/core";
+import { Paper, Box, Grid, Icon, Divider, Zoom, IconButton, Switch, Chip } from "@material-ui/core";
 import { Meteor } from "meteor/meteor";
 import { Tracker } from "meteor/tracker";
 import { useTracker } from "meteor/react-meteor-data";
@@ -13,7 +13,7 @@ import Badge from "@material-ui/core/Badge";
 import Avatar from "@material-ui/core/Avatar";
 import { Link, useParams } from "react-router-dom";
 import { useHistory } from "react-router-dom";
-
+import { _ } from 'meteor/underscore'
 //icons
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
@@ -23,6 +23,7 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { PelisCollection } from "../collections/collections";
 import VPlayer from 'react-vplayer';
 import DeleteIcon from "@material-ui/icons/Delete";
+import DoneIcon from '@material-ui/icons/Done';
 
 const StyledBadge = withStyles((theme) => ({
   badge: {
@@ -74,7 +75,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 20,
     padding: "2em",
     background:
-      "linear-gradient(0deg, rgba(245,0,87,1) 15%, rgba(245,0,87,0) 100%)",
+      "linear-gradient(0deg, #3f4b5b 15%, rgba(245,0,87,0) 100%);",
   },
   boton: {
     borderRadius: 20,
@@ -135,13 +136,15 @@ export default function PeliDetails() {
   const history = useHistory();
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
-
-  PelisCollection.update(useParams().id, { $inc: {vistas: 0.5 }})
- 
+  
   const peliDetails = useTracker(() => {
     Meteor.subscribe("peli", useParams().id);
     return PelisCollection.findOne({ _id: useParams().id });
   });
+
+  const handleChange = (event) => {
+    PelisCollection.update(peliDetails._id, { $set: {mostrar: !(peliDetails.mostrar=="true") }})
+  };
 
   function eliminarPeli() {
     PelisCollection.remove({ _id: peliDetails._id });
@@ -149,6 +152,16 @@ export default function PeliDetails() {
     history.push("/pelis");
   }
 
+  function addVistas(){
+    PelisCollection.update(peliDetails._id, { $inc: {vistas: 1 }})
+  }
+
+  function handleDeleteClasificacion(event){
+    console.log(event)
+    var clasificacionactual = array
+    clasificacionactual.splice(position,1)
+    PelisCollection.update(peliDetails._id, { $set: {clasificacion: clasificacionactual }})
+  }
   return (
     <>
       <div className={classes.drawerHeader}>
@@ -158,9 +171,7 @@ export default function PeliDetails() {
             aria-label="delete"
             className={classes.margin}
           >
-
             <ArrowBackIcon fontSize="large" color="secondary" />
-
           </IconButton>
         </Link>
       </div>
@@ -180,7 +191,7 @@ export default function PeliDetails() {
             alignItems="center" spacing={3}>
             <Grid style={{ width: "100%" }}>
               {/* INSERTAR VIDEO */}
-              <video controls style={{width:"100%", maxHeight: "60vh"}} poster={peliDetails.urlBackground} preload="metadata">
+              <video onLoadedMetadata={addVistas}  controls width="100%" style={{width:"100%", maxHeight: "60vh"}} poster={peliDetails.urlBackground} preload="metadata">
                 <source src={peliDetails.urlPeli} type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
                 <track default kind="subtitles" label="Español" src={peliDetails.subtitulo} srcLang="es"/>
                 {/* <track default kind="descriptions" label="Español" src="https://visuales.uclv.cu/Peliculas/Extranjeras/2020/2020_Ava/sinopsis.txt" srcLang="es"/> */}
@@ -206,8 +217,29 @@ export default function PeliDetails() {
                   
                   {peliDetails.nombrePeli}
                 </Typography>
-                <div />
+                {Meteor.user().profile.role && Meteor.user().profile.role == "admin" ? (
+                    <Switch
+                    checked={peliDetails.mostrar=="true"}
+                    onChange={handleChange}
+                    name="Mostrar"
+                    color="primary"
+                  />
+                  ) : (
+                    <div/>
+                  )}
+                  
               </Grid>
+            </Grid>
+            <Divider variant="middle"/>
+            <Grid item xs={12} >
+            
+            {peliDetails.clasificacion.map((clasi,index) =>
+            <Chip key={index} style={{margin:5}} label={clasi} deleteIcon={<DeleteIcon />} onDelete={handleDeleteClasificacion} />
+  )
+  }
+            </Grid>
+            <Grid item xs={12}>
+
             </Grid>
           </Grid>
         </Paper>

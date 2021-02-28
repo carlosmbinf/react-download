@@ -96,7 +96,7 @@ if (Meteor.isServer) {
 
     res.end();
   });
-  endpoint.post("/hello", (req, res) => {
+  endpoint.post("/createuser", (req, res) => {
     // console.log(req)
     // console.log(req.body)
     try {

@@ -127,7 +127,7 @@ TVCollection.allow({
   
     remove(userId, doc) {
       // Can only remove your own documents.
-      return Meteor.users.findOne({_id:Meteor.userId()}).profile.role == "admin";;
+      return Meteor.users.findOne({_id:Meteor.userId()}).profile.role == "admin";
     },
 })
 PelisCollection.allow({
@@ -143,7 +143,7 @@ PelisCollection.allow({
     
       remove(userId, doc) {
         // Can only remove your own documents.
-        return Meteor.users.findOne({_id:Meteor.userId()}).profile.role == "admin";;
+        return Meteor.users.findOne({_id:Meteor.userId()}).profile.role == "admin";
       },
 })
 DescargasCollection.allow({

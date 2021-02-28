@@ -209,7 +209,7 @@ export default function PeliCard(withAdd) {
                         >
                           <RemoveRedEyeIcon />{" "}
                           <Typography>
-                            <strong>{peliGeneral.vistas}</strong>
+                            <strong>{peliGeneral.vistas.toFixed()}</strong>
                           </Typography>
                         </Grid>
                       </Grid>

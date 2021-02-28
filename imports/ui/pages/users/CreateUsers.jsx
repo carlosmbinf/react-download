@@ -118,28 +118,41 @@ export default function CreateUsers() {
         edad: CI,
       };
 
-      var http = require("http");
-      http.post = require("http-post");
-      http.post("/hello", user, (opciones, res, body) => {
-        if (!opciones.headers.error) {
-          // console.log(`statusCode: ${res.statusCode}`);
-          console.log("error " + JSON.stringify(opciones.headers));
+      $.post("/createuser", user)
+    .done(function (data) {
+      setMessage("Usuario " + user.email + " Creado");
+      handleClick(TransitionUp);
+      setLoad(false);
+      setOpen(true);
+    })
+    .fail(function (data) {
+      setMessage("Ocurrió un Error");
+      handleClick(TransitionUp);
+      setLoad(false);
+      setOpen(true);
+    })
+      // var http = require("http");
+      // http.post = require("http-post");
+      // http.post("/hello", user, (opciones, res, body) => {
+      //   if (!opciones.headers.error) {
+      //     // console.log(`statusCode: ${res.statusCode}`);
+      //     console.log("error " + JSON.stringify(opciones.headers));
 
-          setMessage(opciones.headers.message);
-          handleClick(TransitionUp);
-          setLoad(false);
-          setOpen(true);
+      //     setMessage(opciones.headers.message);
+      //     handleClick(TransitionUp);
+      //     setLoad(false);
+      //     setOpen(true);
           
-          return;
-        } else {
-          console.log(opciones.headers);
-          setMessage(opciones.headers.message);
-          handleClick(TransitionUp);
-          setLoad(false);
-          setOpen(true);
-          return;
-        }
-      });
+      //     return;
+      //   } else {
+      //     console.log(opciones.headers);
+      //     setMessage(opciones.headers.message);
+      //     handleClick(TransitionUp);
+      //     setLoad(false);
+      //     setOpen(true);
+      //     return;
+      //   }
+      // });
     }
 
     makePostRequest();
