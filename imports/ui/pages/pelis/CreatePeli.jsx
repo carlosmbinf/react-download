@@ -100,6 +100,7 @@ export default function CreateArchivo() {
   const [urlBackground, seturlBackground] = useState("");
   const [descripcion, setdescripcion] = useState("");
   const [tamano, settamano] = useState("");
+  const [year, setyear] = useState("");
   const [subtitulo, setsubtitulo] = useState("");
   const [mostrar, setmostrar] = React.useState(false);
   const [open, setOpen] = React.useState(false);
@@ -131,6 +132,7 @@ export default function CreateArchivo() {
       tamano: tamano,
       subtitulo: subtitulo,
       mostrar: mostrar,
+      year:year,
     });
     subtitulo ?
     $.post("convertsrttovtt", { idPeli: idPeli })
@@ -190,6 +192,7 @@ export default function CreateArchivo() {
     setdescripcion("");
     settamano("");
     setsubtitulo("");
+    setyear("");
     setmostrar(false);
     // makePostRequest();
   }
@@ -332,6 +335,31 @@ export default function CreateArchivo() {
                           </FormControl>
                         </Grid>
                         <Grid item xs={12} sm={4} lg={3}>
+                          <FormControl required variant="outlined">
+                            <TextField
+                              required
+                              className={classes.margin}
+                              id="year"
+                              name="Año"
+                              label="Año"
+                              variant="outlined"
+                              color="secondary"
+                              type="number"
+                              value={year}
+                              onInput={(e) => setyear(e.target.value)}
+                              InputProps={
+                                {
+                                  // startAdornment: (
+                                  //   // <InputAdornment position="start">
+                                  //   //   <AccountCircle />
+                                  //   // </InputAdornment>
+                                  // ),
+                                }
+                              }
+                            />
+                          </FormControl>
+                        </Grid>
+                        <Grid item xs={12} sm={4} lg={3}>
                           <FormControl
                             required
                             className={classes.w100}
@@ -345,7 +373,7 @@ export default function CreateArchivo() {
                               label="Tamaño"
                               variant="outlined"
                               color="secondary"
-                              type="text"
+                              type="number"
                               value={tamano}
                               onInput={(e) => settamano(e.target.value)}
                               // InputProps={{
