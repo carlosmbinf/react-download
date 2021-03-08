@@ -13,6 +13,7 @@ import {
   Divider,
   Zoom,
   IconButton,
+  Switch,
 } from "@material-ui/core";
 import { Meteor } from "meteor/meteor";
 import { Tracker } from "meteor/tracker";
@@ -149,6 +150,9 @@ export default function UserCardDetails() {
     alert("Usuario Eliminado");
     history.push("/users");
   }
+  const handleChange = (event) => {
+    Meteor.users.update(users._id, { $set: { "profile.role": (users.profile.role == "admin")?"user":"admin" } })
+  };
   return (
     <>
       <div className={classes.drawerHeader}>
@@ -230,7 +234,7 @@ export default function UserCardDetails() {
                       <DeleteIcon fontSize="large" />
                     </IconButton>
                   ) : (
-                    <div></div>
+                    <div/>
                   )}
 
                   <Typography
@@ -241,7 +245,16 @@ export default function UserCardDetails() {
                   >
                     <PermContactCalendarRoundedIcon /> {users.profile.role}
                   </Typography>
-                  <div />
+                  {Meteor.user().profile.role && Meteor.user().profile.role == "admin" ? (
+                    <Switch
+                    checked={users.profile.role == "admin"}
+                    onChange={handleChange}
+                    name="Roles"
+                    color="primary"
+                  />
+                  ) : (
+                    <div/>
+                  )}
                 </Grid>
               </Grid>
             </Grid>
