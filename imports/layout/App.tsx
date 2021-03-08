@@ -167,18 +167,18 @@ export default function PersistentDrawerLeft() {
   const [error, setError] = useState("");
 
   const userActual = useTracker(() => {
-    
-    Meteor.subscribe("userID",Meteor.userId());
+
+    Meteor.subscribe("userID", Meteor.userId());
     return Meteor.user();
   });
 
-  
+
   const listaDeLinks = [
-    { title: "dashboard", icon: <InboxIcon /> , url:"dashboard"},
+    { title: "dashboard", icon: <InboxIcon />, url: "dashboard" },
     // {title: "guest",
     //   icon: <InboxIcon />,
     // },
-    { title: "USUARIOS", icon: <InboxIcon /> , url:"users"},
+    { title: "USUARIOS", icon: <InboxIcon />, url: "users" },
     // {title: "calendar",
     //   icon: <InboxIcon />,
     // },
@@ -188,12 +188,12 @@ export default function PersistentDrawerLeft() {
     // {title: "create-user",
     //   icon: <InboxIcon />,
     // },
-    { title: "Television en VIVO", icon: <InboxIcon /> , url:"tv"},
-    { title: "Peliculas", icon: <InboxIcon /> , url:"pelis" },
+    { title: "Television en VIVO", icon: <InboxIcon />, url: "tv" },
+    { title: "Peliculas", icon: <InboxIcon />, url: "pelis" },
     // {title: "create-pelis",
     //   icon: <InboxIcon />,
     // },
-    { title: "Descargas Youtube", icon: <InboxIcon /> , url:"downloads"},
+    { title: "Descargas Youtube", icon: <InboxIcon />, url: "downloads" },
   ];
 
   const handleDrawerOpen = () => {
@@ -214,7 +214,7 @@ export default function PersistentDrawerLeft() {
   };
   return (
     <>
-      <div className={classes.root} 
+      <div className={classes.root}
       // style={{ background: "rgb(29 47 62)" }}
       >
         <CssBaseline />
@@ -228,10 +228,10 @@ export default function PersistentDrawerLeft() {
         >
           <AppBar
             position="fixed"
-            className={clsx(classes.appBar, 
-            //   {
-            //   [classes.appBarShift]: open,
-            // }
+            className={clsx(classes.appBar,
+              //   {
+              //   [classes.appBarShift]: open,
+              // }
             )}
           >
             <Toolbar>
@@ -271,8 +271,8 @@ export default function PersistentDrawerLeft() {
                         <Avatar
                           alt={
                             userActual &&
-                            userActual.profile &&
-                            userActual.profile.firstName
+                              userActual.profile &&
+                              userActual.profile.firstName
                               ? userActual.profile.firstName
                               : userActual.profile.name
                           }
@@ -287,12 +287,12 @@ export default function PersistentDrawerLeft() {
                       {
                         <strong>
                           {userActual &&
-                          userActual.profile &&
-                          userActual.profile.firstName
+                            userActual.profile &&
+                            userActual.profile.firstName
                             ? " " +
-                              userActual.profile.firstName +
-                              " " +
-                              userActual.profile.lastName
+                            userActual.profile.firstName +
+                            " " +
+                            userActual.profile.lastName
                             : " " + userActual.profile.name + " "}
                         </strong>
                       }
@@ -332,25 +332,38 @@ export default function PersistentDrawerLeft() {
               {theme.direction === "ltr" ? (
                 <ChevronLeftIcon />
               ) : (
-                <ChevronRightIcon />
-              )}
+                  <ChevronRightIcon />
+                )}
             </IconButton>
           </div>
           <Divider />
           <List>
             {listaDeLinks.map((text, index) => (
-              <Link key={index} to={"/" + text.url} className={classes.link}>
-                <ListItem button className={classes.item}>
-                  <ListItemIcon>
-                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                  </ListItemIcon>
-                  <strong
-                    style={{ textTransform: "uppercase", color: "rgba(0, 0, 0, 0.54)" }}
-                  >
-                    {text.title}
-                  </strong>
-                </ListItem>
-              </Link>
+              Meteor.user().profile && Meteor.user().profile.role == "admin" ?
+                <Link key={index} to={"/" + text.url} className={classes.link}>
+                  <ListItem button className={classes.item}>
+                    <ListItemIcon>
+                      {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                    </ListItemIcon>
+                    <strong
+                      style={{ textTransform: "uppercase", color: "rgba(0, 0, 0, 0.54)" }}
+                    >
+                      {text.title}
+                    </strong>
+                  </ListItem>
+                </Link>
+                : text.url !== "users" ? <Link key={index} to={"/" + text.url} className={classes.link}>
+                  <ListItem button className={classes.item}>
+                    <ListItemIcon>
+                      {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                    </ListItemIcon>
+                    <strong
+                      style={{ textTransform: "uppercase", color: "rgba(0, 0, 0, 0.54)" }}
+                    >
+                      {text.title}
+                    </strong>
+                  </ListItem>
+                </Link> : ""
             ))}
           </List>
           <Divider />
@@ -366,7 +379,7 @@ export default function PersistentDrawerLeft() {
           </List> */}
         </Drawer>
         <main
-          className={clsx(classes.content, 
+          className={clsx(classes.content,
             // {
             // [classes.contentShift]: open,
             // }

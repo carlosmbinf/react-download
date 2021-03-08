@@ -89,27 +89,35 @@ export default function Main() {
           <UserCardDetails />
         </Route>
         <Route path="/users">
-          <Grid
-            container
-            direction="row"
-            justify="center"
-            alignItems="center"
-          >
-            <Grid item xs={12} className={classes.root}>
-              {useractual &&
-                useractual.profile &&
-                useractual.profile.role == "admin" ? (
+          {useractual &&
+            useractual.profile &&
+            useractual.profile.role == "admin" ? (
+              <Grid
+                container
+                direction="row"
+                justify="center"
+                alignItems="center"
+              >
+                <Grid item xs={12} className={classes.root}>
                   <UserCard withCreate="true" />
-                ) : (
-                  ""
-                )}
+                </Grid>
+                <Grid item xs={12}>
+                  <UserCard />
+                  <UsersTable />
+                </Grid>
+              </Grid>
+            ) : (
+              <Zoom in={true}>
+                <Grid container
+                  direction="row"
+                  justify="center"
+                  alignItems="center">
+                  <h1>SIN ACCESO</h1>
+                </Grid>
 
-            </Grid>
-            <Grid item xs={12}>
-              <UserCard />
-              <UsersTable />
-            </Grid>
-          </Grid>
+              </Zoom>
+            )}
+
         </Route>
         <Route path="/calendar"></Route>
         <Route path="/create-user">
@@ -190,24 +198,24 @@ export default function Main() {
               {useractual &&
                 useractual.profile &&
                 useractual.profile.role == "admin" ? (
-                  <PelisCard withCreate="true"/>
+                  <PelisCard withCreate="true" />
                 ) : (
                   ""
                 )}
 
             </Grid>
             <Grid item xs={12}>
-            {useractual &&
+              {useractual &&
                 useractual.profile &&
                 useractual.profile.role == "admin" ? (
-                  <PelisCard clasificacion="admin"/>
+                  <PelisCard clasificacion="admin" />
                 ) : (
                   ""
                 )}
-              <PelisCard clasificacion="AVENTURA"/>
-              <PelisCard clasificacion="ACCION"/>
-              <PelisCard clasificacion="CIENCIA Y FICCION"/>
-              <PelisCard clasificacion="TERROR"/>
+              <PelisCard clasificacion="AVENTURA" />
+              <PelisCard clasificacion="ACCION" />
+              <PelisCard clasificacion="CIENCIA Y FICCION" />
+              <PelisCard clasificacion="TERROR" />
             </Grid>
           </Grid>
 

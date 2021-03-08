@@ -39,6 +39,8 @@ import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import CheckCircleRoundedIcon from "@material-ui/icons/CheckCircleRounded";
 //Collections
 import { DescargasCollection } from "../collections/collections";
+import { useHistory } from 'react-router-dom';
+
 
 const StyledBadge = withStyles((theme) => ({
   badge: {
@@ -107,6 +109,7 @@ export default function UsersTable() {
   const [open, setOpen] = React.useState(true);
   const [selectedStatus, setSelectedStatus] = React.useState(null);
   const dt = React.useRef(null);
+  const history = useHistory();
 
   const descargaRegister = useTracker(() => {
     Meteor.subscribe("users");
@@ -118,13 +121,21 @@ export default function UsersTable() {
         a.push({
           id: data._id,
           email: data.emails[0].address,
-          firstname: data.profile.firstName,
+          firstname: data.profile &&
+            data.profile.firstName
+            ? data.profile.firstName
+            : data.profile.name,
           lastName: data.profile.lastName,
           role: data.profile.role,
           edad: data.edad,
-          foto: data.services&&data.services.facebook&&(data.services.facebook.picture.data.url ? data.services.facebook.picture.data.url : "")
+          foto: data.services &&
+            data.services.facebook &&
+            data.services.facebook.picture.data.url
+            ? data.services.facebook.picture.data.url
+            : "/"
         })
     );
+    
     return a;
   });
 
@@ -139,14 +150,6 @@ export default function UsersTable() {
       <React.Fragment>
         <span className="p-column-title">ID</span>
         {rowData.id}
-      </React.Fragment>
-    );
-  };
-  const idFileBodyTemplate = (rowData) => {
-    return (
-      <React.Fragment>
-        <span className="p-column-title">ID de Youtube</span>
-        {rowData.idFile}
       </React.Fragment>
     );
   };
@@ -166,53 +169,26 @@ export default function UsersTable() {
       </React.Fragment>
     );
   };
-  const comentariosBodyTemplate = (rowData) => {
-    return (
-      <React.Fragment>
-        <span className="p-column-title">Comentarios</span>
-        {rowData.comentarios}
-      </React.Fragment>
-    );
-  };
-  const createdAtBodyTemplate = (rowData) => {
-    return (
-      <React.Fragment>
-        <span className="p-column-title">Fecha de Descarga</span>
-        <h3>{rowData.createdAt}</h3>
-      </React.Fragment>
-    );
-  };
-
   const eliminarVideo = (id) => {
-    console.log(id)
-    const data = {id:id}
-    var http = require("http");
-    http.post = require("http-post");
-    http.post("/eliminar", data, (opciones, res, body) => {
-      if (!opciones.headers.error) {
-        // console.log(`statusCode: ${res.statusCode}`);
-        console.log("TODO OK: " + JSON.stringify(opciones.headers));
-        return;
-      } else {
-        console.log("ERRORS: " + opciones.headers);
-        return;
-      }
-    });
+    Meteor.users.remove(id)   
   }
   const eliminarBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
+        <span className="p-column-title"></span>
         <Button 
-        onClick={() => { eliminarVideo(rowData.idFile) }}
+        onClick={() => { eliminarVideo(rowData.id) }}
         >Eliminar</Button>
       </React.Fragment>
     );
   };
-  const urlRealBodyTemplate = (rowData) => {
+  const urlBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
         <span className="p-column-title"></span>
-        <a href={"/users/" + rowData._id}>View User</a>
+        <Button variant="contained" color="primary" onClick={() => { history.push("/users/" + rowData.id) }}>
+          Ver Detalles
+        </Button>
       </React.Fragment>
     );
   };
@@ -221,12 +197,12 @@ export default function UsersTable() {
       <React.Fragment>
         <span className="p-column-title"></span>
         <Avatar
-                          alt={rowData.firstName
-                          }
-                          src={
-                            rowData.foto
-                          }
-                        />
+          alt={rowData.firstName
+          }
+          src={
+            rowData.foto
+          }
+        />
         {/* <img
           src={rowData.services.facebook.picture.data.url}
           alt="N/A"
@@ -280,7 +256,7 @@ export default function UsersTable() {
               >
                 <Column
                   field="img"
-                  header="Comentarios"
+                  header="IMG"
                   body={thumbnailBodyTemplate}
                 />
                 <Column
@@ -293,41 +269,25 @@ export default function UsersTable() {
                   filterMatchMode="contains"
                 />
                 <Column
-                  field="Nombre y Apellidos"
-                  header="Registro de Salida"
+                  field="nombreApellidos"
+                  header="Nombre y Apellidos"
                   body={nombreBodyTemplate}
                   filter
-                  filterPlaceholder="Buscar en Registro de Salida"
+                  filterPlaceholder="Buscar por Nombre y Apellidos"
                   filterMatchMode="contains"
                 />
                 <Column
                   field="edad"
-                  header="Tamaño de archivo"
+                  header="Edad"
                   body={edadBodyTemplate}
                   filter
-                  filterPlaceholder="Buscar en estantes"
-                  filterMatchMode="contains"
-                />
-                <Column
-                  field="comentarios"
-                  header="Comentarios"
-                  body={comentariosBodyTemplate}
-                  filter
-                  filterPlaceholder="Buscar en comentarios"
-                  filterMatchMode="contains"
-                />
-                <Column
-                  field="createdAt"
-                  header="Fecha de Descarga"
-                  body={createdAtBodyTemplate}
-                  filter
-                  filterPlaceholder="Buscar en comentarios"
+                  filterPlaceholder="Buscar por Edades"
                   filterMatchMode="contains"
                 />
                 <Column
                   field="urlReal"
-                  header="URL Real"
-                  body={urlRealBodyTemplate}
+                  header="URL Detalles"
+                  body={urlBodyTemplate}
                 />
                 <Column
                   field="eliminar"

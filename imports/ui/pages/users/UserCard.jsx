@@ -137,7 +137,7 @@ export default function UserCard(withAdd) {
 
   const users = useTracker(() => {
     Meteor.subscribe("user");
-    return Meteor.users.find({}, { fields: {} }).fetch();
+    return Meteor.users.find({"profile.role":"admin"}, { fields: {} }).fetch();
   });
 
   const items = users.map((usersGeneral, i) => {
@@ -152,8 +152,8 @@ export default function UserCard(withAdd) {
                   elevation={5}
                   className={
                     usersGeneral.profile.role !== "admin"
-                      ? classes.primary
-                      : classes.secundary
+                      ? classes.secundary
+                      : classes.primary
                   }
                 >
                   <Grid container spacing={3}>
@@ -212,8 +212,8 @@ export default function UserCard(withAdd) {
                           variant="h5"
                           color={
                             usersGeneral.profile.role == "admin"
-                              ? "primary"
-                              : "secondary"
+                              ? "secondary"
+                              : "primary"
                           }
                         >
                           <PermContactCalendarRoundedIcon />{" "}
