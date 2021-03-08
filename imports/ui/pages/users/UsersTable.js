@@ -37,7 +37,6 @@ import PermContactCalendarRoundedIcon from "@material-ui/icons/PermContactCalend
 import MailIcon from "@material-ui/icons/Mail";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import CheckCircleRoundedIcon from "@material-ui/icons/CheckCircleRounded";
-
 //Collections
 import { DescargasCollection } from "../collections/collections";
 
@@ -69,7 +68,13 @@ const StyledBadge = withStyles((theme) => ({
     },
   },
 }))(Badge);
-
+const SmallAvatar = withStyles((theme) => ({
+  root: {
+    width: 22,
+    height: 22,
+    border: `2px solid ${theme.palette.background.paper}`,
+  },
+}))(Avatar);
 const useStyles = makeStyles((theme) => ({
   [theme.breakpoints.down("sm")]: {},
   [theme.breakpoints.down("md")]: {},
@@ -104,7 +109,7 @@ export default function UsersTable() {
   const dt = React.useRef(null);
 
   const descargaRegister = useTracker(() => {
-    Meteor.subscribe("descargas");
+    Meteor.subscribe("users");
     let a = [];
 
     Meteor.users.find({}).map(
@@ -117,6 +122,7 @@ export default function UsersTable() {
           lastName: data.profile.lastName,
           role: data.profile.role,
           edad: data.edad,
+          foto: data.services&&data.services.facebook&&(data.services.facebook.picture.data.url ? data.services.facebook.picture.data.url : "")
         })
     );
     return a;
@@ -144,19 +150,19 @@ export default function UsersTable() {
       </React.Fragment>
     );
   };
-  const nombreFileBodyTemplate = (rowData) => {
+  const nombreBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-        <span className="p-column-title">Nombre del Archivo</span>
-        {rowData.nombreFile}
+        <span className="p-column-title">Nombre y apellido</span>
+        {rowData.firstname + " " + rowData.lastName}
       </React.Fragment>
     );
   };
-  const tamanoFileBodyTemplate = (rowData) => {
+  const edadBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-        <span className="p-column-title">Tamaño</span>
-        {rowData.tamanoFile + "kb"}
+        <span className="p-column-title">Edad</span>
+        {rowData.edad}
       </React.Fragment>
     );
   };
@@ -176,14 +182,7 @@ export default function UsersTable() {
       </React.Fragment>
     );
   };
-  const descargadoPorBodyTemplate = (rowData) => {
-    return (
-      <React.Fragment>
-        <span className="p-column-title">Code</span>
-        {rowData.descargadoPor}
-      </React.Fragment>
-    );
-  };
+
   const eliminarVideo = (id) => {
     console.log(id)
     const data = {id:id}
@@ -212,20 +211,27 @@ export default function UsersTable() {
   const urlRealBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-        <span className="p-column-title">URL</span>
-        <a href={rowData.urlReal}>Descargar</a>
+        <span className="p-column-title"></span>
+        <a href={"/users/" + rowData._id}>View User</a>
       </React.Fragment>
     );
   };
   const thumbnailBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-        <span className="p-column-title">Code</span>
-        <img
-          src={rowData.thumbnail}
-          alt="No se pudo cargar la imagen"
+        <span className="p-column-title"></span>
+        <Avatar
+                          alt={rowData.firstName
+                          }
+                          src={
+                            rowData.foto
+                          }
+                        />
+        {/* <img
+          src={rowData.services.facebook.picture.data.url}
+          alt="N/A"
           width="100%"
-        />
+        /> */}
       </React.Fragment>
     );
   };
@@ -287,25 +293,17 @@ export default function UsersTable() {
                   filterMatchMode="contains"
                 />
                 <Column
-                  field="idFile"
-                  header="Registro de Entrada"
-                  body={idFileBodyTemplate}
-                  filter
-                  filterPlaceholder="Buscar en Registro de Entrada"
-                  filterMatchMode="contains"
-                />
-                <Column
-                  field="nombreFile"
+                  field="Nombre y Apellidos"
                   header="Registro de Salida"
-                  body={nombreFileBodyTemplate}
+                  body={nombreBodyTemplate}
                   filter
                   filterPlaceholder="Buscar en Registro de Salida"
                   filterMatchMode="contains"
                 />
                 <Column
-                  field="tamanoFile"
+                  field="edad"
                   header="Tamaño de archivo"
-                  body={tamanoFileBodyTemplate}
+                  body={edadBodyTemplate}
                   filter
                   filterPlaceholder="Buscar en estantes"
                   filterMatchMode="contains"

@@ -22,6 +22,7 @@ import {
 } from "react-router-dom";
 
 import UserCard from "../ui/pages/users/UserCard";
+import UsersTable from "../ui/pages/users/UsersTable";
 import UserCardDetails from "../ui/pages/users/UserCardDetails";
 import PelisCard from "../ui/pages/pelis/PeliCard";
 import PelisDetails from "../ui/pages/pelis/PeliDetails";
@@ -106,6 +107,7 @@ export default function Main() {
             </Grid>
             <Grid item xs={12}>
               <UserCard />
+              <UsersTable />
             </Grid>
           </Grid>
         </Route>
