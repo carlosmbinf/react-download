@@ -91,6 +91,7 @@ const useStyles = makeStyles((theme) =>
     },
     root: {
       display: "flex",
+      width: "100%",
     },
     appBar: {
       transition: theme.transitions.create(["margin", "width"], {
@@ -133,7 +134,7 @@ const useStyles = makeStyles((theme) =>
     },
     content: {
       minHeight: "100vh",
-      minWidth: "100vw",
+      minWidth: "100%",
       maxWidth: "100vw",
       flexGrow: 1,
       backgroundImage: "radial-gradient(circle, rgba(238,174,174,0.8323704481792717) -8%, rgba(112,96,255,0.958420868347339) 100%)",
@@ -214,7 +215,8 @@ export default function PersistentDrawerLeft() {
   };
   return (
     <>
-      <div className={classes.root}
+      <div 
+      className={classes.root}
       // style={{ background: "rgb(29 47 62)" }}
       >
         <CssBaseline />

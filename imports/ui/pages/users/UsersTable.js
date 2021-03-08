@@ -5,6 +5,7 @@ import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 // import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
+import Tooltip from '@material-ui/core/Tooltip';
 import {
   Paper,
   Box,
@@ -38,6 +39,8 @@ import PermContactCalendarRoundedIcon from "@material-ui/icons/PermContactCalend
 import MailIcon from "@material-ui/icons/Mail";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import CheckCircleRoundedIcon from "@material-ui/icons/CheckCircleRounded";
+import ListAltIcon from '@material-ui/icons/ListAlt';
+import DeleteIcon from "@material-ui/icons/Delete";
 //Collections
 import { DescargasCollection } from "../collections/collections";
 import { useHistory } from 'react-router-dom';
@@ -103,6 +106,10 @@ const useStyles = makeStyles((theme) => ({
   margin: {
     margin: theme.spacing(2),
   },
+  avatar:{
+    width: theme.spacing(7),
+    height: theme.spacing(7),
+  }
 }));
 
 export default function UsersTable() {
@@ -201,9 +208,17 @@ export default function UsersTable() {
     return (
       <React.Fragment>
         <span className="p-column-title"></span>
-        <Button 
-        onClick={() => { eliminarVideo(rowData.id) }}
-        >Eliminar</Button>
+        <Tooltip title={"Eliminar a " + rowData.firstname+ " "+ rowData.lastName}>
+          <IconButton
+            aria-label="delete"
+            color="primary"
+            onClick={() => {
+              eliminarVideo(rowData.id);
+            }}
+          >
+            <DeleteIcon fontSize="large" />
+          </IconButton>
+        </Tooltip>
       </React.Fragment>
     );
   };
@@ -211,9 +226,19 @@ export default function UsersTable() {
     return (
       <React.Fragment>
         <span className="p-column-title"></span>
-        <Button variant="contained" color="primary" onClick={() => { history.push("/users/" + rowData.id) }}>
-          Detalles
-        </Button>
+        <Tooltip
+          title={"Ver Detalles de " + rowData.firstname+ " "+ rowData.lastName}
+        >
+          <IconButton
+            aria-label="delete"
+            color="primary"
+            onClick={() => {
+              history.push("/users/" + rowData.id);
+            }}
+          >
+            <ListAltIcon fontSize="large" />
+          </IconButton>
+        </Tooltip>
       </React.Fragment>
     );
   };
@@ -221,7 +246,7 @@ export default function UsersTable() {
     return (
       <React.Fragment>
         <span className="p-column-title"></span>
-        <Avatar
+        <Avatar className={classes.avatar}
           alt={rowData.firstName
           }
           src={
@@ -284,7 +309,7 @@ export default function UsersTable() {
                   header="IMG"
                   body={thumbnailBodyTemplate}
                 />
-                <Column
+                {/* <Column
                   field="id"
                   body={iDBodyTemplate}
                   wrap="nowrap"
@@ -292,7 +317,7 @@ export default function UsersTable() {
                   filter
                   filterPlaceholder="ID"
                   filterMatchMode="contains"
-                />
+                /> */}
                 <Column
                   field="firstname"
                   header="Nombre"
@@ -335,12 +360,12 @@ export default function UsersTable() {
                 />
                 <Column
                   field="urlReal"
-                  header="URL Detalles"
+                  header=""
                   body={urlBodyTemplate}
                 />
                 <Column
                   field="eliminar"
-                  header="Eliminar"
+                  header=""
                   body={eliminarBodyTemplate}
                 />
               </DataTable>

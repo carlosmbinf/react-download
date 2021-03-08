@@ -66,7 +66,7 @@ export default function Main() {
     return Meteor.user();
   });
   return (
-    <div className={classes.contents}>
+    < >
       <div className={classes.toolbar} />
 
       {/* A <Switch> looks through its children <Route>s and
@@ -242,6 +242,6 @@ export default function Main() {
         </Route>
         <Route path="/"></Route>
       </Switch>
-    </div>
+    </>
   );
 }

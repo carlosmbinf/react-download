@@ -22,6 +22,8 @@ import Badge from "@material-ui/core/Badge";
 import Avatar from "@material-ui/core/Avatar";
 import { Link, useParams } from "react-router-dom";
 import { useHistory } from "react-router-dom";
+import Tooltip from '@material-ui/core/Tooltip';
+
 //icons
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
@@ -71,15 +73,9 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 20,
     padding: "2em",
     background:
-      "linear-gradient(0deg, rgba(36,83,162,1) 15%, rgba(245,0,87,0) 100%)",
-  },
-  secundary: {
-    // minWidth: 370,
-    width: "100%",
-    borderRadius: 20,
-    padding: "2em",
-    background:
-      "linear-gradient(0deg, rgba(245,0,87,1) 15%, rgba(245,0,87,0) 100%)",
+      // "linear-gradient(0deg, rgba(36,83,162,1) 15%, rgba(245,0,87,0) 100%)",
+      "#2a323d",
+    color:"#ffffff9c",
   },
   boton: {
     borderRadius: 20,
@@ -169,14 +165,7 @@ export default function UserCardDetails() {
 
       {users && (
         <Zoom in={true}>
-          <Paper
-            elevation={5}
-            className={
-              users.profile.role !== "admin"
-                ? classes.primary
-                : classes.secundary
-            }
-          >
+          <Paper elevation={5} className={classes.primary}>
             <Grid container spacing={3}>
               <Grid item xs={12}>
                 <Grid container direction="row" justify="center">
@@ -198,7 +187,7 @@ export default function UserCardDetails() {
                 </Grid>
                 <Grid container direction="row">
                   <AccountCircleIcon />
-                  <Typography color="textSecondary">
+                  <Typography>
                     <strong>
                       {users.profile.firstName} {users.profile.lastName}
                     </strong>
@@ -208,7 +197,7 @@ export default function UserCardDetails() {
               <Grid item xs={12}>
                 <Grid container direction="row">
                   <PermContactCalendarRoundedIcon />
-                  <Typography color="textSecondary">
+                  <Typography>
                     <strong>{users.profile.role}</strong>
                   </Typography>
                 </Grid>
@@ -216,7 +205,7 @@ export default function UserCardDetails() {
               <Grid item xs={12}>
                 <Grid container direction="row">
                   <MailIcon />
-                  <Typography color="textSecondary">
+                  <Typography>
                     <strong>{users.emails && users.emails[0].address}</strong>
                   </Typography>
                 </Grid>
@@ -229,31 +218,40 @@ export default function UserCardDetails() {
                   justify="space-around"
                   alignItems="center"
                 >
-                  {Meteor.user().profile.role && Meteor.user().profile.role == "admin" ? (
+                  {Meteor.user().profile.role &&
+                  Meteor.user().profile.role == "admin" ? (
                     <IconButton onClick={eliminarUser} aria-label="delete">
-                      <DeleteIcon fontSize="large" />
+                      <DeleteIcon color="primary" fontSize="large" />
                     </IconButton>
                   ) : (
-                    <div/>
+                    <div />
                   )}
 
-                  <Typography
-                    variant="h5"
-                    color={
-                      users.profile.role == "admin" ? "primary" : "secondary"
-                    }
-                  >
+                  <Typography variant="h5">
                     <PermContactCalendarRoundedIcon /> {users.profile.role}
                   </Typography>
-                  {Meteor.user().profile.role && Meteor.user().profile.role == "admin" ? (
-                    <Switch
-                    checked={users.profile.role == "admin"}
-                    onChange={handleChange}
-                    name="Roles"
-                    color="primary"
-                  />
+                  {Meteor.user().profile.role &&
+                  Meteor.user().profile.role == "admin" ? (
+                    <Tooltip
+                      title={
+                        "Cambiar a " + users.profile.role == "admin"
+                          ? "user"
+                          : "admin"
+                      }
+                    >
+                      <Switch
+                        checked={users.profile.role == "admin"}
+                        onChange={handleChange}
+                        name="Roles"
+                        color={
+                          users.profile.role == "admin"
+                            ? "primary"
+                            : "secondary"
+                        }
+                      />
+                    </Tooltip>
                   ) : (
-                    <div/>
+                    <div />
                   )}
                 </Grid>
               </Grid>
