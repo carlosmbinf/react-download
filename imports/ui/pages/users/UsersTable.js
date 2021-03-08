@@ -13,6 +13,7 @@ import {
   Divider,
   Zoom,
   IconButton,
+  Chip,
 } from "@material-ui/core";
 import { Meteor } from "meteor/meteor";
 import { Tracker } from "meteor/tracker";
@@ -156,8 +157,32 @@ export default function UsersTable() {
   const nombreBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-        <span className="p-column-title">Nombre y apellido</span>
-        {rowData.firstname + " " + rowData.lastName}
+        <span className="p-column-title">Nombre</span>
+        {rowData.firstname}
+      </React.Fragment>
+    );
+  };
+  const apellidoBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">Apellido</span>
+        {rowData.lastName}
+      </React.Fragment>
+    );
+  };
+  const emailBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">Email</span>
+        {rowData.email}
+      </React.Fragment>
+    );
+  };
+  const roleBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">Rol</span>
+        <Chip color="primary" label={rowData.role} />
       </React.Fragment>
     );
   };
@@ -187,7 +212,7 @@ export default function UsersTable() {
       <React.Fragment>
         <span className="p-column-title"></span>
         <Button variant="contained" color="primary" onClick={() => { history.push("/users/" + rowData.id) }}>
-          Ver Detalles
+          Detalles
         </Button>
       </React.Fragment>
     );
@@ -265,15 +290,23 @@ export default function UsersTable() {
                   wrap="nowrap"
                   header="ID"
                   filter
-                  filterPlaceholder="Buscar por ID"
+                  filterPlaceholder="ID"
                   filterMatchMode="contains"
                 />
                 <Column
-                  field="nombreApellidos"
-                  header="Nombre y Apellidos"
+                  field="firstname"
+                  header="Nombre"
                   body={nombreBodyTemplate}
                   filter
-                  filterPlaceholder="Buscar por Nombre y Apellidos"
+                  filterPlaceholder="Nombre"
+                  filterMatchMode="contains"
+                />
+                <Column
+                  field="lastName"
+                  header="Apellidos"
+                  body={apellidoBodyTemplate}
+                  filter
+                  filterPlaceholder="Apellidos"
                   filterMatchMode="contains"
                 />
                 <Column
@@ -281,7 +314,23 @@ export default function UsersTable() {
                   header="Edad"
                   body={edadBodyTemplate}
                   filter
-                  filterPlaceholder="Buscar por Edades"
+                  filterPlaceholder="Edad"
+                  filterMatchMode="contains"
+                />
+                <Column
+                  field="email"
+                  header="Correo"
+                  body={emailBodyTemplate}
+                  filter
+                  filterPlaceholder="Correo"
+                  filterMatchMode="contains"
+                />
+                <Column
+                  field="role"
+                  header="Roles"
+                  body={roleBodyTemplate}
+                  filter
+                  filterPlaceholder="Roles"
                   filterMatchMode="contains"
                 />
                 <Column
