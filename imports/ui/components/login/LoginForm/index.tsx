@@ -55,7 +55,9 @@ const LoginForm = ({ className }: Props) => {
   const handleLoginFacebook = () => {
     setError("");
     Meteor.loginWithFacebook(
-      { requestPermissions: ["public_profile", "email"] },
+      { requestPermissions: ["public_profile", "email" 
+      // "user_birthday", "user_age_range","gender"
+    ] },
       function (err) {
         err ? setError(err.message) : history.push("/pelis");
       }
