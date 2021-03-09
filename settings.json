@@ -1,5 +1,5 @@
 {
-	"ROOT_URL":"https://srv5119-206152.vps.etecsa.cu:5000/",
+	"ROOT_URL":"https://srv5119-206152.vps.etecsa.cu",
 	"public": {
 		"baseUrl": "http://localhost:5500/"
 	 },

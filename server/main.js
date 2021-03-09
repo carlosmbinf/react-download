@@ -252,7 +252,7 @@ if (Meteor.isServer) {
   });
 
   Meteor.startup(() => {
-    process.env.ROOT_URL = "https://srv5119-206152.vps.etecsa.cu:5000/";
+    process.env.ROOT_URL = "https://srv5119-206152.vps.etecsa.cu";
     console.log(process.env.ROOT_URL);
     
     ServiceConfiguration.configurations.remove({
