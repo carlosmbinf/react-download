@@ -228,10 +228,6 @@ export default function PeliCard(options) {
     );
   });
 
-  
-
-  // console.log(peli);
-
   if (options.withCreate == "true") {
     return (
     <>

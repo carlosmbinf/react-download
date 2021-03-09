@@ -30,7 +30,7 @@ import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
 import PermContactCalendarRoundedIcon from "@material-ui/icons/PermContactCalendarRounded";
 import MailIcon from "@material-ui/icons/Mail";
-import RemoveRedEyeIcon from '@material-ui/icons/RemoveRedEye';
+import RemoveRedEyeIcon from "@material-ui/icons/RemoveRedEye";
 
 const StyledBadge = withStyles((theme) => ({
   badge: {
@@ -95,7 +95,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundRepeat: "no-repeat",
   },
   boton: {
-    margin:15,
+    margin: 15,
     borderRadius: 20,
     padding: 0,
   },
@@ -157,106 +157,63 @@ export default function TVonline(withAdd) {
   const items = tv.map((tvGeneral, i) => {
     return (
       <>
-        <Link key={i} to={"/tv/" + tvGeneral._id} className={classes.link}>
-          <Button color="inherit" className={classes.boton}>
-            <Paper
-              elevation={5}
-              className={
-                tvGeneral.mostrar !== "true"
-                  ? classes.primary
-                  : classes.secundary
-              }
-              style={{
-                backgroundImage: "url(" + tvGeneral.urlBackground + ")",
-              }}
-            >
-              <Grid container spacing={3}>
-                <Grid item xs={12}>
-                  {/* <Divider className={classes.padding10} /> */}
-                  <Grid item xs={12} style={{position: "absolute",
-    bottom: 0}}>
-                    <Grid
-                      container
-                      className={classes.elementosBotom}
-                      container
-                      direction="row"
-                      justify="center"
-                      alignItems="center"
-                    >
-                      <Grid item xs={10}>
-                      <Typography
-                        style={{
-                          color: "white",
-                          fontSize: 14,
-                          fontFamily: "cursive",
-                        }}
-                      >
-                        <strong>{tvGeneral.nombreTV}</strong>
-                      </Typography>
-                      <Grid
-                          container
-                          direction="row"
-                          justify="flex-end"
-                          alignItems="center"
-                          style={{
-                            color: "white",
-                            fontSize: 14,
-                            fontFamily: "cursive",
-                          }}
-                        >
-                          <RemoveRedEyeIcon />{" "}
-                          <Typography>
-                            <strong>{tvGeneral.vistas.toFixed()}</strong>
-                          </Typography>
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                </Grid>
-              </Grid>
-            </Paper>
-          </Button>
-        </Link>
-        </>
-    );
-  });
-
-  
-
-  // console.log(peli);
-
-  if (withAdd.withCreate == "true") {
-    return (
-    <>
-      <Fade top >
-        <Grid
-          container
-          direction="column"
-          justify="center"
-          alignItems="center"
-          className={classes.root2}
-        >
-          <Link to={"/create-tv"} className={classes.link}>
+        {(tvGeneral.mostrar == "true" || withAdd.admin)?(
+          <Link key={i} to={"/tv/" + tvGeneral._id} className={classes.link}>
             <Button color="inherit" className={classes.boton}>
-              <Paper elevation={5} className={classes.rootADD}>
+              <Paper
+                elevation={5}
+                className={
+                  tvGeneral.mostrar !== "true"
+                    ? classes.primary
+                    : classes.secundary
+                }
+                style={{
+                  backgroundImage: "url(" + tvGeneral.urlBackground + ")",
+                }}
+              >
                 <Grid container spacing={3}>
                   <Grid item xs={12}>
+                    {/* <Divider className={classes.padding10} /> */}
                     <Grid
-                      container
-                      direction="column"
-                      justify="center"
-                      alignItems="center"
+                      item
+                      xs={12}
+                      style={{ position: "absolute", bottom: 0 }}
                     >
-                      <Grid item>
-                        <AddCircleRoundedIcon
-                          fontSize="large"
-                          htmlColor="#114c84"
-                        />
-                      </Grid>
-                      <Grid item>
-                        <Typography className={classes.createpeli}>
-                          <strong>AGREGAR TV</strong>
-                        </Typography>
+                      <Grid
+                        container
+                        className={classes.elementosBotom}
+                        container
+                        direction="row"
+                        justify="center"
+                        alignItems="center"
+                      >
+                        <Grid item xs={10}>
+                          <Typography
+                            style={{
+                              color: "white",
+                              fontSize: 14,
+                              fontFamily: "cursive",
+                            }}
+                          >
+                            <strong>{tvGeneral.nombreTV}</strong>
+                          </Typography>
+                          <Grid
+                            container
+                            direction="row"
+                            justify="flex-end"
+                            alignItems="center"
+                            style={{
+                              color: "white",
+                              fontSize: 14,
+                              fontFamily: "cursive",
+                            }}
+                          >
+                            <RemoveRedEyeIcon />{" "}
+                            <Typography>
+                              <strong>{tvGeneral.vistas.toFixed()}</strong>
+                            </Typography>
+                          </Grid>
+                        </Grid>
                       </Grid>
                     </Grid>
                   </Grid>
@@ -264,19 +221,64 @@ export default function TVonline(withAdd) {
               </Paper>
             </Button>
           </Link>
-        </Grid>
-      </Fade>
+        ) : (
+          ""
+        )}
+      </>
+    );
+  });
+  
+  if (withAdd.withCreate == "true") {
+    return (
+      <>
+        <Fade top>
+          <Grid
+            container
+            direction="column"
+            justify="center"
+            alignItems="center"
+            className={classes.root2}
+          >
+            <Link to={"/create-tv"} className={classes.link}>
+              <Button color="inherit" className={classes.boton}>
+                <Paper elevation={5} className={classes.rootADD}>
+                  <Grid container spacing={3}>
+                    <Grid item xs={12}>
+                      <Grid
+                        container
+                        direction="column"
+                        justify="center"
+                        alignItems="center"
+                      >
+                        <Grid item>
+                          <AddCircleRoundedIcon
+                            fontSize="large"
+                            htmlColor="#114c84"
+                          />
+                        </Grid>
+                        <Grid item>
+                          <Typography className={classes.createpeli}>
+                            <strong>AGREGAR TV</strong>
+                          </Typography>
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </Paper>
+              </Button>
+            </Link>
+          </Grid>
+        </Fade>
       </>
     );
   }
   return (
     <>
-    <Fade left>
-    <div style={{ width: "100%" }}>
-        <Carousel items={items} />
-      </div>
-    </Fade>
-      
+      <Fade left>
+        <div style={{ width: "100%" }}>
+          <Carousel items={items} />
+        </div>
+      </Fade>
     </>
   );
 }

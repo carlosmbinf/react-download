@@ -66,7 +66,7 @@ export default function Main() {
     return Meteor.user();
   });
   return (
-    < >
+    <>
       <div className={classes.toolbar} />
 
       {/* A <Switch> looks through its children <Route>s and
@@ -78,12 +78,12 @@ export default function Main() {
         </Route>
         <Route path="/downloads">
           {useractual &&
-            useractual.profile &&
-            useractual.profile.role == "admin" ? (
-              <AddDescargas />
-            ) : (
-              ""
-            )}
+          useractual.profile &&
+          useractual.profile.role == "admin" ? (
+            <AddDescargas />
+          ) : (
+            ""
+          )}
           <TableDescarga />
         </Route>
         <Route path="/users/:id">
@@ -91,156 +91,150 @@ export default function Main() {
         </Route>
         <Route path="/users">
           {useractual &&
-            useractual.profile &&
-            useractual.profile.role == "admin" ? (
+          useractual.profile &&
+          useractual.profile.role == "admin" ? (
+            <Grid
+              container
+              direction="row"
+              justify="center"
+              alignItems="center"
+            >
+              <Grid item xs={12} className={classes.root}>
+                <UserCard withCreate="true" />
+              </Grid>
+              <Grid item xs={12}>
+                <UserCard />
+                <UsersTable />
+              </Grid>
+            </Grid>
+          ) : (
+            <Zoom in={true}>
               <Grid
                 container
                 direction="row"
                 justify="center"
                 alignItems="center"
               >
-                <Grid item xs={12} className={classes.root}>
-                  <UserCard withCreate="true" />
-                </Grid>
-                <Grid item xs={12}>
-                  <UserCard />
-                  <UsersTable />
-                </Grid>
+                <h1>SIN ACCESO</h1>
               </Grid>
-            ) : (
-              <Zoom in={true}>
-                <Grid container
-                  direction="row"
-                  justify="center"
-                  alignItems="center">
-                  <h1>SIN ACCESO</h1>
-                </Grid>
-
-              </Zoom>
-            )}
-
+            </Zoom>
+          )}
         </Route>
         <Route path="/calendar"></Route>
         <Route path="/create-user">
           {useractual &&
-            useractual.profile &&
-            useractual.profile.role == "admin" ? (
-              <CreateUsers />
-            ) : (
-              <Zoom in={true}>
-                <Grid container
-                  direction="row"
-                  justify="center"
-                  alignItems="center">
-                  <h1>SIN ACCESO</h1>
-                </Grid>
-
-              </Zoom>
-
-
-            )}
-
+          useractual.profile &&
+          useractual.profile.role == "admin" ? (
+            <CreateUsers />
+          ) : (
+            <Zoom in={true}>
+              <Grid
+                container
+                direction="row"
+                justify="center"
+                alignItems="center"
+              >
+                <h1>SIN ACCESO</h1>
+              </Grid>
+            </Zoom>
+          )}
         </Route>
         <Route path="/tv/:id">
           <TV />
         </Route>
         <Route path="/tv">
-          <Grid
-            container
-            direction="row"
-            justify="center"
-            alignItems="center"
-          >
+          <Grid container direction="row" justify="center" alignItems="center">
             <Grid item xs={12} className={classes.root}>
               {useractual &&
-                useractual.profile &&
-                useractual.profile.role == "admin" ? (
-                  <TVonline withCreate="true" />
-                ) : (
-                  ""
-                )}
-
+              useractual.profile &&
+              useractual.profile.role == "admin" ? (
+                <TVonline withCreate="true" />
+              ) : (
+                ""
+              )}
             </Grid>
             <Grid item xs={12}>
-              <TVonline />
+              {useractual &&
+              useractual.profile &&
+              useractual.profile.role == "admin" ? (
+                <TVonline admin />
+              ) : (
+                ""
+              )}
             </Grid>
           </Grid>
         </Route>
         <Route path="/create-tv">
           {useractual &&
-            useractual.profile &&
-            useractual.profile.role == "admin" ? (
-              <CreateTV />
-            ) : (
-              <Zoom in={true}>
-                <Grid container
-                  direction="row"
-                  justify="center"
-                  alignItems="center">
-                  <h1>SIN ACCESO</h1>
-                </Grid>
-
-              </Zoom>
-
-
-            )}
+          useractual.profile &&
+          useractual.profile.role == "admin" ? (
+            <CreateTV />
+          ) : (
+            <Zoom in={true}>
+              <Grid
+                container
+                direction="row"
+                justify="center"
+                alignItems="center"
+              >
+                <h1>SIN ACCESO</h1>
+              </Grid>
+            </Zoom>
+          )}
         </Route>
         <Route path="/pelis/:id">
           <PelisDetails />
         </Route>
         <Route path="/pelis">
-          <Grid
-            container
-            direction="row"
-            justify="center"
-            alignItems="center"
-          >
+          <Grid container direction="row" justify="center" alignItems="center">
             <Grid item xs={12} className={classes.root}>
               {useractual &&
-                useractual.profile &&
-                useractual.profile.role == "admin" ? (
-                  <PelisCard withCreate="true" />
-                ) : (
-                  ""
-                )}
-
+              useractual.profile &&
+              useractual.profile.role == "admin" ? (
+                <PelisCard withCreate="true" />
+              ) : (
+                ""
+              )}
             </Grid>
             <Grid item xs={12}>
               {useractual &&
-                useractual.profile &&
-                useractual.profile.role == "admin" ? (
-                  <PelisCard clasificacion="admin" />
-                ) : (
-                  ""
-                )}
+              useractual.profile &&
+              useractual.profile.role == "admin" ? (
+                <PelisCard clasificacion="admin" />
+              ) : (
+                ""
+              )}
               <PelisCard clasificacion="AVENTURA" />
               <PelisCard clasificacion="ACCION" />
               <PelisCard clasificacion="CIENCIA Y FICCION" />
               <PelisCard clasificacion="TERROR" />
             </Grid>
           </Grid>
-
         </Route>
         <Route path="/create-pelis">
           {useractual &&
-            useractual.profile &&
-            useractual.profile.role == "admin" ? (
-              <CreateArchivo />
-            ) : (
-              <Zoom in={true}>
-                <Grid container
-                  direction="row"
-                  justify="center"
-                  alignItems="center">
-                  <h1>SIN ACCESO</h1>
-                </Grid>
-
-              </Zoom>
-
-
-            )}
+          useractual.profile &&
+          useractual.profile.role == "admin" ? (
+            <CreateArchivo />
+          ) : (
+            <Zoom in={true}>
+              <Grid
+                container
+                direction="row"
+                justify="center"
+                alignItems="center"
+              >
+                <h1>SIN ACCESO</h1>
+              </Grid>
+            </Zoom>
+          )}
         </Route>
-        <Route path="/"></Route>
+        <Route path="/">
+          <PelisCard clasificacion="AVENTURA" />
+          <PelisCard clasificacion="ACCION" />
+          <PelisCard clasificacion="CIENCIA Y FICCION" />
+          <PelisCard clasificacion="TERROR" />
+        </Route>
       </Switch>
     </>
   );

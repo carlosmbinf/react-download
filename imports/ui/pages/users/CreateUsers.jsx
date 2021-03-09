@@ -169,8 +169,6 @@ export default function CreateUsers() {
     return Meteor.users.find({}, { fields: {} });
   });
 
-  console.log(users);
-
   return (
     <>
       <div className={classes.drawerHeader}>

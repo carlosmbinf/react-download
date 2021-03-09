@@ -235,7 +235,6 @@ export default function PeliDetails() {
 
       {peliDetails && <Zoom in={true} >
         <Paper
-          elevation={5}
           className={
             peliDetails.mostrar !== "false"
               ? classes.secundary

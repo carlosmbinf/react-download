@@ -289,7 +289,7 @@ export default function UsersTable() {
       <div className={classes.drawerHeader}></div>
 
       <Zoom in={true}>
-        <div style={{ width: "100%" }}>
+        <div style={{ width: "100%", padding:10}}>
           <div className="datatable-responsive-demo">
             <div className="card">
               <DataTable

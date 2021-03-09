@@ -74,7 +74,7 @@ const useStyles = makeStyles((theme) => ({
     padding: "2em",
     background:
       // "linear-gradient(0deg, rgba(36,83,162,1) 15%, rgba(245,0,87,0) 100%)",
-      "#2a323d",
+      "#3f4b5b",
     color:"#ffffff9c",
   },
   boton: {

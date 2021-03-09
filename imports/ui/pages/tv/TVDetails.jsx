@@ -5,7 +5,7 @@ import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import { Paper, Box, Grid, Icon, Divider, Zoom, IconButton } from "@material-ui/core";
+import { Paper, Box, Grid, Icon, Divider, Zoom, IconButton, Switch } from "@material-ui/core";
 import { Meteor } from "meteor/meteor";
 import { Tracker } from "meteor/tracker";
 import { useTracker } from "meteor/react-meteor-data";
@@ -73,7 +73,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 20,
     padding: "2em",
     background:
-      "linear-gradient(0deg, rgba(245,0,87,1) 15%, rgba(245,0,87,0) 100%)",
+      "linear-gradient(0deg, #3f4b5b 15%, rgba(245,0,87,0) 100%);",
   },
   boton: {
     borderRadius: 20,
@@ -142,13 +142,14 @@ export default function TV() {
     return TVCollection.findOne({ _id: useParams().id });
   });
 
-  tvDetails&&console.log(tvDetails);
-  
   function eliminarPeli() {
     TVCollection.remove({ _id: tvDetails._id });
     alert("Pelicula Eliminada");
     history.push("/tv");
   }
+  const handleChange = (event) => {
+    TVCollection.update(tvDetails._id, { $set: { mostrar: !(tvDetails.mostrar == "true") } })
+  };
   return (
     <>
       <div className={classes.drawerHeader}>
@@ -206,7 +207,16 @@ export default function TV() {
                   
                   {tvDetails.nombreTV}
                 </Typography>
-                <div />
+                {Meteor.user().profile.role && Meteor.user().profile.role == "admin" ? (
+                    <Switch
+                      checked={tvDetails.mostrar == "true"}
+                      onChange={handleChange}
+                      name="Mostrar"
+                      color="primary"
+                    />
+                  ) : (
+                      <div />
+                    )}
               </Grid>
             </Grid>
 
