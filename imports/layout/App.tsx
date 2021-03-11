@@ -216,9 +216,9 @@ export default function PersistentDrawerLeft() {
   };
   return (
     <>
-      <div 
-      className={classes.root}
-      // style={{ background: "rgb(29 47 62)" }}
+      <div
+        className={classes.root}
+        // style={{ background: "rgb(29 47 62)" }}
       >
         <CssBaseline />
         <Slide
@@ -231,7 +231,8 @@ export default function PersistentDrawerLeft() {
         >
           <AppBar
             position="fixed"
-            className={clsx(classes.appBar,
+            className={clsx(
+              classes.appBar
               //   {
               //   [classes.appBarShift]: open,
               // }
@@ -263,19 +264,36 @@ export default function PersistentDrawerLeft() {
                       color="textSecondary"
                       noWrap
                     >
-                      <StyledBadge
-                        overlap="circle"
-                        anchorOrigin={{
-                          vertical: "bottom",
-                          horizontal: "right",
-                        }}
-                        variant="dot"
-                      >
+                      {Meteor.status().connected ? (
+                        <StyledBadge
+                          overlap="circle"
+                          anchorOrigin={{
+                            vertical: "bottom",
+                            horizontal: "right",
+                          }}
+                          variant="dot"
+                        >
+                          <Avatar
+                            alt={
+                              userActual &&
+                              userActual.profile &&
+                              userActual.profile.firstName
+                                ? userActual.profile.firstName
+                                : userActual.profile.name
+                            }
+                            src={
+                              userActual.services &&
+                              userActual.services.facebook &&
+                              userActual.services.facebook.picture.data.url
+                            }
+                          />
+                        </StyledBadge>
+                      ) : (
                         <Avatar
                           alt={
                             userActual &&
-                              userActual.profile &&
-                              userActual.profile.firstName
+                            userActual.profile &&
+                            userActual.profile.firstName
                               ? userActual.profile.firstName
                               : userActual.profile.name
                           }
@@ -285,17 +303,17 @@ export default function PersistentDrawerLeft() {
                             userActual.services.facebook.picture.data.url
                           }
                         />
-                      </StyledBadge>
+                      )}
 
                       {
                         <strong>
                           {userActual &&
-                            userActual.profile &&
-                            userActual.profile.firstName
+                          userActual.profile &&
+                          userActual.profile.firstName
                             ? " " +
-                            userActual.profile.firstName +
-                            " " +
-                            userActual.profile.lastName
+                              userActual.profile.firstName +
+                              " " +
+                              userActual.profile.lastName
                             : " " + userActual.profile.name + " "}
                         </strong>
                       }
@@ -335,39 +353,49 @@ export default function PersistentDrawerLeft() {
               {theme.direction === "ltr" ? (
                 <ChevronLeftIcon />
               ) : (
-                  <ChevronRightIcon />
-                )}
+                <ChevronRightIcon />
+              )}
             </IconButton>
           </div>
           <Divider />
           <List>
-            {listaDeLinks.map((text, index) => (
-              Meteor.user().profile && Meteor.user().profile.role == "admin" ?
+            {listaDeLinks.map((text, index) =>
+              Meteor.user().profile && Meteor.user().profile.role == "admin" ? (
                 <Link key={index} to={"/" + text.url} className={classes.link}>
                   <ListItem button className={classes.item}>
                     <ListItemIcon>
                       {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                     </ListItemIcon>
                     <strong
-                      style={{ textTransform: "uppercase", color: "rgba(0, 0, 0, 0.54)" }}
+                      style={{
+                        textTransform: "uppercase",
+                        color: "rgba(0, 0, 0, 0.54)",
+                      }}
                     >
                       {text.title}
                     </strong>
                   </ListItem>
                 </Link>
-                : text.url !== "users" ? <Link key={index} to={"/" + text.url} className={classes.link}>
+              ) : text.url !== "users" ? (
+                <Link key={index} to={"/" + text.url} className={classes.link}>
                   <ListItem button className={classes.item}>
                     <ListItemIcon>
                       {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                     </ListItemIcon>
                     <strong
-                      style={{ textTransform: "uppercase", color: "rgba(0, 0, 0, 0.54)" }}
+                      style={{
+                        textTransform: "uppercase",
+                        color: "rgba(0, 0, 0, 0.54)",
+                      }}
                     >
                       {text.title}
                     </strong>
                   </ListItem>
-                </Link> : ""
-            ))}
+                </Link>
+              ) : (
+                ""
+              )
+            )}
           </List>
           <Divider />
           {/* <List>
@@ -382,7 +410,8 @@ export default function PersistentDrawerLeft() {
           </List> */}
         </Drawer>
         <main
-          className={clsx(classes.content,
+          className={clsx(
+            classes.content
             // {
             // [classes.contentShift]: open,
             // }
