@@ -250,7 +250,10 @@ if (Meteor.isServer) {
   Meteor.publish("userID", function (id) {
     return Meteor.users.find({_id:id});
   });
-
+    
+    Meteor.onConnection(function(c) {
+      console.log(c)
+    })
   Meteor.startup(() => {
     process.env.ROOT_URL = "https://srv5119-206152.vps.etecsa.cu";
     console.log(process.env.ROOT_URL);
