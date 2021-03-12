@@ -5,7 +5,7 @@ import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 // import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import Tooltip from '@material-ui/core/Tooltip';
+import Tooltip from "@material-ui/core/Tooltip";
 import {
   Paper,
   Box,
@@ -39,12 +39,14 @@ import PermContactCalendarRoundedIcon from "@material-ui/icons/PermContactCalend
 import MailIcon from "@material-ui/icons/Mail";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import CheckCircleRoundedIcon from "@material-ui/icons/CheckCircleRounded";
-import ListAltIcon from '@material-ui/icons/ListAlt';
+import ListAltIcon from "@material-ui/icons/ListAlt";
 import DeleteIcon from "@material-ui/icons/Delete";
 //Collections
-import { DescargasCollection } from "../collections/collections";
-import { useHistory } from 'react-router-dom';
-
+import {
+  DescargasCollection,
+  OnlineCollection,
+} from "../collections/collections";
+import { useHistory } from "react-router-dom";
 
 const StyledBadge = withStyles((theme) => ({
   badge: {
@@ -74,6 +76,7 @@ const StyledBadge = withStyles((theme) => ({
     },
   },
 }))(Badge);
+
 const SmallAvatar = withStyles((theme) => ({
   root: {
     width: 22,
@@ -106,10 +109,10 @@ const useStyles = makeStyles((theme) => ({
   margin: {
     margin: theme.spacing(2),
   },
-  avatar:{
+  avatar: {
     width: theme.spacing(7),
     height: theme.spacing(7),
-  }
+  },
 }));
 
 export default function UsersTable() {
@@ -121,8 +124,6 @@ export default function UsersTable() {
 
   // var userOnline = useTracker(() => {
 
-  
-  
   //   return OnlineCollection.find({"userId" : Meteor.userId()}).fetch();
   // });
 
@@ -137,21 +138,23 @@ export default function UsersTable() {
         a.push({
           id: data._id,
           email: data.emails[0].address,
-          firstname: data.profile &&
-            data.profile.firstName
-            ? data.profile.firstName
-            : data.profile.name,
+          firstname:
+            data.profile && data.profile.firstName
+              ? data.profile.firstName
+              : data.profile.name,
           lastName: data.profile.lastName,
           role: data.profile.role,
           edad: data.edad,
-          foto: data.services &&
+          foto:
+            data.services &&
             data.services.facebook &&
             data.services.facebook.picture.data.url
-            ? data.services.facebook.picture.data.url
-            : "/"
+              ? data.services.facebook.picture.data.url
+              : "/",
+          online: OnlineCollection.find({ userId: data._id }).count() > 0,
         })
     );
-    
+
     return a;
   });
 
@@ -210,13 +213,15 @@ export default function UsersTable() {
     );
   };
   const eliminarVideo = (id) => {
-    Meteor.users.remove(id)   
-  }
+    Meteor.users.remove(id);
+  };
   const eliminarBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
         <span className="p-column-title"></span>
-        <Tooltip title={"Eliminar a " + rowData.firstname+ " "+ rowData.lastName}>
+        <Tooltip
+          title={"Eliminar a " + rowData.firstname + " " + rowData.lastName}
+        >
           <IconButton
             aria-label="delete"
             color="primary"
@@ -235,7 +240,9 @@ export default function UsersTable() {
       <React.Fragment>
         <span className="p-column-title"></span>
         <Tooltip
-          title={"Ver Detalles de " + rowData.firstname+ " "+ rowData.lastName}
+          title={
+            "Ver Detalles de " + rowData.firstname + " " + rowData.lastName
+          }
         >
           <IconButton
             aria-label="delete"
@@ -254,13 +261,32 @@ export default function UsersTable() {
     return (
       <React.Fragment>
         <span className="p-column-title"></span>
-        <Avatar className={classes.avatar}
-          alt={rowData.firstName
-          }
-          src={
-            rowData.foto
-          }
+{rowData.online?
+<StyledBadge
+                          overlap="circle"
+                          anchorOrigin={{
+                            vertical: "bottom",
+                            horizontal: "right",
+                          }}
+                          variant="dot"
+                        >
+                          <Avatar
+                          className={classes.avatar}
+                          alt={rowData.firstName}
+                          src={rowData.foto}
+                          />
+                        </StyledBadge>
+:
+<Avatar
+          className={classes.avatar}
+          alt={rowData.firstName}
+          src={rowData.foto}
         />
+}
+        
+
+
+        
         {/* <img
           src={rowData.services.facebook.picture.data.url}
           alt="N/A"
@@ -297,7 +323,7 @@ export default function UsersTable() {
       <div className={classes.drawerHeader}></div>
 
       <Zoom in={true}>
-        <div style={{ width: "100%", padding:10}}>
+        <div style={{ width: "100%", padding: 10 }}>
           <div className="datatable-responsive-demo">
             <div className="card">
               <DataTable
@@ -312,11 +338,7 @@ export default function UsersTable() {
                 paginatorLeft={paginatorLeft}
                 paginatorRight={paginatorRight}
               >
-                <Column
-                  field="img"
-                  header="IMG"
-                  body={thumbnailBodyTemplate}
-                />
+                <Column field="img" header="IMG" body={thumbnailBodyTemplate} />
                 {/* <Column
                   field="id"
                   body={iDBodyTemplate}
@@ -366,11 +388,7 @@ export default function UsersTable() {
                   filterPlaceholder="Roles"
                   filterMatchMode="contains"
                 />
-                <Column
-                  field="urlReal"
-                  header=""
-                  body={urlBodyTemplate}
-                />
+                <Column field="urlReal" header="" body={urlBodyTemplate} />
                 <Column
                   field="eliminar"
                   header=""
