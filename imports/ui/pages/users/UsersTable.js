@@ -118,7 +118,8 @@ const useStyles = makeStyles((theme) => ({
 export default function UsersTable() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
-  const [selectedStatus, setSelectedStatus] = React.useState(null);
+  const [selectedOnline, setSelectedOnline] = React.useState(null);
+  const [selectedRole, setSelectedRole] = React.useState(null);
   const dt = React.useRef(null);
   const history = useHistory();
 
@@ -126,7 +127,46 @@ export default function UsersTable() {
 
   //   return OnlineCollection.find({"userId" : Meteor.userId()}).fetch();
   // });
-
+  const statuses = ["ONLINE", "DISCONECTED"];
+  const statusesRole = ["admin", "user"];
+  const onStatusChange = (e) => {
+    dt.current.filter(e.value, "online", "equals");
+    setSelectedOnline(e.value);
+  };
+  const onRoleChange = (e) => {
+    dt.current.filter(e.value, "role", "equals");
+    setSelectedRole(e.value);
+  };
+  const onlineItemTemplate = (option) => {
+    return <span className={`customer-badge`}><Chip onClick={()=>{}} color="primary" label={option} /></span>;
+    // ;
+  };
+  const roleItemTemplate = (option) => {
+    return <span className={`customer-badge`}><Chip onClick={()=>{}} color="primary" label={option} /></span>;
+    // ;
+  };
+  const onlineFilter = (
+    <Dropdown
+      value={selectedOnline}
+      options={statuses}
+      onChange={onStatusChange}
+      itemTemplate={onlineItemTemplate}
+      placeholder="Select a Status"
+      className="p-column-filter"
+      showClear
+    />
+  );
+  const roleFilter = (
+    <Dropdown
+      value={selectedRole}
+      options={statusesRole}
+      onChange={onRoleChange}
+      itemTemplate={roleItemTemplate}
+      placeholder="Select a Role"
+      className="p-column-filter"
+      showClear
+    />
+  );
   const usersRegister = useTracker(() => {
     Meteor.subscribe("users");
     Meteor.subscribe("conexiones");
@@ -151,7 +191,8 @@ export default function UsersTable() {
             data.services.facebook.picture.data.url
               ? data.services.facebook.picture.data.url
               : "/",
-          online: OnlineCollection.find({ userId: data._id }).count() > 0,
+          online: OnlineCollection.find({ userId: data._id }).count() > 0?"ONLINE":"DISCONECTED",
+          // address: OnlineCollection.find({ userId: data._id }).fetch(),
         })
     );
 
@@ -204,14 +245,19 @@ export default function UsersTable() {
       </React.Fragment>
     );
   };
-  const edadBodyTemplate = (rowData) => {
+  const onlineBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-        <span className="p-column-title">Edad</span>
-        {rowData.edad}
+        <span className="p-column-title">ONLINE</span>
+        <Chip
+          color="primary"
+          label={rowData.online}
+        />
       </React.Fragment>
     );
   };
+  
+
   const eliminarVideo = (id) => {
     Meteor.users.remove(id);
   };
@@ -261,32 +307,29 @@ export default function UsersTable() {
     return (
       <React.Fragment>
         <span className="p-column-title"></span>
-{rowData.online?
-<StyledBadge
-                          overlap="circle"
-                          anchorOrigin={{
-                            vertical: "bottom",
-                            horizontal: "right",
-                          }}
-                          variant="dot"
-                        >
-                          <Avatar
-                          className={classes.avatar}
-                          alt={rowData.firstName}
-                          src={rowData.foto}
-                          />
-                        </StyledBadge>
-:
-<Avatar
-          className={classes.avatar}
-          alt={rowData.firstName}
-          src={rowData.foto}
-        />
-}
-        
+        {rowData.online=="ONLINE" ? (
+          <StyledBadge
+            overlap="circle"
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "right",
+            }}
+            variant="dot"
+          >
+            <Avatar
+              className={classes.avatar}
+              alt={rowData.firstName}
+              src={rowData.foto}
+            />
+          </StyledBadge>
+        ) : (
+          <Avatar
+            className={classes.avatar}
+            alt={rowData.firstName}
+            src={rowData.foto}
+          />
+        )}
 
-
-        
         {/* <img
           src={rowData.services.facebook.picture.data.url}
           alt="N/A"
@@ -295,29 +338,7 @@ export default function UsersTable() {
       </React.Fragment>
     );
   };
-  const statuses = ["true", "false"];
-  const onStatusChange = (e) => {
-    dt.current.filter(e.value, "clasificado", "equals");
-    setSelectedStatus(e.value);
-  };
-  const statusItemTemplate = (option) => {
-    return (
-      <span className={`customer-badge status-${option}`}>
-        {option == "true" ? "Clasificado" : "No Clasificado"}
-      </span>
-    );
-  };
-  const statusFilter = (
-    <Dropdown
-      value={selectedStatus}
-      options={statuses}
-      onChange={onStatusChange}
-      itemTemplate={statusItemTemplate}
-      placeholder="Seleccione la clasificación"
-      className="p-column-filter"
-      showClear
-    />
-  );
+
   return (
     <>
       <div className={classes.drawerHeader}></div>
@@ -365,14 +386,6 @@ export default function UsersTable() {
                   filterMatchMode="contains"
                 />
                 <Column
-                  field="edad"
-                  header="Edad"
-                  body={edadBodyTemplate}
-                  filter
-                  filterPlaceholder="Edad"
-                  filterMatchMode="contains"
-                />
-                <Column
                   field="email"
                   header="Correo"
                   body={emailBodyTemplate}
@@ -381,12 +394,18 @@ export default function UsersTable() {
                   filterMatchMode="contains"
                 />
                 <Column
+                  field="online"
+                  header="ONLINE"
+                  body={onlineBodyTemplate}
+                  filter
+                  filterElement={onlineFilter}
+                />
+                <Column
                   field="role"
                   header="Roles"
                   body={roleBodyTemplate}
                   filter
-                  filterPlaceholder="Roles"
-                  filterMatchMode="contains"
+                  filterElement={roleFilter}
                 />
                 <Column field="urlReal" header="" body={urlBodyTemplate} />
                 <Column

@@ -258,7 +258,6 @@ if (Meteor.isServer) {
   });
 
   Meteor.onConnection(function (connection) {
-    console.log(connection.id)
     OnlineCollection.insert({
       _id: connection.id,
       address: connection.clientAddress,
