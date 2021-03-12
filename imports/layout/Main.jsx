@@ -200,7 +200,7 @@ export default function Main() {
               {useractual &&
               useractual.profile &&
               useractual.profile.role == "admin" ? (
-                <PelisCard clasificacion="admin" />
+                <PelisCard clasificacion="All" />
               ) : (
                 ""
               )}

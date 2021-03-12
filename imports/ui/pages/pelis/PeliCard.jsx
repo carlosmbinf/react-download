@@ -151,7 +151,7 @@ export default function PeliCard(options) {
 
   const peli = useTracker(() => {
     Meteor.subscribe("pelis");
-    if (options.clasificacion == "admin") {
+    if (options.clasificacion == "All") {
       return PelisCollection.find({}, { fields: {} }).fetch();
     } else {
       return PelisCollection.find({ clasificacion: options.clasificacion }, { fields: {} }).fetch();
@@ -284,7 +284,7 @@ export default function PeliCard(options) {
             style={{padding:60,paddingBottom:0,paddingRight:0}}
           >
             <Grid item xs={12}>
-              <Typography variant="h4" gutterBottom style={{fontFamily:"cursive"}}>
+              <Typography variant="h4" gutterBottom style={{color:"white",fontFamily:"cursive"}}>
                 {options.clasificacion}
               </Typography>
 
