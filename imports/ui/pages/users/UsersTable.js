@@ -119,8 +119,16 @@ export default function UsersTable() {
   const dt = React.useRef(null);
   const history = useHistory();
 
-  const descargaRegister = useTracker(() => {
+  // var userOnline = useTracker(() => {
+
+  
+  
+  //   return OnlineCollection.find({"userId" : Meteor.userId()}).fetch();
+  // });
+
+  const usersRegister = useTracker(() => {
     Meteor.subscribe("users");
+    Meteor.subscribe("conexiones");
     let a = [];
 
     Meteor.users.find({}).map(
@@ -295,7 +303,7 @@ export default function UsersTable() {
               <DataTable
                 ref={dt}
                 className="p-shadow-5 p-datatable-responsive-demo"
-                value={descargaRegister}
+                value={usersRegister}
                 paginator
                 paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
                 currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"

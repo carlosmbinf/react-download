@@ -33,6 +33,7 @@ import Badge from "@material-ui/core/Badge";
 import Avatar from "@material-ui/core/Avatar";
 import { Meteor } from "meteor/meteor";
 import Fade from "react-reveal/Fade";
+import { OnlineCollection } from "../ui/pages/collections/collections";
 
 const drawerWidth = 240;
 const StyledBadge = withStyles((theme) => ({
@@ -174,7 +175,6 @@ export default function PersistentDrawerLeft() {
     return Meteor.user();
   });
 
-
   const listaDeLinks = [
     { title: "dashboard", icon: <InboxIcon />, url: "dashboard" },
     // {title: "guest",
@@ -264,7 +264,8 @@ export default function PersistentDrawerLeft() {
                       color="textSecondary"
                       noWrap
                     >
-                      {Meteor.status().connected ? (
+                      {/* Meteor.status().connected */}
+                      { Meteor.status().connected ? 
                         <StyledBadge
                           overlap="circle"
                           anchorOrigin={{
@@ -288,7 +289,7 @@ export default function PersistentDrawerLeft() {
                             }
                           />
                         </StyledBadge>
-                      ) : (
+                       : 
                         <Avatar
                           alt={
                             userActual &&
@@ -303,7 +304,7 @@ export default function PersistentDrawerLeft() {
                             userActual.services.facebook.picture.data.url
                           }
                         />
-                      )}
+                      }
 
                       {
                         <strong>

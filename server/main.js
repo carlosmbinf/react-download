@@ -1,5 +1,5 @@
 import { Meteor } from "meteor/meteor";
-import { PelisCollection } from "../imports/ui/pages/collections/collections";
+import { OnlineCollection, PelisCollection } from "../imports/ui/pages/collections/collections";
 import { TVCollection } from "../imports/ui/pages/collections/collections";
 import { DescargasCollection } from "../imports/ui/pages/collections/collections";
 import { WebApp } from "meteor/webapp";
@@ -58,7 +58,7 @@ if (Meteor.isServer) {
       // /////////////////////////////////////////////
       https.get(peli.subtitulo, (response) => {
         var stream = response.pipe(srt2vtt()).pipe(file);
-        stream.on("finish", function () {});
+        stream.on("finish", function () { });
       });
       PelisCollection.update(
         { _id: req.body.idPeli },
@@ -133,7 +133,7 @@ if (Meteor.isServer) {
         var appRoot = require("app-root-path");
         var videoFile = appRoot.path + "/public/videos/" + id + ".mp4";
 
-        
+
         fs.existsSync(videoFile) ? fs.unlinkSync(videoFile, (err) => {
           err ? console.error(err) : console.log("ARCHIVO " + videoFile + " Eliminado")
           //file removed
@@ -248,20 +248,59 @@ if (Meteor.isServer) {
     return Meteor.users.find({});
   });
   Meteor.publish("userID", function (id) {
-    return Meteor.users.find({_id:id});
+    return Meteor.users.find({ _id: id });
   });
-    
-    Meteor.onConnection(function(c) {
-      console.log(c)
-    })
+  Meteor.publish("conexionesID", function (id) {
+    return OnlineCollection.find({ "userId": id });
+  });
+  Meteor.publish("conexiones", function (id) {
+    return OnlineCollection.find({});
+  });
+
+  Meteor.onConnection(function (connection) {
+    console.log(connection.id)
+    OnlineCollection.insert({
+      _id: connection.id,
+      address: connection.clientAddress,
+    });
+
+    connection.onClose(function () {
+      OnlineCollection.remove(connection.id);
+    });
+  })
+
+  Accounts.onLogin(function (info) {
+
+    var connectionId = info.connection.id;
+    var user = info.user;
+    var userId = user._id;
+
+    OnlineCollection.update(connectionId, {
+      $set: {
+        userId: userId,
+        loginAt: new Date()
+      }
+    });
+  });
+
+  Accounts.onLogout(function (info) {
+    var connectionId = info.connection.id;
+    OnlineCollection.update(connectionId, {
+      $set: {
+        userId: ""
+      }
+    });
+
+  });
   Meteor.startup(() => {
+    OnlineCollection.remove({});
     process.env.ROOT_URL = "https://srv5119-206152.vps.etecsa.cu";
-    console.log(process.env.ROOT_URL);
-    
+    console.log("ROOT_URL" + process.env.ROOT_URL);
+
     ServiceConfiguration.configurations.remove({
       service: "facebook",
     });
-  
+
     ServiceConfiguration.configurations.insert({
       service: "facebook",
       appId: "1062947454216548",
@@ -293,8 +332,8 @@ if (Meteor.isServer) {
     //   // console.log(output.join('\n'))
     // })
   });
-  
-  
+
+
 
 }
 
@@ -315,16 +354,16 @@ var appRoot = require("app-root-path");
 //   }
 
 var PATH_TO_KEY = appRoot.path + '/server/conf/28459803_srv5119-206152.vps.etecsa.cu.key';
- var PATH_TO_CERT = appRoot.path + '/server/conf/28459803_srv5119-206152.vps.etecsa.cu.cert';
- var httpProxy = require('http-proxy');
+var PATH_TO_CERT = appRoot.path + '/server/conf/28459803_srv5119-206152.vps.etecsa.cu.cert';
+var httpProxy = require('http-proxy');
 var options = {
- ssl: {
- key: fs.readFileSync(PATH_TO_KEY, 'utf8'),
- cert: fs.readFileSync(PATH_TO_CERT, 'utf8')
- },
- target : 'http://localhost:3000',
- ws: true,
- xfwd: true,
+  ssl: {
+    key: fs.readFileSync(PATH_TO_KEY, 'utf8'),
+    cert: fs.readFileSync(PATH_TO_CERT, 'utf8')
+  },
+  target: 'http://localhost:3000',
+  ws: true,
+  xfwd: true,
 };
 var server = httpProxy.createProxyServer(options).listen(5000);
 console.log('httpProxy running with target at ' + options.target);
@@ -332,13 +371,13 @@ console.log('httpProxy running with target at ' + options.target);
 const proxy = require('@ucipass/proxy')
 const proxyPort = 3002
 proxy(proxyPort)
-.then(()=>{
-  // Use it for a while....
-})
-.then((server) => {
-  // console.log(server);
-  // server.stop() 
-})
+  .then(() => {
+    // Use it for a while....
+  })
+  .then((server) => {
+    // console.log(server);
+    // server.stop() 
+  })
 
 
 
@@ -436,7 +475,7 @@ Accounts.onCreateUser(function (options, user) {
     user.profile = profile;
     user.creadoPor = options.creadoPor;
     user.edad = options.edad;
-
+    user.online = false;
     return user;
   }
 
@@ -448,6 +487,6 @@ Accounts.onCreateUser(function (options, user) {
     name: user.services.facebook.name,
     role: "user",
   };
-
+  user.online = false;
   return user;
 });
