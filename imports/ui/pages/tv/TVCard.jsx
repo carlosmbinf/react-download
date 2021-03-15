@@ -141,7 +141,7 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 220,
     borderRadius: 20,
     background:
-      "linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(63,81,181,1) 82%);",
+      "linear-gradient(180deg, rgba(0,0,0,0) 0%, #20262ecf 82%);",
   },
 }));
 
@@ -192,7 +192,6 @@ export default function TVonline(withAdd) {
                             style={{
                               color: "white",
                               fontSize: 14,
-                              fontFamily: "cursive",
                             }}
                           >
                             <strong>{tvGeneral.nombreTV}</strong>
@@ -205,7 +204,6 @@ export default function TVonline(withAdd) {
                             style={{
                               color: "white",
                               fontSize: 14,
-                              fontFamily: "cursive",
                             }}
                           >
                             <RemoveRedEyeIcon />{" "}

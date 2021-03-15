@@ -141,7 +141,7 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 220,
     borderRadius: 20,
     background:
-      "linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(63,81,181,1) 82%);",
+      "linear-gradient(180deg, rgba(0,0,0,0) 0%, #20262ecf 82%);",
   },
 }));
 
@@ -195,7 +195,6 @@ export default function PeliCard(options) {
                           style={{
                             color: "white",
                             fontSize: 14,
-                            fontFamily: "cursive",
                           }}
                         >
                           <strong>{peliGeneral.nombrePeli}</strong>
@@ -208,7 +207,6 @@ export default function PeliCard(options) {
                           style={{
                             color: "white",
                             fontSize: 14,
-                            fontFamily: "cursive",
                           }}
                         >
                           <RemoveRedEyeIcon />{" "}
@@ -284,7 +282,7 @@ export default function PeliCard(options) {
             style={{padding:60,paddingBottom:0,paddingRight:0}}
           >
             <Grid item xs={12}>
-              <Typography variant="h4" gutterBottom style={{color:"white",fontFamily:"cursive"}}>
+              <Typography variant="h4" gutterBottom style={{color:"white"}}>
                 {options.clasificacion}
               </Typography>
 

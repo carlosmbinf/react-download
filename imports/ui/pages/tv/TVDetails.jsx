@@ -202,7 +202,7 @@ export default function TV() {
                   )}
                 <Typography
                   variant="h5"
-                  style={{color: "white",fontFamily: "cursive"}}
+                  style={{color: "white"}}
                 >
                   
                   {tvDetails.nombreTV}

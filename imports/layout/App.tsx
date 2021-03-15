@@ -26,7 +26,7 @@ import MailIcon from "@material-ui/icons/Mail";
 import { Link } from "react-router-dom";
 import Main from "./Main";
 import { Button, Grid, Slide } from "@material-ui/core";
-
+import { useHistory } from 'react-router-dom';
 import { useTracker } from "meteor/react-meteor-data";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import Badge from "@material-ui/core/Badge";
@@ -34,6 +34,21 @@ import Avatar from "@material-ui/core/Avatar";
 import { Meteor } from "meteor/meteor";
 import Fade from "react-reveal/Fade";
 import { OnlineCollection } from "../ui/pages/collections/collections";
+
+
+
+import BottomNavigation from '@material-ui/core/BottomNavigation';
+import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
+import FolderIcon from '@material-ui/icons/Folder';
+import RestoreIcon from '@material-ui/icons/Restore';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import LocationOnIcon from '@material-ui/icons/LocationOn';
+import DashboardIcon from '@material-ui/icons/Dashboard';
+import GroupIcon from '@material-ui/icons/Group';
+import LiveTvIcon from '@material-ui/icons/LiveTv';
+import MovieFilterIcon from '@material-ui/icons/MovieFilter';
+import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
+import Footer from "./Footer";
 
 const drawerWidth = 240;
 const StyledBadge = withStyles((theme) => ({
@@ -138,12 +153,12 @@ const useStyles = makeStyles((theme) =>
       minWidth: "100%",
       maxWidth: "100vw",
       flexGrow: 1,
-      background:"#2a323d",
+      background: "#2a323d",
       // backgroundImage: "radial-gradient(circle, rgba(238,174,174,0.8323704481792717) -8%, rgba(112,96,255,0.958420868347339) 100%)",
       backgroundPosition: "center",
       backgroundSize: "cover",
       backgroundRepeat: "no-repeat",
-      padding: "5px",
+      paddingBottom: "7em",
       transition: theme.transitions.create("margin", {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
@@ -160,15 +175,37 @@ const useStyles = makeStyles((theme) =>
     textTittle: {
       // backgroundColor: "#fff",
     },
+    footer: {
+      width: "100%",
+      position: "fixed",
+      bottom: 0,
+      background: theme.palette.primary.main,
+      color: "green",
+      "&$Mui-selected": {
+        color: "red",
+      },
+    },
+    bottomItem: {
+      color: theme.palette.text.secondary,
+    '&$selected': {
+      color: theme.palette.primary.main,
+    },
+    }
   })
 );
 
 export default function PersistentDrawerLeft() {
   const classes = useStyles();
   const theme = useTheme();
+  const history = useHistory();
   const [open, setOpen] = React.useState(false);
   const [error, setError] = useState("");
+  const [value, setValue] = React.useState('recents');
 
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+    history.push(newValue);
+  };
   const userActual = useTracker(() => {
 
     Meteor.subscribe("userID", Meteor.userId());
@@ -176,11 +213,12 @@ export default function PersistentDrawerLeft() {
   });
 
   const listaDeLinks = [
-    { title: "dashboard", icon: <InboxIcon />, url: "dashboard" },
+    // { title: "dashboard", icon: <DashboardIcon />, url: "dashboard" },
     // {title: "guest",
     //   icon: <InboxIcon />,
     // },
-    { title: "USUARIOS", icon: <InboxIcon />, url: "users" },
+    
+    { title: "USUARIOS", icon: <GroupIcon />, url: "users" },
     // {title: "calendar",
     //   icon: <InboxIcon />,
     // },
@@ -190,12 +228,12 @@ export default function PersistentDrawerLeft() {
     // {title: "create-user",
     //   icon: <InboxIcon />,
     // },
-    { title: "Television en VIVO", icon: <InboxIcon />, url: "tv" },
-    { title: "Peliculas", icon: <InboxIcon />, url: "pelis" },
+    { title: "Television en VIVO", icon: <LiveTvIcon />, url: "tv" },
+    { title: "Peliculas", icon: <MovieFilterIcon />, url: "pelis" },
     // {title: "create-pelis",
     //   icon: <InboxIcon />,
     // },
-    { title: "Descargas Youtube", icon: <InboxIcon />, url: "downloads" },
+    { title: "Descargas Youtube", icon: <CloudDownloadIcon />, url: "downloads" },
   ];
 
   const handleDrawerOpen = () => {
@@ -265,7 +303,7 @@ export default function PersistentDrawerLeft() {
                       noWrap
                     >
                       {/* Meteor.status().connected */}
-                      { Meteor.status().connected ? 
+                      {Meteor.status().connected ? (
                         <StyledBadge
                           overlap="circle"
                           anchorOrigin={{
@@ -289,7 +327,7 @@ export default function PersistentDrawerLeft() {
                             }
                           />
                         </StyledBadge>
-                       : 
+                      ) : (
                         <Avatar
                           alt={
                             userActual &&
@@ -304,7 +342,7 @@ export default function PersistentDrawerLeft() {
                             userActual.services.facebook.picture.data.url
                           }
                         />
-                      }
+                      )}
 
                       {
                         <strong>
@@ -421,6 +459,7 @@ export default function PersistentDrawerLeft() {
           {/* <div className={classes.drawerHeader}/> */}
           <Main />
         </main>
+        <Footer/>
       </div>
     </>
   );

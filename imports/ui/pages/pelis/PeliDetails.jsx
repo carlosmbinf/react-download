@@ -492,7 +492,7 @@ export default function PeliDetails() {
                     )}
                   <Typography
                     variant="h5"
-                    style={{ color: "#ffffff99", fontFamily: "cursive" }}
+                    style={{ color: "#ffffff99",}}
                   >
 
                     {peliDetails.nombrePeli}
@@ -531,7 +531,6 @@ export default function PeliDetails() {
                           style={{
                             color: "white",
                             fontSize: 14,
-                            fontFamily: "cursive",
                           }}
                         >
                           <RemoveRedEyeIcon />{" "}
