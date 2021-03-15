@@ -22,7 +22,9 @@ createStyles({
       bottom: 0,
       color:"white",
       boxShadow: "0 0 20px 0px rgb(0 0 0 / 46%);",
-      backgroundColor: '#3f51b5c7',
+      backgroundColor: '#3f51b561',
+      zIndex: "1",
+      backdropFilter: "blur(30px)",
       [theme.breakpoints.up('sm')]: {
         display:"none",
       },

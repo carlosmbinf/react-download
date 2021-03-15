@@ -125,6 +125,9 @@ const useStyles = makeStyles((theme) =>
     },
     menuButton: {
       marginRight: theme.spacing(2),
+      [theme.breakpoints.down('xs')]: {
+        display:"none",
+      },
     },
     hide: {
       display: "none",
@@ -139,6 +142,9 @@ const useStyles = makeStyles((theme) =>
       background:
         "linear-gradient(270deg, rgba(0,0,0,0) 0%, rgba(63,81,181,1) 82%);",
       borderRight: 0,
+      [theme.breakpoints.down('xs')]: {
+        display:"none",
+      },
     },
     drawerHeader: {
       display: "flex",
