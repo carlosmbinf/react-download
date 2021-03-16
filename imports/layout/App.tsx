@@ -35,8 +35,6 @@ import { Meteor } from "meteor/meteor";
 import Fade from "react-reveal/Fade";
 import { OnlineCollection } from "../ui/pages/collections/collections";
 
-
-
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import FolderIcon from '@material-ui/icons/Folder';
@@ -308,8 +306,8 @@ export default function PersistentDrawerLeft() {
                       color="textSecondary"
                       noWrap
                     >
-                      {/* Meteor.status().connected */}
-                      {Meteor.status().connected ? (
+                     <Button onClick={()=> {history.push("/users/" + userActual._id)}}>
+                     {Meteor.status().connected ? (
                         <StyledBadge
                           overlap="circle"
                           anchorOrigin={{
@@ -362,6 +360,7 @@ export default function PersistentDrawerLeft() {
                             : " " + userActual.profile.name + " "}
                         </strong>
                       }
+                      </Button>
 
                       {userActual && (
                         <Button color="secondary" onClick={handleLogOut}>

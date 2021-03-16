@@ -5,7 +5,16 @@ import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import { Paper, Box, Grid, Icon, Divider, Zoom, IconButton, Switch } from "@material-ui/core";
+import {
+  Paper,
+  Box,
+  Grid,
+  Icon,
+  Divider,
+  Zoom,
+  IconButton,
+  Switch,
+} from "@material-ui/core";
 import { Meteor } from "meteor/meteor";
 import { Tracker } from "meteor/tracker";
 import { useTracker } from "meteor/react-meteor-data";
@@ -18,9 +27,9 @@ import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
 import PermContactCalendarRoundedIcon from "@material-ui/icons/PermContactCalendarRounded";
 import MailIcon from "@material-ui/icons/Mail";
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import { TVCollection } from "../collections/collections";
-import VPlayer from 'react-vplayer';
+import VPlayer from "react-vplayer";
 import DeleteIcon from "@material-ui/icons/Delete";
 
 const StyledBadge = withStyles((theme) => ({
@@ -72,8 +81,7 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     borderRadius: 20,
     padding: "2em",
-    background:
-      "linear-gradient(0deg, #3f4b5b 15%, rgba(245,0,87,0) 100%);",
+    background: "linear-gradient(0deg, #3f4b5b 15%, rgba(245,0,87,0) 100%);",
   },
   boton: {
     borderRadius: 20,
@@ -135,7 +143,7 @@ export default function TV() {
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
 
-  TVCollection.update(useParams().id, { $inc: {vistas: 0.5 }})
+  // TVCollection.update(useParams().id, { $inc: {vistas: 0.5 }})
 
   const tvDetails = useTracker(() => {
     Meteor.subscribe("tv", useParams().id);
@@ -147,8 +155,13 @@ export default function TV() {
     alert("Pelicula Eliminada");
     history.push("/tv");
   }
+  function addVistas() {
+    PelisCollection.update(peliDetails._id, { $inc: { vistas: 1 } });
+  }
   const handleChange = (event) => {
-    TVCollection.update(tvDetails._id, { $set: { mostrar: !(tvDetails.mostrar == "true") } })
+    TVCollection.update(tvDetails._id, {
+      $set: { mostrar: !(tvDetails.mostrar == "true") },
+    });
   };
   return (
     <>
@@ -159,74 +172,79 @@ export default function TV() {
             aria-label="delete"
             className={classes.margin}
           >
-
             <ArrowBackIcon fontSize="large" color="secondary" />
-
           </IconButton>
         </Link>
       </div>
+      <div className={classes.drawerHeader}>
+        {tvDetails && (
+          <Zoom in={true}>
+            <Paper
+              elevation={5}
+              className={
+                tvDetails.mostrar !== "true"
+                  ? classes.primary
+                  : classes.secundary
+              }
+            >
+              <Grid
+                container
+                direction="row"
+                justify="center"
+                alignItems="center"
+                spacing={1}
+              >
+                <Grid style={{ width: "100%" }}>
+                  {/* INSERTAR VIDEO */}
+                  <iframe
+                    onLoadedMetadata={addVistas}
+                    allow="autoplay; encrypted-media; fullscreen"
+                    src={tvDetails.urlTV}
+                    style={{
+                      width: "100%",
+                      maxHeight: "60vh",
+                      minHeight: "60vh",
+                    }}
+                  ></iframe>
+                </Grid>
 
-      {tvDetails && <Zoom in={true} >
-        <Paper
-          elevation={5}
-          className={
-            tvDetails.mostrar !== "true"
-              ? classes.primary
-              : classes.secundary
-          }
-        >
-          <Grid container
-            direction="row"
-            justify="center"
-            alignItems="center" spacing={1}>
-            <Grid style={{ width: "100%" }}>
-              {/* INSERTAR VIDEO */}
-              <iframe
-              allow="autoplay; encrypted-media; fullscreen" 
-              src={tvDetails.urlTV} 
-              style={{width:"100%", maxHeight: "60vh",minHeight: "60vh"}}></iframe>
-            </Grid>
-
-            <Grid item xs={12}>
-              {/* <Divider className={classes.padding10} /> */}
-              <Grid container
-                  direction="row-reverse"
-                  justify="space-around"
-                  alignItems="center">
-                    {Meteor.user().profile.role && Meteor.user().profile.role == "admin" ? (
-                    <IconButton onClick={eliminarPeli} aria-label="delete">
-                      <DeleteIcon fontSize="large" />
-                    </IconButton>
-                  ) : (
-                    <div/>
-                  )}
-                <Typography
-                  variant="h5"
-                  style={{color: "white"}}
-                >
-                  
-                  {tvDetails.nombreTV}
-                </Typography>
-                {Meteor.user().profile.role && Meteor.user().profile.role == "admin" ? (
-                    <Switch
-                      checked={tvDetails.mostrar == "true"}
-                      onChange={handleChange}
-                      name="Mostrar"
-                      color="primary"
-                    />
-                  ) : (
+                <Grid item xs={12}>
+                  {/* <Divider className={classes.padding10} /> */}
+                  <Grid
+                    container
+                    direction="row-reverse"
+                    justify="space-around"
+                    alignItems="center"
+                  >
+                    {Meteor.user().profile.role &&
+                    Meteor.user().profile.role == "admin" ? (
+                      <IconButton onClick={eliminarPeli} aria-label="delete">
+                        <DeleteIcon fontSize="large" />
+                      </IconButton>
+                    ) : (
                       <div />
                     )}
+                    <Typography variant="h5" style={{ color: "white" }}>
+                      {tvDetails.nombreTV}
+                    </Typography>
+                    {Meteor.user().profile.role &&
+                    Meteor.user().profile.role == "admin" ? (
+                      <Switch
+                        checked={tvDetails.mostrar == "true"}
+                        onChange={handleChange}
+                        name="Mostrar"
+                        color="primary"
+                      />
+                    ) : (
+                      <div />
+                    )}
+                  </Grid>
+                </Grid>
               </Grid>
-            </Grid>
-
-
-          </Grid>
-        </Paper>
-      </Zoom>
-      }
-
-
+            </Paper>
+          </Zoom>
+        )}
+      </div>
     </>
   );
 }
