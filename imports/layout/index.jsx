@@ -50,7 +50,7 @@ export default function App() {
         <Switch>
           <Route path="/">
             {userActual &&
-              (userActual.baneado ? <PersistentDrawerLeft /> : <LoginPage />)}
+              (userActual.baneado ? <LoginPage /> : <PersistentDrawerLeft />)}
               {!userActual&&<LoginPage />}
           </Route>
         </Switch>
