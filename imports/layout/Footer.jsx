@@ -50,45 +50,49 @@ createStyles({
 }));
 
 export default function Footer() {
-    const history = useHistory();
-  const classes = useStyles();
-  const [value, setValue] = React.useState('recents');
-  var { slug } = useParams();
-  const listaDeLinks = [
-    // { title: "dashboard", icon: <DashboardIcon />, url: "dashboard" },
-    // {title: "guest",
-    //   icon: <InboxIcon />,
-    // },
-    
-    { title: "USUARIOS", icon: <GroupIcon />, url: "users" },
-    // {title: "calendar",
-    //   icon: <InboxIcon />,
-    // },
-    // {title: "login",
-    //   icon: <InboxIcon />,
-    // },
-    // {title: "create-user",
-    //   icon: <InboxIcon />,
-    // },
-    { title: "Television", icon: <LiveTvIcon />, url: "tv" },
-    { title: "Peliculas", icon: <MovieFilterIcon />, url: "pelis" },
-    // {title: "create-pelis",
-    //   icon: <InboxIcon />,
-    // },
-    { title: "Youtube", icon: <CloudDownloadIcon />, url: "downloads" },
-  ];
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-    history.push("/" + newValue);
-  };
+   
   function Child() {
+    const history = useHistory();
+    const classes = useStyles();
+    const [value, setValue] = React.useState('recents');
     // We can use the `useParams` hook here to access
     // the dynamic pieces of the URL.
     let { id } = useParams();
-  
+
+    const listaDeLinks = [
+      // { title: "dashboard", icon: <DashboardIcon />, url: "dashboard" },
+      // {title: "guest",
+      //   icon: <InboxIcon />,
+      // },
+      
+      { title: "USUARIOS", icon: <GroupIcon />, url: "users" },
+      // {title: "calendar",
+      //   icon: <InboxIcon />,
+      // },
+      // {title: "login",
+      //   icon: <InboxIcon />,
+      // },
+      // {title: "create-user",
+      //   icon: <InboxIcon />,
+      // },
+      { title: "Television", icon: <LiveTvIcon />, url: "tv" },
+      { title: "Peliculas", icon: <MovieFilterIcon />, url: "pelis" },
+      // {title: "create-pelis",
+      //   icon: <InboxIcon />,
+      // },
+      { title: "Youtube", icon: <CloudDownloadIcon />, url: "downloads" },
+    ];
+
+    const handleChange = (event, newValue) => {
+      setValue(newValue);
+      history.push("/" + newValue);
+    };
     return (
-      <>
+      <BottomNavigation
+      value={value}
+      onChange={handleChange}
+      className={classes.root}
+    >
       {listaDeLinks.map((data, index) =>
       Meteor.user().profile && Meteor.user().profile.role == "admin" ? (
         <BottomNavigationAction
@@ -106,25 +110,22 @@ export default function Footer() {
           key={index}
           label={data.title}
           value={data.url}
+          showLabel={data.url == id}
           icon={data.icon}
           className={classes.selected}
         />
       )
     )}
-    </>
+    </BottomNavigation>
     )
   }
   return (
-    <BottomNavigation
-      value={value}
-      onChange={handleChange}
-      className={classes.root}
-    >
+    
       <Switch>
           <Route path="/:id" children={<Child />} />
         </Switch>
       
-    </BottomNavigation>
+    
     
   );
 }
