@@ -475,6 +475,8 @@ Accounts.onCreateUser(function (options, user) {
     user.creadoPor = options.creadoPor;
     user.edad = options.edad;
     user.online = false;
+    user.baneado = false;
+
     return user;
   }
 
@@ -487,5 +489,6 @@ Accounts.onCreateUser(function (options, user) {
     role: "user",
   };
   user.online = false;
+  user.baneado = false;
   return user;
 });

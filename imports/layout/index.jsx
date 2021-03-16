@@ -47,21 +47,13 @@ export default function App() {
     <Router>
       <div className={classes.root}>
         <CssBaseline />
-        
-        {!userActual && 
         <Switch>
-        <Route path="/loading">
-        </Route>
-        <Route path="/">
-          <LoginPage />
-        </Route>
+          <Route path="/">
+            {userActual &&
+              (userActual.baneado ? <PersistentDrawerLeft /> : <LoginPage />)}
+              {!userActual&&<LoginPage />}
+          </Route>
         </Switch>
-        }
-        {userActual && (
-          
-            <PersistentDrawerLeft />
-         
-        )}
       </div>
     </Router>
   );
