@@ -3,6 +3,13 @@ import { makeStyles,createStyles } from '@material-ui/core/styles';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import { useHistory } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  useParams
+} from "react-router-dom";
 
 //ICONS
 import FolderIcon from '@material-ui/icons/Folder';
@@ -46,7 +53,7 @@ export default function Footer() {
     const history = useHistory();
   const classes = useStyles();
   const [value, setValue] = React.useState('recents');
-
+  var { slug } = useParams();
   const listaDeLinks = [
     // { title: "dashboard", icon: <DashboardIcon />, url: "dashboard" },
     // {title: "guest",
@@ -73,32 +80,51 @@ export default function Footer() {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
-    history.push(newValue);
+    history.push("/" + newValue);
   };
-
+  function Child() {
+    // We can use the `useParams` hook here to access
+    // the dynamic pieces of the URL.
+    let { id } = useParams();
+  
+    return (
+      <>
+      {listaDeLinks.map((data, index) =>
+      Meteor.user().profile && Meteor.user().profile.role == "admin" ? (
+        <BottomNavigationAction
+          key={index}
+          label={data.title}
+          value={data.url}
+          showLabel={data.url == id}
+          icon={data.icon}
+          className={classes.selected}
+        />
+      ) : data.url == "users" ? (
+        ""
+      ) : (
+        <BottomNavigationAction
+          key={index}
+          label={data.title}
+          value={data.url}
+          icon={data.icon}
+          className={classes.selected}
+        />
+      )
+    )}
+    </>
+    )
+  }
   return (
-    <BottomNavigation value={value} onChange={handleChange} className={classes.root}>
-      {listaDeLinks.map((data, index) => 
-            Meteor.user().profile && Meteor.user().profile.role == "admin" ?
-              <BottomNavigationAction
-                key={index}
-                label={data.title}
-                value={data.url}
-                icon={data.icon}
-                className={classes.selected}
-              />
-             : (data.url == "users" ? 
-              ""
-             : 
-             <BottomNavigationAction
-             key={index}
-             label={data.title}
-             value={data.url}
-             icon={data.icon}
-             
-             className={classes.selected}
-           />)
-          )}
+    <BottomNavigation
+      value={value}
+      onChange={handleChange}
+      className={classes.root}
+    >
+      <Switch>
+          <Route path="/:id" children={<Child />} />
+        </Switch>
+      
     </BottomNavigation>
+    
   );
 }
