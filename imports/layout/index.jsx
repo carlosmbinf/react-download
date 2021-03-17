@@ -49,9 +49,9 @@ export default function App() {
         <CssBaseline />
         <Switch>
           <Route path="/">
-            {userActual &&
-              (userActual.baneado ? <LoginPage /> : <PersistentDrawerLeft />)}
-              {!userActual&&<LoginPage />}
+            {
+              (userActual ? <LoginPage /> : <PersistentDrawerLeft />)}
+            {/* {!userActual && <LoginPage />} */}
           </Route>
         </Switch>
       </div>

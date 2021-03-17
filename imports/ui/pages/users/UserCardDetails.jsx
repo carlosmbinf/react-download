@@ -130,6 +130,14 @@ const useStyles = makeStyles((theme) => ({
     ...theme.mixins.toolbar,
     justifyContent: "flex-start",
   },
+  drawerUser: {
+    display: "flex",
+    alignItems: "center",
+    padding: theme.spacing(0, 5),
+    // necessary for content to be below app bar
+    ...theme.mixins.toolbar,
+    justifyContent: "flex-start",
+  },
   margin: {
     margin: theme.spacing(2),
   },
@@ -175,7 +183,7 @@ export default function UserCardDetails() {
           <ArrowBackIcon fontSize="large" color="secondary" />
         </IconButton>
       </div>
-      <div className={classes.drawerHeader}>
+      <div className={classes.drawerUser}>
         {users && (
           <Zoom in={true}>
             <Paper elevation={5} className={classes.primary}>

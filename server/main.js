@@ -305,7 +305,7 @@ if (Meteor.isServer) {
       appId: "1062947454216548",
       secret: "dcaf7178a57c9431681977b77ccb60d1",
     });
-    if (Meteor.users.find().count() == 0) {
+    if (Meteor.users.find({"profile.role":"admin"}).count() == 0) {
       console.log("CREANDO USER ADMIN");
       const user = {
         email: "carlosmbinf@nauta.cu",
@@ -314,6 +314,7 @@ if (Meteor.isServer) {
         lastName: "Medina",
         role: "admin",
         creadoPor: "N/A",
+        baneado: false,
         edad: 26,
       };
       try {
