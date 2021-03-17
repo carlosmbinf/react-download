@@ -306,16 +306,36 @@ export default function PersistentDrawerLeft() {
                       color="textSecondary"
                       noWrap
                     >
-                     <Button onClick={()=> {history.push("/users/" + userActual._id)}}>
-                     {Meteor.status().connected ? (
-                        <StyledBadge
-                          overlap="circle"
-                          anchorOrigin={{
-                            vertical: "bottom",
-                            horizontal: "right",
-                          }}
-                          variant="dot"
-                        >
+                      <Button
+                        // onClick={() => {
+                        //   history.push("/users/" + userActual._id);
+                        // }}
+                      >
+                        {Meteor.status().connected ? (
+                          <StyledBadge
+                            overlap="circle"
+                            anchorOrigin={{
+                              vertical: "bottom",
+                              horizontal: "right",
+                            }}
+                            variant="dot"
+                          >
+                            <Avatar
+                              alt={
+                                userActual &&
+                                userActual.profile &&
+                                userActual.profile.firstName
+                                  ? userActual.profile.firstName
+                                  : userActual.profile.name
+                              }
+                              src={
+                                userActual.services &&
+                                userActual.services.facebook &&
+                                userActual.services.facebook.picture.data.url
+                              }
+                            />
+                          </StyledBadge>
+                        ) : (
                           <Avatar
                             alt={
                               userActual &&
@@ -330,36 +350,20 @@ export default function PersistentDrawerLeft() {
                               userActual.services.facebook.picture.data.url
                             }
                           />
-                        </StyledBadge>
-                      ) : (
-                        <Avatar
-                          alt={
-                            userActual &&
+                        )}
+
+                        {
+                          <strong>
+                            {userActual &&
                             userActual.profile &&
                             userActual.profile.firstName
-                              ? userActual.profile.firstName
-                              : userActual.profile.name
-                          }
-                          src={
-                            userActual.services &&
-                            userActual.services.facebook &&
-                            userActual.services.facebook.picture.data.url
-                          }
-                        />
-                      )}
-
-                      {
-                        <strong>
-                          {userActual &&
-                          userActual.profile &&
-                          userActual.profile.firstName
-                            ? " " +
-                              userActual.profile.firstName +
-                              " " +
-                              userActual.profile.lastName
-                            : " " + userActual.profile.name + " "}
-                        </strong>
-                      }
+                              ? " " +
+                                userActual.profile.firstName +
+                                " " +
+                                userActual.profile.lastName
+                              : " " + userActual.profile.name + " "}
+                          </strong>
+                        }
                       </Button>
 
                       {userActual && (
@@ -464,7 +468,7 @@ export default function PersistentDrawerLeft() {
           {/* <div className={classes.drawerHeader}/> */}
           <Main />
         </main>
-        <Footer/>
+        <Footer />
       </div>
     </>
   );
