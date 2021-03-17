@@ -50,7 +50,7 @@ export default function App() {
         <Switch>
           <Route path="/">
             {!userActual && <LoginPage />}
-            {!userActual && <PersistentDrawerLeft />}
+            {userActual && <PersistentDrawerLeft />}
           </Route>
         </Switch>
       </div>

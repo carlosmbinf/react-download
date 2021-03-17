@@ -22,7 +22,7 @@ import Badge from "@material-ui/core/Badge";
 import Avatar from "@material-ui/core/Avatar";
 import { Link, useParams } from "react-router-dom";
 import { useHistory } from "react-router-dom";
-import Tooltip from "@material-ui/core/Tooltip";
+import Tooltip from '@material-ui/core/Tooltip';
 
 //icons
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
@@ -31,9 +31,6 @@ import PermContactCalendarRoundedIcon from "@material-ui/icons/PermContactCalend
 import MailIcon from "@material-ui/icons/Mail";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from '@material-ui/icons/Edit';
-import BlockIcon from '@material-ui/icons/Block';
-import { Cancel } from "@material-ui/icons";
 const StyledBadge = withStyles((theme) => ({
   badge: {
     backgroundColor: "#44b700",
@@ -78,7 +75,7 @@ const useStyles = makeStyles((theme) => ({
     background:
       // "linear-gradient(0deg, rgba(36,83,162,1) 15%, rgba(245,0,87,0) 100%)",
       "#3f4b5b",
-    color: "#ffffff9c",
+    color:"#ffffff9c",
   },
   boton: {
     borderRadius: 20,
@@ -130,14 +127,6 @@ const useStyles = makeStyles((theme) => ({
     ...theme.mixins.toolbar,
     justifyContent: "flex-start",
   },
-  drawerUser: {
-    display: "flex",
-    alignItems: "center",
-    padding: theme.spacing(0, 5),
-    // necessary for content to be below app bar
-    ...theme.mixins.toolbar,
-    justifyContent: "flex-start",
-  },
   margin: {
     margin: theme.spacing(2),
   },
@@ -146,8 +135,6 @@ const useStyles = makeStyles((theme) => ({
 export default function UserCardDetails() {
   const history = useHistory();
   const classes = useStyles();
-  var [edit, setEdit] = React.useState(false);
-
   const bull = <span className={classes.bullet}>•</span>;
 
   const users = useTracker(() => {
@@ -160,137 +147,119 @@ export default function UserCardDetails() {
     history.push("/users");
   }
   const handleChange = (event) => {
-    Meteor.users.update(users._id, {
-      $set: {
-        "profile.role": users.profile.role == "admin" ? "user" : "admin",
-      },
-    });
+    Meteor.users.update(users._id, { $set: { "profile.role": (users.profile.role == "admin")?"user":"admin" } })
   };
-  function editEvent() {
-    setEdit(!edit)
-  }
   return (
     <>
       <div className={classes.drawerHeader}>
-        <IconButton
-          color="primary"
-          aria-label="delete"
-          className={classes.margin}
-          onClick={() => {
-            history.goBack();
-          }}
-        >
-          <ArrowBackIcon fontSize="large" color="secondary" />
-        </IconButton>
+        <Link to={"/users"}>
+          <IconButton
+            color="primary"
+            aria-label="delete"
+            className={classes.margin}
+          >
+            <ArrowBackIcon fontSize="large" color="secondary" />
+          </IconButton>
+        </Link>
       </div>
-      <div className={classes.drawerUser}>
-        {users && (
-          <Zoom in={true}>
-            <Paper elevation={5} className={classes.primary}>
-              <Grid container spacing={3}>
-                <Grid item xs={12}>
-                  <Grid container direction="row" justify="center">
-                    <Avatar
-                      className={classes.large}
-                      alt={
-                        users && users.profile.firstName
-                          ? users.profile.firstName
-                          : users.profile.name
-                      }
-                      src={
-                        users.services &&
-                        users.services.facebook &&
-                        users.services.facebook.picture.data.url
-                          ? users.services.facebook.picture.data.url
-                          : "/"
-                      }
-                    />
-                  </Grid>
-                  <Grid container direction="row">
-                    <AccountCircleIcon />
-                    <Typography>
-                      <strong>
-                        {users.profile.firstName} {users.profile.lastName}
-                      </strong>
-                    </Typography>
-                  </Grid>
+
+      {users && (
+        <Zoom in={true}>
+          <Paper elevation={5} className={classes.primary}>
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <Grid container direction="row" justify="center">
+                  <Avatar
+                    className={classes.large}
+                    alt={
+                      users && users.profile.firstName
+                        ? users.profile.firstName
+                        : users.profile.name
+                    }
+                    src={
+                      users.services &&
+                      users.services.facebook &&
+                      users.services.facebook.picture.data.url
+                        ? users.services.facebook.picture.data.url
+                        : "/"
+                    }
+                  />
                 </Grid>
-                <Grid item xs={12}>
-                  <Grid container direction="row">
-                    <PermContactCalendarRoundedIcon />
-                    <Typography>
-                      <strong>{users.profile.role}</strong>
-                    </Typography>
-                  </Grid>
-                </Grid>
-                <Grid item xs={12}>
-                  <Grid container direction="row">
-                    <MailIcon />
-                    <Typography>
-                      <strong>{users.emails && users.emails[0].address}</strong>
-                    </Typography>
-                  </Grid>
-                </Grid>
-                <Grid item xs={12}>
-                  <Divider className={classes.padding10} />
-                  <Grid
-                    container
-                    direction="row-reverse"
-                    justify="space-around"
-                    alignItems="center"
-                  >
-                    {Meteor.user().profile.role &&
-                    Meteor.user().profile.role == "admin" ? (
-                      <IconButton onClick={eliminarUser} aria-label="delete">
-                        <DeleteIcon color="primary" fontSize="large" />
-                      </IconButton>
-                    ) : (
-                      <div />
-                    )}
-                    {Meteor.user().profile.role &&
-                    Meteor.user().profile.role == "admin" ? (
-                      <Tooltip title={edit ? "Cancelar edicion" : "Editar"}>
-                        <IconButton onClick={editEvent} aria-label="edit">
-                          {edit ? (
-                            <Cancel color="primary" fontSize="large" />
-                          ) : (
-                            <EditIcon color="primary" fontSize="large" />
-                          )}
-                        </IconButton>
-                      </Tooltip>
-                    ) : (
-                      <div />
-                    )}
-                    {Meteor.user().profile.role &&
-                    Meteor.user().profile.role == "admin" ? (
-                      <Tooltip
-                        title={
-                          users.profile.role == "admin"
-                            ? "Cambiar a USER"
-                            : "Cambiar a ADMIN"
-                        }
-                      >
-                        <Switch
-                          checked={users.profile.role == "admin"}
-                          onChange={handleChange}
-                          name="Roles"
-                          color={
-                            users.profile.role == "admin"
-                              ? "primary"
-                              : "secondary"
-                          }
-                        />
-                      </Tooltip>
-                    ) : (
-                      <div />
-                    )}
-                  </Grid>
+                <Grid container direction="row">
+                  <AccountCircleIcon />
+                  <Typography>
+                    <strong>
+                      {users.profile.firstName} {users.profile.lastName}
+                    </strong>
+                  </Typography>
                 </Grid>
               </Grid>
-            </Paper>
-          </Zoom>
-        )}
-      </div>
+              <Grid item xs={12}>
+                <Grid container direction="row">
+                  <PermContactCalendarRoundedIcon />
+                  <Typography>
+                    <strong>{users.profile.role}</strong>
+                  </Typography>
+                </Grid>
+              </Grid>
+              <Grid item xs={12}>
+                <Grid container direction="row">
+                  <MailIcon />
+                  <Typography>
+                    <strong>{users.emails && users.emails[0].address}</strong>
+                  </Typography>
+                </Grid>
+              </Grid>
+              <Grid item xs={12}>
+                <Divider className={classes.padding10} />
+                <Grid
+                  container
+                  direction="row-reverse"
+                  justify="space-around"
+                  alignItems="center"
+                >
+                  {Meteor.user().profile.role &&
+                  Meteor.user().profile.role == "admin" ? (
+                    <IconButton onClick={eliminarUser} aria-label="delete">
+                      <DeleteIcon color="primary" fontSize="large" />
+                    </IconButton>
+                  ) : (
+                    <div />
+                  )}
+
+                  <Typography variant="h5">
+                    <PermContactCalendarRoundedIcon /> {users.profile.role}
+                  </Typography>
+                  {Meteor.user().profile.role &&
+                  Meteor.user().profile.role == "admin" ? (
+                    <Tooltip
+                      title={
+                        "Cambiar a " + users.profile.role == "admin"
+                          ? "user"
+                          : "admin"
+                      }
+                    >
+                      <Switch
+                        checked={users.profile.role == "admin"}
+                        onChange={handleChange}
+                        name="Roles"
+                        color={
+                          users.profile.role == "admin"
+                            ? "primary"
+                            : "secondary"
+                        }
+                      />
+                    </Tooltip>
+                  ) : (
+                    <div />
+                  )}
+                </Grid>
+              </Grid>
+            </Grid>
+          </Paper>
+        </Zoom>
+      )}
     </>
   );
 }
+
