@@ -306,11 +306,7 @@ export default function PersistentDrawerLeft() {
                       color="textSecondary"
                       noWrap
                     >
-                      <Button
-                        // onClick={() => {
-                        //   history.push("/users/" + userActual._id);
-                        // }}
-                      >
+                      
                         {Meteor.status().connected ? (
                           <StyledBadge
                             overlap="circle"
@@ -364,7 +360,6 @@ export default function PersistentDrawerLeft() {
                               : " " + userActual.profile.name + " "}
                           </strong>
                         }
-                      </Button>
 
                       {userActual && (
                         <Button color="secondary" onClick={handleLogOut}>
