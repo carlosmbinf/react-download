@@ -130,6 +130,14 @@ const useStyles = makeStyles((theme) => ({
     ...theme.mixins.toolbar,
     justifyContent: "flex-start",
   },
+  drawerItem: {
+    display: "flex",
+    alignItems: "center",
+    padding: theme.spacing(0, 4),
+    // necessary for content to be below app bar
+    ...theme.mixins.toolbar,
+    justifyContent: "flex-start",
+  },
   margin: {
     margin: theme.spacing(2),
   },
@@ -232,15 +240,15 @@ export default function PeliDetails() {
           </IconButton>
         </Link>
       </div>
-
+      <div className={classes.drawerItem}>
       {peliDetails && <Zoom in={true} >
-        <Paper
+        {/* <Paper
           className={
             peliDetails.mostrar !== "false"
               ? classes.secundary
               : classes.primary
           }
-        >
+        > */}
           {edit ?
             <Grid container
               direction="row"
@@ -570,11 +578,11 @@ export default function PeliDetails() {
 
           }
 
-        </Paper>
+        {/* </Paper> */}
       </Zoom>
       }
 
-
+</div>
     </>
   );
 }

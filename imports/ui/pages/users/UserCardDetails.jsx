@@ -127,6 +127,14 @@ const useStyles = makeStyles((theme) => ({
     ...theme.mixins.toolbar,
     justifyContent: "flex-start",
   },
+  drawerItem: {
+    display: "flex",
+    alignItems: "center",
+    padding: theme.spacing(0, 5),
+    // necessary for content to be below app bar
+    ...theme.mixins.toolbar,
+    justifyContent: "flex-start",
+  },
   margin: {
     margin: theme.spacing(2),
   },
@@ -162,7 +170,7 @@ export default function UserCardDetails() {
           </IconButton>
         </Link>
       </div>
-
+      <div className={classes.drawerItem}>
       {users && (
         <Zoom in={true}>
           <Paper elevation={5} className={classes.primary}>
@@ -259,6 +267,8 @@ export default function UserCardDetails() {
           </Paper>
         </Zoom>
       )}
+      </div>
+      
     </>
   );
 }

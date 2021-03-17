@@ -125,6 +125,14 @@ const useStyles = makeStyles((theme) => ({
     ...theme.mixins.toolbar,
     justifyContent: "flex-start",
   },
+  drawerItem: {
+    display: "flex",
+    alignItems: "center",
+    padding: theme.spacing(0, 4),
+    // necessary for content to be below app bar
+    ...theme.mixins.toolbar,
+    justifyContent: "flex-start",
+  },
   margin: {
     margin: theme.spacing(2),
   },
@@ -134,8 +142,6 @@ export default function TV() {
   const history = useHistory();
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
-
-  TVCollection.update(useParams().id, { $inc: {vistas: 0.5 }})
 
   const tvDetails = useTracker(() => {
     Meteor.subscribe("tv", useParams().id);
@@ -149,6 +155,9 @@ export default function TV() {
   }
   const handleChange = (event) => {
     TVCollection.update(tvDetails._id, { $set: { mostrar: !(tvDetails.mostrar == "true") } })
+  };
+  const addVistas = (event) => {
+    TVCollection.update(useParams().id, { $inc: {vistas: 0.5 }})
   };
   return (
     <>
@@ -165,16 +174,16 @@ export default function TV() {
           </IconButton>
         </Link>
       </div>
-
+      <div className={classes.drawerItem}>
       {tvDetails && <Zoom in={true} >
-        <Paper
+        {/* <Paper
           elevation={5}
           className={
             tvDetails.mostrar !== "true"
               ? classes.primary
               : classes.secundary
           }
-        >
+        > */}
           <Grid container
             direction="row"
             justify="center"
@@ -182,6 +191,7 @@ export default function TV() {
             <Grid style={{ width: "100%" }}>
               {/* INSERTAR VIDEO */}
               <iframe
+              // onLoad={addVistas}
               allow="autoplay; encrypted-media; fullscreen" 
               src={tvDetails.urlTV} 
               style={{width:"100%", maxHeight: "60vh",minHeight: "60vh"}}></iframe>
@@ -222,11 +232,11 @@ export default function TV() {
 
 
           </Grid>
-        </Paper>
+        {/* </Paper> */}
       </Zoom>
       }
 
-
+</div>
     </>
   );
 }

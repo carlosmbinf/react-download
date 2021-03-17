@@ -206,10 +206,10 @@ export default function TVonline(withAdd) {
                               fontSize: 14,
                             }}
                           >
-                            <RemoveRedEyeIcon />{" "}
+                            {/* <RemoveRedEyeIcon />{" "}
                             <Typography>
                               <strong>{tvGeneral.vistas.toFixed()}</strong>
-                            </Typography>
+                            </Typography> */}
                           </Grid>
                         </Grid>
                       </Grid>
