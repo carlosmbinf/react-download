@@ -110,6 +110,8 @@ const useStyles = makeStyles((theme) =>
       width: "100%",
     },
     appBar: {
+      backdropFilter: "blur(30px)",
+      backgroundColor: "#3f51b561",
       transition: theme.transitions.create(["margin", "width"], {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
@@ -125,8 +127,8 @@ const useStyles = makeStyles((theme) =>
     },
     menuButton: {
       marginRight: theme.spacing(2),
-      [theme.breakpoints.down('xs')]: {
-        display:"none",
+      [theme.breakpoints.down("xs")]: {
+        display: "none",
       },
     },
     hide: {
@@ -142,8 +144,8 @@ const useStyles = makeStyles((theme) =>
       background:
         "linear-gradient(270deg, rgba(0,0,0,0) 0%, rgba(63,81,181,1) 82%);",
       borderRight: 0,
-      [theme.breakpoints.down('xs')]: {
-        display:"none",
+      [theme.breakpoints.down("xs")]: {
+        display: "none",
       },
     },
     drawerHeader: {
@@ -193,10 +195,10 @@ const useStyles = makeStyles((theme) =>
     },
     bottomItem: {
       color: theme.palette.text.secondary,
-    '&$selected': {
-      color: theme.palette.primary.main,
+      "&$selected": {
+        color: theme.palette.primary.main,
+      },
     },
-    }
   })
 );
 
@@ -309,6 +311,9 @@ export default function PersistentDrawerLeft() {
                       noWrap
                     >
                       <Button
+                        style={{
+                          color: "white",
+                        }}
                         onClick={() => {
                           history.push("/users/" + userActual._id);
                         }}
@@ -324,7 +329,7 @@ export default function PersistentDrawerLeft() {
                           >
                             <Avatar
                               alt={
-                                userActual &&
+                                " " + userActual &&
                                 userActual.profile &&
                                 userActual.profile.firstName
                                   ? userActual.profile.firstName
@@ -367,12 +372,12 @@ export default function PersistentDrawerLeft() {
                           </strong>
                         }
                       </Button>
-                      {userActual && (
-                        <Button color="secondary" onClick={handleLogOut}>
-                          <ExitToAppIcon />
-                          LogOut
-                        </Button>
-                      )}
+                      <IconButton
+                        color="secondary"
+                        onClick={handleLogOut}
+                      >
+                        <ExitToAppIcon />
+                      </IconButton>
                     </Typography>
                   </Grid>
                 </Slide>
@@ -380,7 +385,6 @@ export default function PersistentDrawerLeft() {
             </Toolbar>
           </AppBar>
         </Slide>
-
         <Drawer
           className={classes.drawer}
           variant="persistent"
@@ -394,8 +398,8 @@ export default function PersistentDrawerLeft() {
             <IconButton
               style={{
                 color: "white",
-                background:
-                  "radial-gradient(circle, rgba(245,0,87,1) 0%, rgba(63,81,181,0) 82%)",
+                // background:
+                //   "radial-gradient(circle, rgba(245,0,87,1) 0%, rgba(63,81,181,0) 82%)",
               }}
               onClick={handleDrawerClose}
             >

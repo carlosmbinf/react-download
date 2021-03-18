@@ -280,6 +280,7 @@ if (Meteor.isServer) {
         loginAt: new Date()
       }
     });
+    
   });
 
   Accounts.onLogout(function (info) {
