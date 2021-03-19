@@ -3,6 +3,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Rotate from 'react-reveal/Rotate';
 
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 
 import { useTracker } from "meteor/react-meteor-data";
 
@@ -38,14 +40,28 @@ const useStyles = makeStyles((theme) => ({
 export default function App() {
   const classes = useStyles();
 
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+
+  const theme = React.useMemo(
+    () =>
+      createMuiTheme({
+        palette: {
+          type: 'dark',
+        },
+      }),
+    [prefersDarkMode],
+  );
+
   const userActual = useTracker(() => {
     return Meteor.user();
   });
 
 
   return (
+    <ThemeProvider theme={theme}>
     <Router>
       <div className={classes.root}>
+      
         <CssBaseline />
         <Switch>
           <Route path="/">
@@ -55,6 +71,7 @@ export default function App() {
         </Switch>
       </div>
     </Router>
+    </ThemeProvider>
   );
 }
 

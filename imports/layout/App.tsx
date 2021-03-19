@@ -307,13 +307,13 @@ export default function PersistentDrawerLeft() {
                     <Typography
                       variant="h6"
                       className={classes.textTittle}
-                      color="textSecondary"
+                      // color="textSecondary"
                       noWrap
                     >
                       <Button
-                        style={{
-                          color: "white",
-                        }}
+                        // style={{
+                        //   color: "white",
+                        // }}
                         onClick={() => {
                           history.push("/users/" + userActual._id);
                         }}
@@ -360,7 +360,7 @@ export default function PersistentDrawerLeft() {
                         )}
 
                         {
-                          <strong>
+                          
                             {userActual &&
                             userActual.profile &&
                             userActual.profile.firstName
@@ -369,7 +369,7 @@ export default function PersistentDrawerLeft() {
                                 " " +
                                 userActual.profile.lastName
                               : " " + userActual.profile.name + " "}
-                          </strong>
+                          
                         }
                       </Button>
                       <IconButton

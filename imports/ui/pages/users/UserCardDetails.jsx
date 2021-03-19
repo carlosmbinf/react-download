@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
@@ -14,6 +14,12 @@ import {
   Zoom,
   IconButton,
   Switch,
+  FormControl,
+  TextField,
+  InputAdornment,
+  MenuItem,
+  Select,
+  InputLabel,
 } from "@material-ui/core";
 import { Meteor } from "meteor/meteor";
 import { Tracker } from "meteor/tracker";
@@ -22,7 +28,7 @@ import Badge from "@material-ui/core/Badge";
 import Avatar from "@material-ui/core/Avatar";
 import { Link, useParams } from "react-router-dom";
 import { useHistory } from "react-router-dom";
-import Tooltip from '@material-ui/core/Tooltip';
+import Tooltip from "@material-ui/core/Tooltip";
 
 //icons
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
@@ -31,6 +37,8 @@ import PermContactCalendarRoundedIcon from "@material-ui/icons/PermContactCalend
 import MailIcon from "@material-ui/icons/Mail";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import DeleteIcon from "@material-ui/icons/Delete";
+import SendIcon from "@material-ui/icons/Send";
+
 const StyledBadge = withStyles((theme) => ({
   badge: {
     backgroundColor: "#44b700",
@@ -75,7 +83,7 @@ const useStyles = makeStyles((theme) => ({
     background:
       // "linear-gradient(0deg, rgba(36,83,162,1) 15%, rgba(245,0,87,0) 100%)",
       "#3f4b5b",
-    color:"#ffffff9c",
+    color: "#ffffff9c",
   },
   boton: {
     borderRadius: 20,
@@ -143,9 +151,15 @@ const useStyles = makeStyles((theme) => ({
 export default function UserCardDetails() {
   const history = useHistory();
   const classes = useStyles();
-  const bull = <span className={classes.bullet}>•</span>;
-  var [edit, setEdit] = React.useState(false);
+  var [edit, setEdit] = useState(false);
+  var [editPassword, setEditPassword] = useState(false);
+  const [password, setPassword] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
+  const [firstName, setfirstName] = useState("");
+  const [lastName, setlastName] = useState("");
+  const [edad, setEdad] = useState(0);
 
+  const bull = <span className={classes.bullet}>•</span>;
   const users = useTracker(() => {
     Meteor.subscribe("user", useParams().id);
     return Meteor.users.findOne({ _id: useParams().id });
@@ -155,12 +169,48 @@ export default function UserCardDetails() {
     alert("Usuario Eliminado");
     history.push("/users");
   }
-  
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    // console.log( 'Email:', email, 'Password: ', password, 'firstName: ', firstName);
+
+    // You should see email and password in console.
+    // ..code to submit form to backend here...
+    async function updateUser() {
+      const user = {
+        "profile.firstName": firstName,
+        "profile.lastName": lastName,
+        "profile.role": role,
+        edad: edad,
+      };
+      Meteor.users.update(Meteor.userId(), { $set: user }) && alert("TODO OK");
+    }
+
+    async function changePassword() {
+        Accounts.changePassword(oldPassword, password, function(error) {
+          if (error) {
+              message = 'There was an issue: ' + error.reason;
+          } else {
+              message = 'You reset your password!'
+          }
+      });
+    }
+
+    editPassword?changePassword():updateUser();
+  }
+
   const handleEdit = (event) => {
     setEdit(!edit);
   };
+  const handleEditPassword = (event) => {
+    setEditPassword(!editPassword);
+  };
   const handleChange = (event) => {
-    Meteor.users.update(users._id, { $set: { "profile.role": (users.profile.role == "admin")?"user":"admin" } })
+    Meteor.users.update(users._id, {
+      $set: {
+        "profile.role": users.profile.role == "admin" ? "user" : "admin",
+      },
+    });
   };
   return (
     <>
@@ -181,25 +231,220 @@ export default function UserCardDetails() {
             <Paper elevation={5} className={classes.primary}>
               <Grid container spacing={3}>
                 {edit ? (
-                  <Grid item xs={12}>
-                  <Grid container direction="row" justify="center">
-                    <Avatar
-                      className={classes.large}
-                      alt={
-                        users && users.profile.firstName
-                          ? users.profile.firstName
-                          : users.profile.name
-                      }
-                      src={
-                        users.services &&
-                        users.services.facebook &&
-                        users.services.facebook.picture.data.url
-                          ? users.services.facebook.picture.data.url
-                          : "/"
-                      }
-                    />
-                  </Grid>
-                </Grid>
+                  <>
+                    <Grid item xs={12}>
+                      <Grid container direction="row" justify="center">
+                        <Avatar
+                          className={classes.large}
+                          alt={
+                            users.profile.firstName
+                              ? users.profile.firstName
+                              : users.profile.name
+                          }
+                          src={
+                            users.services &&
+                            users.services.facebook &&
+                            users.services.facebook.picture.data.url
+                              ? users.services.facebook.picture.data.url
+                              : "/"
+                          }
+                        />
+                      </Grid>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <form
+                        action="/hello"
+                        method="post"
+                        className={classes.root}
+                        onSubmit={handleSubmit}
+                        // noValidate
+                        autoComplete="true"
+                      >
+                        <Grid container className={classes.margin}>
+                          Datos del Usuario
+                        </Grid>
+                        <Grid container>
+                          <Grid item xs={12} sm={4} lg={3}>
+                            <FormControl required variant="outlined">
+                              <TextField
+                                required
+                                className={classes.margin}
+                                id="email"
+                                name="email"
+                                label="Email"
+                                variant="outlined"
+                                color="secondary"
+                                type="email"
+                                value={users.emails[0].address}
+                                onInput={(e) => setEmail(e.target.value)}
+                                InputProps={{
+                                  startAdornment: (
+                                    <InputAdornment position="start">
+                                      <AccountCircleIcon />
+                                    </InputAdornment>
+                                  ),
+                                }}
+                              />
+                            </FormControl>
+                          </Grid>
+                          {!users.services.facebook ? (
+                            <Grid item xs={12}>
+                              <Button
+                                color={editPassword ? "secondary" : "primary"}
+                                variant="contained"
+                                onClick={handleEditPassword}
+                              >
+                                {editPassword
+                                  ? "Cancelar Cambio de Contraseña"
+                                  : "Cambiar Contraseña"}
+                              </Button>
+                            </Grid>
+                          ) : (
+                            ""
+                          )}
+                          {!users.services.facebook
+                            ? editPassword && (
+                                <>
+                                  <Grid item xs={12} sm={4} lg={3}>
+                                    <FormControl required variant="outlined">
+                                      <TextField
+                                        required
+                                        className={classes.margin}
+                                        id="oldpassword"
+                                        name="oldpassword"
+                                        label="Contraseña actual"
+                                        variant="outlined"
+                                        color="secondary"
+                                        type="password"
+                                        value={password}
+                                        onInput={(e) =>
+                                          setPassword(e.target.value)
+                                        }
+                                        InputProps={{
+                                          startAdornment: (
+                                            <InputAdornment position="start">
+                                              <AccountCircleIcon />
+                                            </InputAdornment>
+                                          ),
+                                        }}
+                                      />
+                                    </FormControl>
+                                  </Grid>
+                                  <Grid item xs={12}>
+                                    <FormControl required variant="outlined">
+                                      <TextField
+                                        required
+                                        className={classes.margin}
+                                        id="password"
+                                        name="password"
+                                        label="Nueva Contraseña"
+                                        variant="outlined"
+                                        color="secondary"
+                                        type="password"
+                                        value={oldPassword}
+                                        onInput={(e) =>
+                                          setOldPassword(e.target.value)
+                                        }
+                                        InputProps={{
+                                          startAdornment: (
+                                            <InputAdornment position="start">
+                                              <AccountCircleIcon />
+                                            </InputAdornment>
+                                          ),
+                                        }}
+                                      />
+                                    </FormControl>
+                                  </Grid>
+                                </>
+                              )
+                            : ""}
+                        </Grid>
+                        <Grid container className={classes.margin}>
+                          Datos Personales
+                        </Grid>
+                        <Grid container>
+                          <Grid item xs={12} sm={4} lg={3}>
+                            <FormControl required variant="outlined">
+                              <TextField
+                                required
+                                className={classes.margin}
+                                id="firstName"
+                                name="firstName"
+                                label="Nombre"
+                                variant="outlined"
+                                color="secondary"
+                                value={users.profile.firstName}
+                                onInput={(e) => setfirstName(e.target.value)}
+                                InputProps={{
+                                  startAdornment: (
+                                    <InputAdornment position="start">
+                                      <AccountCircleIcon />
+                                    </InputAdornment>
+                                  ),
+                                }}
+                              />
+                            </FormControl>
+                          </Grid>
+                          <Grid item xs={12} sm={4} lg={3}>
+                            <FormControl required variant="outlined">
+                              <TextField
+                                required
+                                className={classes.margin}
+                                id="lastName"
+                                name="lastName"
+                                label="Apellidos"
+                                variant="outlined"
+                                color="secondary"
+                                value={users.profile.lastName}
+                                onInput={(e) => setlastName(e.target.value)}
+                                InputProps={{
+                                  startAdornment: (
+                                    <InputAdornment position="start">
+                                      <AccountCircleIcon />
+                                    </InputAdornment>
+                                  ),
+                                }}
+                              />
+                            </FormControl>
+                          </Grid>
+                          <Grid item xs={12} sm={4} lg={3}>
+                            <FormControl required variant="outlined">
+                              <TextField
+                                required
+                                className={classes.margin}
+                                id="edad"
+                                name="edad"
+                                label="Edad"
+                                type="number"
+                                variant="outlined"
+                                color="secondary"
+                                value={users.edad}
+                                onInput={(e) => setEdad(e.target.value)}
+                                InputProps={{
+                                  startAdornment: (
+                                    <InputAdornment position="start">
+                                      <AccountCircleIcon />
+                                    </InputAdornment>
+                                  ),
+                                }}
+                              />
+                            </FormControl>
+                          </Grid>
+                        </Grid>
+
+                        <Grid item xs={12} className={classes.flex}>
+                          <Button
+                            variant="contained"
+                            type="submit"
+                            color="secondary"
+                          >
+                            <SendIcon />
+                            Send
+                          </Button>
+                        </Grid>
+                      </form>
+                    </Grid>
+                  </>
                 ) : (
                   <>
                     <Grid item xs={12}>
@@ -207,7 +452,7 @@ export default function UserCardDetails() {
                         <Avatar
                           className={classes.large}
                           alt={
-                            users && users.profile.firstName
+                            users.profile.firstName
                               ? users.profile.firstName
                               : users.profile.name
                           }
@@ -301,4 +546,3 @@ export default function UserCardDetails() {
     </>
   );
 }
-
