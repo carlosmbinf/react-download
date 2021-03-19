@@ -492,7 +492,7 @@ export default function PeliDetails() {
                   justify="space-around"
                   alignItems="center">
                   {Meteor.user().profile.role && Meteor.user().profile.role == "admin" ? (
-                    <IconButton onClick={eliminarPeli} aria-label="delete">
+                    <IconButton color="secondary" onClick={eliminarPeli} aria-label="delete">
                       <DeleteIcon fontSize="large" />
                     </IconButton>
                   ) : (
@@ -537,12 +537,12 @@ export default function PeliDetails() {
                           justify="flex-end"
                           alignItems="center"
                           style={{
-                            color: "white",
                             fontSize: 14,
                           }}
                         >
-                          <RemoveRedEyeIcon />{" "}
-                          <Typography>
+                          <RemoveRedEyeIcon 
+                          color="textPrimary"/>{" "}
+                          <Typography color="textPrimary">
                             <strong>{peliDetails.vistas.toFixed()}</strong>
                           </Typography>
                         </Grid>

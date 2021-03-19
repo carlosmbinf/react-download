@@ -116,9 +116,7 @@ const useStyles = makeStyles((theme) => ({
   pos: {
     marginBottom: 12,
   },
-  createpeli: {
-    color: "#114c84",
-  },
+  
   link: {
     borderRadius: 20,
     textDecoration: "none",
@@ -251,11 +249,10 @@ export default function PeliCard(options) {
                       <Grid item>
                         <AddCircleRoundedIcon
                           fontSize="large"
-                          htmlColor="#114c84"
                         />
                       </Grid>
                       <Grid item>
-                        <Typography className={classes.createpeli}>
+                        <Typography >
                           <strong>AGREGAR PELI</strong>
                         </Typography>
                       </Grid>

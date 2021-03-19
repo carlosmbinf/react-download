@@ -204,7 +204,7 @@ export default function TV() {
                   justify="space-around"
                   alignItems="center">
                     {Meteor.user().profile.role && Meteor.user().profile.role == "admin" ? (
-                    <IconButton onClick={eliminarPeli} aria-label="delete">
+                    <IconButton color="secondary" onClick={eliminarPeli} aria-label="delete">
                       <DeleteIcon fontSize="large" />
                     </IconButton>
                   ) : (
@@ -212,7 +212,7 @@ export default function TV() {
                   )}
                 <Typography
                   variant="h5"
-                  style={{color: "white"}}
+                  color="textSecondary"
                 >
                   
                   {tvDetails.nombreTV}

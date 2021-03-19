@@ -102,7 +102,7 @@ const useStyles = makeStyles((theme) =>
       marginLeft: "0",
       transition: "all ease 0.2s",
       "&:hover": {
-        color: "#114c84",
+        color: theme.palette.secondary.main,
       },
     },
     root: {
@@ -142,7 +142,7 @@ const useStyles = makeStyles((theme) =>
       backdropFilter: "blur(30px)",
       width: drawerWidth,
       background:
-        "linear-gradient(270deg, rgba(0,0,0,0) 0%, rgba(63,81,181,1) 82%);",
+        "#3f51b561",
       borderRight: 0,
       [theme.breakpoints.down("xs")]: {
         display: "none",
@@ -194,7 +194,7 @@ const useStyles = makeStyles((theme) =>
       },
     },
     bottomItem: {
-      color: theme.palette.text.secondary,
+      color: theme.palette.secondary.main,
       "&$selected": {
         color: theme.palette.primary.main,
       },
@@ -396,11 +396,7 @@ export default function PersistentDrawerLeft() {
         >
           <div className={classes.drawerHeader}>
             <IconButton
-              style={{
-                color: "white",
-                // background:
-                //   "radial-gradient(circle, rgba(245,0,87,1) 0%, rgba(63,81,181,0) 82%)",
-              }}
+             color="secondary"
               onClick={handleDrawerClose}
             >
               {theme.direction === "ltr" ? (
@@ -419,30 +415,30 @@ export default function PersistentDrawerLeft() {
                     <ListItemIcon>
                       {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                     </ListItemIcon>
-                    <strong
-                      style={{
-                        textTransform: "uppercase",
-                        color: "rgba(0, 0, 0, 0.54)",
-                      }}
-                    >
-                      {text.title}
-                    </strong>
+                    <Typography
+                  variant="h6"
+                  color="textSecondary"
+                  style={{
+                    textTransform: "uppercase",
+                    // color: "rgba(0, 0, 0, 0.54)",
+                  }}
+                >
+                  {text.title}
+                </Typography>
                   </ListItem>
                 </Link>
               ) : text.url !== "users" ? (
                 <Link key={index} to={"/" + text.url} className={classes.link}>
                   <ListItem button className={classes.item}>
-                    <ListItemIcon>
+                    <ListItemIcon color="primary">
                       {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                     </ListItemIcon>
-                    <strong
-                      style={{
-                        textTransform: "uppercase",
-                        color: "rgba(0, 0, 0, 0.54)",
-                      }}
-                    >
-                      {text.title}
-                    </strong>
+                    <Typography
+                  variant="h5"
+                  color="textSecondary"
+                >
+                  {text.title}
+                </Typography>
                   </ListItem>
                 </Link>
               ) : (
