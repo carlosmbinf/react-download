@@ -368,7 +368,7 @@ export default function PersistentDrawerLeft() {
                                 userActual.profile.firstName +
                                 " " +
                                 userActual.profile.lastName
-                              : " " + userActual.profile.name + " "}
+                              : " " + userActual.profile.name + " "
                           
                         }
                       </Button>
