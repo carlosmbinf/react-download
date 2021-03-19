@@ -116,9 +116,6 @@ const useStyles = makeStyles((theme) => ({
   pos: {
     marginBottom: 12,
   },
-  createpeli: {
-    color: "#114c84",
-  },
   link: {
     borderRadius: 20,
     textDecoration: "none",
@@ -249,14 +246,13 @@ export default function TVonline(withAdd) {
                         alignItems="center"
                       >
                         <Grid item>
-                          <AddCircleRoundedIcon
-                            fontSize="large"
-                            htmlColor="#114c84"
-                          />
+                          <Typography fontSize="large" color="secondary">
+                            <AddCircleRoundedIcon />
+                          </Typography>
                         </Grid>
                         <Grid item>
-                          <Typography className={classes.createpeli}>
-                            <strong>AGREGAR TV</strong>
+                          <Typography color="secondary">
+                            AGREGAR TV
                           </Typography>
                         </Grid>
                       </Grid>

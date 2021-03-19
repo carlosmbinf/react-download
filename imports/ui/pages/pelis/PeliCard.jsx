@@ -247,15 +247,15 @@ export default function PeliCard(options) {
                       alignItems="center"
                     >
                       <Grid item>
-                        <AddCircleRoundedIcon
-                          fontSize="large"
-                        />
-                      </Grid>
-                      <Grid item>
-                        <Typography >
-                          <strong>AGREGAR PELI</strong>
-                        </Typography>
-                      </Grid>
+                          <Typography fontSize="large" color="secondary">
+                            <AddCircleRoundedIcon />
+                          </Typography>
+                        </Grid>
+                        <Grid item>
+                          <Typography color="secondary">
+                            AGREGAR PELÍCULA
+                          </Typography>
+                        </Grid>
                     </Grid>
                   </Grid>
                 </Grid>

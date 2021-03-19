@@ -247,16 +247,15 @@ export default function UserCard(withAdd) {
                       alignItems="center"
                     >
                       <Grid item>
-                        <AddCircleRoundedIcon
-                          fontSize="large"
-                          htmlColor="#114c84"
-                        />
-                      </Grid>
-                      <Grid item>
-                        <Typography className={classes.createUsers}>
-                          <strong>CREATE USER</strong>
-                        </Typography>
-                      </Grid>
+                          <Typography fontSize="large" color="secondary">
+                            <AddCircleRoundedIcon />
+                          </Typography>
+                        </Grid>
+                        <Grid item>
+                          <Typography color="secondary">
+                            CREATE USUARIO
+                          </Typography>
+                        </Grid>
                     </Grid>
                   </Grid>
                 </Grid>

@@ -208,7 +208,7 @@ export default function CreateUsers() {
               >
                 <Grid container spacing={3}>
                   <Grid item xs={12}>
-                    <Typography variant="h4" color="primary" component="h2">
+                    <Typography variant="h4" color="secondary" component="h2">
                       Agregar Usuarios
                     </Typography>
                   </Grid>

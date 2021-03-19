@@ -242,7 +242,7 @@ export default function CreateArchivo() {
               >
                 <Grid container spacing={3}>
                   <Grid item xs={12}>
-                    <Typography variant="h4" color="primary" component="h2">
+                    <Typography variant="h5" color="secondary" component="h2">
                       Agregar Película
                     </Typography>
                   </Grid>
@@ -446,6 +446,7 @@ export default function CreateArchivo() {
                                 checked={mostrar}
                                 onChange={handleChange}
                                 name="checkedA"
+                                color="primary"
                               />
                             }
                             label="mostrar"
