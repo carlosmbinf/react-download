@@ -38,6 +38,7 @@ import { Grid, Zoom } from "@material-ui/core";
 import CreateTV from "../ui/pages/tv/CreateTV";
 import TVonline from "../ui/pages/tv/TVCard";
 import TV from "../ui/pages/tv/TVDetails";
+import Video from "../ui/pages/videos/VideoDetails";
 
 const useStyles = makeStyles((theme) => ({
   // necessary for content to be below app bar
@@ -181,6 +182,9 @@ export default function Main() {
               </Grid>
             </Zoom>
           )}
+        </Route>
+        <Route path="/videos/:id">
+          <Video />
         </Route>
         <Route path="/pelis/:id">
           <PelisDetails />

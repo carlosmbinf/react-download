@@ -32,6 +32,7 @@ import AccountCircle from "@material-ui/icons/AccountCircle";
 import SendIcon from "@material-ui/icons/Send";
 import CloseIcon from "@material-ui/icons/Close";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -221,8 +222,8 @@ export default function AddDescargas() {
               >
                 <Grid container spacing={3}>
                   <Grid item xs={12}>
-                    <Typography variant="h4" color="primary" component="h2">
-                      Crear Usuarios
+                    <Typography variant="h5" color="secondary" component="h2">
+                      Descargar Video
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
@@ -236,17 +237,17 @@ export default function AddDescargas() {
                     >
                       
                       <Grid container className={classes.margin}>
-                        Datos
+                        ID de Youtube
                       </Grid>
                       <Grid container>
-                        <Grid item xs={12} sm={4} lg={3}>
+                        <Grid item xs={12}>
                           <FormControl required variant="outlined">
                             <TextField
                               required
                               className={classes.margin}
                               id="idVideo"
                               name="idVideo"
-                              label="Nombre"
+                              label="ID"
                               variant="outlined"
                               color="secondary"
                               value={idVideo}
@@ -254,7 +255,7 @@ export default function AddDescargas() {
                               InputProps={{
                                 startAdornment: (
                                   <InputAdornment position="start">
-                                    <AccountCircle />
+                                    <CloudDownloadIcon />
                                   </InputAdornment>
                                 ),
                               }}

@@ -230,15 +230,14 @@ export default function PeliDetails() {
   return (
     <>
       <div className={classes.drawerHeader}>
-        <Link to={"/pelis"}>
-          <IconButton
-            color="primary"
-            aria-label="delete"
-            className={classes.margin}
-          >
-            <ArrowBackIcon fontSize="large" color="secondary" />
-          </IconButton>
-        </Link>
+        <IconButton
+          color="primary"
+          aria-label="delete"
+          className={classes.margin}
+          onClick={() => { history.goBack() }}
+        >
+          <ArrowBackIcon fontSize="large" color="secondary" />
+        </IconButton>
       </div>
       <div className={classes.drawerItem}>
       {peliDetails && <Zoom in={true} >
@@ -531,21 +530,21 @@ export default function PeliDetails() {
                     }
                   </Grid>
                   <Grid item xs={12} sm={4}>
-                  <Grid
-                          container
-                          direction="row"
-                          justify="flex-end"
-                          alignItems="center"
-                          style={{
-                            fontSize: 14,
-                          }}
-                        >
-                          <RemoveRedEyeIcon 
-                          color="textPrimary"/>{" "}
-                          <Typography color="textPrimary">
-                            <strong>{peliDetails.vistas.toFixed()}</strong>
-                          </Typography>
-                        </Grid>
+                    <Grid
+                      container
+                      direction="row"
+                      justify="flex-end"
+                      alignItems="center"
+                      style={{
+                        fontSize: 14,
+                      }}
+                    >
+
+                      <Typography color="textPrimary">
+                        <RemoveRedEyeIcon />{" "}
+                        <strong>{peliDetails.vistas.toFixed()}</strong>
+                      </Typography>
+                    </Grid>
                   </Grid>
                 </Grid>
 

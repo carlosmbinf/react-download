@@ -215,15 +215,14 @@ export default function UserCardDetails() {
   return (
     <>
       <div className={classes.drawerHeader}>
-        <Link to={"/users"}>
-          <IconButton
-            color="primary"
-            aria-label="delete"
-            className={classes.margin}
-          >
-            <ArrowBackIcon fontSize="large" color="secondary" />
-          </IconButton>
-        </Link>
+        <IconButton
+          color="primary"
+          aria-label="delete"
+          className={classes.margin}
+          onClick={() => { history.goBack() }}
+        >
+          <ArrowBackIcon fontSize="large" color="secondary" />
+        </IconButton>
       </div>
       <div className={classes.drawerItem}>
         {users && (

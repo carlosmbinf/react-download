@@ -47,7 +47,7 @@ export const SchemaTVCollection = new SimpleSchema({
   },
   vistas: {
     type: Number,
-    defaultValue: 1,
+    defaultValue: 0,
   },
 });
 
@@ -87,7 +87,7 @@ export const SchemaPelisCollection = new SimpleSchema({
   },
   vistas: {
     type: Number,
-    defaultValue: 1,
+    defaultValue: 0,
   },
   year: {
     type: Number,
@@ -137,6 +137,10 @@ export const SchemaDescargaCollection = new SimpleSchema({
     type: String,
     defaultValue: "",
     optional: true,
+  },
+  vistas: {
+    type: Number,
+    defaultValue: 0,
   },
 });
 

@@ -244,6 +244,9 @@ if (Meteor.isServer) {
   Meteor.publish("descargas", function () {
     return DescargasCollection.find({});
   });
+  Meteor.publish("descarga", function (id) {
+    return DescargasCollection.find({ _id: id });
+  });
   Meteor.publish("user", function () {
     return Meteor.users.find({});
   });

@@ -20,6 +20,7 @@ import { useTracker } from "meteor/react-meteor-data";
 import Badge from "@material-ui/core/Badge";
 import Avatar from "@material-ui/core/Avatar";
 import { Link, useParams } from "react-router-dom";
+import { useHistory } from 'react-router-dom';
 
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
@@ -36,6 +37,7 @@ import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
 import PermContactCalendarRoundedIcon from "@material-ui/icons/PermContactCalendarRounded";
 import MailIcon from "@material-ui/icons/Mail";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import DeleteIcon from "@material-ui/icons/Delete";
 import CheckCircleRoundedIcon from "@material-ui/icons/CheckCircleRounded";
 
 //Collections
@@ -102,6 +104,7 @@ export default function TableDescarga() {
   const [open, setOpen] = React.useState(true);
   const [selectedStatus, setSelectedStatus] = React.useState(null);
   const dt = React.useRef(null);
+  const history = useHistory();
 
   const descargaRegister = useTracker(() => {
     Meteor.subscribe("descargas");
@@ -114,9 +117,9 @@ export default function TableDescarga() {
           id: data._id,
           idFile: data.idFile,
           nombreFile: data.nombreFile,
-          tamanoFile: data.tamanoFile,
+          tamanoFile: data.tamanoFile ? data.tamanoFile : 0,
           comentarios: data.comentarios,
-          descargadoPor: data.descargadoPor,
+          descargadoPor: Meteor.users.findOne({_id:data.descargadoPor}).emails[0].address,
           urlReal: data.urlReal,
           thumbnail: data.thumbnail,
           createdAt: data.createdAt.toString(),
@@ -159,7 +162,7 @@ export default function TableDescarga() {
     return (
       <React.Fragment>
         <span className="p-column-title">Tamaño</span>
-        {rowData.tamanoFile + "kb"}
+        {rowData.tamanoFile ? (rowData.tamanoFile + " KB"):"N/A"}
       </React.Fragment>
     );
   };
@@ -182,7 +185,7 @@ export default function TableDescarga() {
   const descargadoPorBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-        <span className="p-column-title">Code</span>
+        <span className="p-column-title">Descargado Por</span>
         {rowData.descargadoPor}
       </React.Fragment>
     );
@@ -215,24 +218,27 @@ export default function TableDescarga() {
   const eliminarBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-        <Button 
-        onClick={() => { eliminarVideo(rowData.idFile) }}
-        >Eliminar</Button>
+        <span className="p-column-title">Eliminar Video</span>
+        <IconButton color="secondary" onClick={() => { eliminarVideo(rowData.idFile) }} aria-label="delete">
+          <DeleteIcon fontSize="large" />
+        </IconButton>
       </React.Fragment>
     );
   };
   const urlRealBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-        <span className="p-column-title">URL</span>
-        <a href={rowData.urlReal}>Descargar</a>
+        <span className="p-column-title">Detalles</span>
+        <Button 
+          onClick={() => { history.push("/videos/" + rowData.id) }}
+        >Ver Video</Button>
       </React.Fragment>
     );
   };
   const thumbnailBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-        <span className="p-column-title">Code</span>
+        <span className="p-column-title">Imagen</span>
         <img
           src={rowData.thumbnail}
           alt="No se pudo cargar la imagen"
@@ -290,36 +296,36 @@ export default function TableDescarga() {
                   body={thumbnailBodyTemplate}
                 />
                 <Column
-                  field="id"
-                  body={iDBodyTemplate}
+                  field="descargadoPor"
+                  body={descargadoPorBodyTemplate}
                   wrap="nowrap"
-                  header="ID"
+                  header="Descargado Por"
                   filter
-                  filterPlaceholder="Buscar por ID"
+                  filterPlaceholder="User email"
                   filterMatchMode="contains"
                 />
                 <Column
                   field="idFile"
-                  header="Registro de Entrada"
+                  header="Id de youtube"
                   body={idFileBodyTemplate}
                   filter
-                  filterPlaceholder="Buscar en Registro de Entrada"
+                  filterPlaceholder="Id de youtube"
                   filterMatchMode="contains"
                 />
                 <Column
                   field="nombreFile"
-                  header="Registro de Salida"
+                  header="Nombre"
                   body={nombreFileBodyTemplate}
                   filter
-                  filterPlaceholder="Buscar en Registro de Salida"
+                  filterPlaceholder="Nombre"
                   filterMatchMode="contains"
                 />
                 <Column
                   field="tamanoFile"
-                  header="Tamaño de archivo"
+                  header="Tamaño"
                   body={tamanoFileBodyTemplate}
                   filter
-                  filterPlaceholder="Buscar en estantes"
+                  filterPlaceholder="Tamaño"
                   filterMatchMode="contains"
                 />
                 <Column
@@ -327,7 +333,7 @@ export default function TableDescarga() {
                   header="Comentarios"
                   body={comentariosBodyTemplate}
                   filter
-                  filterPlaceholder="Buscar en comentarios"
+                  filterPlaceholder="Comentarios"
                   filterMatchMode="contains"
                 />
                 <Column
@@ -335,7 +341,7 @@ export default function TableDescarga() {
                   header="Fecha de Descarga"
                   body={createdAtBodyTemplate}
                   filter
-                  filterPlaceholder="Buscar en comentarios"
+                  filterPlaceholder="Fecha de Descarga"
                   filterMatchMode="contains"
                 />
                 <Column
@@ -343,11 +349,16 @@ export default function TableDescarga() {
                   header="URL Real"
                   body={urlRealBodyTemplate}
                 />
-                <Column
-                  field="eliminar"
-                  header="Eliminar"
-                  body={eliminarBodyTemplate}
-                />
+                {Meteor.user().profile.role && Meteor.user().profile.role == "admin" ?
+                  <Column
+                    field="eliminar"
+                    header="Eliminar"
+                    body={eliminarBodyTemplate}
+                  />
+                  :
+                  ""
+                }
+                
               </DataTable>
             </div>
           </div>

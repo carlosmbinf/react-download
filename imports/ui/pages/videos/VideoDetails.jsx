@@ -19,7 +19,8 @@ import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
 import PermContactCalendarRoundedIcon from "@material-ui/icons/PermContactCalendarRounded";
 import MailIcon from "@material-ui/icons/Mail";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import { TVCollection } from "../collections/collections";
+import { DescargasCollection } from "../collections/collections";
+import RemoveRedEyeIcon from '@material-ui/icons/RemoveRedEye';
 import VPlayer from 'react-vplayer';
 import DeleteIcon from "@material-ui/icons/Delete";
 
@@ -136,49 +137,63 @@ const useStyles = makeStyles((theme) => ({
   margin: {
     margin: theme.spacing(2),
   },
+  paper:{
+    padding: theme.spacing(3, 3),
+  }
 }));
 
-export default function TV() {
+export default function Video() {
   const history = useHistory();
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
 
-  const tvDetails = useTracker(() => {
-    Meteor.subscribe("tv", useParams().id);
-    return TVCollection.findOne({ _id: useParams().id });
+  const videoDetails = useTracker(() => {
+    Meteor.subscribe("descarga", useParams().id);
+    return DescargasCollection.findOne({ _id: useParams().id });
   });
 
-  function eliminarPeli() {
-    TVCollection.remove({ _id: tvDetails._id });
-    alert("Pelicula Eliminada");
-    history.push("/tv");
+  function addVistas() {
+    DescargasCollection.update(videoDetails._id, { $inc: {vistas: 1 }})
+  };
+
+  function eliminarVideo() {
+    const data = {id:useParams().id}
+
+    $.post("/eliminar", data)
+        .done(function (data) {
+          alert("Video Eliminado");
+        })
+        .fail(function (data) {
+          console.log("ERRORS " + data);
+        });
+    history.push("/");
   }
-  const handleChange = (event) => {
-    TVCollection.update(tvDetails._id, { $set: { mostrar: !(tvDetails.mostrar == "true") } })
-  };
-  const addVistas = (event) => {
-    TVCollection.update(useParams().id, { $inc: {vistas: 0.5 }})
-  };
+  // const handleChange = (event) => {
+  //   TVCollection.update(videoDetails._id, { $set: { mostrar: !(videoDetails.mostrar == "true") } })
+  // };
+  
   return (
     <>
       <div className={classes.drawerHeader}>
-        <IconButton
-          color="primary"
-          aria-label="delete"
-          className={classes.margin}
-          onClick={() => { history.goBack() }}
-        >
+        
+          <IconButton
+            color="primary"
+            aria-label="delete"
+            className={classes.margin}
+            onClick={()=>{history.goBack()}}
+          >
 
-          <ArrowBackIcon fontSize="large" color="secondary" />
+            <ArrowBackIcon fontSize="large" color="secondary" />
 
-        </IconButton>
+          </IconButton>
+        
       </div>
       <div className={classes.drawerItem}>
-      {tvDetails && <Zoom in={true} >
+      {videoDetails && <Zoom in={true} >
         {/* <Paper
           elevation={5}
           className={
-            tvDetails.mostrar !== "true"
+            videoDetails.mostrar !== "true"
               ? classes.primary
               : classes.secundary
           }
@@ -189,44 +204,78 @@ export default function TV() {
             alignItems="center" spacing={1}>
             <Grid style={{ width: "100%" }}>
               {/* INSERTAR VIDEO */}
-              <iframe
-              // onLoad={addVistas}
-              allow="autoplay; encrypted-media; fullscreen" 
-              src={tvDetails.urlTV} 
-              style={{width:"100%", maxHeight: "60vh",minHeight: "60vh"}}></iframe>
+              <video onLoad={addVistas} controls width="100%" style={{ width: "100%", maxHeight: "60vh" }} preload="metadata">
+                  <source src={videoDetails.urlReal} type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
+                  {/* <track default kind="subtitles" label="Español" src={peliDetails.subtitulo} srcLang="es" /> */}
+                  {/* <track default kind="descriptions" label="Español" src="https://visuales.uclv.cu/Peliculas/Extranjeras/2020/2020_Ava/sinopsis.txt" srcLang="es"/> */}
+                </video>
             </Grid>
 
             <Grid item xs={12}>
               {/* <Divider className={classes.padding10} /> */}
               <Grid container
-                  direction="row-reverse"
-                  justify="space-around"
-                  alignItems="center">
-                    {Meteor.user().profile.role && Meteor.user().profile.role == "admin" ? (
-                    <IconButton color="secondary" onClick={eliminarPeli} aria-label="delete">
-                      <DeleteIcon fontSize="large" />
-                    </IconButton>
-                  ) : (
-                    <div/>
-                  )}
-                <Typography
-                  variant="h5"
-                  color="textSecondary"
-                >
-                  
-                  {tvDetails.nombreTV}
-                </Typography>
+                direction="row-reverse"
+                justify="space-around"
+                alignItems="center">
                 {Meteor.user().profile.role && Meteor.user().profile.role == "admin" ? (
-                    <Switch
-                      checked={tvDetails.mostrar == "true"}
-                      onChange={handleChange}
-                      name="Mostrar"
-                      color="primary"
-                    />
-                  ) : (
-                      <div />
-                    )}
+                  <Grid item>
+                    <Grid
+                      container
+                      direction="row"
+                      justify="flex-end"
+                      alignItems="center"
+                      style={{
+                        fontSize: 14,
+                      }}
+                    >
+                      <Typography color="textPrimary">
+                        <RemoveRedEyeIcon
+                        />
+                        {" "}
+                        <strong>{videoDetails.vistas.toFixed()}</strong>
+                      </Typography>
+                      <IconButton color="secondary" onClick={eliminarVideo} aria-label="delete">
+                        <DeleteIcon fontSize="large" />
+                      </IconButton>
+                    </Grid>
+                  </Grid>
+                  
+                  
+                ) : (
+                  <div />
+                )}
+                <Grid item xs={10}>
+                  <Typography
+                  color="textSecondary"
+                  noWrap
+                >
+
+                  {videoDetails.nombreFile}
+                </Typography>
+                </Grid>
+                
+                <div />
               </Grid>
+              {videoDetails.comentarios &&
+                <Grid container
+                  direction="row"
+                  justify="center"
+                  alignItems="center">
+                  <Grid item xs={12}>
+                    <Paper
+                      elevation={5}
+                      className={classes.paper}>
+                      <Typography
+                        color="textSecondary"
+                      >
+                        {videoDetails.comentarios}
+                      </Typography>
+                    </Paper>
+                  </Grid>
+
+                </Grid>
+              }
+
             </Grid>
 
 
