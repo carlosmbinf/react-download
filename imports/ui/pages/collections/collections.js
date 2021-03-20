@@ -112,6 +112,8 @@ export const SchemaDescargaCollection = new SimpleSchema({
   },
   tamanoFile: {
     type: String,
+    defaultValue: "",
+    optional: true,
   },
   comentarios: {
     type: String,
