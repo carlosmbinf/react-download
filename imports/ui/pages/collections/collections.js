@@ -117,6 +117,8 @@ export const SchemaDescargaCollection = new SimpleSchema({
   },
   comentarios: {
     type: String,
+    defaultValue: "",
+    optional: true,
   },
   createdAt: {
     type: Date,
@@ -133,6 +135,8 @@ export const SchemaDescargaCollection = new SimpleSchema({
   },
   url:{
     type: String,
+    defaultValue: "",
+    optional: true,
   },
 });
 
