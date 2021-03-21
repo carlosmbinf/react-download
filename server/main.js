@@ -253,7 +253,10 @@ if (Meteor.isServer) {
   Meteor.publish("userID", function (id) {
     return Meteor.users.find({ _id: id });
   });
-  Meteor.publish("conexionesID", function (id) {
+  Meteor.publish("userRole", function (role) {
+    return Meteor.users.find({ "profile.role": role });
+  });
+  Meteor.publish("conexionesUser", function (id) {
     return OnlineCollection.find({ "userId": id });
   });
   Meteor.publish("conexiones", function (id) {
@@ -283,7 +286,11 @@ if (Meteor.isServer) {
         loginAt: new Date()
       }
     });
-    
+    Meteor.users.update(userId, {
+      $set: {
+        online: true
+      }
+    });
   });
 
   Accounts.onLogout(function (info) {
@@ -293,7 +300,11 @@ if (Meteor.isServer) {
         userId: ""
       }
     });
-
+    Meteor.users.update(info.user._id, {
+      $set: {
+        online: false
+      }
+    });
   });
   Meteor.startup(() => {
     OnlineCollection.remove({});

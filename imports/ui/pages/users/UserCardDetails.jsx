@@ -161,7 +161,7 @@ export default function UserCardDetails() {
 
   const bull = <span className={classes.bullet}>•</span>;
   const users = useTracker(() => {
-    Meteor.subscribe("user", useParams().id);
+    Meteor.subscribe("userID", useParams().id);
     return Meteor.users.findOne({ _id: useParams().id });
   });
   function eliminarUser() {
@@ -487,6 +487,16 @@ export default function UserCardDetails() {
                         <Typography>
                           <strong>
                             {users.emails && users.emails[0].address}
+                          </strong>
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Grid container direction="row">
+                        <MailIcon />
+                        <Typography>
+                          <strong>
+                            {users.online?"ONLINE":"DISCONECTED"}
                           </strong>
                         </Typography>
                       </Grid>

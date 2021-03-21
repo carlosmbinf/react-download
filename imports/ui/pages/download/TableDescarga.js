@@ -108,11 +108,12 @@ export default function TableDescarga() {
 
   const descargaRegister = useTracker(() => {
     Meteor.subscribe("descargas");
+    Meteor.subscribe("userRole","admin");
+    
     let a = [];
 
     DescargasCollection.find({}).map(
-      (data) =>
-        data &&
+      (data) => {
         a.push({
           id: data._id,
           idFile: data.idFile,
@@ -124,6 +125,7 @@ export default function TableDescarga() {
           thumbnail: data.thumbnail,
           createdAt: data.createdAt.toString(),
         })
+        }
     );
     return a;
   });
@@ -355,9 +357,9 @@ export default function TableDescarga() {
                     header="Eliminar"
                     body={eliminarBodyTemplate}
                   />
-                  :
-                  ""
-                }
+                   :
+                  <></>
+                } 
                 
               </DataTable>
             </div>

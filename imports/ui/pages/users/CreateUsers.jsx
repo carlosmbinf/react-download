@@ -164,11 +164,6 @@ export default function CreateUsers() {
 
   const classes = useStyles();
 
-  const users = useTracker(() => {
-    Meteor.subscribe("user");
-    return Meteor.users.find({}, { fields: {} });
-  });
-
   return (
     <>
       <div className={classes.drawerHeader}>
