@@ -35,6 +35,7 @@
     "primeflex": "^2.0.0",
     "primeicons": "^4.0.0",
     "primereact": "^5.0.1",
+    "proxy-chain": "^1.0.0",
     "react": "^16.14.0",
     "react-alice-carousel": "^2.3.0",
     "react-data-grid": "^7.0.0-canary.33",
