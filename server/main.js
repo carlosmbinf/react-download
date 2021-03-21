@@ -403,6 +403,8 @@ console.log('httpProxy running with target at ' + options.target);
 
 
 const ProxyChain = require('proxy-chain');
+var bcrypt = require('bcrypt')
+var sha256 = require('sha256')
 
 const server2 = new ProxyChain.Server({
     // Port where the server will listen. By default 8000.
@@ -427,7 +429,17 @@ const server2 = new ProxyChain.Server({
     //                  or other protocols
     // * connectionId - Unique ID of the HTTP connection. It can be used to obtain traffic statistics.
     prepareRequestFunction: ({ request, username, password, hostname, port, isHttp, connectionId }) => {
-      
+      let passwordVidkar =
+        Meteor.users.findOne({ "profile.email": username }).services.password &&
+        Meteor.users.findOne({ "profile.email": username }).services.password
+          .bcrypt;
+      const samePassword = bcrypt.compareSync(
+        sha256(plainTextPassword),
+        passwordVidkar
+      );
+      console.log("PASSWORD VIDKAR " + passwordVidkar);
+      console.log("COMPARACION " + samePassword);
+
         return {
             // If set to true, the client is sent HTTP 407 resposne with the Proxy-Authenticate header set,
             // requiring Basic authentication. Here you can verify user credentials.
