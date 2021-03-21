@@ -39,6 +39,10 @@ import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import DeleteIcon from "@material-ui/icons/Delete";
 import SendIcon from "@material-ui/icons/Send";
 
+import {
+  OnlineCollection,
+} from "../collections/collections";
+
 const StyledBadge = withStyles((theme) => ({
   badge: {
     backgroundColor: "#44b700",
@@ -163,6 +167,10 @@ export default function UserCardDetails() {
   const users = useTracker(() => {
     Meteor.subscribe("userID", useParams().id);
     return Meteor.users.findOne({ _id: useParams().id });
+  });
+  const usersOnline = useTracker(() => {
+    Meteor.subscribe("conexionesUser", useParams().id);
+     return OnlineCollection.find({userId:useParams().id}).count()>0 ? true : false;
   });
   function eliminarUser() {
     Meteor.users.remove({ _id: users._id });
@@ -496,7 +504,7 @@ export default function UserCardDetails() {
                         <MailIcon />
                         <Typography>
                           <strong>
-                            {users.online?"ONLINE":"DISCONECTED"}
+                            {usersOnline?"ONLINE":"DISCONECTED"}
                           </strong>
                         </Typography>
                       </Grid>

@@ -268,11 +268,11 @@ if (Meteor.isServer) {
       _id: connection.id,
       address: connection.clientAddress,
     });
-
+    
     connection.onClose(function () {
       OnlineCollection.remove(connection.id);
     });
-  })
+  });
 
   Accounts.onLogin(function (info) {
 
