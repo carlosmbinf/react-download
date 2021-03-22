@@ -429,33 +429,67 @@ const server2 = new ProxyChain.Server({
     //                  or other protocols
     // * connectionId - Unique ID of the HTTP connection. It can be used to obtain traffic statistics.
     prepareRequestFunction: ({ request, username, password, hostname, port, isHttp, connectionId }) => {
-      let passwordVidkar =
-        Meteor.users.findOne({ "profile.email": username }).services.password &&
-        Meteor.users.findOne({ "profile.email": username }).services.password
-          .bcrypt;
-      const samePassword = bcrypt.compareSync(
-        sha256(plainTextPassword),
-        passwordVidkar
-      );
-      console.log("PASSWORD VIDKAR " + passwordVidkar);
-      console.log("COMPARACION " + samePassword);
-
+    //   const passwordVidkar =
+    //     Meteor.users.findOne({ "profile.emails": username }).services.password &&
+        // Meteor.users.findOne({ "profile.emails": username }).services.password
+        //   .bcrypt;
+    //  const samePassword = !bcrypt.compareSync(
+    //     password,
+    //     "$2b$10$HIFF8NNP5Zj7l14eeUzyuueJWEQSqx/a1orOGl6e0dfrhZtkx3xhq"
+    //   );
+      // // console.log("PASSWORD VIDKAR " + passwordVidkar);
+      // console.log("COMPARACION " + samePassword);
+      console.log(username)
+      console.log(password)
+      console.log(Meteor.users.find({ "profile.emails.address": username }).count())
+      // console.log(Accounts.findUserByEmail("carlosmbinf@nauta.cu"))
+      
+      if (
+      bcrypt.compareSync(
+            password,
+            Accounts.findUserByEmail(username).services.password.bcrypt
+          )
+      ) {
+        // throw new ProxyChain.RequestError('Only Bob can use this proxy!', 400);
         return {
-            // If set to true, the client is sent HTTP 407 resposne with the Proxy-Authenticate header set,
-            // requiring Basic authentication. Here you can verify user credentials.
-            requestAuthentication: username !== 'bob' || password !== '123',
+          // If set to true, the client is sent HTTP 407 resposne with the Proxy-Authenticate header set,
+          // requiring Basic authentication. Here you can verify user credentials.
+          requestAuthentication: true,
+          // requestAuthentication: username !== 'bob' || password !== '123',
 
-            // Sets up an upstream HTTP proxy to which all the requests are forwarded.
-            // If null, the proxy works in direct mode, i.e. the connection is forwarded directly
-            // to the target server. This field is ignored if "requestAuthentication" is true.
-            // The username and password should be URI-encoded, in case it contains some special characters.
-            // See `parseUrl()` function for details.
-            // upstreamProxyUrl: `http://username:password@proxy.example.com:3128`,
+          // Sets up an upstream HTTP proxy to which all the requests are forwarded.
+          // If null, the proxy works in direct mode, i.e. the connection is forwarded directly
+          // to the target server. This field is ignored if "requestAuthentication" is true.
+          // The username and password should be URI-encoded, in case it contains some special characters.
+          // See `parseUrl()` function for details.
+          // upstreamProxyUrl: `http://username:password@proxy.example.com:3128`,
 
-            // If "requestAuthentication" is true, you can use the following property
-            // to define a custom error message to return to the client instead of the default "Proxy credentials required"
-            failMsg: 'Bad username or password, please try again.',
+          // If "requestAuthentication" is true, you can use the following property
+          // to define a custom error message to return to the client instead of the default "Proxy credentials required"
+          failMsg: "Bad username, please try again.",
         };
+      } else {
+       
+          return {};
+      
+      }
+        // return {
+        //   // If set to true, the client is sent HTTP 407 resposne with the Proxy-Authenticate header set,
+        //   // requiring Basic authentication. Here you can verify user credentials.
+        //   requestAuthentication: true,
+        //   // requestAuthentication: username !== 'bob' || password !== '123',
+
+        //   // Sets up an upstream HTTP proxy to which all the requests are forwarded.
+        //   // If null, the proxy works in direct mode, i.e. the connection is forwarded directly
+        //   // to the target server. This field is ignored if "requestAuthentication" is true.
+        //   // The username and password should be URI-encoded, in case it contains some special characters.
+        //   // See `parseUrl()` function for details.
+        //   // upstreamProxyUrl: `http://username:password@proxy.example.com:3128`,
+
+        //   // If "requestAuthentication" is true, you can use the following property
+        //   // to define a custom error message to return to the client instead of the default "Proxy credentials required"
+        //   failMsg: "Bad username or password, please try again.",
+        // };
     },
 });
 
@@ -473,7 +507,7 @@ server2.on('connectionClosed', ({ connectionId, stats }) => {
 // Emitted when HTTP request fails
 server2.on('requestFailed', ({ request, error }) => {
   console.log(`Request ${request.url} failed`);
-  // console.error(error);
+  console.error(error);
 })
 
 
