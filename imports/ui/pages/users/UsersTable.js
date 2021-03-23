@@ -192,6 +192,8 @@ export default function UsersTable() {
               ? data.services.facebook.picture.data.url
               : "/",
           online: OnlineCollection.find({ userId: data._id }).count() > 0?"ONLINE":"DISCONECTED",
+          username : data.username
+
           // address: OnlineCollection.find({ userId: data._id }).fetch(),
         })
     );
@@ -218,6 +220,14 @@ export default function UsersTable() {
       <React.Fragment>
         <span className="p-column-title">Nombre</span>
         {rowData.firstname}
+      </React.Fragment>
+    );
+  };
+  const usernameBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">Username</span>
+        {rowData.username}
       </React.Fragment>
     );
   };
@@ -391,6 +401,14 @@ export default function UsersTable() {
                   body={emailBodyTemplate}
                   filter
                   filterPlaceholder="Correo"
+                  filterMatchMode="contains"
+                />
+                <Column
+                  field="username"
+                  header="UserName"
+                  body={usernameBodyTemplate}
+                  filter
+                  filterPlaceholder="UserName"
                   filterMatchMode="contains"
                 />
                 <Column

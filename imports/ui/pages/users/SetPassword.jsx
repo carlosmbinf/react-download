@@ -163,11 +163,11 @@ export default function SetPassword() {
         repeatPassword &&
         repeatPassword === valuepassword ? (
           <Button onClick={saveData} variant="contained" color="primary">
-            Guardar Contraseña
+            Guardar
           </Button>
         ) : (
           <Button onClick={saveData} variant="contained" color="primary" disabled>
-            Guardar Contraseña
+            Guardar
           </Button>
         )}
       </DialogActions>
