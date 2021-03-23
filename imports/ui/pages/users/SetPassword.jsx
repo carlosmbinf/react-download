@@ -90,7 +90,7 @@ export default function SetPassword() {
   return (
     <Dialog
       aria-labelledby="customized-dialog-title"
-      open={userActual && userActual.services && !userActual.services.password.bcrypt}
+      open={userActual && userActual.services && userActual.services.password && !userActual.services.password.bcrypt}
     >
       <DialogTitle id="customized-dialog-title">Actualizar usuario y contraseña.</DialogTitle>
       <DialogContent dividers>
