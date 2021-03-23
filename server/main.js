@@ -1,5 +1,8 @@
 import { Meteor } from "meteor/meteor";
-import { OnlineCollection, PelisCollection } from "../imports/ui/pages/collections/collections";
+import {
+  OnlineCollection,
+  PelisCollection,
+} from "../imports/ui/pages/collections/collections";
 import { TVCollection } from "../imports/ui/pages/collections/collections";
 import { DescargasCollection } from "../imports/ui/pages/collections/collections";
 import { WebApp } from "meteor/webapp";
@@ -58,7 +61,7 @@ if (Meteor.isServer) {
       // /////////////////////////////////////////////
       https.get(peli.subtitulo, (response) => {
         var stream = response.pipe(srt2vtt()).pipe(file);
-        stream.on("finish", function () { });
+        stream.on("finish", function () {});
       });
       PelisCollection.update(
         { _id: req.body.idPeli },
@@ -125,7 +128,7 @@ if (Meteor.isServer) {
   });
   endpoint.post("/eliminar", (req, res) => {
     // console.log(req)
-    console.log(req.body)
+    console.log(req.body);
     let id = req.body.id;
     try {
       if (DescargasCollection.findOne({ idFile: id })) {
@@ -133,11 +136,14 @@ if (Meteor.isServer) {
         var appRoot = require("app-root-path");
         var videoFile = appRoot.path + "/public/videos/" + id + ".mp4";
 
-
-        fs.existsSync(videoFile) ? fs.unlinkSync(videoFile, (err) => {
-          err ? console.error(err) : console.log("ARCHIVO " + videoFile + " Eliminado")
-          //file removed
-        }) : console.log("no existe el fichero");
+        fs.existsSync(videoFile)
+          ? fs.unlinkSync(videoFile, (err) => {
+              err
+                ? console.error(err)
+                : console.log("ARCHIVO " + videoFile + " Eliminado");
+              //file removed
+            })
+          : console.log("no existe el fichero");
 
         DescargasCollection.remove({ idFile: id });
         //file removed
@@ -219,7 +225,6 @@ if (Meteor.isServer) {
   WebApp.connectHandlers.use(bodyParser.urlencoded({ extended: true }));
   WebApp.connectHandlers.use(endpoint);
 
-
   // ServiceConfiguration.configurations.remove({
   //   service: "google"
   // });
@@ -257,7 +262,7 @@ if (Meteor.isServer) {
     return Meteor.users.find({ "profile.role": role });
   });
   Meteor.publish("conexionesUser", function (id) {
-    return OnlineCollection.find({ "userId": id });
+    return OnlineCollection.find({ userId: id });
   });
   Meteor.publish("conexiones", function (id) {
     return OnlineCollection.find({});
@@ -268,14 +273,13 @@ if (Meteor.isServer) {
       _id: connection.id,
       address: connection.clientAddress,
     });
-    
+
     connection.onClose(function () {
       OnlineCollection.remove(connection.id);
     });
   });
 
   Accounts.onLogin(function (info) {
-
     var connectionId = info.connection.id;
     var user = info.user;
     var userId = user._id;
@@ -283,13 +287,13 @@ if (Meteor.isServer) {
     OnlineCollection.update(connectionId, {
       $set: {
         userId: userId,
-        loginAt: new Date()
-      }
+        loginAt: new Date(),
+      },
     });
     Meteor.users.update(userId, {
       $set: {
-        online: true
-      }
+        online: true,
+      },
     });
   });
 
@@ -297,13 +301,13 @@ if (Meteor.isServer) {
     var connectionId = info.connection.id;
     OnlineCollection.update(connectionId, {
       $set: {
-        userId: ""
-      }
+        userId: "",
+      },
     });
     Meteor.users.update(info.user._id, {
       $set: {
-        online: false
-      }
+        online: false,
+      },
     });
   });
   Meteor.startup(() => {
@@ -320,7 +324,7 @@ if (Meteor.isServer) {
       appId: "1062947454216548",
       secret: "dcaf7178a57c9431681977b77ccb60d1",
     });
-    if (Meteor.users.find({"profile.role":"admin"}).count() == 0) {
+    if (Meteor.users.find({ "profile.role": "admin" }).count() == 0) {
       console.log("CREANDO USER ADMIN");
       const user = {
         email: "carlosmbinf@nauta.cu",
@@ -347,9 +351,6 @@ if (Meteor.isServer) {
     //   // console.log(output.join('\n'))
     // })
   });
-
-
-
 }
 
 var appRoot = require("app-root-path");
@@ -368,20 +369,22 @@ var appRoot = require("app-root-path");
 //     console.error(error)
 //   }
 
-var PATH_TO_KEY = appRoot.path + '/server/conf/28459803_srv5119-206152.vps.etecsa.cu.key';
-var PATH_TO_CERT = appRoot.path + '/server/conf/28459803_srv5119-206152.vps.etecsa.cu.cert';
-var httpProxy = require('http-proxy');
+var PATH_TO_KEY =
+  appRoot.path + "/server/conf/28459803_srv5119-206152.vps.etecsa.cu.key";
+var PATH_TO_CERT =
+  appRoot.path + "/server/conf/28459803_srv5119-206152.vps.etecsa.cu.cert";
+var httpProxy = require("http-proxy");
 var options = {
   ssl: {
-    key: fs.readFileSync(PATH_TO_KEY, 'utf8'),
-    cert: fs.readFileSync(PATH_TO_CERT, 'utf8')
+    key: fs.readFileSync(PATH_TO_KEY, "utf8"),
+    cert: fs.readFileSync(PATH_TO_CERT, "utf8"),
   },
-  target: 'http://localhost:3000',
+  target: "http://localhost:3000",
   ws: true,
   xfwd: true,
 };
 var server = httpProxy.createProxyServer(options).listen(5000);
-console.log('httpProxy running with target at ' + options.target);
+console.log("httpProxy running with target at " + options.target);
 
 // -------------------Este Proxy Funciona al FULLLLLLLLL-----------
 // const proxy = require('@ucipass/proxy')
@@ -392,133 +395,106 @@ console.log('httpProxy running with target at ' + options.target);
 //   })
 //   .then((server) => {
 //     // console.log(server);
-//     // server.stop() 
+//     // server.stop()
 //   })
 
 // -------------------Este Proxy Funciona al FULLLLLLLLL-----------
 
-
-
-
-
-
-const ProxyChain = require('proxy-chain');
-var bcrypt = require('bcrypt')
-var sha256 = require('sha256')
-
+const ProxyChain = require("proxy-chain");
+var bcrypt = require("bcrypt");
+var sha256 = require("sha256");
+const crypto = require("crypto");
 const server2 = new ProxyChain.Server({
-    // Port where the server will listen. By default 8000.
-    port: 3002,
+  // Port where the server will listen. By default 8000.
+  port: 3002,
 
-    // Enables verbose logging
-    // verbose: true,
+  // Enables verbose logging
+  // verbose: true,
 
-    // Custom user-defined function to authenticate incoming proxy requests,
-    // and optionally provide the URL to chained upstream proxy.
-    // The function must return an object (or promise resolving to the object) with the following signature:
-    // { requestAuthentication: Boolean, upstreamProxyUrl: String }
-    // If the function is not defined or is null, the server runs in simple mode.
-    // Note that the function takes a single argument with the following properties:
-    // * request      - An instance of http.IncomingMessage class with information about the client request
-    //                  (which is either HTTP CONNECT for SSL protocol, or other HTTP request)
-    // * username     - Username parsed from the Proxy-Authorization header. Might be empty string.
-    // * password     - Password parsed from the Proxy-Authorization header. Might be empty string.
-    // * hostname     - Hostname of the target server
-    // * port         - Port of the target server
-    // * isHttp       - If true, this is a HTTP request, otherwise it's a HTTP CONNECT tunnel for SSL
-    //                  or other protocols
-    // * connectionId - Unique ID of the HTTP connection. It can be used to obtain traffic statistics.
-    prepareRequestFunction: ({ request, username, password, hostname, port, isHttp, connectionId }) => {
-    //   const passwordVidkar =
-    //     Meteor.users.findOne({ "profile.emails": username }).services.password &&
-        // Meteor.users.findOne({ "profile.emails": username }).services.password
-        //   .bcrypt;
-    //  const samePassword = !bcrypt.compareSync(
-    //     password,
-    //     "$2b$10$HIFF8NNP5Zj7l14eeUzyuueJWEQSqx/a1orOGl6e0dfrhZtkx3xhq"
-    //   );
-      // // console.log("PASSWORD VIDKAR " + passwordVidkar);
-      // console.log("COMPARACION " + samePassword);
-      console.log(username)
-      console.log(password)
-      console.log(Meteor.users.find({ "profile.emails.address": username }).count())
-      // console.log(Accounts.findUserByEmail("carlosmbinf@nauta.cu"))
-      
-      if (
-      bcrypt.compareSync(
-            password,
-            Accounts.findUserByEmail(username).services.password.bcrypt
-          )
-      ) {
-        // throw new ProxyChain.RequestError('Only Bob can use this proxy!', 400);
-        return {
-          // If set to true, the client is sent HTTP 407 resposne with the Proxy-Authenticate header set,
-          // requiring Basic authentication. Here you can verify user credentials.
-          requestAuthentication: true,
-          // requestAuthentication: username !== 'bob' || password !== '123',
-
-          // Sets up an upstream HTTP proxy to which all the requests are forwarded.
-          // If null, the proxy works in direct mode, i.e. the connection is forwarded directly
-          // to the target server. This field is ignored if "requestAuthentication" is true.
-          // The username and password should be URI-encoded, in case it contains some special characters.
-          // See `parseUrl()` function for details.
-          // upstreamProxyUrl: `http://username:password@proxy.example.com:3128`,
-
-          // If "requestAuthentication" is true, you can use the following property
-          // to define a custom error message to return to the client instead of the default "Proxy credentials required"
-          failMsg: "Bad username, please try again.",
-        };
-      } else {
-       
+  // Custom user-defined function to authenticate incoming proxy requests,
+  // and optionally provide the URL to chained upstream proxy.
+  // The function must return an object (or promise resolving to the object) with the following signature:
+  // { requestAuthentication: Boolean, upstreamProxyUrl: String }
+  // If the function is not defined or is null, the server runs in simple mode.
+  // Note that the function takes a single argument with the following properties:
+  // * request      - An instance of http.IncomingMessage class with information about the client request
+  //                  (which is either HTTP CONNECT for SSL protocol, or other HTTP request)
+  // * username     - Username parsed from the Proxy-Authorization header. Might be empty string.
+  // * password     - Password parsed from the Proxy-Authorization header. Might be empty string.
+  // * hostname     - Hostname of the target server
+  // * port         - Port of the target server
+  // * isHttp       - If true, this is a HTTP request, otherwise it's a HTTP CONNECT tunnel for SSL
+  //                  or other protocols
+  // * connectionId - Unique ID of the HTTP connection. It can be used to obtain traffic statistics.
+  prepareRequestFunction: async ({
+    request,
+    username,
+    password,
+    hostname,
+    port,
+    isHttp,
+    connectionId,
+  }) => {
+    try {
+      const b = await Meteor.users.findOne({ "emails.0.address": username });
+      if (b) {
+        const userInput = crypto.Hash("sha256").update(password).digest("hex");
+        const a = await bcrypt.compareSync(
+          userInput,
+          b && b.services.password.bcrypt
+        );
+        if (!a) {
+          return {
+            requestAuthentication: true,
+            failMsg: "Contraseña incorrecta, Vuelva a intentarlo nuevamente",
+          };
+        } else {
           return {};
-      
+        }
+      } else {
+        return {
+          requestAuthentication: true,
+          failMsg: "Usuario no Existe",
+        };
       }
-        // return {
-        //   // If set to true, the client is sent HTTP 407 resposne with the Proxy-Authenticate header set,
-        //   // requiring Basic authentication. Here you can verify user credentials.
-        //   requestAuthentication: true,
-        //   // requestAuthentication: username !== 'bob' || password !== '123',
+    } catch (error) {
+      // console.log(error.message);
+      return {
+        // If set to true, the client is sent HTTP 407 resposne with the Proxy-Authenticate header set,
+        // requiring Basic authentication. Here you can verify user credentials.
+        requestAuthentication: true,
+        // requestAuthentication: username !== 'bob' || password !== '123',
 
-        //   // Sets up an upstream HTTP proxy to which all the requests are forwarded.
-        //   // If null, the proxy works in direct mode, i.e. the connection is forwarded directly
-        //   // to the target server. This field is ignored if "requestAuthentication" is true.
-        //   // The username and password should be URI-encoded, in case it contains some special characters.
-        //   // See `parseUrl()` function for details.
-        //   // upstreamProxyUrl: `http://username:password@proxy.example.com:3128`,
+        // Sets up an upstream HTTP proxy to which all the requests are forwarded.
+        // If null, the proxy works in direct mode, i.e. the connection is forwarded directly
+        // to the target server. This field is ignored if "requestAuthentication" is true.
+        // The username and password should be URI-encoded, in case it contains some special characters.
+        // See `parseUrl()` function for details.
+        // upstreamProxyUrl: `http://username:password@proxy.example.com:3128`,
 
-        //   // If "requestAuthentication" is true, you can use the following property
-        //   // to define a custom error message to return to the client instead of the default "Proxy credentials required"
-        //   failMsg: "Bad username or password, please try again.",
-        // };
-    },
+        // If "requestAuthentication" is true, you can use the following property
+        // to define a custom error message to return to the client instead of the default "Proxy credentials required"
+        failMsg: "Bad username or password, please try again.",
+      };
+    }
+  },
 });
 
 server2.listen(() => {
   console.log(`Proxy server is listening on port ${server2.port}`);
 });
 
-
 // Emitted when HTTP connection is closed
-server2.on('connectionClosed', ({ connectionId, stats }) => {
+server2.on("connectionClosed", ({ connectionId, stats }) => {
   // console.log(`Connection ${connectionId} closed`);
   // console.dir(stats);
 });
 
 // Emitted when HTTP request fails
-server2.on('requestFailed', ({ request, error }) => {
+server2.on("requestFailed", ({ request, error }) => {
   console.log(`Request ${request.url} failed`);
   console.error(error);
-})
-
-
-
-
-
-
-
-
-
-
+});
 
 // var httpProxy = require('http-proxy');
 // const http = require("http");
