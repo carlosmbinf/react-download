@@ -1,4 +1,5 @@
 import { Meteor } from "meteor/meteor";
+import { Accounts } from 'meteor/accounts-base'
 import {
   OnlineCollection,
   PelisCollection,
@@ -108,6 +109,34 @@ if (Meteor.isServer) {
 
       res.writeHead(200, {
         message: "Usuario Creado",
+      });
+    } catch (error) {
+      console.log("error.error :> " + error.error);
+      console.log("error.reason :> " + error.reason);
+      console.log("error.message :> " + error.message);
+      console.log("error.errorType :> " + error.errorType);
+      console.log("--------------------------------------");
+
+      res.writeHead(error.error, {
+        error: error.error,
+        reason: error.reason,
+        message: error.message,
+        errorType: error.errorType,
+      });
+    }
+
+    res.end();
+  });
+  endpoint.post("/userpass", (req, res) => {
+    // console.log(req)
+    // console.log(req.body)
+    try {
+      Accounts.setUsername(req.body.id,req.body.username);
+      Accounts.setPassword(req.body.id,req.body.password);
+      console.log("Usuario actualizado" + req.body.id + " "+req.body.username + " ");
+
+      res.writeHead(200, {
+        message: "Usuario actualizado",
       });
     } catch (error) {
       console.log("error.error :> " + error.error);
@@ -402,7 +431,7 @@ console.log("httpProxy running with target at " + options.target);
 
 const ProxyChain = require("proxy-chain");
 var bcrypt = require("bcrypt");
-var sha256 = require("sha256");
+// var sha256 = require("sha256");
 const crypto = require("crypto");
 const server2 = new ProxyChain.Server({
   // Port where the server will listen. By default 8000.
@@ -436,14 +465,14 @@ const server2 = new ProxyChain.Server({
     connectionId,
   }) => {
     try {
-      const b = await Meteor.users.findOne({ "emails.0.address": username });
+      const b = await Meteor.users.findOne({ "username": username });
       if (b) {
         const userInput = crypto.Hash("sha256").update(password).digest("hex");
         const a = await bcrypt.compareSync(
           userInput,
           b && b.services.password.bcrypt
         );
-        if (!a) {
+        if ((!a)||b.baneado) {
           return {
             requestAuthentication: true,
             failMsg: "Contraseña incorrecta, Vuelva a intentarlo nuevamente",
@@ -474,7 +503,7 @@ const server2 = new ProxyChain.Server({
 
         // If "requestAuthentication" is true, you can use the following property
         // to define a custom error message to return to the client instead of the default "Proxy credentials required"
-        failMsg: "Bad username or password, please try again.",
+        failMsg: "Por Favor, reintentelo de nuevo, ocurrio un problema en el servidor",
       };
     }
   },
@@ -591,7 +620,7 @@ Accounts.onCreateUser(function (options, user) {
     user.creadoPor = options.creadoPor;
     user.edad = options.edad;
     user.online = false;
-    user.baneado = false;
+    user.baneado = true;
 
     return user;
   }
@@ -605,6 +634,6 @@ Accounts.onCreateUser(function (options, user) {
     role: "user",
   };
   user.online = false;
-  user.baneado = false;
+  user.baneado = true;
   return user;
 });

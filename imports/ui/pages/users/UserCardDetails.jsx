@@ -220,6 +220,14 @@ export default function UserCardDetails() {
       },
     });
   };
+  const handleChangebaneado = (event) => {
+    Meteor.users.update(users._id, {
+      $set: {
+        "baneado": users.baneado ? false : true,
+      },
+    });
+  };
+  
   return (
     <>
       <div className={classes.drawerHeader}>
@@ -532,24 +540,38 @@ export default function UserCardDetails() {
                       >
                         {edit ? "Cancelar Edición" : "Editar"}
                       </Button>
+                      {edit?
                       <Tooltip
-                        title={
-                          "Cambiar a " + users.profile.role == "admin"
-                            ? "user"
-                            : "admin"
+                      title={users.baneado
+                          ? "Desbloquear Usuario"
+                          : "Bloquear Usuario"
+                      }
+                    >
+                      <Button
+                        onClick={handleChangebaneado}
+                        variant="contained"
+                        color={users.baneado ? "secondary" : "primary"}
+                      >
+                        {users.baneado ? "Desbloquear" : "Bloquear"}
+                        </Button>
+                    </Tooltip>
+                    :
+                    <Tooltip
+                        title={users.profile.role == "admin"
+                            ? "Cambiar a user"
+                            : "Cambiar a admin"
                         }
                       >
                         <Switch
                           checked={users.profile.role == "admin"}
                           onChange={handleChange}
                           name="Roles"
-                          color={
-                            users.profile.role == "admin"
-                              ? "primary"
-                              : "secondary"
-                          }
+                          color="primary"
                         />
                       </Tooltip>
+
+                    }
+                      
                     </Grid>
                   </Grid>
                 ) : (
