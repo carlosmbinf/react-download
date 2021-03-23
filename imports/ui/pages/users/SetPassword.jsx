@@ -62,12 +62,25 @@ export default function SetPassword() {
     Meteor.subscribe("userID", Meteor.userId());
     return Meteor.user();
   });
+  const usernameexist = userActual&&userActual.username ? true : false
+  const passwordexist = userActual && userActual.services && userActual.services.password && userActual.services.password.bcrypt ? true : false
+    
   const saveData = () => {
     let data = {
       id: Meteor.userId(),
       username : valueusername,
       password : valuepassword,
     }
+    if (usernameexist || passwordexist) {
+      usernameexist ? data = {
+        id: Meteor.userId(),
+        password: valuepassword,
+      } : data = {
+        id: Meteor.userId(),
+        username: valueusername,
+      }
+    }
+    
     $.post("/userpass", data)
     .done(function (data) {
       console.log(data)
@@ -75,6 +88,12 @@ export default function SetPassword() {
     .fail(function (data) {
       console.log(data)
     })
+  };
+  const handleLogout = (event) => {
+    event.preventDefault();
+    Meteor.logout((error) => {
+      error && error ? console.log(error.message) : "";
+    });
   };
   const handleChangeusername = (event) => {
     setvalueusername(event.target.value);
@@ -86,12 +105,11 @@ export default function SetPassword() {
     setrepeatPassword(event.target.value);
     
   };
-
+ 
   return (
     <Dialog
       aria-labelledby="customized-dialog-title"
-      open={userActual && userActual.services && userActual.services.password && userActual.services.password.bcrypt ? false : true}
-    >
+      open={!usernameexist || !passwordexist}>
       <DialogTitle id="customized-dialog-title">Actualizar usuario y contraseña.</DialogTitle>
       <DialogContent dividers>
         <Typography gutterBottom>
@@ -101,39 +119,47 @@ export default function SetPassword() {
           y entonces podra iniciar session mediante su <strong>Usuario y Contraseña</strong> o mediante el <strong>Login de Facebook</strong>
         </Typography>
         <Grid container direction="column" justify="center" alignItems="center">
-          <TextField
-            autoFocus
-            margin="dense"
-            id="username"
-            label="Usuario"
-            type="text"
-            value={valueusername}
-            onChange={handleChangeusername}
-            fullWidth
-          />
-          <TextField
-            margin="dense"
-            id="password"
-            label="Contraseña"
-            type="password"
-            value={valuepassword}
-            onChange={handleChangepassword}
-            fullWidth
-          />
-          <TextField
-            margin="dense"
-            id="repeatPassword"
-            label="Repita la Contraseña"
-            type="password"
-            value={repeatPassword}
-            onChange={handleChangerepeatPassword}
-            fullWidth
-          />
+          {!usernameexist &&
+            <TextField
+              autoFocus
+              margin="dense"
+              id="username"
+              label="Usuario"
+              type="text"
+              value={valueusername}
+              onChange={handleChangeusername}
+              fullWidth
+            />}
+          {!passwordexist &&
+            <>
+              <TextField
+                margin="dense"
+                id="password"
+                label="Contraseña"
+                type="password"
+                value={valuepassword}
+                onChange={handleChangepassword}
+                fullWidth
+              />
+              <TextField
+                margin="dense"
+                id="repeatPassword"
+                label="Repita la Contraseña"
+                type="password"
+                value={repeatPassword}
+                onChange={handleChangerepeatPassword}
+                fullWidth
+              />
+            </>}
+          
+          
         </Grid>
       </DialogContent>
       <DialogActions>
-        {valueusername &&
-        valuepassword &&
+      <Button onClick={handleLogout} variant="contained" color="secondary">
+            Logout
+          </Button>
+        {valueusername && passwordexist || usernameexist &&
         repeatPassword &&
         repeatPassword === valuepassword ? (
           <Button onClick={saveData} variant="contained" color="primary">

@@ -131,8 +131,8 @@ if (Meteor.isServer) {
     // console.log(req)
     // console.log(req.body)
     try {
-      Accounts.setUsername(req.body.id,req.body.username);
-      Accounts.setPassword(req.body.id,req.body.password);
+      req.body.username&&Accounts.setUsername(req.body.id,req.body.username);
+      req.body.password&&Accounts.setPassword(req.body.id,req.body.password);
       console.log("Usuario actualizado" + req.body.id + " "+req.body.username + " ");
 
       res.writeHead(200, {
