@@ -57,15 +57,24 @@ export default function SetPassword() {
   const [valuepassword, setvaluepassword] = React.useState("");
   const [repeatPassword, setrepeatPassword] = React.useState("");
   const [todoOK, settodoOk] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
 
   const userActual = useTracker(() => {
-    Meteor.subscribe("userID", Meteor.userId());
     return Meteor.user();
   });
+ 
   const usernameexist = userActual&&userActual.username ? true : false
   const passwordexist = userActual && userActual.services && userActual.services.password && userActual.services.password.bcrypt ? true : false
+  
+  useTracker(() => {
+    setTimeout(() => {
+      setOpen(!usernameexist || !passwordexist)
+    }, 2000);
     
+   });
+
   const saveData = () => {
+    
     let data = {
       id: Meteor.userId(),
       username : valueusername,
@@ -80,13 +89,15 @@ export default function SetPassword() {
         username: valueusername,
       }
     }
-    
+    setvaluepassword("")
+    setvalueusername("")
     $.post("/userpass", data)
     .done(function (data) {
-      console.log(data)
+      
+      alert("Gracias!!!, sus datos fueron guardados correctamente.")
     })
     .fail(function (data) {
-      console.log(data)
+      alert("Ocurrio un Problema. Reintentelo nuevamente")
     })
   };
   const handleLogout = (event) => {
@@ -109,7 +120,7 @@ export default function SetPassword() {
   return (
     <Dialog
       aria-labelledby="customized-dialog-title"
-      open={!usernameexist || !passwordexist}>
+      open={open}>
       <DialogTitle id="customized-dialog-title">Actualizar usuario y contraseña.</DialogTitle>
       <DialogContent dividers>
         <Typography gutterBottom>

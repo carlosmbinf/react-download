@@ -50,6 +50,8 @@ import MovieFilterIcon from '@material-ui/icons/MovieFilter';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import Footer from "./Footer";
 import SetPassword from "../ui/pages/users/SetPassword";
+import { Suspense } from "react";
+import SpinnerModal from "../ui/components/spinnerModal/SpinnerModal";
 
 const drawerWidth = 240;
 const StyledBadge = withStyles((theme) => ({
@@ -263,7 +265,7 @@ export default function PersistentDrawerLeft() {
   };
   return (
     <>
-    <SetPassword/>
+    
       <div
         className={classes.root}
         // style={{ background: "rgb(29 47 62)" }}
@@ -473,6 +475,12 @@ export default function PersistentDrawerLeft() {
         </main>
         <Footer />
       </div>
+          <Suspense
+            fallback={<SpinnerModal/>}
+          >
+            <SetPassword/>
+            </Suspense>
+      
     </>
   );
 }
