@@ -625,7 +625,7 @@ Accounts.onCreateUser(function (options, user) {
     return user;
   }
 
-  user.username = user.services.facebook.name;
+//  user.username = user.services.facebook.name;
   user.emails = [{ address: user.services.facebook.email }];
   user.profile = {
     firstName: user.services.facebook.first_name,
