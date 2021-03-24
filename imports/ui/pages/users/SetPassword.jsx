@@ -159,7 +159,7 @@ export default function SetPassword() {
       <Button onClick={handleLogout} variant="contained" color="secondary">
             Logout
           </Button>
-        {valueusername && passwordexist || usernameexist &&
+        {valueusername && passwordexist||valueusername && repeatPassword && repeatPassword === valuepassword || usernameexist &&
         repeatPassword &&
         repeatPassword === valuepassword ? (
           <Button onClick={saveData} variant="contained" color="primary">
