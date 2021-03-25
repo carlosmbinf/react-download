@@ -32,14 +32,12 @@ export default function SpinnerModal() {
   return (
     <Dialog
       open={true}
-      onClose={handleClose}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-      className={{background:"red"}}
+      aria-labelledby="simple-dialog-title"
     >
-      <div className={classes.root}>
-        <CircularProgress color="secondary"/>
-      </div>
+      <Grid className={{ width: 50, height: 50 }}>
+           <CircularProgress />
+         </Grid>
+        <CircularProgress color="secondary" />
     </Dialog>
   );
 }

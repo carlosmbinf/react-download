@@ -41,6 +41,9 @@ import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import CheckCircleRoundedIcon from "@material-ui/icons/CheckCircleRounded";
 import ListAltIcon from "@material-ui/icons/ListAlt";
 import DeleteIcon from "@material-ui/icons/Delete";
+import CheckIcon from '@material-ui/icons/Check';
+import BlockIcon from '@material-ui/icons/Block';
+
 //Collections
 import {
   DescargasCollection,
@@ -120,6 +123,7 @@ export default function UsersTable() {
   const [open, setOpen] = React.useState(true);
   const [selectedOnline, setSelectedOnline] = React.useState(null);
   const [selectedRole, setSelectedRole] = React.useState(null);
+  const [selectedConProxy, setSelectedConProxy] = React.useState(null);
   const dt = React.useRef(null);
   const history = useHistory();
 
@@ -129,6 +133,7 @@ export default function UsersTable() {
   // });
   const statuses = ["ONLINE", "DISCONECTED"];
   const statusesRole = ["admin", "user"];
+  const statusesConProxy = ["true", "false"];
   const onStatusChange = (e) => {
     dt.current.filter(e.value, "online", "equals");
     setSelectedOnline(e.value);
@@ -137,11 +142,19 @@ export default function UsersTable() {
     dt.current.filter(e.value, "role", "equals");
     setSelectedRole(e.value);
   };
+  const onConProxyChange = (e) => {
+    dt.current.filter(e.value, "conProxy", "equals");
+    setSelectedConProxy(e.value);
+  };
   const onlineItemTemplate = (option) => {
     return <span className={`customer-badge`}><Chip onClick={()=>{}} color="primary" label={option} /></span>;
     // ;
   };
   const roleItemTemplate = (option) => {
+    return <span className={`customer-badge`}><Chip onClick={()=>{}} color="primary" label={option} /></span>;
+    // ;
+  };
+  const conProxyItemTemplate = (option) => {
     return <span className={`customer-badge`}><Chip onClick={()=>{}} color="primary" label={option} /></span>;
     // ;
   };
@@ -166,6 +179,16 @@ export default function UsersTable() {
       className="p-column-filter"
       showClear
     />
+  );const conProxyFilter = (
+    <Dropdown
+      value={selectedConProxy}
+      options={statusesConProxy}
+      onChange={onConProxyChange}
+      itemTemplate={conProxyItemTemplate}
+      placeholder="Select a Role"
+      className="p-column-filter"
+      showClear
+    />
   );
   const usersRegister = useTracker(() => {
     Meteor.subscribe("users");
@@ -178,11 +201,15 @@ export default function UsersTable() {
         a.push({
           id: data._id,
           email: data.emails[0].address,
-          firstname:
+          // firstname:
+          //   data.profile && data.profile.firstName
+          //     ? data.profile.firstName
+          //     : data.profile.name,
+          // lastName: data.profile.lastName,
+          name:
             data.profile && data.profile.firstName
-              ? data.profile.firstName
+              ? data.profile.firstName + " " + data.profile.lastName
               : data.profile.name,
-          lastName: data.profile.lastName,
           role: data.profile.role,
           edad: data.edad,
           foto:
@@ -191,9 +218,12 @@ export default function UsersTable() {
             data.services.facebook.picture.data.url
               ? data.services.facebook.picture.data.url
               : "/",
-          online: OnlineCollection.find({ userId: data._id }).count() > 0?"ONLINE":"DISCONECTED",
-          username : data.username
-
+          online:
+            OnlineCollection.find({ userId: data._id }).count() > 0
+              ? "ONLINE"
+              : "DISCONECTED",
+          username: data.username,
+          conProxy: !data.baneado
           // address: OnlineCollection.find({ userId: data._id }).fetch(),
         })
     );
@@ -218,8 +248,8 @@ export default function UsersTable() {
   const nombreBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-        <span className="p-column-title">Nombre</span>
-        {rowData.firstname}
+        <span className="p-column-title">Nombre y Apellidos</span>
+        {rowData.name}
       </React.Fragment>
     );
   };
@@ -266,7 +296,14 @@ export default function UsersTable() {
       </React.Fragment>
     );
   };
-  
+  const conProxyBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">Con Proxy</span>
+        <Chip color={rowData.conProxy?"primary":"secondary"} label={rowData.conProxy?<CheckIcon/>:<BlockIcon/>} />
+      </React.Fragment>
+    );
+  };
 
   const eliminarVideo = (id) => {
     Meteor.users.remove(id);
@@ -380,19 +417,11 @@ export default function UsersTable() {
                   filterMatchMode="contains"
                 /> */}
                 <Column
-                  field="firstname"
+                  field="name"
                   header="Nombre"
                   body={nombreBodyTemplate}
                   filter
-                  filterPlaceholder="Nombre"
-                  filterMatchMode="contains"
-                />
-                <Column
-                  field="lastName"
-                  header="Apellidos"
-                  body={apellidoBodyTemplate}
-                  filter
-                  filterPlaceholder="Apellidos"
+                  filterPlaceholder="Nombre y Apellidos"
                   filterMatchMode="contains"
                 />
                 <Column
@@ -424,6 +453,14 @@ export default function UsersTable() {
                   body={roleBodyTemplate}
                   filter
                   filterElement={roleFilter}
+                />
+                
+                <Column
+                  field="conProxy"
+                  header="Proxy"
+                  body={conProxyBodyTemplate}
+                  filter
+                  filterElement={conProxyFilter}
                 />
                 <Column field="urlReal" header="" body={urlBodyTemplate} />
                 <Column

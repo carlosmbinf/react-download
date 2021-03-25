@@ -69,7 +69,7 @@ export default function SetPassword() {
   useTracker(() => {
     setTimeout(() => {
       setOpen(!usernameexist || !passwordexist)
-    }, 2000);
+    }, 3000);
     
    });
 
