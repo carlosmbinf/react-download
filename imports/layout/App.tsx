@@ -211,12 +211,8 @@ export default function PersistentDrawerLeft() {
   const history = useHistory();
   const [open, setOpen] = React.useState(false);
   const [error, setError] = useState("");
-  const [value, setValue] = React.useState('recents');
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-    history.push(newValue);
-  };
+ 
   const userActual = useTracker(() => {
 
     Meteor.subscribe("userID", Meteor.userId());
@@ -363,7 +359,6 @@ export default function PersistentDrawerLeft() {
                           />
                         )}
 
-                        {
                           
                             {userActual &&
                             userActual.profile &&
@@ -472,9 +467,11 @@ export default function PersistentDrawerLeft() {
         >
           {/* <div className={classes.drawerHeader}/> */}
           <Main />
+          
         </main>
-        <Footer />
+        
       </div>
+      <Footer />
           <Suspense
             fallback={<SpinnerModal/>}
           >
