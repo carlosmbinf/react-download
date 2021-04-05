@@ -162,7 +162,9 @@ export default function UserCardDetails() {
   const [firstName, setfirstName] = useState("");
   const [lastName, setlastName] = useState("");
   const [edad, setEdad] = useState(0);
-
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  
   const bull = <span className={classes.bullet}>•</span>;
   const users = useTracker(() => {
     Meteor.subscribe("userID", useParams().id);
@@ -184,27 +186,26 @@ export default function UserCardDetails() {
 
     // You should see email and password in console.
     // ..code to submit form to backend here...
-    async function updateUser() {
-      const user = {
-        "profile.firstName": firstName,
-        "profile.lastName": lastName,
-        "profile.role": role,
-        edad: edad,
-      };
-      Meteor.users.update(Meteor.userId(), { $set: user }) && alert("TODO OK");
-    }
 
     async function changePassword() {
-        Accounts.changePassword(oldPassword, password, function(error) {
-          if (error) {
-              message = 'There was an issue: ' + error.reason;
-          } else {
-              message = 'You reset your password!'
-          }
-      });
+      oldPassword === password
+        ? Accounts.changePassword(oldPassword, password, function (error) {
+            if (error) {
+              console.log( "There was an issue: " + error.reason)
+            } else {
+              console.log( "You reset your password!")
+            }
+          })
+        : alert("La Contraseña no Coincide");
     }
 
-    editPassword?changePassword():updateUser();
+    (oldPassword||password)&&changePassword()
+    firstName&&Meteor.users.update(Meteor.userId(), { $set: {"profile.firstName":firstName} });
+    lastName&&Meteor.users.update(Meteor.userId(), { $set: {"profile.lastName":lastName} });
+    edad&&Meteor.users.update(Meteor.userId(), { $set: {edad:edad} });
+    username&&Meteor.users.update(Meteor.userId(), { $set: {username:username} });
+    email&&Meteor.users.update(Meteor.userId(), { $set: {"emails.0.address":email} });
+
   }
 
   const handleEdit = (event) => {
@@ -235,7 +236,9 @@ export default function UserCardDetails() {
           color="primary"
           aria-label="delete"
           className={classes.margin}
-          onClick={() => { history.goBack() }}
+          onClick={() => {
+            history.goBack();
+          }}
         >
           <ArrowBackIcon fontSize="large" color="secondary" />
         </IconButton>
@@ -278,10 +281,11 @@ export default function UserCardDetails() {
                         <Grid container className={classes.margin}>
                           Datos del Usuario
                         </Grid>
-                        <Grid container>
+                        <Grid container spacing={3}>
                           <Grid item xs={12} sm={4} lg={3}>
                             <FormControl required variant="outlined">
                               <TextField
+                                fullWidth
                                 required
                                 className={classes.margin}
                                 id="email"
@@ -301,8 +305,29 @@ export default function UserCardDetails() {
                                 }}
                               />
                             </FormControl>
+                            <FormControl required variant="outlined">
+                              <TextField
+                                fullWidth
+                                required
+                                className={classes.margin}
+                                id="username"
+                                name="username"
+                                label="Nombre de Usuario"
+                                variant="outlined"
+                                color="secondary"
+                                type="text"
+                                value={users.username}
+                                onInput={(e) => setUsername(e.target.value)}
+                                InputProps={{
+                                  startAdornment: (
+                                    <InputAdornment position="start">
+                                      <AccountCircleIcon />
+                                    </InputAdornment>
+                                  ),
+                                }}
+                              />
+                            </FormControl>
                           </Grid>
-                          {!users.services.facebook ? (
                             <Grid item xs={12}>
                               <Button
                                 color={editPassword ? "secondary" : "primary"}
@@ -314,45 +339,17 @@ export default function UserCardDetails() {
                                   : "Cambiar Contraseña"}
                               </Button>
                             </Grid>
-                          ) : (
-                            ""
-                          )}
-                          {!users.services.facebook
-                            ? editPassword && (
+                          {editPassword && (
                                 <>
                                   <Grid item xs={12} sm={4} lg={3}>
                                     <FormControl required variant="outlined">
                                       <TextField
+                                        fullWidth
                                         required
                                         className={classes.margin}
                                         id="oldpassword"
                                         name="oldpassword"
-                                        label="Contraseña actual"
-                                        variant="outlined"
-                                        color="secondary"
-                                        type="password"
-                                        value={password}
-                                        onInput={(e) =>
-                                          setPassword(e.target.value)
-                                        }
-                                        InputProps={{
-                                          startAdornment: (
-                                            <InputAdornment position="start">
-                                              <AccountCircleIcon />
-                                            </InputAdornment>
-                                          ),
-                                        }}
-                                      />
-                                    </FormControl>
-                                  </Grid>
-                                  <Grid item xs={12}>
-                                    <FormControl required variant="outlined">
-                                      <TextField
-                                        required
-                                        className={classes.margin}
-                                        id="password"
-                                        name="password"
-                                        label="Nueva Contraseña"
+                                        label="Contraseña anterior"
                                         variant="outlined"
                                         color="secondary"
                                         type="password"
@@ -370,17 +367,43 @@ export default function UserCardDetails() {
                                       />
                                     </FormControl>
                                   </Grid>
+                                  <Grid item xs={12} sm={4} lg={3}>
+                                    <FormControl required variant="outlined">
+                                      <TextField
+                                        fullWidth
+                                        required
+                                        className={classes.margin}
+                                        id="password"
+                                        name="password"
+                                        label="Nueva Contraseña"
+                                        variant="outlined"
+                                        color="secondary"
+                                        type="password"
+                                        value={password}
+                                        onInput={(e) =>
+                                          setPassword(e.target.value)
+                                        }
+                                        InputProps={{
+                                          startAdornment: (
+                                            <InputAdornment position="start">
+                                              <AccountCircleIcon />
+                                            </InputAdornment>
+                                          ),
+                                        }}
+                                      />
+                                    </FormControl>
+                                  </Grid>
                                 </>
-                              )
-                            : ""}
+                              )}
                         </Grid>
                         <Grid container className={classes.margin}>
                           Datos Personales
                         </Grid>
-                        <Grid container>
+                        <Grid container spacing={3}>
                           <Grid item xs={12} sm={4} lg={3}>
                             <FormControl required variant="outlined">
                               <TextField
+                                fullWidth
                                 required
                                 className={classes.margin}
                                 id="firstName"
@@ -403,6 +426,7 @@ export default function UserCardDetails() {
                           <Grid item xs={12} sm={4} lg={3}>
                             <FormControl required variant="outlined">
                               <TextField
+                                fullWidth
                                 required
                                 className={classes.margin}
                                 id="lastName"
@@ -425,6 +449,7 @@ export default function UserCardDetails() {
                           <Grid item xs={12} sm={4} lg={3}>
                             <FormControl required variant="outlined">
                               <TextField
+                                fullWidth
                                 required
                                 className={classes.margin}
                                 id="edad"
@@ -512,7 +537,7 @@ export default function UserCardDetails() {
                         <MailIcon />
                         <Typography>
                           <strong>
-                            {usersOnline?"ONLINE":"DISCONECTED"}
+                            {usersOnline ? "ONLINE" : "DISCONECTED"}
                           </strong>
                         </Typography>
                       </Grid>
@@ -540,40 +565,60 @@ export default function UserCardDetails() {
                       >
                         {edit ? "Cancelar Edición" : "Editar"}
                       </Button>
-                      {edit?
-                      <Tooltip
-                      title={users.baneado
-                          ? "Desbloquear Usuario"
-                          : "Bloquear Usuario"
-                      }
-                    >
-                      <Button
-                        onClick={handleChangebaneado}
-                        variant="contained"
-                        color={users.baneado ? "secondary" : "primary"}
-                      >
-                        {users.baneado ? "Desbloquear" : "Bloquear"}
-                        </Button>
-                    </Tooltip>
-                    :
-                    <Tooltip
-                        title={users.profile.role == "admin"
-                            ? "Cambiar a user"
-                            : "Cambiar a admin"
-                        }
-                      >
-                        <Switch
-                          checked={users.profile.role == "admin"}
-                          onChange={handleChange}
-                          name="Roles"
-                          color="primary"
-                        />
-                      </Tooltip>
-
-                    }
-                      
+                      {edit ? (
+                        <Tooltip
+                          title={
+                            users.baneado
+                              ? "Desbloquear Usuario"
+                              : "Bloquear Usuario"
+                          }
+                        >
+                          <Button
+                            onClick={handleChangebaneado}
+                            variant="contained"
+                            color={users.baneado ? "secondary" : "primary"}
+                          >
+                            {users.baneado ? "Desbloquear" : "Bloquear"}
+                          </Button>
+                        </Tooltip>
+                      ) : (
+                        <Tooltip
+                          title={
+                            users.profile.role == "admin"
+                              ? "Cambiar a user"
+                              : "Cambiar a admin"
+                          }
+                        >
+                          <Switch
+                            checked={users.profile.role == "admin"}
+                            onChange={handleChange}
+                            name="Roles"
+                            color="primary"
+                          />
+                        </Tooltip>
+                      )}
                     </Grid>
                   </Grid>
+                ) : users._id == Meteor.userId() ? (
+                  <>
+                    <Grid item xs={12}>
+                      <Divider className={classes.padding10} />
+                      <Grid
+                        container
+                        direction="row"
+                        justify="center"
+                        alignItems="center"
+                      >
+                         <Button
+                        color={edit ? "secondary" : "primary"}
+                        variant="contained"
+                        onClick={handleEdit}
+                      >
+                        {edit ? "Cancelar Edición" : "Editar"}
+                      </Button>
+                      </Grid>
+                    </Grid>
+                  </>
                 ) : (
                   ""
                 )}

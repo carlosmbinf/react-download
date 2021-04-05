@@ -50,6 +50,8 @@ import MovieFilterIcon from '@material-ui/icons/MovieFilter';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import Footer from "./Footer";
 import SetPassword from "../ui/pages/users/SetPassword";
+import { Suspense } from "react";
+import SpinnerModal from "../ui/components/spinnerModal/SpinnerModal";
 
 const drawerWidth = 240;
 const StyledBadge = withStyles((theme) => ({
@@ -209,12 +211,8 @@ export default function PersistentDrawerLeft() {
   const history = useHistory();
   const [open, setOpen] = React.useState(false);
   const [error, setError] = useState("");
-  const [value, setValue] = React.useState('recents');
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-    history.push(newValue);
-  };
+ 
   const userActual = useTracker(() => {
 
     Meteor.subscribe("userID", Meteor.userId());
@@ -263,7 +261,7 @@ export default function PersistentDrawerLeft() {
   };
   return (
     <>
-    <SetPassword/>
+    
       <div
         className={classes.root}
         // style={{ background: "rgb(29 47 62)" }}
@@ -361,7 +359,6 @@ export default function PersistentDrawerLeft() {
                           />
                         )}
 
-                        {
                           
                             {userActual &&
                             userActual.profile &&
@@ -470,9 +467,17 @@ export default function PersistentDrawerLeft() {
         >
           {/* <div className={classes.drawerHeader}/> */}
           <Main />
+          
         </main>
-        <Footer />
+        
       </div>
+      <Footer />
+          <Suspense
+            fallback={<SpinnerModal/>}
+          >
+            <SetPassword/>
+            </Suspense>
+      
     </>
   );
 }

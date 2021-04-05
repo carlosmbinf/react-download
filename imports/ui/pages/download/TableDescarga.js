@@ -31,6 +31,7 @@ import "primeicons/primeicons.css";
 import "primeflex/primeflex.css";
 import "./TableDescarga.css";
 import { Dropdown } from "primereact/dropdown";
+import ShowMoreText from 'react-show-more-text';
 //icons
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
@@ -39,6 +40,8 @@ import MailIcon from "@material-ui/icons/Mail";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import DeleteIcon from "@material-ui/icons/Delete";
 import CheckCircleRoundedIcon from "@material-ui/icons/CheckCircleRounded";
+import AddIcon from '@material-ui/icons/Add';
+import RemoveIcon from '@material-ui/icons/Remove';
 
 //Collections
 import { DescargasCollection } from "../collections/collections";
@@ -169,10 +172,35 @@ export default function TableDescarga() {
     );
   };
   const comentariosBodyTemplate = (rowData) => {
+    // const [open, setOpen] = React.useState(false);
+    const executeOnClick = () => {
+      // setOpen(!open)
+      // console.log("Hola");
+    };
     return (
       <React.Fragment>
         <span className="p-column-title">Comentarios</span>
-        {rowData.comentarios}
+        <ShowMoreText
+          /* Default options */
+          lines={3}
+          more={
+            <IconButton color="secondary" aria-label="add">
+              <AddIcon />
+            </IconButton>
+          }
+          less={
+            <IconButton color="secondary" aria-label="remove">
+              <RemoveIcon />
+            </IconButton>
+          }
+          className="content-css"
+          anchorClass="my-anchor-css-class"
+          onClick={executeOnClick}
+          expanded={false}
+          width={280}
+        >
+          {rowData.comentarios}
+        </ShowMoreText>
       </React.Fragment>
     );
   };

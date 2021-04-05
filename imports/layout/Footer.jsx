@@ -51,10 +51,10 @@ createStyles({
 
 export default function Footer() {
    
-  function Child() {
+  
     const history = useHistory();
     const classes = useStyles();
-    const [value, setValue] = React.useState('recents');
+    const [value, setValue] = React.useState('pelis');
     // We can use the `useParams` hook here to access
     // the dynamic pieces of the URL.
     let { id } = useParams();
@@ -99,7 +99,7 @@ export default function Footer() {
           key={index}
           label={data.title}
           value={data.url}
-          showLabel={data.url == id}
+          showLabel={data.url == id || (data.url==="pelis"&& id=="")}
           icon={data.icon}
           className={classes.selected}
         />
@@ -110,7 +110,7 @@ export default function Footer() {
           key={index}
           label={data.title}
           value={data.url}
-          showLabel={data.url == id}
+          showLabel={data.url == id || (data.url==="pelis"&& id=="")}
           icon={data.icon}
           className={classes.selected}
         />
@@ -119,13 +119,3 @@ export default function Footer() {
     </BottomNavigation>
     )
   }
-  return (
-    
-      <Switch>
-          <Route path="/:id" children={<Child />} />
-        </Switch>
-      
-    
-    
-  );
-}

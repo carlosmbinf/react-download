@@ -46,7 +46,8 @@ export default function App() {
     () =>
       createMuiTheme({
         palette: {
-          type: 'dark',
+          type: 'dark' ,
+          // type: prefersDarkMode ? 'dark' : 'light',
         },
       }),
     [prefersDarkMode],
