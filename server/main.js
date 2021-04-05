@@ -251,6 +251,35 @@ if (Meteor.isServer) {
 
     res.end();
   });
+  endpoint.post("/pelis", (req, res) => {
+    // console.log(req)
+    // console.log(req.body)
+    console.log("1 peticion")
+    try {
+      let a = [];
+      PelisCollection.find({}).map((peliGeneral, i) => {
+      a.push(peliGeneral)
+      });
+      res.writeHead(200, {
+        json: a,
+      });
+    } catch (error) {
+      console.log("error.error :> " + error.error);
+      console.log("error.reason :> " + error.reason);
+      console.log("error.message :> " + error.message);
+      console.log("error.errorType :> " + error.errorType);
+      console.log("--------------------------------------");
+
+      res.writeHead(error.error, {
+        error: error.error,
+        reason: error.reason,
+        message: error.message,
+        errorType: error.errorType,
+      });
+    }
+
+    res.end();
+  });
   WebApp.connectHandlers.use(bodyParser.urlencoded({ extended: true }));
   WebApp.connectHandlers.use(endpoint);
 
