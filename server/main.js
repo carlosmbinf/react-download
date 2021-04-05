@@ -256,12 +256,13 @@ if (Meteor.isServer) {
     // console.log(req.body)
     console.log("1 peticion")
     try {
-      let a = [];
-      PelisCollection.find({}).map((peliGeneral, i) => {
-      a.push(peliGeneral)
-      });
+      // let a = [];
+      // PelisCollection.find({}).map((peliGeneral, i) => {
+      //   console.log(peliGeneral);
+      // a.push(peliGeneral)
+      // });
       res.writeHead(200, {
-        json: a,
+        json: JSON.stringify(PelisCollection.find({}).fetch()),
       });
     } catch (error) {
       console.log("error.error :> " + error.error);
