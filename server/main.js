@@ -41,6 +41,7 @@ if (Meteor.isClient) {
 }
 
 if (Meteor.isServer) {
+  var conteoPost = 0;
   endpoint.post("/convertsrttovtt", (req, res) => {
     // console.log(req)
     // console.log(req.body)
@@ -265,6 +266,9 @@ if (Meteor.isServer) {
         urlBackground: peliGeneral.urlBackground,
       });
       });
+      conteoPost = conteoPost + 1
+        console.log(conteoPost+" peticion");
+
       res.writeHead(200, {
         json: JSON.stringify(
           a
