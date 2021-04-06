@@ -239,7 +239,6 @@ if (Meteor.isServer) {
         message: "El fichero " + req.body.idVideo + " ya existe",
       });
     }
-
     // console.log('id:', info.id)
     // console.log('title:', info.title)
     // console.log('url:', info.url)
@@ -254,15 +253,22 @@ if (Meteor.isServer) {
   endpoint.post("/pelis", (req, res) => {
     // console.log(req)
     // console.log(req.body)
-    console.log("1 peticion")
+    // console.log(PelisCollection.find({}, { descripcion: 0 }).fetch());
     try {
-      // let a = [];
-      // PelisCollection.find({}).map((peliGeneral, i) => {
-      //   console.log(peliGeneral);
-      // a.push(peliGeneral)
-      // });
+      let a = [];
+      PelisCollection.find({}).map((peliGeneral, i) => {
+        // console.log(peliGeneral);
+      a.push({
+        _id: peliGeneral._id,
+        nombrePeli: peliGeneral.nombrePeli,
+        tamano: peliGeneral.tamano,
+        urlBackground: peliGeneral.urlBackground,
+      });
+      });
       res.writeHead(200, {
-        json: JSON.stringify(PelisCollection.find({}).fetch()),
+        json: JSON.stringify(
+          a
+        ),
       });
     } catch (error) {
       console.log("error.error :> " + error.error);
