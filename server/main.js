@@ -264,6 +264,7 @@ if (Meteor.isServer) {
         nombrePeli: peliGeneral.nombrePeli,
         tamano: peliGeneral.tamano,
         urlBackground: peliGeneral.urlBackground,
+        urlPeli: peliGeneral.urlPeli
       });
       });
       conteoPost = conteoPost + 1
