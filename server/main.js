@@ -268,7 +268,7 @@ if (Meteor.isServer) {
         // descripcion: descripcion,
         vistas:vistas,
         year:year,
-        clasificacion:clasificacion,
+        // clasificacion:clasificacion,
       });
       });
       conteoPost = conteoPost + 1
