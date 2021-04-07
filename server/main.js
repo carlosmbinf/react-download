@@ -265,7 +265,7 @@ if (Meteor.isServer) {
         tamano: peliGeneral.tamano,
         urlBackground: peliGeneral.urlBackground,
         urlPeli: peliGeneral.urlPeli,
-        descripcion: descripcion,
+        // descripcion: descripcion,
         vistas:vistas,
         year:year,
         clasificacion:clasificacion,
