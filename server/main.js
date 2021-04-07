@@ -266,8 +266,8 @@ if (Meteor.isServer) {
         urlBackground: peliGeneral.urlBackground,
         urlPeli: peliGeneral.urlPeli,
         // descripcion: descripcion,
-        vistas:vistas,
-        year:year,
+        // vistas:vistas,
+        // year:year,
         // clasificacion:clasificacion,
       });
       });
