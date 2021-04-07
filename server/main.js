@@ -264,7 +264,11 @@ if (Meteor.isServer) {
         nombrePeli: peliGeneral.nombrePeli,
         tamano: peliGeneral.tamano,
         urlBackground: peliGeneral.urlBackground,
-        urlPeli: peliGeneral.urlPeli
+        urlPeli: peliGeneral.urlPeli,
+        descripcion: descripcion,
+        vistas:vistas,
+        year:year,
+        clasificacion:clasificacion,
       });
       });
       conteoPost = conteoPost + 1
