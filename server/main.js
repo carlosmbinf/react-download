@@ -12,6 +12,7 @@ import router from "router";
 import youtubeDownload from "./downloader";
 import fs from "fs";
 
+
 const endpoint = router();
 
 function insertLink({ title, url }) {
@@ -41,7 +42,21 @@ if (Meteor.isClient) {
 }
 
 if (Meteor.isServer) {
+<<<<<<< HEAD
   var conteoPost = 0;
+=======
+  const WebSocket = require("ws");
+  const wss = new WebSocket.Server({ port: 8080 });
+
+  wss.on("connection", function connection(ws) {
+    ws.on("message", function incoming(message) {
+      console.log("received: %s", message);
+    });
+
+    // ws.send("something");
+  });
+
+>>>>>>> arreglos
   endpoint.post("/convertsrttovtt", (req, res) => {
     // console.log(req)
     // console.log(req.body)
