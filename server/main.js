@@ -42,9 +42,7 @@ if (Meteor.isClient) {
 }
 
 if (Meteor.isServer) {
-<<<<<<< HEAD
   var conteoPost = 0;
-=======
   const WebSocket = require("ws");
   const wss = new WebSocket.Server({ port: 8080 });
 
@@ -56,7 +54,6 @@ if (Meteor.isServer) {
     // ws.send("something");
   });
 
->>>>>>> arreglos
   endpoint.post("/convertsrttovtt", (req, res) => {
     // console.log(req)
     // console.log(req.body)
