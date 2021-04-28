@@ -7,6 +7,7 @@ export const PelisCollection = new Mongo.Collection('pelisRegister');
 export const DescargasCollection = new Mongo.Collection('descargasRegister');
 export const TVCollection = new Mongo.Collection('tvRegister');
 export const OnlineCollection = new Mongo.Collection('online');
+export const MensajesCollection = new Mongo.Collection('mensajes');
 
 export const SchemaOnlineCollection = new SimpleSchema({
   address : {
@@ -23,6 +24,31 @@ export const SchemaOnlineCollection = new SimpleSchema({
 });
 
 OnlineCollection.attachSchema(SchemaOnlineCollection);
+
+export const SchemaMensajesCollection = new SimpleSchema({
+  from : {
+    type: String,
+  },
+  to : {
+    type: String,
+  },
+  mensaje : {
+    type: String,
+    optional: true,
+  },
+  leido : {
+    type: Boolean,
+    defaultValue: false,
+    optional: true,
+  },
+  createdAt: {
+    type: Date,
+    defaultValue: new Date(),
+    optional: true,
+  },
+});
+
+MensajesCollection.attachSchema(SchemaMensajesCollection);
 export const SchemaTVCollection = new SimpleSchema({
   nombreTV:{
     type: String,
@@ -223,5 +249,21 @@ Meteor.users.allow({
     remove(userId, doc) {
       // Can only remove your own documents.
       return Meteor.users.findOne({_id:Meteor.userId()}).profile.role == "admin";
+    },
+})
+MensajesCollection.allow({
+  insert(doc) {
+      // The user must be logged in and the document must be owned by the user.
+      return true;
+    },
+  
+    update(userId, doc, fields, modifier) {
+      // Can only change your own documents.
+      return true;
+    },
+  
+    remove(userId, doc) {
+      // Can only remove your own documents.
+      return true;
     },
 })

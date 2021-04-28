@@ -3,6 +3,7 @@ import { Accounts } from 'meteor/accounts-base'
 import {
   OnlineCollection,
   PelisCollection,
+  MensajesCollection
 } from "../imports/ui/pages/collections/collections";
 import { TVCollection } from "../imports/ui/pages/collections/collections";
 import { DescargasCollection } from "../imports/ui/pages/collections/collections";
@@ -342,6 +343,9 @@ if (Meteor.isServer) {
   });
   Meteor.publish("conexiones", function (id) {
     return OnlineCollection.find({});
+  });
+  Meteor.publish("mensajes", function (id) {
+    return MensajesCollection.find({ to: id });
   });
 
   Meteor.onConnection(function (connection) {
