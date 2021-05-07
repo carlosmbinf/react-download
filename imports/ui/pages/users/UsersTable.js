@@ -304,7 +304,24 @@ export default function UsersTable() {
       </React.Fragment>
     );
   };
-
+  const megasGastadosinBytesTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">Megas Gastados por el Cliente</span>
+        {rowData.megasGastadosinBytes?rowData.megasGastadosinBytes:'0'}
+      </React.Fragment>
+    );
+  };
+  const megasGastadosinBytesGeneralTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">Megas Gastados en el Servidor</span>
+        {rowData.megasGastadosinBytesGeneral?rowData.megasGastadosinBytesGeneral:'0'}
+      </React.Fragment>
+    );
+  };
+  
+  
   const eliminarVideo = (id) => {
     Meteor.users.remove(id);
   };
@@ -462,6 +479,18 @@ export default function UsersTable() {
                   filter
                   filterElement={conProxyFilter}
                 />
+              <Column
+                  field="megasGastadosinBytes"
+                  header="Megas Gastados x Cliente"
+                  body={megasGastadosinBytesTemplate}
+                  reorderable={true}
+                />
+                <Column
+                field="megasGastadosinBytesGeneral"
+                header="Megas Gastados in Server"
+                body={megasGastadosinBytesGeneralTemplate}
+                reorderable={true}
+              />
                 <Column field="urlReal" header="" body={urlBodyTemplate} />
                 <Column
                   field="eliminar"
