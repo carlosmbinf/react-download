@@ -10,15 +10,33 @@ export const OnlineCollection = new Mongo.Collection('online');
 export const MensajesCollection = new Mongo.Collection('mensajes');
 
 export const SchemaOnlineCollection = new SimpleSchema({
-  address : {
+  address: {
     type: String,
   },
-  userId : {
+  connectionId: {
+    type: String,
+    optional: true,
+  },
+  userId: {
     type: String,
     optional: true,
   },
   loginAt: {
     type: Date,
+    optional: true,
+  },
+  hostname: {
+    type: String,
+    optional: true,
+  },
+  megasGastadosinBytes: {
+    type: Number,
+    defaultValue: 0,
+    optional: true,
+  },
+  megasGastadosinBytesGeneral: {
+    type: Number,
+    defaultValue: 0,
     optional: true,
   },
 });

@@ -479,7 +479,42 @@ console.log("httpProxy running with target at " + options.target);
 //   })
 
 // -------------------Este Proxy Funciona al FULLLLLLLLL-----------
-
+async function conect(connectionId,userId,hostname){
+  await OnlineCollection.insert({
+    connectionId: connectionId,
+    address: "proxy",
+    userId: userId,
+    loginAt: new Date(),
+    hostname: hostname,
+  });
+  // await Meteor.users.update(userId, {
+  //   $set: {
+  //     online: true,
+  //   },
+  // });
+  return true
+}
+async function disconect(connectionId,stats){
+  // await console.log('remove ' + connectionId);
+  const conn = await OnlineCollection.findOne({ connectionId: connectionId.toString() })
+  const user = Meteor.users.findOne(conn.userId);
+  let bytesGastados = Number(stats.srcTxBytes) + Number(stats.srcRxBytes) 
+  // + Number(stats.trgTxBytes) + Number(stats. trgRxBytes)
+  let bytesGastadosGeneral = Number(stats.srcTxBytes) + Number(stats.srcRxBytes) + Number(stats.trgTxBytes) + Number(stats. trgRxBytes)
+  Meteor.users.update(user._id, {
+    $inc: { megasGastadosinBytes: bytesGastados },
+  });
+  Meteor.users.update(user._id, {
+    $inc: { megasGastadosinBytesGeneral: bytesGastadosGeneral },
+  });
+   await OnlineCollection.remove(conn._id);
+  // await console.log(idofconn&&idofconn._id);
+  // await Meteor.users.update(userId, {
+  //   $set: {
+  //     online: true,
+  //   },
+  // });
+}
 const ProxyChain = require("proxy-chain");
 var bcrypt = require("bcrypt");
 // var sha256 = require("sha256");
@@ -528,8 +563,14 @@ const server2 = new ProxyChain.Server({
             requestAuthentication: true,
             failMsg: "Contraseña incorrecta, Vuelva a intentarlo nuevamente",
           };
-        } else {
+        } else {        
+        try {
+          conect(connectionId, b._id, hostname);
+        // if( await conect(connectionId,b&&b._id))
           return {};
+        } catch (error) {
+          console.log(error);
+        }  
         }
       } else {
         return {
@@ -568,8 +609,8 @@ server2.listen(() => {
 server2.on("connectionClosed", ({ connectionId, stats }) => {
   // console.log(`Connection ${connectionId} closed`);
   // console.dir(stats);
+  disconect(connectionId,stats);
 });
-
 // Emitted when HTTP request fails
 server2.on("requestFailed", ({ request, error }) => {
   console.log(`Request ${request.url} failed`);
