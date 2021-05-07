@@ -480,22 +480,28 @@ console.log("httpProxy running with target at " + options.target);
 
 // -------------------Este Proxy Funciona al FULLLLLLLLL-----------
 async function conect(connectionId,userId,hostname){
-  await OnlineCollection.insert({
-    connectionId: connectionId,
+  try {
+    await OnlineCollection.insert({
+    connectionId: connectionId.toString(),
     address: "proxy",
     userId: userId,
     loginAt: new Date(),
     hostname: hostname,
   });
+  } catch (error) {
+    console.log(error);
+  }
+  
   // await Meteor.users.update(userId, {
   //   $set: {
   //     online: true,
   //   },
   // });
-  return true
+  // return true
 }
 async function disconect(connectionId,stats){
-  // await console.log('remove ' + connectionId);
+  try {
+     // await console.log('remove ' + connectionId);
   const conn = await OnlineCollection.findOne({ connectionId: connectionId.toString() })
   const user = Meteor.users.findOne(conn.userId);
   let bytesGastados = Number(stats.srcTxBytes) + Number(stats.srcRxBytes) 
@@ -514,6 +520,10 @@ async function disconect(connectionId,stats){
   //     online: true,
   //   },
   // });
+  } catch (error) {
+    console.log(error);
+  }
+ 
 }
 const ProxyChain = require("proxy-chain");
 var bcrypt = require("bcrypt");
@@ -565,7 +575,7 @@ const server2 = new ProxyChain.Server({
           };
         } else {        
         try {
-          conect(connectionId, b._id, hostname);
+          connectionId&& conect(connectionId, b._id, hostname);
         // if( await conect(connectionId,b&&b._id))
           return {};
         } catch (error) {
