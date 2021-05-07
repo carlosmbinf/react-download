@@ -479,19 +479,19 @@ console.log("httpProxy running with target at " + options.target);
 //   })
 
 // -------------------Este Proxy Funciona al FULLLLLLLLL-----------
-async function conect(connectionId,userId,hostname){
+async function conect(connectionId, userId, hostname) {
   try {
     await OnlineCollection.insert({
-    connectionId: connectionId.toString(),
-    address: "proxy",
-    userId: userId,
-    loginAt: new Date(),
-    hostname: hostname,
-  });
+      connectionId: connectionId.toString(),
+      address: "proxy",
+      userId: userId,
+      loginAt: new Date(),
+      hostname: hostname,
+    });
   } catch (error) {
     console.log(error);
   }
-  
+
   // await Meteor.users.update(userId, {
   //   $set: {
   //     online: true,
@@ -499,31 +499,38 @@ async function conect(connectionId,userId,hostname){
   // });
   // return true
 }
-async function disconect(connectionId,stats){
+async function disconect(connectionId, stats) {
   try {
-     // await console.log('remove ' + connectionId);
-  const conn = await OnlineCollection.findOne({ connectionId: connectionId.toString() })
-  const user = Meteor.users.findOne(conn.userId);
-  let bytesGastados = Number(stats.srcTxBytes) + Number(stats.srcRxBytes) 
-  // + Number(stats.trgTxBytes) + Number(stats. trgRxBytes)
-  let bytesGastadosGeneral = Number(stats.srcTxBytes) + Number(stats.srcRxBytes) + Number(stats.trgTxBytes) + Number(stats. trgRxBytes)
-  Meteor.users.update(user._id, {
-    $inc: { megasGastadosinBytes: bytesGastados },
-  });
-  Meteor.users.update(user._id, {
-    $inc: { megasGastadosinBytesGeneral: bytesGastadosGeneral },
-  });
-   await OnlineCollection.remove(conn._id);
-  // await console.log(idofconn&&idofconn._id);
-  // await Meteor.users.update(userId, {
-  //   $set: {
-  //     online: true,
-  //   },
-  // });
+    // await console.log('remove ' + connectionId);
+    const conn = await OnlineCollection.findOne({
+      connectionId: connectionId.toString(),
+    });
+    const user = conn.userId && Meteor.users.findOne(conn.userId);
+    let bytesGastados = Number(stats.srcTxBytes) + Number(stats.srcRxBytes);
+    // + Number(stats.trgTxBytes) + Number(stats. trgRxBytes)
+    let bytesGastadosGeneral =
+      Number(stats.srcTxBytes) +
+      Number(stats.srcRxBytes) +
+      Number(stats.trgTxBytes) +
+      Number(stats.trgRxBytes);
+    conn.userId &&
+      (await Meteor.users.update(user._id, {
+        $inc: { megasGastadosinBytes: bytesGastados },
+      }));
+    conn.userId &&
+      (await Meteor.users.update(user._id, {
+        $inc: { megasGastadosinBytesGeneral: bytesGastadosGeneral },
+      }));
+    await OnlineCollection.remove(conn._id);
+    // await console.log(idofconn&&idofconn._id);
+    // await Meteor.users.update(userId, {
+    //   $set: {
+    //     online: true,
+    //   },
+    // });
   } catch (error) {
     console.log(error);
   }
- 
 }
 const ProxyChain = require("proxy-chain");
 var bcrypt = require("bcrypt");

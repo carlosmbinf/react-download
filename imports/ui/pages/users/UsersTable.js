@@ -223,7 +223,9 @@ export default function UsersTable() {
               ? "ONLINE"
               : "DISCONECTED",
           username: data.username,
-          conProxy: !data.baneado
+          conProxy: !data.baneado,
+          megasGastadosinBytes: data.megasGastadosinBytes,
+          megasGastadosinBytesGeneral: data.megasGastadosinBytesGeneral
           // address: OnlineCollection.find({ userId: data._id }).fetch(),
         })
     );
@@ -308,7 +310,9 @@ export default function UsersTable() {
     return (
       <React.Fragment>
         <span className="p-column-title">Megas Gastados por el Cliente</span>
-        {rowData.megasGastadosinBytes?rowData.megasGastadosinBytes:'0'}
+        {rowData.megasGastadosinBytes
+          ? Number.parseFloat(rowData.megasGastadosinBytes / 1000000).toFixed(2) + ' MB'
+          : "0"}
       </React.Fragment>
     );
   };
@@ -316,7 +320,9 @@ export default function UsersTable() {
     return (
       <React.Fragment>
         <span className="p-column-title">Megas Gastados en el Servidor</span>
-        {rowData.megasGastadosinBytesGeneral?rowData.megasGastadosinBytesGeneral:'0'}
+        {rowData.megasGastadosinBytesGeneral
+          ? Number.parseFloat(rowData.megasGastadosinBytesGeneral / 1000000).toFixed(2) + ' MB'
+          : "0"}
       </React.Fragment>
     );
   };
@@ -481,13 +487,13 @@ export default function UsersTable() {
                 />
               <Column
                   field="megasGastadosinBytes"
-                  header="Megas Gastados x Cliente"
+                  header="Megas x Cliente"
                   body={megasGastadosinBytesTemplate}
                   reorderable={true}
                 />
                 <Column
                 field="megasGastadosinBytesGeneral"
-                header="Megas Gastados in Server"
+                header="Megas x Server"
                 body={megasGastadosinBytesGeneralTemplate}
                 reorderable={true}
               />
