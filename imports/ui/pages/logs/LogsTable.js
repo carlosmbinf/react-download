@@ -124,26 +124,34 @@ export default function LogsTable() {
   const [open, setOpen] = React.useState(true);
   const dt = React.useRef(null);
   const history = useHistory();
-  Meteor.subscribe("logs");
+  
+
   const logs = useTracker(() => {
+    Meteor.subscribe("logs");
+    let a = [];
     try {
       
-      var a = [];
-      LogsCollection.find().forEach(async (log) => {
-        userAfectado = await Meteor.users.findOne(log.userAfectado);
-        userAdmin = await Meteor.users.findOne(log.userAdmin);
-
+       LogsCollection.find().map((log) => {
+        // Meteor.users.findOne(log.userAfectado) = await Meteor.users.findOne(log.userAfectado);
+        // Meteor.users.findOne(log.userAdmin) = await Meteor.users.findOne(log.userAdmin);
+        log&&
         a.push({
           id: log._id,
-          nombreUserAfectado:(userAfectado.profile&&userAfectado.profile.firstName) + " " + (userAfectado.profile&&userAfectado.profile.lastName),
-          nombreUserAdmin: (userAdmin.profile&&userAdmin.profile.firstName) + " " + (userAdmin.profile&&userAdmin.profile.lastName),
+          nombreUserAfectado:
+            (Meteor.users.findOne(log.userAfectado) && Meteor.users.findOne(log.userAfectado).profile && Meteor.users.findOne(log.userAfectado).profile.firstName) +
+            " " +
+            (Meteor.users.findOne(log.userAfectado)&& Meteor.users.findOne(log.userAfectado).profile && Meteor.users.findOne(log.userAfectado).profile.lastName),
+          nombreUserAdmin:
+            (Meteor.users.findOne(log.userAdmin) && Meteor.users.findOne(log.userAdmin).profile.firstName) +
+            " " +
+            (Meteor.users.findOne(log.userAdmin) && Meteor.users.findOne(log.userAdmin).profile.lastName),
           mensaje: log.message,
         });
       });
     } catch (error) {}
-    console.log(a);
+     console.log(a);
+     return a;
 
-    return a;
   });
 
   const paginatorLeft = (
