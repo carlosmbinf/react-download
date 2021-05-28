@@ -7,6 +7,7 @@ import {
 } from "../imports/ui/pages/collections/collections";
 import { TVCollection } from "../imports/ui/pages/collections/collections";
 import { DescargasCollection } from "../imports/ui/pages/collections/collections";
+import { RegisterDataUsersCollection } from "../imports/ui/pages/collections/collections";
 import { WebApp } from "meteor/webapp";
 import bodyParser from "body-parser";
 import router from "router";
@@ -38,11 +39,98 @@ function insertDescarga({
   });
 }
 
+
+const tarea = async() => {
+  var users = Meteor.users.find({})
+  console.log('Count ' + users.count());
+  console.log('running every minute to 1 from 5');
+
+  users.fetch().map((user) => {
+    console.log({
+      userId: user._id,
+      megasGastadosinBytes: user.megasGastadosinBytes,
+      megasGastadosinBytesGeneral: user.megasGastadosinBytesGeneral,
+    });
+    RegisterDataUsersCollection.insert({
+      userId: user._id,
+      megasGastadosinBytes: user.megasGastadosinBytes,
+      megasGastadosinBytesGeneral: user.megasGastadosinBytesGeneral,
+    });
+    Meteor.users.update(user._id, {
+      $set: { megasGastadosinBytes: 0, megasGastadosinBytesGeneral: 0 },
+    });
+  });
+} 
+
 if (Meteor.isClient) {
   Group.subscription = Meteor.subscribe("links");
 }
 
 if (Meteor.isServer) {
+  var cron = require("node-cron");
+  // console.log(` la fecha inicial es mayor q la segunda ` + (new Date() > new Date()));
+
+  try {
+    cron
+      .schedule(
+        "0 * 1 * *",
+        async () => {
+          let users = await Meteor.users.find({});
+          await console.log("Count " + users.count());
+          await console.log("running every minute to 1 from 5");
+
+          await users.fetch().map((user) => {
+            user.megasGastadosinBytes > 0 &&
+              (console.log({
+                userId: user._id,
+                megasGastadosinBytes: user.megasGastadosinBytes,
+                megasGastadosinBytesGeneral: user.megasGastadosinBytesGeneral,
+              }),
+              RegisterDataUsersCollection.insert({
+                userId: user._id,
+                megasGastadosinBytes: user.megasGastadosinBytes,
+                megasGastadosinBytesGeneral: user.megasGastadosinBytesGeneral,
+              }),
+              Meteor.users.update(user._id, {
+                $set: {
+                  megasGastadosinBytes: 0,
+                  megasGastadosinBytesGeneral: 0,
+                },
+              }));
+          });
+        },
+        {
+          scheduled: true,
+          timezone: "America/Sao_Paulo",
+        }
+      )
+      .start();
+
+    cron
+      .schedule(
+        "0-59 * * * *",
+        async () => {
+          let users = await Meteor.users.find({});
+          await users.forEach((user) => {
+            !(user.username == "carlosmbinf") &&
+              user.megasGastadosinBytes > 1000000000 &&
+              new Date() >=
+                new Date(
+                  user.fechaSubscripcion ? user.fechaSubscripcion : new Date()
+                ) &&
+              Meteor.users.update(user._id, { $set: { baneado: true } });
+          });
+        },
+        {
+          scheduled: true,
+          timezone: "America/Sao_Paulo",
+        }
+      )
+      .start();
+  } catch (error) {
+    console.log(error);
+  }
+
   var conteoPost = 0;
 
   endpoint.post("/convertsrttovtt", (req, res) => {
@@ -135,9 +223,11 @@ if (Meteor.isServer) {
     // console.log(req)
     // console.log(req.body)
     try {
-      req.body.username&&Accounts.setUsername(req.body.id,req.body.username);
-      req.body.password&&Accounts.setPassword(req.body.id,req.body.password);
-      console.log("Usuario actualizado" + req.body.id + " "+req.body.username + " ");
+      req.body.username && Accounts.setUsername(req.body.id, req.body.username);
+      req.body.password && Accounts.setPassword(req.body.id, req.body.password);
+      console.log(
+        "Usuario actualizado" + req.body.id + " " + req.body.username + " "
+      );
 
       res.writeHead(200, {
         message: "Usuario actualizado",
@@ -262,25 +352,23 @@ if (Meteor.isServer) {
       let a = [];
       PelisCollection.find({}).map((peliGeneral, i) => {
         // console.log(peliGeneral);
-      a.push({
-        _id: peliGeneral._id,
-        nombrePeli: peliGeneral.nombrePeli,
-        tamano: peliGeneral.tamano,
-        urlBackground: peliGeneral.urlBackground,
-        urlPeli: peliGeneral.urlPeli,
-        // descripcion: descripcion,
-        // vistas:vistas,
-        // year:year,
-        // clasificacion:clasificacion,
+        a.push({
+          _id: peliGeneral._id,
+          nombrePeli: peliGeneral.nombrePeli,
+          tamano: peliGeneral.tamano,
+          urlBackground: peliGeneral.urlBackground,
+          urlPeli: peliGeneral.urlPeli,
+          // descripcion: descripcion,
+          // vistas:vistas,
+          // year:year,
+          // clasificacion:clasificacion,
+        });
       });
-      });
-      conteoPost = conteoPost + 1
-        console.log(conteoPost+" peticion");
+      conteoPost = conteoPost + 1;
+      console.log(conteoPost + " peticion");
 
       res.writeHead(200, {
-        json: JSON.stringify(
-          a
-        ),
+        json: JSON.stringify(a),
       });
     } catch (error) {
       console.log("error.error :> " + error.error);

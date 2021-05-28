@@ -8,6 +8,32 @@ export const DescargasCollection = new Mongo.Collection('descargasRegister');
 export const TVCollection = new Mongo.Collection('tvRegister');
 export const OnlineCollection = new Mongo.Collection('online');
 export const MensajesCollection = new Mongo.Collection('mensajes');
+export const RegisterDataUsersCollection = new Mongo.Collection('registerDataUsers');
+
+
+export const SchemaRegisterDataUsersCollection = new SimpleSchema({
+  userId: {
+    type: String,
+    optional: false,
+  },
+  fecha: {
+    type: Date,
+    defaultValue: new Date(),
+    optional: true,
+  },
+  megasGastadosinBytes: {
+    type: Number,
+    defaultValue: 0,
+    optional: true,
+  },
+  megasGastadosinBytesGeneral: {
+    type: Number,
+    defaultValue: 0,
+    optional: true,
+  },
+});
+
+RegisterDataUsersCollection.attachSchema(SchemaRegisterDataUsersCollection);
 
 export const SchemaOnlineCollection = new SimpleSchema({
   address: {
@@ -189,6 +215,23 @@ export const SchemaDescargaCollection = new SimpleSchema({
 });
 
 DescargasCollection.attachSchema(SchemaDescargaCollection)
+
+RegisterDataUsersCollection.allow({
+  insert(doc) {
+      // The user must be logged in and the document must be owned by the user.
+      return true;
+    },
+  
+    update() {
+      // Can only change your own documents.
+      return true;
+    },
+  
+    remove(userId, doc) {
+      // Can only remove your own documents.
+      return true;
+    },
+})
 OnlineCollection.allow({
   insert(doc) {
       // The user must be logged in and the document must be owned by the user.

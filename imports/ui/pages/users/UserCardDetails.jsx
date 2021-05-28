@@ -39,9 +39,12 @@ import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import DeleteIcon from "@material-ui/icons/Delete";
 import SendIcon from "@material-ui/icons/Send";
 
+var dateFormat = require('dateformat');
+
 import {
   OnlineCollection,
 } from "../collections/collections";
+import { EmailOutlined } from "@material-ui/icons";
 
 const StyledBadge = withStyles((theme) => ({
   badge: {
@@ -163,6 +166,7 @@ export default function UserCardDetails() {
   const [lastName, setlastName] = useState("");
   const [edad, setEdad] = useState(0);
   const [username, setUsername] = useState("");
+  const [fechaSubscripcion, setfechaSubscripcion] = useState("");
   const [email, setEmail] = useState("");
   
   const bull = <span className={classes.bullet}>•</span>;
@@ -188,18 +192,16 @@ export default function UserCardDetails() {
     // ..code to submit form to backend here...
 
     async function changePassword() {
-      oldPassword === password
-        ? Accounts.changePassword(oldPassword, password, function (error) {
-            if (error) {
-              console.log( "There was an issue: " + error.reason)
-            } else {
-              console.log( "You reset your password!")
-            }
-          })
-        : alert("La Contraseña no Coincide");
+      Accounts.changePassword(oldPassword, password, function (error) {
+        if (error) {
+          console.log("There was an issue: " + error.reason)
+        } else {
+          console.log("You reset your password!")
+        }
+      })
     }
 
-    (oldPassword||password)&&changePassword()
+    (oldPassword || password) &&changePassword()
     firstName&&Meteor.users.update(Meteor.userId(), { $set: {"profile.firstName":firstName} });
     lastName&&Meteor.users.update(Meteor.userId(), { $set: {"profile.lastName":lastName} });
     edad&&Meteor.users.update(Meteor.userId(), { $set: {edad:edad} });
@@ -276,7 +278,7 @@ export default function UserCardDetails() {
                         className={classes.root}
                         onSubmit={handleSubmit}
                         // noValidate
-                        autoComplete="true"
+                        autoComplete="false"
                       >
                         <Grid container className={classes.margin}>
                           Datos del Usuario
@@ -295,11 +297,12 @@ export default function UserCardDetails() {
                                 color="secondary"
                                 type="email"
                                 value={users.emails[0].address}
-                                onInput={(e) => setEmail(e.target.value)}
+                                // onInput={(e) => setEmail(e.target.value)}
                                 InputProps={{
+                                  readOnly: true,
                                   startAdornment: (
                                     <InputAdornment position="start">
-                                      <AccountCircleIcon />
+                                      <EmailOutlined />
                                     </InputAdornment>
                                   ),
                                 }}
@@ -317,7 +320,7 @@ export default function UserCardDetails() {
                                 color="secondary"
                                 type="text"
                                 value={users.username}
-                                onInput={(e) => setUsername(e.target.value)}
+                                onInput={(e) => Meteor.users.update(users._id, { $set: { username: e.target.value } })}
                                 InputProps={{
                                   startAdornment: (
                                     <InputAdornment position="start">
@@ -327,18 +330,34 @@ export default function UserCardDetails() {
                                 }}
                               />
                             </FormControl>
+                            {Meteor.user().profile.role == 'admin' &&
+                              <FormControl variant="outlined">
+                                <TextField
+                                  fullWidth
+                                  // required
+                                  className={classes.margin}
+                                  id="fechaSubscripcion"
+                                  name="fechaSubscripcion"
+                                  label="Fecha Limite"
+                                  variant="outlined"
+                                  color="secondary"
+                                  type="date"
+                                value={dateFormat(new Date(users.fechaSubscripcion ? users.fechaSubscripcion : (new Date())), "yyyy-mm-dd", true, true)}
+                                  onInput={(e) => Meteor.users.update(users._id, { $set: { fechaSubscripcion: new Date(e.target.value) } })}
+                                />
+                              </FormControl>}
                           </Grid>
-                            <Grid item xs={12}>
-                              <Button
-                                color={editPassword ? "secondary" : "primary"}
-                                variant="contained"
-                                onClick={handleEditPassword}
-                              >
-                                {editPassword
-                                  ? "Cancelar Cambio de Contraseña"
-                                  : "Cambiar Contraseña"}
-                              </Button>
-                            </Grid>
+                          <Grid item xs={12}>
+                            <Button
+                              color={editPassword ? "secondary" : "primary"}
+                              variant="contained"
+                              onClick={handleEditPassword}
+                            >
+                              {editPassword
+                                ? "Cancelar Cambio de Contraseña"
+                                : "Cambiar Contraseña"}
+                            </Button>
+                          </Grid>
                           {editPassword && (
                                 <>
                                   <Grid item xs={12} sm={4} lg={3}>
@@ -393,6 +412,16 @@ export default function UserCardDetails() {
                                       />
                                     </FormControl>
                                   </Grid>
+                                  <Grid item xs={12} className={classes.flex}>
+                          <Button
+                            variant="contained"
+                            type="submit"
+                            color="secondary"
+                          >
+                            <SendIcon />
+                            Send
+                          </Button>
+                        </Grid>
                                 </>
                               )}
                         </Grid>
@@ -414,6 +443,7 @@ export default function UserCardDetails() {
                                 value={users.profile.firstName}
                                 onInput={(e) => setfirstName(e.target.value)}
                                 InputProps={{
+                                  readOnly: true,
                                   startAdornment: (
                                     <InputAdornment position="start">
                                       <AccountCircleIcon />
@@ -437,6 +467,7 @@ export default function UserCardDetails() {
                                 value={users.profile.lastName}
                                 onInput={(e) => setlastName(e.target.value)}
                                 InputProps={{
+                                  readOnly: true,
                                   startAdornment: (
                                     <InputAdornment position="start">
                                       <AccountCircleIcon />
@@ -461,6 +492,7 @@ export default function UserCardDetails() {
                                 value={users.edad}
                                 onInput={(e) => setEdad(e.target.value)}
                                 InputProps={{
+                                  readOnly: true,
                                   startAdornment: (
                                     <InputAdornment position="start">
                                       <AccountCircleIcon />
@@ -472,16 +504,7 @@ export default function UserCardDetails() {
                           </Grid>
                         </Grid>
 
-                        <Grid item xs={12} className={classes.flex}>
-                          <Button
-                            variant="contained"
-                            type="submit"
-                            color="secondary"
-                          >
-                            <SendIcon />
-                            Send
-                          </Button>
-                        </Grid>
+                        
                       </form>
                     </Grid>
                   </>
