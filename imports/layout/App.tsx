@@ -241,6 +241,7 @@ export default function PersistentDrawerLeft() {
     //   icon: <InboxIcon />,
     // },
     { title: "Descargas Youtube", icon: <CloudDownloadIcon />, url: "downloads" },
+    { title: "Registro de Logs", icon: <DashboardIcon />, url: "logs" },
   ];
 
   const handleDrawerOpen = () => {

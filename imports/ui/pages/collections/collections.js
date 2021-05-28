@@ -9,6 +9,7 @@ export const TVCollection = new Mongo.Collection('tvRegister');
 export const OnlineCollection = new Mongo.Collection('online');
 export const MensajesCollection = new Mongo.Collection('mensajes');
 export const RegisterDataUsersCollection = new Mongo.Collection('registerDataUsers');
+export const LogsCollection = new Mongo.Collection('Logs');
 
 
 export const SchemaRegisterDataUsersCollection = new SimpleSchema({
@@ -215,6 +216,23 @@ export const SchemaDescargaCollection = new SimpleSchema({
 });
 
 DescargasCollection.attachSchema(SchemaDescargaCollection)
+
+LogsCollection.allow({
+  insert(doc) {
+    // The user must be logged in and the document must be owned by the user.
+    return true;
+  },
+
+  update() {
+    // Can only change your own documents.
+    return true;
+  },
+
+  remove(userId, doc) {
+    // Can only remove your own documents.
+    return true;
+  },
+});
 
 RegisterDataUsersCollection.allow({
   insert(doc) {

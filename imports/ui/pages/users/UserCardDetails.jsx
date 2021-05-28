@@ -41,10 +41,7 @@ import SendIcon from "@material-ui/icons/Send";
 
 var dateFormat = require('dateformat');
 
-import {
-  OnlineCollection,
-} from "../collections/collections";
-import { EmailOutlined } from "@material-ui/icons";
+import { OnlineCollection, LogsCollection } from "../collections/collections";
 
 const StyledBadge = withStyles((theme) => ({
   badge: {
@@ -166,7 +163,6 @@ export default function UserCardDetails() {
   const [lastName, setlastName] = useState("");
   const [edad, setEdad] = useState(0);
   const [username, setUsername] = useState("");
-  const [fechaSubscripcion, setfechaSubscripcion] = useState("");
   const [email, setEmail] = useState("");
   
   const bull = <span className={classes.bullet}>•</span>;
@@ -192,16 +188,18 @@ export default function UserCardDetails() {
     // ..code to submit form to backend here...
 
     async function changePassword() {
-      Accounts.changePassword(oldPassword, password, function (error) {
-        if (error) {
-          console.log("There was an issue: " + error.reason)
-        } else {
-          console.log("You reset your password!")
-        }
-      })
+      oldPassword === password
+        ? Accounts.changePassword(oldPassword, password, function (error) {
+            if (error) {
+              console.log( "There was an issue: " + error.reason)
+            } else {
+              console.log( "You reset your password!")
+            }
+          })
+        : alert("La Contraseña no Coincide");
     }
 
-    (oldPassword || password) &&changePassword()
+    (oldPassword||password)&&changePassword()
     firstName&&Meteor.users.update(Meteor.userId(), { $set: {"profile.firstName":firstName} });
     lastName&&Meteor.users.update(Meteor.userId(), { $set: {"profile.lastName":lastName} });
     edad&&Meteor.users.update(Meteor.userId(), { $set: {edad:edad} });
@@ -226,8 +224,18 @@ export default function UserCardDetails() {
   const handleChangebaneado = (event) => {
     Meteor.users.update(users._id, {
       $set: {
-        "baneado": users.baneado ? false : true,
+        baneado: users.baneado ? false : true,
+        bloqueadoDesbloqueadoPor: Meteor.userId(),
       },
+    });
+    LogsCollection.insert({
+      type: !users.baneado ? "Bloqueado" : "Desbloqueado",
+      userAfectado: users._id,
+      userAdmin: Meteor.userId(),
+      message:
+        "Ha sido " +
+        (!users.baneado ? "Bloqueado" : "Desbloqueado") +
+        " por un Admin",
     });
   };
   
@@ -278,17 +286,16 @@ export default function UserCardDetails() {
                         className={classes.root}
                         onSubmit={handleSubmit}
                         // noValidate
-                        autoComplete="false"
+                        autoComplete="true"
                       >
                         <Grid container className={classes.margin}>
                           Datos del Usuario
                         </Grid>
                         <Grid container spacing={3}>
                           <Grid item xs={12} sm={4} lg={3}>
-                            <FormControl required variant="outlined">
+                            <FormControl  variant="outlined">
                               <TextField
                                 fullWidth
-                                required
                                 className={classes.margin}
                                 id="email"
                                 name="email"
@@ -302,16 +309,15 @@ export default function UserCardDetails() {
                                   readOnly: true,
                                   startAdornment: (
                                     <InputAdornment position="start">
-                                      <EmailOutlined />
+                                      <AccountCircleIcon />
                                     </InputAdornment>
                                   ),
                                 }}
                               />
                             </FormControl>
-                            <FormControl required variant="outlined">
+                            <FormControl variant="outlined">
                               <TextField
                                 fullWidth
-                                required
                                 className={classes.margin}
                                 id="username"
                                 name="username"
@@ -320,7 +326,11 @@ export default function UserCardDetails() {
                                 color="secondary"
                                 type="text"
                                 value={users.username}
-                                onInput={(e) => Meteor.users.update(users._id, { $set: { username: e.target.value } })}
+                                onInput={(e) =>
+                                  Meteor.users.update(users._id, {
+                                    $set: { username: e.target.value },
+                                  })
+                                }
                                 InputProps={{
                                   startAdornment: (
                                     <InputAdornment position="start">
@@ -330,11 +340,10 @@ export default function UserCardDetails() {
                                 }}
                               />
                             </FormControl>
-                            {Meteor.user().profile.role == 'admin' &&
+                            {Meteor.user().profile.role == "admin" && (
                               <FormControl variant="outlined">
                                 <TextField
                                   fullWidth
-                                  // required
                                   className={classes.margin}
                                   id="fechaSubscripcion"
                                   name="fechaSubscripcion"
@@ -342,10 +351,28 @@ export default function UserCardDetails() {
                                   variant="outlined"
                                   color="secondary"
                                   type="date"
-                                value={dateFormat(new Date(users.fechaSubscripcion ? users.fechaSubscripcion : (new Date())), "yyyy-mm-dd", true, true)}
-                                  onInput={(e) => Meteor.users.update(users._id, { $set: { fechaSubscripcion: new Date(e.target.value) } })}
+                                  value={dateFormat(
+                                    new Date(
+                                      users.fechaSubscripcion
+                                        ? users.fechaSubscripcion
+                                        : new Date()
+                                    ),
+                                    "yyyy-mm-dd",
+                                    true,
+                                    true
+                                  )}
+                                  onInput={(e) =>
+                                    Meteor.users.update(users._id, {
+                                      $set: {
+                                        fechaSubscripcion: e.target.value?(new Date(
+                                          e.target.value
+                                        )):'',
+                                      },
+                                    })
+                                  }
                                 />
-                              </FormControl>}
+                              </FormControl>
+                            )}
                           </Grid>
                           <Grid item xs={12}>
                             <Button
@@ -359,81 +386,78 @@ export default function UserCardDetails() {
                             </Button>
                           </Grid>
                           {editPassword && (
-                                <>
-                                  <Grid item xs={12} sm={4} lg={3}>
-                                    <FormControl required variant="outlined">
-                                      <TextField
-                                        fullWidth
-                                        required
-                                        className={classes.margin}
-                                        id="oldpassword"
-                                        name="oldpassword"
-                                        label="Contraseña anterior"
-                                        variant="outlined"
-                                        color="secondary"
-                                        type="password"
-                                        value={oldPassword}
-                                        onInput={(e) =>
-                                          setOldPassword(e.target.value)
-                                        }
-                                        InputProps={{
-                                          startAdornment: (
-                                            <InputAdornment position="start">
-                                              <AccountCircleIcon />
-                                            </InputAdornment>
-                                          ),
-                                        }}
-                                      />
-                                    </FormControl>
-                                  </Grid>
-                                  <Grid item xs={12} sm={4} lg={3}>
-                                    <FormControl required variant="outlined">
-                                      <TextField
-                                        fullWidth
-                                        required
-                                        className={classes.margin}
-                                        id="password"
-                                        name="password"
-                                        label="Nueva Contraseña"
-                                        variant="outlined"
-                                        color="secondary"
-                                        type="password"
-                                        value={password}
-                                        onInput={(e) =>
-                                          setPassword(e.target.value)
-                                        }
-                                        InputProps={{
-                                          startAdornment: (
-                                            <InputAdornment position="start">
-                                              <AccountCircleIcon />
-                                            </InputAdornment>
-                                          ),
-                                        }}
-                                      />
-                                    </FormControl>
-                                  </Grid>
-                                  <Grid item xs={12} className={classes.flex}>
-                          <Button
-                            variant="contained"
-                            type="submit"
-                            color="secondary"
-                          >
-                            <SendIcon />
-                            Send
-                          </Button>
-                        </Grid>
-                                </>
-                              )}
+                            <>
+                              <Grid item xs={12} sm={4} lg={3}>
+                                <FormControl required variant="outlined">
+                                  <TextField
+                                    fullWidth
+                                    required
+                                    className={classes.margin}
+                                    id="oldpassword"
+                                    name="oldpassword"
+                                    label="Contraseña anterior"
+                                    variant="outlined"
+                                    color="secondary"
+                                    type="password"
+                                    value={oldPassword}
+                                    onInput={(e) =>
+                                      setOldPassword(e.target.value)
+                                    }
+                                    InputProps={{
+                                      startAdornment: (
+                                        <InputAdornment position="start">
+                                          <AccountCircleIcon />
+                                        </InputAdornment>
+                                      ),
+                                    }}
+                                  />
+                                </FormControl>
+                              </Grid>
+                              <Grid item xs={12} sm={4} lg={3}>
+                                <FormControl required variant="outlined">
+                                  <TextField
+                                    fullWidth
+                                    required
+                                    className={classes.margin}
+                                    id="password"
+                                    name="password"
+                                    label="Nueva Contraseña"
+                                    variant="outlined"
+                                    color="secondary"
+                                    type="password"
+                                    value={password}
+                                    onInput={(e) => setPassword(e.target.value)}
+                                    InputProps={{
+                                      startAdornment: (
+                                        <InputAdornment position="start">
+                                          <AccountCircleIcon />
+                                        </InputAdornment>
+                                      ),
+                                    }}
+                                  />
+                                </FormControl>
+                              </Grid>
+                              <Grid item xs={12} className={classes.flex}>
+                                <Button
+                                  variant="contained"
+                                  type="submit"
+                                  color="secondary"
+                                >
+                                  <SendIcon />
+                                  Send
+                                </Button>
+                              </Grid>
+                            </>
+                          )}
                         </Grid>
                         <Grid container className={classes.margin}>
                           Datos Personales
                         </Grid>
                         <Grid container spacing={3}>
                           <Grid item xs={12} sm={4} lg={3}>
-                            <FormControl required variant="outlined">
+                            <FormControl variant="outlined">
                               <TextField
                                 fullWidth
-                                required
                                 className={classes.margin}
                                 id="firstName"
                                 name="firstName"
@@ -441,9 +465,14 @@ export default function UserCardDetails() {
                                 variant="outlined"
                                 color="secondary"
                                 value={users.profile.firstName}
-                                onInput={(e) => setfirstName(e.target.value)}
+                                onInput={(e) =>
+                                  Meteor.users.update(users._id, {
+                                    $set: {
+                                      "profile.firstName": e.target.value,
+                                    },
+                                  })
+                                }
                                 InputProps={{
-                                  readOnly: true,
                                   startAdornment: (
                                     <InputAdornment position="start">
                                       <AccountCircleIcon />
@@ -454,10 +483,9 @@ export default function UserCardDetails() {
                             </FormControl>
                           </Grid>
                           <Grid item xs={12} sm={4} lg={3}>
-                            <FormControl required variant="outlined">
+                            <FormControl variant="outlined">
                               <TextField
                                 fullWidth
-                                required
                                 className={classes.margin}
                                 id="lastName"
                                 name="lastName"
@@ -465,9 +493,14 @@ export default function UserCardDetails() {
                                 variant="outlined"
                                 color="secondary"
                                 value={users.profile.lastName}
-                                onInput={(e) => setlastName(e.target.value)}
+                                onInput={(e) =>
+                                  Meteor.users.update(users._id, {
+                                    $set: {
+                                      "profile.lastName": e.target.value,
+                                    },
+                                  })
+                                }
                                 InputProps={{
-                                  readOnly: true,
                                   startAdornment: (
                                     <InputAdornment position="start">
                                       <AccountCircleIcon />
@@ -478,10 +511,9 @@ export default function UserCardDetails() {
                             </FormControl>
                           </Grid>
                           <Grid item xs={12} sm={4} lg={3}>
-                            <FormControl required variant="outlined">
+                            <FormControl variant="outlined">
                               <TextField
                                 fullWidth
-                                required
                                 className={classes.margin}
                                 id="edad"
                                 name="edad"
@@ -490,9 +522,14 @@ export default function UserCardDetails() {
                                 variant="outlined"
                                 color="secondary"
                                 value={users.edad}
-                                onInput={(e) => setEdad(e.target.value)}
+                                onInput={(e) =>
+                                  Meteor.users.update(users._id, {
+                                    $set: {
+                                      "edad": e.target.value,
+                                    },
+                                  })
+                                }
                                 InputProps={{
-                                  readOnly: true,
                                   startAdornment: (
                                     <InputAdornment position="start">
                                       <AccountCircleIcon />
@@ -503,8 +540,6 @@ export default function UserCardDetails() {
                             </FormControl>
                           </Grid>
                         </Grid>
-
-                        
                       </form>
                     </Grid>
                   </>
@@ -632,13 +667,13 @@ export default function UserCardDetails() {
                         justify="center"
                         alignItems="center"
                       >
-                         <Button
-                        color={edit ? "secondary" : "primary"}
-                        variant="contained"
-                        onClick={handleEdit}
-                      >
-                        {edit ? "Cancelar Edición" : "Editar"}
-                      </Button>
+                        <Button
+                          color={edit ? "secondary" : "primary"}
+                          variant="contained"
+                          onClick={handleEdit}
+                        >
+                          {edit ? "Cancelar Edición" : "Editar"}
+                        </Button>
                       </Grid>
                     </Grid>
                   </>

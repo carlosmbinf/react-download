@@ -7,7 +7,7 @@ import {
 } from "../imports/ui/pages/collections/collections";
 import { TVCollection } from "../imports/ui/pages/collections/collections";
 import { DescargasCollection } from "../imports/ui/pages/collections/collections";
-import { RegisterDataUsersCollection } from "../imports/ui/pages/collections/collections";
+import { RegisterDataUsersCollection, LogsCollection } from "../imports/ui/pages/collections/collections";
 import { WebApp } from "meteor/webapp";
 import bodyParser from "body-parser";
 import router from "router";
@@ -118,7 +118,15 @@ if (Meteor.isServer) {
                 new Date(
                   user.fechaSubscripcion ? user.fechaSubscripcion : new Date()
                 ) &&
-              Meteor.users.update(user._id, { $set: { baneado: true } });
+              (Meteor.users.update(user._id, {
+                $set: { baneado: true, bloqueadoDesbloqueadoPor: "server" },
+              }),
+              LogsCollection.insert({
+                type: !user.baneado ? "Bloqueado" : "Desbloqueado",
+                userAfectado: user._id,
+                userAdmin: "server",
+                message: 'El server Bloqueo automaticamente el proxy'
+              }));
           });
         },
         {
@@ -398,7 +406,12 @@ if (Meteor.isServer) {
   //   clientId: "????????????????.apps.googleusercontent.com",
   //   secret: "????????????????"
   // });
-
+  Meteor.publish("logs", function () {
+    return LogsCollection.find({});
+  });
+  Meteor.publish("logsId", function (id) {
+    return LogsCollection.find({ userAfectado: id });
+  });
   Meteor.publish("pelis", function () {
     return PelisCollection.find({});
   });

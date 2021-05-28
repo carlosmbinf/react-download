@@ -39,6 +39,7 @@ import CreateTV from "../ui/pages/tv/CreateTV";
 import TVonline from "../ui/pages/tv/TVCard";
 import TV from "../ui/pages/tv/TVDetails";
 import Video from "../ui/pages/videos/VideoDetails";
+import LogsTable from "../ui/pages/logs/LogsTable";
 
 const useStyles = makeStyles((theme) => ({
   // necessary for content to be below app bar
@@ -220,6 +221,26 @@ export default function Main() {
           useractual.profile &&
           useractual.profile.role == "admin" ? (
             <CreateArchivo />
+          ) : (
+            <Zoom in={true}>
+              <Grid
+                container
+                direction="row"
+                justify="center"
+                alignItems="center"
+              >
+                <h1>SIN ACCESO</h1>
+              </Grid>
+            </Zoom>
+          )}
+        </Route>
+        <Route path="/logs">
+          {useractual &&
+          useractual.profile &&
+          useractual.profile.role == "admin" ? (
+            <Zoom in={true}>
+              <LogsTable />
+            </Zoom>
           ) : (
             <Zoom in={true}>
               <Grid
