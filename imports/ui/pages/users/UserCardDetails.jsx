@@ -20,6 +20,7 @@ import {
   MenuItem,
   Select,
   InputLabel,
+  FormControlLabel,
 } from "@material-ui/core";
 import { Meteor } from "meteor/meteor";
 import { Tracker } from "meteor/tracker";
@@ -164,7 +165,7 @@ export default function UserCardDetails() {
   const [edad, setEdad] = useState(0);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
-  
+
   const bull = <span className={classes.bullet}>•</span>;
   const users = useTracker(() => {
     Meteor.subscribe("userID", useParams().id);
@@ -172,7 +173,7 @@ export default function UserCardDetails() {
   });
   const usersOnline = useTracker(() => {
     Meteor.subscribe("conexionesUser", useParams().id);
-     return OnlineCollection.find({userId:useParams().id}).count()>0 ? true : false;
+    return OnlineCollection.find({ userId: useParams().id }).count() > 0 ? true : false;
   });
   function eliminarUser() {
     Meteor.users.remove({ _id: users._id });
@@ -190,21 +191,21 @@ export default function UserCardDetails() {
     async function changePassword() {
       oldPassword === password
         ? Accounts.changePassword(oldPassword, password, function (error) {
-            if (error) {
-              console.log( "There was an issue: " + error.reason)
-            } else {
-              console.log( "You reset your password!")
-            }
-          })
+          if (error) {
+            console.log("There was an issue: " + error.reason)
+          } else {
+            console.log("You reset your password!")
+          }
+        })
         : alert("La Contraseña no Coincide");
     }
 
-    (oldPassword||password)&&changePassword()
-    firstName&&Meteor.users.update(Meteor.userId(), { $set: {"profile.firstName":firstName} });
-    lastName&&Meteor.users.update(Meteor.userId(), { $set: {"profile.lastName":lastName} });
-    edad&&Meteor.users.update(Meteor.userId(), { $set: {edad:edad} });
-    username&&Meteor.users.update(Meteor.userId(), { $set: {username:username} });
-    email&&Meteor.users.update(Meteor.userId(), { $set: {"emails.0.address":email} });
+    (oldPassword || password) && changePassword()
+    firstName && Meteor.users.update(Meteor.userId(), { $set: { "profile.firstName": firstName } });
+    lastName && Meteor.users.update(Meteor.userId(), { $set: { "profile.lastName": lastName } });
+    edad && Meteor.users.update(Meteor.userId(), { $set: { edad: edad } });
+    username && Meteor.users.update(Meteor.userId(), { $set: { username: username } });
+    email && Meteor.users.update(Meteor.userId(), { $set: { "emails.0.address": email } });
 
   }
 
@@ -239,7 +240,7 @@ export default function UserCardDetails() {
       createdAt: new Date(),
     });
   };
-  
+
   return (
     <>
       <div className={classes.drawerHeader}>
@@ -272,8 +273,8 @@ export default function UserCardDetails() {
                           }
                           src={
                             users.services &&
-                            users.services.facebook &&
-                            users.services.facebook.picture.data.url
+                              users.services.facebook &&
+                              users.services.facebook.picture.data.url
                               ? users.services.facebook.picture.data.url
                               : "/"
                           }
@@ -292,9 +293,9 @@ export default function UserCardDetails() {
                         <Grid container className={classes.margin}>
                           Datos del Usuario
                         </Grid>
-                        <Grid container spacing={3}>
-                          <Grid item xs={12} sm={4} lg={3}>
-                            <FormControl  variant="outlined">
+                        <Grid container spacing={3} style={{paddingBottom:20}}>
+                          <Grid item xs={12} lg={3}>
+                            <FormControl variant="outlined">
                               <TextField
                                 fullWidth
                                 className={classes.margin}
@@ -316,6 +317,8 @@ export default function UserCardDetails() {
                                 }}
                               />
                             </FormControl>
+                          </Grid>
+                          <Grid item xs={12} lg={3}>
                             <FormControl variant="outlined">
                               <TextField
                                 fullWidth
@@ -341,140 +344,170 @@ export default function UserCardDetails() {
                                 }}
                               />
                             </FormControl>
-                            {Meteor.user().profile.role == "admin" && (
-                              <FormControl variant="outlined">
-                                <TextField
-                                  fullWidth
-                                  className={classes.margin}
-                                  id="fechaSubscripcion"
-                                  name="fechaSubscripcion"
-                                  label="Fecha Limite"
-                                  variant="outlined"
-                                  color="secondary"
-                                  type="date"
-                                  value={dateFormat(
-                                    new Date(
-                                      users.fechaSubscripcion
-                                        ? users.fechaSubscripcion
-                                        : new Date()
-                                    ),
-                                    "yyyy-mm-dd",
-                                    true,
-                                    true
-                                  )}
-                                  onInput={(e) => {
-                                    Meteor.users.update(users._id, {
-                                      $set: {
-                                        fechaSubscripcion: e.target.value ? (new Date(
-                                          e.target.value
-                                        )) : '',
-                                        baneado: e.target.value ? false : users.baneado
-                                      },
-                                    })
-                                    e.target.value && LogsCollection.insert({
-                                      type: 'Fecha Limite Proxy',
-                                      userAfectado: users._id,
-                                      userAdmin: Meteor.userId(),
-                                      message:
-                                        "La Fecha Limite del Proxy se cambió para: " +
-                                        dateFormat(
-                                          new Date(e.target.value),
-                                          "yyyy-mm-dd",
-                                          true,
-                                          true
-                                        ),
-                                      createdAt: new Date(),
-                                    });
-                                    e.target.value && LogsCollection.insert({
-                                      type: "Desbloqueado",
-                                      userAfectado: users._id,
-                                      userAdmin: Meteor.userId(),
-                                      message:
-                                        "Ha sido Desbloqueado por un Admin",
-                                      createdAt: new Date(),
-                                    });
-                                  }
-                                  }
-                                />
-                              </FormControl>
-                            )}
                           </Grid>
-                          <Grid item xs={12}>
-                            <Button
-                              color={editPassword ? "secondary" : "primary"}
-                              variant="contained"
-                              onClick={handleEditPassword}
-                            >
-                              {editPassword
-                                ? "Cancelar Cambio de Contraseña"
-                                : "Cambiar Contraseña"}
-                            </Button>
-                          </Grid>
-                          {editPassword && (
+                          {Meteor.user().profile.role == "admin" && !(users.profile.role == 'admin') && (
                             <>
-                              <Grid item xs={12} sm={4} lg={3}>
-                                <FormControl required variant="outlined">
+                              <Grid item xs={12}>
+                                <FormControl variant="outlined">
                                   <TextField
                                     fullWidth
-                                    required
                                     className={classes.margin}
-                                    id="oldpassword"
-                                    name="oldpassword"
-                                    label="Contraseña anterior"
+                                    id="fechaSubscripcion"
+                                    name="fechaSubscripcion"
+                                    label="Fecha Limite"
                                     variant="outlined"
                                     color="secondary"
-                                    type="password"
-                                    value={oldPassword}
-                                    onInput={(e) =>
-                                      setOldPassword(e.target.value)
+                                    type="date"
+                                    value={dateFormat(
+                                      new Date(
+                                        users.fechaSubscripcion
+                                          ? users.fechaSubscripcion
+                                          : new Date()
+                                      ),
+                                      "yyyy-mm-dd",
+                                      true,
+                                      true
+                                    )}
+                                    onInput={(e) => {
+                                      Meteor.users.update(users._id, {
+                                        $set: {
+                                          fechaSubscripcion: e.target.value ? (new Date(
+                                            e.target.value
+                                          )) : '',
+                                          baneado: e.target.value ? false : users.baneado
+                                        },
+                                      })
+                                      e.target.value && LogsCollection.insert({
+                                        type: 'Fecha Limite Proxy',
+                                        userAfectado: users._id,
+                                        userAdmin: Meteor.userId(),
+                                        message:
+                                          "La Fecha Limite del Proxy se cambió para: " +
+                                          dateFormat(
+                                            new Date(e.target.value),
+                                            "yyyy-mm-dd",
+                                            true,
+                                            true
+                                          ),
+                                        createdAt: new Date(),
+                                      });
+                                      e.target.value && LogsCollection.insert({
+                                        type: "Desbloqueado",
+                                        userAfectado: users._id,
+                                        userAdmin: Meteor.userId(),
+                                        message:
+                                          "Ha sido Desbloqueado por un Admin",
+                                        createdAt: new Date(),
+                                      });
                                     }
-                                    InputProps={{
-                                      startAdornment: (
-                                        <InputAdornment position="start">
-                                          <AccountCircleIcon />
-                                        </InputAdornment>
-                                      ),
-                                    }}
+                                    }
                                   />
                                 </FormControl>
                               </Grid>
-                              <Grid item xs={12} sm={4} lg={3}>
-                                <FormControl required variant="outlined">
-                                  <TextField
-                                    fullWidth
-                                    required
-                                    className={classes.margin}
-                                    id="password"
-                                    name="password"
-                                    label="Nueva Contraseña"
-                                    variant="outlined"
-                                    color="secondary"
-                                    type="password"
-                                    value={password}
-                                    onInput={(e) => setPassword(e.target.value)}
-                                    InputProps={{
-                                      startAdornment: (
-                                        <InputAdornment position="start">
-                                          <AccountCircleIcon />
-                                        </InputAdornment>
-                                      ),
-                                    }}
-                                  />
-                                </FormControl>
-                              </Grid>
-                              <Grid item xs={12} className={classes.flex}>
-                                <Button
-                                  variant="contained"
-                                  type="submit"
-                                  color="secondary"
-                                >
-                                  <SendIcon />
-                                  Send
-                                </Button>
+                              <Grid item xs={12} style={{
+                                display: 'flex',
+                                justifyContent: 'left',
+                                alignItems: 'center'
+                              }}>
+                                <FormControlLabel control={<Tooltip
+                                    title={
+                                      users.isIlimitado
+                                        ? "Cambiar consumo por MB"
+                                        : "Cambiar consumo por Fecha"
+                                    }
+                                  >
+                                    <Switch
+                                      checked={users.isIlimitado}
+                                      onChange={() => { Meteor.users.update(users._id, { $set: { isIlimitado: !users.isIlimitado } }) }}
+                                      name="Ilimitado"
+                                      color={users.isIlimitado ? "secondary" : "primary"}
+                                    />
+                                  </Tooltip>} label={users.isIlimitado
+                                        ? "Limitado por Fecha"
+                                        : "Puede Consumir 1000 MB"} />
+                                {/* <FormControlLabel variant="outlined" label="Primary">
+                                  
+                                </FormControlLabel> */}
+                                
                               </Grid>
                             </>
                           )}
                         </Grid>
+                        <Grid item xs={12}>
+                          <Button
+                            color={editPassword ? "secondary" : "primary"}
+                            variant="contained"
+                            onClick={handleEditPassword}
+                          >
+                            {editPassword
+                              ? "Cancelar Cambio de Contraseña"
+                              : "Cambiar Contraseña"}
+                          </Button>
+                        </Grid>
+                        {editPassword && (
+                          <>
+                            <Grid item xs={12} sm={4} lg={3}>
+                              <FormControl required variant="outlined">
+                                <TextField
+                                  fullWidth
+                                  required
+                                  className={classes.margin}
+                                  id="oldpassword"
+                                  name="oldpassword"
+                                  label="Contraseña anterior"
+                                  variant="outlined"
+                                  color="secondary"
+                                  type="password"
+                                  value={oldPassword}
+                                  onInput={(e) =>
+                                    setOldPassword(e.target.value)
+                                  }
+                                  InputProps={{
+                                    startAdornment: (
+                                      <InputAdornment position="start">
+                                        <AccountCircleIcon />
+                                      </InputAdornment>
+                                    ),
+                                  }}
+                                />
+                              </FormControl>
+                            </Grid>
+                            <Grid item xs={12} sm={4} lg={3}>
+                              <FormControl required variant="outlined">
+                                <TextField
+                                  fullWidth
+                                  required
+                                  className={classes.margin}
+                                  id="password"
+                                  name="password"
+                                  label="Nueva Contraseña"
+                                  variant="outlined"
+                                  color="secondary"
+                                  type="password"
+                                  value={password}
+                                  onInput={(e) => setPassword(e.target.value)}
+                                  InputProps={{
+                                    startAdornment: (
+                                      <InputAdornment position="start">
+                                        <AccountCircleIcon />
+                                      </InputAdornment>
+                                    ),
+                                  }}
+                                />
+                              </FormControl>
+                            </Grid>
+                            <Grid item xs={12} className={classes.flex}>
+                              <Button
+                                variant="contained"
+                                type="submit"
+                                color="secondary"
+                              >
+                                <SendIcon />
+                                  Send
+                                </Button>
+                            </Grid>
+                          </>
+                        )}
                         <Grid container className={classes.margin}>
                           Datos Personales
                         </Grid>
@@ -581,8 +614,8 @@ export default function UserCardDetails() {
                           }
                           src={
                             users.services &&
-                            users.services.facebook &&
-                            users.services.facebook.picture.data.url
+                              users.services.facebook &&
+                              users.services.facebook.picture.data.url
                               ? users.services.facebook.picture.data.url
                               : "/"
                           }
@@ -629,7 +662,7 @@ export default function UserCardDetails() {
                 )}
 
                 {Meteor.user().profile.role &&
-                Meteor.user().profile.role == "admin" ? (
+                  Meteor.user().profile.role == "admin" ? (
                   <Grid item xs={12}>
                     <Divider className={classes.padding10} />
                     <Grid
