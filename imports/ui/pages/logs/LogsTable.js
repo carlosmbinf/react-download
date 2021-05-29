@@ -148,11 +148,10 @@ export default function LogsTable() {
             " " +
             (Meteor.users.findOne(log.userAdmin) && Meteor.users.findOne(log.userAdmin).profile.lastName),
           mensaje: log.message,
-          createAt: log.createAt,
+          createdAt: log.createdAt,
         });
       });
     } catch (error) {}
-     console.log(a);
      return a;
 
   });
@@ -167,7 +166,7 @@ export default function LogsTable() {
     return (
       <React.Fragment>
         <span className="p-column-title">Fecha del Log</span>
-        {rowData.createAt}
+        {rowData.createdAt}
       </React.Fragment>
     );
   };
@@ -273,7 +272,7 @@ export default function LogsTable() {
                   filterMatchMode="contains"
                 />
                 <Column
-                  field="createAt"
+                  field="createdAt"
                   header="Fecha del Log"
                   body={createAtBodyTemplate}
                   filter
