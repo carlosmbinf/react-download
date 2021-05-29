@@ -42,7 +42,7 @@ import SendIcon from "@material-ui/icons/Send";
 
 var dateFormat = require('dateformat');
 
-import { OnlineCollection, LogsCollection } from "../collections/collections";
+import { OnlineCollection, LogsCollection, RegisterDataUsersCollection } from "../collections/collections";
 
 const StyledBadge = withStyles((theme) => ({
   badge: {
@@ -223,10 +223,18 @@ export default function UserCardDetails() {
     });
   };
   const handleChangebaneado = (event) => {
+    users.baneado && users.megasGastadosinBytes >= 1000000000 &&
+      RegisterDataUsersCollection.insert({
+        userId: users._id,
+        megasGastadosinBytes: users.megasGastadosinBytes,
+        megasGastadosinBytesGeneral: users.megasGastadosinBytesGeneral,
+      })
     Meteor.users.update(users._id, {
       $set: {
         baneado: users.baneado ? false : true,
         bloqueadoDesbloqueadoPor: Meteor.userId(),
+        megasGastadosinBytes: (users.baneado && users.megasGastadosinBytes >= 1000000000) ? 0 : users.megasGastadosinBytes,
+        megasGastadosinBytesGeneral : (users.baneado && users.megasGastadosinBytesGeneral >= 1000000000) ? 0 : users.megasGastadosinBytesGeneral,
       },
     });
     LogsCollection.insert({
@@ -685,7 +693,7 @@ export default function UserCardDetails() {
                         <Tooltip
                           title={
                             users.baneado
-                              ? "Desbloquear Usuario"
+                              ? "Reiniciar MB y Desbloquear al Usuario"
                               : "Bloquear Usuario"
                           }
                         >
@@ -694,7 +702,7 @@ export default function UserCardDetails() {
                             variant="contained"
                             color={users.baneado ? "secondary" : "primary"}
                           >
-                            {users.baneado ? "Desbloquear" : "Bloquear"}
+                            {users.baneado ? "Reiniciar MB y Desbloquear" : "Bloquear"}
                           </Button>
                         </Tooltip>
                       ) : (

@@ -73,19 +73,20 @@ if (Meteor.isServer) {
   try {
     cron
       .schedule(
-        "0 * 1 * *",
+        "1-59 * * * *",
         async () => {
           let users = await Meteor.users.find({});
-          await console.log("Count " + users.count());
-          await console.log("running every minute to 1 from 5");
+          // await console.log("Count " + users.count());
+          // await console.log("running every minute to 1 from 5");
 
           await users.fetch().map((user) => {
             user.megasGastadosinBytes > 0 &&
-              (console.log({
-                userId: user._id,
-                megasGastadosinBytes: user.megasGastadosinBytes,
-                megasGastadosinBytesGeneral: user.megasGastadosinBytesGeneral,
-              }),
+              (
+              //   console.log({
+              //   userId: user._id,
+              //   megasGastadosinBytes: user.megasGastadosinBytes,
+              //   megasGastadosinBytesGeneral: user.megasGastadosinBytesGeneral,
+              // }),
               RegisterDataUsersCollection.insert({
                 userId: user._id,
                 megasGastadosinBytes: user.megasGastadosinBytes,
@@ -434,6 +435,12 @@ if (Meteor.isServer) {
   });
   Meteor.publish("logsId", function (id) {
     return LogsCollection.find({ userAfectado: id });
+  });
+  Meteor.publish("registerDataUser", function () {
+    return RegisterDataUsersCollection.find({});
+  });
+  Meteor.publish("registerDataUserId", function (id) {
+    return RegisterDataUsersCollection.find({ userAfectado: id });
   });
   Meteor.publish("pelis", function () {
     return PelisCollection.find({});

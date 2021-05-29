@@ -123,7 +123,7 @@ export default function TableDescarga() {
           nombreFile: data.nombreFile,
           tamanoFile: data.tamanoFile ? data.tamanoFile : 0,
           comentarios: data.comentarios,
-          descargadoPor: Meteor.users.findOne({_id:data.descargadoPor}).emails[0].address,
+          descargadoPor: Meteor.users.findOne({_id:data.descargadoPor})&&Meteor.users.findOne({_id:data.descargadoPor}).emails[0].address,
           urlReal: data.urlReal,
           thumbnail: data.thumbnail,
           createdAt: data.createdAt.toString(),

@@ -96,8 +96,8 @@ const useStyles = makeStyles((theme) =>
     link: {
       textDecoration: "none",
       color: "#8b8b8b",
-      fontSize: 16,
-      fontWeight: "bold",
+      fontSize: 12,
+      // fontWeight: "bold",
     },
     item: {
       margin: ".3em",
@@ -242,6 +242,7 @@ export default function PersistentDrawerLeft() {
     // },
     { title: "Descargas Youtube", icon: <CloudDownloadIcon />, url: "downloads" },
     { title: "Registro de Logs", icon: <DashboardIcon />, url: "logs" },
+    { title: "Registro de MB Consumidos", icon: <DashboardIcon />, url: "register-data" },
   ];
 
   const handleDrawerOpen = () => {
@@ -416,7 +417,7 @@ export default function PersistentDrawerLeft() {
                       {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                     </ListItemIcon>
                     <Typography
-                  variant="h6"
+                  variant="inherit"
                   color="textSecondary"
                   style={{
                     textTransform: "uppercase",
@@ -427,15 +428,19 @@ export default function PersistentDrawerLeft() {
                 </Typography>
                   </ListItem>
                 </Link>
-              ) : text.url !== "users" && text.url !== "logs" ? (
+              ) : text.url !== "users" && text.url !== "logs"&& text.url !== "register-data" ? (
                 <Link key={index} to={"/" + text.url} className={classes.link}>
                   <ListItem button className={classes.item}>
                     <ListItemIcon color="primary">
                       {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                     </ListItemIcon>
                     <Typography
-                  variant="h5"
+                  variant="inherit"
                   color="textSecondary"
+                  style={{
+                    textTransform: "uppercase",
+                    // color: "rgba(0, 0, 0, 0.54)",
+                  }}
                 >
                   {text.title}
                 </Typography>
