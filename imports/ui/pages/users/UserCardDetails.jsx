@@ -39,7 +39,7 @@ import MailIcon from "@material-ui/icons/Mail";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import DeleteIcon from "@material-ui/icons/Delete";
 import SendIcon from "@material-ui/icons/Send";
-
+import DataUsageIcon from '@material-ui/icons/DataUsage';
 var dateFormat = require('dateformat');
 
 import { OnlineCollection, LogsCollection, RegisterDataUsersCollection } from "../collections/collections";
@@ -614,58 +614,63 @@ export default function UserCardDetails() {
                     <Grid item xs={12}>
                       <Grid container direction="row" justify="center">
                         <Avatar
-                          className={classes.large}
-                          alt={
-                            users.profile.firstName
-                              ? users.profile.firstName
-                              : users.profile.name
-                          }
-                          src={
-                            users.services &&
-                              users.services.facebook &&
-                              users.services.facebook.picture.data.url
-                              ? users.services.facebook.picture.data.url
-                              : "/"
-                          }
-                        />
+                            className={classes.large}
+                            alt={
+                              users.profile.firstName
+                                ? users.profile.firstName
+                                : users.profile.name
+                            }
+                            src={
+                              users.services &&
+                                users.services.facebook &&
+                                users.services.facebook.picture.data.url
+                                ? users.services.facebook.picture.data.url
+                                : "/"
+                            }
+                          />
+                        </Grid>
+                        <Grid container direction="row">
+                          <Typography>
+
+                            Nombre: {users.profile.firstName} {users.profile.lastName}
+
+                          </Typography>
+                        </Grid>
                       </Grid>
-                      <Grid container direction="row">
-                        <AccountCircleIcon />
-                        <Typography>
-                          <strong>
-                            {users.profile.firstName} {users.profile.lastName}
-                          </strong>
-                        </Typography>
+                      <Grid item xs={12}>
+                        <Grid container direction="row">
+                          <Typography>
+                            Rol: {users.profile.role}
+                          </Typography>
+                        </Grid>
                       </Grid>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Grid container direction="row">
-                        <PermContactCalendarRoundedIcon />
-                        <Typography>
-                          <strong>{users.profile.role}</strong>
-                        </Typography>
+                      <Grid item xs={12}>
+                        <Grid container direction="row">
+                          <Typography>
+
+                            {users.emails && 'Email: ' + users.emails[0].address}
+
+                          </Typography>
+                        </Grid>
                       </Grid>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Grid container direction="row">
-                        <MailIcon />
-                        <Typography>
-                          <strong>
-                            {users.emails && users.emails[0].address}
-                          </strong>
-                        </Typography>
+                      <Grid item xs={12}>
+                        <Grid container direction="row">
+                          <Typography>
+
+                            Megas Gastados: {Number.parseFloat(users.megasGastadosinBytes / 1000000).toFixed(2) + ' MB'}
+
+                          </Typography>
+                        </Grid>
                       </Grid>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Grid container direction="row">
-                        <MailIcon />
-                        <Typography>
-                          <strong>
-                            {usersOnline ? "ONLINE" : "DISCONECTED"}
-                          </strong>
-                        </Typography>
+                      <Grid item xs={12}>
+                        <Grid container direction="row">
+                          <Typography>
+
+                            Conexion: {users.Baneado ? 'Desactivado' : "Activado"}
+
+                          </Typography>
+                        </Grid>
                       </Grid>
-                    </Grid>
                   </>
                 )}
 
