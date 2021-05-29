@@ -148,6 +148,7 @@ export default function LogsTable() {
             " " +
             (Meteor.users.findOne(log.userAdmin) && Meteor.users.findOne(log.userAdmin).profile.lastName),
           mensaje: log.message,
+          createAt: log.createAt,
         });
       });
     } catch (error) {}
@@ -162,6 +163,14 @@ export default function LogsTable() {
   const paginatorRight = (
     <Button type="button" icon="pi pi-cloud" className="p-button-text" />
   );
+  const createAtBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">Fecha del Log</span>
+        {rowData.createAt}
+      </React.Fragment>
+    );
+  };
   const iDBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
@@ -263,6 +272,15 @@ export default function LogsTable() {
                   filterPlaceholder="Search"
                   filterMatchMode="contains"
                 />
+                <Column
+                  field="createAt"
+                  header="Fecha del Log"
+                  body={createAtBodyTemplate}
+                  filter
+                  filterPlaceholder="Search"
+                  filterMatchMode="contains"
+                />
+                
               </DataTable>
             </div>
           </div>

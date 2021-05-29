@@ -236,6 +236,7 @@ export default function UserCardDetails() {
         "Ha sido " +
         (!users.baneado ? "Bloqueado" : "Desbloqueado") +
         " por un Admin",
+      createdAt: new Date(),
     });
   };
   
@@ -382,6 +383,7 @@ export default function UserCardDetails() {
                                           true,
                                           true
                                         ),
+                                      createdAt: new Date(),
                                     });
                                     e.target.value && LogsCollection.insert({
                                       type: "Desbloqueado",
@@ -389,6 +391,7 @@ export default function UserCardDetails() {
                                       userAdmin: Meteor.userId(),
                                       message:
                                         "Ha sido Desbloqueado por un Admin",
+                                      createdAt: new Date(),
                                     });
                                   }
                                   }
