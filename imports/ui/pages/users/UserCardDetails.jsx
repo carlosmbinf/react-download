@@ -223,7 +223,7 @@ export default function UserCardDetails() {
     });
   };
   const handleChangebaneado = (event) => {
-    users.baneado && users.megasGastadosinBytes >= 1000000000 &&
+    users.baneado && users.megasGastadosinBytes >= 500000000 &&
       RegisterDataUsersCollection.insert({
         userId: users._id,
         megasGastadosinBytes: users.megasGastadosinBytes,
@@ -233,8 +233,8 @@ export default function UserCardDetails() {
       $set: {
         baneado: users.baneado ? false : true,
         bloqueadoDesbloqueadoPor: Meteor.userId(),
-        megasGastadosinBytes: (users.baneado && users.megasGastadosinBytes >= 1000000000) ? 0 : users.megasGastadosinBytes,
-        megasGastadosinBytesGeneral : (users.baneado && users.megasGastadosinBytesGeneral >= 1000000000) ? 0 : users.megasGastadosinBytesGeneral,
+        megasGastadosinBytes: (users.baneado && users.megasGastadosinBytes >= 500000000) ? 0 : users.megasGastadosinBytes,
+        megasGastadosinBytesGeneral : (users.baneado && users.megasGastadosinBytesGeneral >= 500000000) ? 0 : users.megasGastadosinBytesGeneral,
       },
     });
     LogsCollection.insert({
