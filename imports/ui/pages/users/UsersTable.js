@@ -338,7 +338,7 @@ export default function UsersTable() {
       <React.Fragment>
         <span className="p-column-title"></span>
         <Tooltip
-          title={"Eliminar a " + rowData.firstname + " " + rowData.lastName}
+          title={"Eliminar a " + rowData.name}
         >
           <IconButton
             aria-label="delete"
@@ -359,7 +359,7 @@ export default function UsersTable() {
         <span className="p-column-title"></span>
         <Tooltip
           title={
-            "Ver Detalles de " + rowData.firstname + " " + rowData.lastName
+            "Ver Detalles de " + rowData.name
           }
         >
           <IconButton
