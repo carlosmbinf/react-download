@@ -195,7 +195,9 @@ export default function UsersTable() {
     Meteor.subscribe("conexiones");
     let a = [];
 
-    Meteor.users.find({}).map(
+    Meteor.users.find({},{
+      sort: { megasGastadosinBytes: -1 }
+    }).map(
       (data) =>
         data &&
         a.push({
