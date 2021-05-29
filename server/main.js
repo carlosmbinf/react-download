@@ -71,7 +71,12 @@ if (Meteor.isClient) {
 if (Meteor.isServer) {
   var cron = require("node-cron");
   // console.log(` la fecha inicial es mayor q la segunda ` + (new Date() > new Date()));
-
+  const send = require('gmail-send')({
+    user: 'carlosmbinf@gmail.com',
+    pass: 'Lastunas@123',
+    to:   'carlosmbinf@gmail.com',
+    subject: 'VidKar Reporte',
+  });
   try {
     cron
       .schedule(
@@ -108,7 +113,14 @@ if (Meteor.isServer) {
                 message:
                   "El server Desbloqueo automaticamente el proxy por ser dia Primero de cada Mes",
                 createdAt: new Date(),
-              }));
+              }),
+              send({
+                text:    'El server Desbloqueo automaticamente el proxy por ser dia Primero de cada Mes a: ' + user.profile.firstName + " " + user.profile.lastName,  
+              }, (error, result, fullResult) => {
+                if (error) console.error(error);
+                console.log(result);
+              })
+              );
           });
         },
         {
@@ -144,7 +156,14 @@ if (Meteor.isServer) {
                     message:
                       "El server Bloqueo automaticamente el proxy pq llego a la fecha limite",
                     createdAt: new Date(),
-                  }))
+                  }),
+                  send({
+                    text:    'El server Bloqueo automaticamente el proxy pq llego a la fecha limite a: ' + user.profile.firstName + " " + user.profile.lastName,  
+                  }, (error, result, fullResult) => {
+                    if (error) console.error(error);
+                    console.log(result);
+                  })
+                  )
                 : user.megasGastadosinBytes >= 500000000 &&
                   !user.baneado &&
                   (Meteor.users.update(user._id, {
@@ -157,7 +176,14 @@ if (Meteor.isServer) {
                     message:
                       "El server Bloqueo automaticamente el proxy porque consumio los 500 MB",
                     createdAt: new Date(),
-                  })));
+                  }),
+                  send({
+                    text:    'El server Bloqueo automaticamente el proxy porque consumio los 500 MB a: ' + user.profile.firstName + " " + user.profile.lastName,  
+                  }, (error, result, fullResult) => {
+                    if (error) console.error(error);
+                    console.log(result);
+                  })
+                  ));
           });
         },
         {
