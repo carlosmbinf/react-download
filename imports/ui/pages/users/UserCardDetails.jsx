@@ -432,7 +432,7 @@ export default function UserCardDetails() {
                                     />
                                   </Tooltip>} label={users.isIlimitado
                                         ? "Limitado por Fecha"
-                                        : "Puede Consumir 1000 MB"} />
+                                        : "Puede Consumir 500 MB"} />
                                 {/* <FormControlLabel variant="outlined" label="Primary">
                                   
                                 </FormControlLabel> */}
