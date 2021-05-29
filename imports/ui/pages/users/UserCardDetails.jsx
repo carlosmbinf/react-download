@@ -361,14 +361,36 @@ export default function UserCardDetails() {
                                     true,
                                     true
                                   )}
-                                  onInput={(e) =>
+                                  onInput={(e) => {
                                     Meteor.users.update(users._id, {
                                       $set: {
-                                        fechaSubscripcion: e.target.value?(new Date(
+                                        fechaSubscripcion: e.target.value ? (new Date(
                                           e.target.value
-                                        )):'',
+                                        )) : '',
+                                        baneado: e.target.value ? false : users.baneado
                                       },
                                     })
+                                    e.target.value && LogsCollection.insert({
+                                      type: 'Fecha Limite Proxy',
+                                      userAfectado: users._id,
+                                      userAdmin: Meteor.userId(),
+                                      message:
+                                        "La Fecha Limite del Proxy se cambió para: " +
+                                        dateFormat(
+                                          new Date(e.target.value),
+                                          "yyyy-mm-dd",
+                                          true,
+                                          true
+                                        ),
+                                    });
+                                    e.target.value && LogsCollection.insert({
+                                      type: "Desbloqueado",
+                                      userAfectado: users._id,
+                                      userAdmin: Meteor.userId(),
+                                      message:
+                                        "Ha sido Desbloqueado por un Admin",
+                                    });
+                                  }
                                   }
                                 />
                               </FormControl>

@@ -128,6 +128,7 @@ export default function LogsTable() {
 
   const logs = useTracker(() => {
     Meteor.subscribe("logs");
+    Meteor.subscribe("user");
     let a = [];
     try {
       
@@ -137,12 +138,13 @@ export default function LogsTable() {
         log&&
         a.push({
           id: log._id,
+          type:log.type,
           nombreUserAfectado:
             (Meteor.users.findOne(log.userAfectado) && Meteor.users.findOne(log.userAfectado).profile && Meteor.users.findOne(log.userAfectado).profile.firstName) +
             " " +
             (Meteor.users.findOne(log.userAfectado)&& Meteor.users.findOne(log.userAfectado).profile && Meteor.users.findOne(log.userAfectado).profile.lastName),
           nombreUserAdmin:
-            (Meteor.users.findOne(log.userAdmin) && Meteor.users.findOne(log.userAdmin).profile.firstName) +
+          log.userAdmin=='server'?'SERVER':(Meteor.users.findOne(log.userAdmin) && Meteor.users.findOne(log.userAdmin).profile.firstName) +
             " " +
             (Meteor.users.findOne(log.userAdmin) && Meteor.users.findOne(log.userAdmin).profile.lastName),
           mensaje: log.message,
@@ -164,7 +166,15 @@ export default function LogsTable() {
     return (
       <React.Fragment>
         <span className="p-column-title">ID</span>
-        {rowData._id}
+        {rowData.id}
+      </React.Fragment>
+    );
+  };
+  const typeBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">Tipo de Log</span>
+        {rowData.type}
       </React.Fragment>
     );
   };
@@ -208,12 +218,12 @@ export default function LogsTable() {
                 paginator
                 paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
                 currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
-                rows={5}
-                rowsPerPageOptions={[5, 10, 20, 50, 100]}
+                rows={10}
+                rowsPerPageOptions={[10, 20, 50, 75, 100]}
                 paginatorLeft={paginatorLeft}
                 paginatorRight={paginatorRight}
               >
-             <Column
+                <Column
                   field="id"
                   header="ID del Logs"
                   body={iDBodyTemplate}
@@ -222,17 +232,25 @@ export default function LogsTable() {
                   filterMatchMode="contains"
                 />
                 <Column
-                  field="nombreUserAfectado"
-                  header="Nombre y Apellidos del Usuario Afectado"
-                  body={nombreAfectadoBodyTemplate}
+                  field="type"
+                  header="Tipo de Log"
+                  body={typeBodyTemplate}
                   filter
                   filterPlaceholder="Search"
                   filterMatchMode="contains"
                 />
                 <Column
                   field="nombreUserAdmin"
-                  header="Nombre y Apellidos del Admin"
+                  header="Usuario Admin"
                   body={userAdminBodyTemplate}
+                  filter
+                  filterPlaceholder="Search"
+                  filterMatchMode="contains"
+                />
+                <Column
+                  field="nombreUserAfectado"
+                  header="Usuario Afectado"
+                  body={nombreAfectadoBodyTemplate}
                   filter
                   filterPlaceholder="Search"
                   filterMatchMode="contains"

@@ -106,35 +106,37 @@ if (Meteor.isServer) {
       )
       .start();
 
-    cron
-      .schedule(
-        "0-59 * * * *",
-        async () => {
-          let users = await Meteor.users.find({});
-          await users.forEach((user) => {
-            !(user.username == "carlosmbinf") &&
-              user.megasGastadosinBytes > 1000000000 &&
-              new Date() >=
-                new Date(
-                  user.fechaSubscripcion ? user.fechaSubscripcion : new Date()
-                ) &&
-              (Meteor.users.update(user._id, {
-                $set: { baneado: true, bloqueadoDesbloqueadoPor: "server" },
-              }),
-              LogsCollection.insert({
-                type: !user.baneado ? "Bloqueado" : "Desbloqueado",
-                userAfectado: user._id,
-                userAdmin: "server",
-                message: 'El server Bloqueo automaticamente el proxy'
-              }));
-          });
-        },
-        {
-          scheduled: true,
-          timezone: "America/Sao_Paulo",
-        }
-      )
-      .start();
+    // cron
+    //   .schedule(
+    //     "0-59 * * * *",
+    //     async () => {
+    //       let users = await Meteor.users.find({});
+    //       await users.forEach((user) => {
+    //         // !(user.username == "carlosmbinf") && 
+    //         !(user.profile.role == "admin") &&
+    //           (user.megasGastadosinBytes > 1000000000 ||
+    //             new Date() >=
+    //               new Date(
+    //                 user.fechaSubscripcion ? user.fechaSubscripcion : new Date()
+    //               )) &&
+    //           !user.baneado &&
+    //           (Meteor.users.update(user._id, {
+    //             $set: { baneado: true, bloqueadoDesbloqueadoPor: "server" },
+    //           }),
+    //           LogsCollection.insert({
+    //             type: "Bloqueado",
+    //             userAfectado: user._id,
+    //             userAdmin: "server",
+    //             message: "El server Bloqueo automaticamente el proxy",
+    //           }));
+    //       });
+    //     },
+    //     {
+    //       scheduled: true,
+    //       timezone: "America/Sao_Paulo",
+    //     }
+    //   )
+    //   .start();
   } catch (error) {
     console.log(error);
   }

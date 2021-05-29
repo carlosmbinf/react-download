@@ -427,7 +427,7 @@ export default function PersistentDrawerLeft() {
                 </Typography>
                   </ListItem>
                 </Link>
-              ) : text.url !== "users" ? (
+              ) : text.url !== "users" && text.url !== "logs" ? (
                 <Link key={index} to={"/" + text.url} className={classes.link}>
                   <ListItem button className={classes.item}>
                     <ListItemIcon color="primary">
