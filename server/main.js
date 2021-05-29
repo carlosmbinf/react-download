@@ -55,6 +55,8 @@ const tarea = async() => {
       userId: user._id,
       megasGastadosinBytes: user.megasGastadosinBytes,
       megasGastadosinBytesGeneral: user.megasGastadosinBytesGeneral,
+      fecha: new Date(),
+      
     });
     Meteor.users.update(user._id, {
       $set: { megasGastadosinBytes: 0, megasGastadosinBytesGeneral: 0 },
@@ -81,16 +83,16 @@ if (Meteor.isServer) {
 
           await users.fetch().map((user) => {
             user.megasGastadosinBytes > 0 &&
-              (
               //   console.log({
               //   userId: user._id,
               //   megasGastadosinBytes: user.megasGastadosinBytes,
               //   megasGastadosinBytesGeneral: user.megasGastadosinBytesGeneral,
               // }),
-              RegisterDataUsersCollection.insert({
+              (RegisterDataUsersCollection.insert({
                 userId: user._id,
                 megasGastadosinBytes: user.megasGastadosinBytes,
-                megasGastadosinBytesGeneral: user.megasGastadosinBytesGeneral,
+                megasGastadosinBytesGeneral: user.megasGastadosinBytesGeneral,,
+                fecha: new Date(),
               }),
               Meteor.users.update(user._id, {
                 $set: {
@@ -103,9 +105,10 @@ if (Meteor.isServer) {
                 type: "Desbloqueado",
                 userAfectado: user._id,
                 userAdmin: "server",
-                message: "El server Desbloqueo automaticamente el proxy por ser dia Primero de cada Mes",
-              })
-              );
+                message:
+                  "El server Desbloqueo automaticamente el proxy por ser dia Primero de cada Mes",
+                createdAt: new Date(),
+              }));
           });
         },
         {
@@ -138,9 +141,11 @@ if (Meteor.isServer) {
                     type: "Bloqueado",
                     userAfectado: user._id,
                     userAdmin: "server",
-                    message: "El server Bloqueo automaticamente el proxy",
+                    message:
+                      "El server Bloqueo automaticamente el proxy pq llego a la fecha limite",
+                    createdAt: new Date(),
                   }))
-                : user.megasGastadosinBytes > 1000000000 &&
+                : user.megasGastadosinBytes >= 500000000 &&
                   !user.baneado &&
                   (Meteor.users.update(user._id, {
                     $set: { baneado: true, bloqueadoDesbloqueadoPor: "server" },
@@ -149,7 +154,9 @@ if (Meteor.isServer) {
                     type: "Bloqueado",
                     userAfectado: user._id,
                     userAdmin: "server",
-                    message: "El server Bloqueo automaticamente el proxy",
+                    message:
+                      "El server Bloqueo automaticamente el proxy porque consumio los 500 MB",
+                    createdAt: new Date(),
                   })));
           });
         },
