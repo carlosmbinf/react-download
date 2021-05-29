@@ -148,7 +148,7 @@ export default function LogsTable() {
             " " +
             (Meteor.users.findOne(log.userAdmin) && Meteor.users.findOne(log.userAdmin).profile.lastName),
           mensaje: log.message,
-          createdAt: log.createdAt,
+          createdAt: log.createdAt&&(log.createdAt + ""),
         });
       });
     } catch (error) {}
