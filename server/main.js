@@ -91,7 +91,7 @@ if (Meteor.isServer) {
               (RegisterDataUsersCollection.insert({
                 userId: user._id,
                 megasGastadosinBytes: user.megasGastadosinBytes,
-                megasGastadosinBytesGeneral: user.megasGastadosinBytesGeneral,,
+                megasGastadosinBytesGeneral: user.megasGastadosinBytesGeneral,
                 fecha: new Date(),
               }),
               Meteor.users.update(user._id, {
