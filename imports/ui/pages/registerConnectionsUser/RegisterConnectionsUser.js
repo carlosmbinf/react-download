@@ -134,7 +134,7 @@ export default function RegisterConnectionsUser() {
     Meteor.subscribe("user");
     let a = [];
     try {
-      OnlineCollection.find((id ? { userId: id } : {}),{sort: { userId: 1, hostname: 1 }}).map(
+      OnlineCollection.find((id ? { userId: id } : {}),{sort: { userId: 1, hostname: 1, loginAt: -1 }}).map(
          (register) => {
            // Meteor.users.findOne(register.userAfectado) = await Meteor.users.findOne(register.userAfectado);
            // Meteor.users.findOne(register.userAdmin) = await Meteor.users.findOne(register.userAdmin);

@@ -372,6 +372,7 @@ export default function UserCardDetails() {
                           </Grid>
                           {Meteor.user().profile.role == "admin" && !(users.profile.role == 'admin') && (
                             <>
+                            {users.isIlimitado && 
                               <Grid item xs={12}>
                                 <FormControl variant="outlined">
                                   <TextField
@@ -429,35 +430,38 @@ export default function UserCardDetails() {
                                   />
                                 </FormControl>
                               </Grid>
+                              }
+                              {!users.isIlimitado && 
                               <Grid item xs={12}>
-                            <FormControl variant="outlined">
-                              <TextField
-                                fullWidth
-                                className={classes.margin}
-                                id="megas"
-                                name="megas"
-                                label="Megas"
-                                type="number"
-                                variant="outlined"
-                                color="secondary"
-                                value={users.megas?users.megas:0}
-                                onInput={(e) =>
-                                  Meteor.users.update(users._id, {
-                                    $set: {
-                                      "megas": e.target.value,
-                                    },
-                                  })
-                                }
-                                InputProps={{
-                                  startAdornment: (
-                                    <InputAdornment position="start">
-                                      <AccountCircleIcon />
-                                    </InputAdornment>
-                                  ),
-                                }}
+                                <FormControl variant="outlined">
+                                  <TextField
+                                    fullWidth
+                                    className={classes.margin}
+                                    id="megas"
+                                    name="megas"
+                                    label="Megas"
+                                    type="number"
+                                    variant="outlined"
+                                    color="secondary"
+                                    value={users.megas ? users.megas : 0}
+                                    onInput={(e) =>
+                                      Meteor.users.update(users._id, {
+                                        $set: {
+                                          "megas": e.target.value,
+                                        },
+                                      })
+                                    }
+                                    InputProps={{
+                                      startAdornment: (
+                                        <InputAdornment position="start">
+                                          <AccountCircleIcon />
+                                        </InputAdornment>
+                                      ),
+                                    }}
                                   />
-                            </FormControl>
-                          </Grid>
+                                </FormControl>
+                              </Grid>}
+
                               <Grid item xs={12} style={{
                                 display: 'flex',
                                 justifyContent: 'left',
@@ -683,7 +687,7 @@ export default function UserCardDetails() {
                         <Grid container direction="row">
                           <Typography>
 
-                            Megas Gastados: {Number.parseFloat(users.megasGastadosinBytes / 1000000).toFixed(2) + ' MB'}
+                            Megas Gastados: {users.megasGastadosinBytes?Number.parseFloat(users.megasGastadosinBytes / 1000000).toFixed(2):0 + ' MB'}
 
                           </Typography>
                         </Grid>

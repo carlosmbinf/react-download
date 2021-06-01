@@ -133,7 +133,7 @@ export default function LogsTable() {
     let a = [];
     try {
       
-       LogsCollection.find(id ? { userAfectado: id } : {}).map((log) => {
+       LogsCollection.find((id ? { userAfectado: id } : {}),{sort: { createdAt : -1}}).map((log) => {
          // Meteor.users.findOne(log.userAfectado) = await Meteor.users.findOne(log.userAfectado);
          // Meteor.users.findOne(log.userAdmin) = await Meteor.users.findOne(log.userAdmin);
          log &&

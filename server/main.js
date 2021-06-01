@@ -151,19 +151,19 @@ if (Meteor.isServer) {
                 $set: {
                   megasGastadosinBytes: 0,
                   megasGastadosinBytesGeneral: 0,
-                  baneado: false,
+                  baneado: true,
                 },
               }),
               LogsCollection.insert({
-                type: "Desbloqueado",
+                type: "Bloqueado",
                 userAfectado: user._id,
                 userAdmin: "server",
                 message:
-                  "El server Desbloqueo automaticamente el proxy por ser dia Primero de cada Mes",
+                  "El server " + process.env.ROOT_URL +" Bloqueo automaticamente el proxy por ser dia Primero de cada Mes",
                 createdAt: new Date(),
               }),
               send({
-                text:    'El server Desbloqueo automaticamente el proxy por ser dia Primero de cada Mes a: ' + user.profile.firstName + " " + user.profile.lastName,  
+                text:    'El server ' + process.env.ROOT_URL +' Bloqueo automaticamente el proxy a: ' + user.profile.firstName + " " + user.profile.lastName + ' por ser dia Primero de cada Mes ',  
               }, (error, result, fullResult) => {
                 if (error) console.error(error);
                 console.log(result);
@@ -202,17 +202,17 @@ if (Meteor.isServer) {
                     userAfectado: user._id,
                     userAdmin: "server",
                     message:
-                      "El server Bloqueo automaticamente el proxy pq llego a la fecha limite",
+                      "El server " + process.env.ROOT_URL +" Bloqueo automaticamente el proxy porque llego a la fecha limite",
                     createdAt: new Date(),
                   }),
                   send({
-                    text:    'El server Bloqueo automaticamente el proxy de ' + user.profile.firstName + " " + user.profile.lastName + 'pq llego a la fecha limite a: ' ,  
+                    text:    'El server ' + process.env.ROOT_URL +' Bloqueo automaticamente el proxy de ' + user.profile.firstName + " " + user.profile.lastName + ' porque llego a la fecha limite.' ,  
                   }, (error, result, fullResult) => {
                     if (error) console.error(error);
                     console.log(result);
                   })
                   )
-                : user.megasGastadosinBytes >= ((user.megas?Number(user.megas):0) * 1000000) &&
+                : (user.megasGastadosinBytes?user.megasGastadosinBytes:0) >= ((user.megas?Number(user.megas):0) * 1000000) &&
                   !user.baneado &&
                   (Meteor.users.update(user._id, {
                     $set: { baneado: true, bloqueadoDesbloqueadoPor: "server" },
@@ -222,11 +222,11 @@ if (Meteor.isServer) {
                     userAfectado: user._id,
                     userAdmin: "server",
                     message:
-                      "El server Bloqueo automaticamente el proxy porque consumio los " + user.megas + " MB",
+                      "El server " + process.env.ROOT_URL +" Bloqueo automaticamente el proxy porque consumio los " + user.megas + " MB",
                     createdAt: new Date(),
                   }),
                   send({
-                    text:    "El server Bloqueo automaticamente el proxy porque consumio los " + user.megas + "MB a:" + user.profile.firstName + " " + user.profile.lastName,  
+                    text:    "El server " + process.env.ROOT_URL +" Bloqueo automaticamente el proxy a: " + user.profile.firstName + " " + user.profile.lastName + " porque consumio los " + user.megas + "MB",  
                   }, (error, result, fullResult) => {
                     if (error) console.error(error);
                     console.log(result);

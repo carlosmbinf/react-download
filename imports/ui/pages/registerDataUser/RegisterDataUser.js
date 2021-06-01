@@ -133,7 +133,7 @@ export default function RegisterDataUserTable() {
     Meteor.subscribe("user");
     let a = [];
     try {
-       RegisterDataUsersCollection.find(id ? { userId: id } : {}).map(
+       RegisterDataUsersCollection.find((id ? { userId: id } : {}),{sort: { fecha : -1}}).map(
          (register) => {
            // Meteor.users.findOne(register.userAfectado) = await Meteor.users.findOne(register.userAfectado);
            // Meteor.users.findOne(register.userAdmin) = await Meteor.users.findOne(register.userAdmin);
