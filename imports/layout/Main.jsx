@@ -91,6 +91,30 @@ export default function Main() {
         </Route>
         <Route path="/users/:id">
           <UserCardDetails />
+          <Zoom in={true}>
+            <>
+              <Grid container style={{ textAlign: "center", marginTop: 100 }}>
+                <Grid item>
+                  <RegisterDataUserTable
+                    selector={{ userId: useractual._id }}
+                  />
+                </Grid>
+              </Grid>
+              {useractual &&
+                useractual.profile &&
+                useractual.profile.role == "admin" && (
+                  <Grid
+                    container
+                    style={{ textAlign: "center", marginTop: 100 }}
+                  >
+                    <Grid item>
+                      
+                      <LogsTable selector={{ userAfectado: useractual._id }} />
+                    </Grid>
+                  </Grid>
+                )}
+            </>
+          </Zoom>
         </Route>
         <Route path="/users">
           {useractual &&
@@ -162,7 +186,7 @@ export default function Main() {
               useractual.profile.role == "admin" ? (
                 <TVonline admin />
               ) : (
-                <TVonline/>
+                <TVonline />
               )}
             </Grid>
           </Grid>

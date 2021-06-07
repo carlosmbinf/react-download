@@ -119,7 +119,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function LogsTable() {
+export default function LogsTable(option) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const dt = React.useRef(null);
@@ -132,7 +132,7 @@ export default function LogsTable() {
     let a = [];
     try {
       
-       LogsCollection.find().map((log) => {
+       LogsCollection.find(option.selector?option.selector:{}).map((log) => {
         // Meteor.users.findOne(log.userAfectado) = await Meteor.users.findOne(log.userAfectado);
         // Meteor.users.findOne(log.userAdmin) = await Meteor.users.findOne(log.userAdmin);
         log&&
@@ -213,10 +213,11 @@ export default function LogsTable() {
 
   return (
     <>
-      <div className={classes.drawerHeader}></div>
-
+      <Grid item style={{ textAlign: "center" }}>
+        <h1>Registro Eventos </h1>
+      </Grid>
       <Zoom in={true}>
-        <div style={{ width: "100%", padding: 10 }}>
+        <div style={{ width: "100%", padding: 20 }}>
           <div className="datatable-responsive-demo">
             <div className="card">
               <DataTable
@@ -279,7 +280,6 @@ export default function LogsTable() {
                   filterPlaceholder="Search"
                   filterMatchMode="contains"
                 />
-                
               </DataTable>
             </div>
           </div>

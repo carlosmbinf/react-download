@@ -120,7 +120,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function RegisterDataUserTable() {
+export default function RegisterDataUserTable(option) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const dt = React.useRef(null);
@@ -132,7 +132,7 @@ export default function RegisterDataUserTable() {
     Meteor.subscribe("user");
     let a = [];
     try {
-       RegisterDataUsersCollection.find({}).map((register) => {
+       RegisterDataUsersCollection.find(option.selector?option.selector:{}).map((register) => {
         // Meteor.users.findOne(register.userAfectado) = await Meteor.users.findOne(register.userAfectado);
         // Meteor.users.findOne(register.userAdmin) = await Meteor.users.findOne(register.userAdmin);
         // register&&
@@ -199,10 +199,11 @@ let b = Meteor.users.findOne(register.userId)
 
   return (
     <>
-      <div className={classes.drawerHeader}></div>
-
+      <Grid item style={{ textAlign: "center" }}>
+        <h1>Registro de Datos Mensuales</h1>
+      </Grid>
       <Zoom in={true}>
-        <div style={{ width: "100%", padding: 10 }}>
+        <div style={{ width: "100%", padding: 20 }}>
           <div className="datatable-responsive-demo">
             <div className="card">
               <DataTable
@@ -257,7 +258,6 @@ let b = Meteor.users.findOne(register.userId)
                   filterPlaceholder="Search"
                   filterMatchMode="contains"
                 />
-                
               </DataTable>
             </div>
           </div>

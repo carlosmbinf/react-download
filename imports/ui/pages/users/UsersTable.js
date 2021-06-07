@@ -118,7 +118,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function UsersTable() {
+export default function UsersTable(option) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const [selectedOnline, setSelectedOnline] = React.useState(null);
@@ -195,7 +195,7 @@ export default function UsersTable() {
     Meteor.subscribe("conexiones");
     let a = [];
 
-    Meteor.users.find({},{
+    Meteor.users.find(option.selector?option.selector:{},{
       sort: { megasGastadosinBytes: -1 }
     }).map(
       (data) =>
