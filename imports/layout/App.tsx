@@ -243,6 +243,7 @@ export default function PersistentDrawerLeft() {
     { title: "Descargas Youtube", icon: <CloudDownloadIcon />, url: "downloads" },
     { title: "Registro de Logs", icon: <DashboardIcon />, url: "logs" },
     { title: "Registro de MB Consumidos", icon: <DashboardIcon />, url: "register-data" },
+    { title: "Registro de Conexiones", icon: <DashboardIcon />, url: "connections" },
   ];
 
   const handleDrawerOpen = () => {
@@ -424,11 +425,11 @@ export default function PersistentDrawerLeft() {
                     // color: "rgba(0, 0, 0, 0.54)",
                   }}
                 >
-                  {text.title}
+                {text.title}
                 </Typography>
                   </ListItem>
                 </Link>
-              ) : text.url !== "users" && text.url !== "logs"&& text.url !== "register-data" ? (
+              ) : text.url !== "users" && text.url !== "logs" && text.url !== "connections" && text.url !== "register-data" ? (
                 <Link key={index} to={"/" + text.url} className={classes.link}>
                   <ListItem button className={classes.item}>
                     <ListItemIcon color="primary">

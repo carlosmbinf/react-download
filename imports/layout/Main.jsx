@@ -41,6 +41,7 @@ import TV from "../ui/pages/tv/TVDetails";
 import Video from "../ui/pages/videos/VideoDetails";
 import LogsTable from "../ui/pages/logs/LogsTable";
 import RegisterDataUserTable from "../ui/pages/registerDataUser/RegisterDataUser";
+import RegisterConnectionsUser from "../ui/pages/registerConnectionsUser/RegisterConnectionsUser";
 
 const useStyles = makeStyles((theme) => ({
   // necessary for content to be below app bar
@@ -107,6 +108,7 @@ export default function Main() {
                   >
                     <Grid item>
                       <LogsTable/>
+                      <RegisterConnectionsUser/>
                     </Grid>
                   </Grid>
                 )}
@@ -282,6 +284,26 @@ export default function Main() {
           useractual.profile.role == "admin" ? (
             <Zoom in={true}>
               <RegisterDataUserTable />
+            </Zoom>
+          ) : (
+            <Zoom in={true}>
+              <Grid
+                container
+                direction="row"
+                justify="center"
+                alignItems="center"
+              >
+                <h1>SIN ACCESO</h1>
+              </Grid>
+            </Zoom>
+          )}
+        </Route>
+        <Route path="/connections">
+          {useractual &&
+          useractual.profile &&
+          useractual.profile.role == "admin" ? (
+            <Zoom in={true}>
+              <RegisterConnectionsUser />
             </Zoom>
           ) : (
             <Zoom in={true}>
