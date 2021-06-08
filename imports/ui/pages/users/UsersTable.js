@@ -196,7 +196,7 @@ export default function UsersTable(option) {
     let a = [];
 
     Meteor.users.find(option.selector?option.selector:{},{
-      sort: { megasGastadosinBytes: -1 }
+      sort: { megasGastadosinBytes : -1, 'profile.firstName' : 1 , 'profile.lastName' : 1 }
     }).map(
       (data) =>
         data &&
