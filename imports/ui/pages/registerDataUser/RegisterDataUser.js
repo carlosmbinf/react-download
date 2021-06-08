@@ -21,7 +21,7 @@ import { Tracker } from "meteor/tracker";
 import { useTracker } from "meteor/react-meteor-data";
 import Badge from "@material-ui/core/Badge";
 import Avatar from "@material-ui/core/Avatar";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams} from "react-router-dom"; 
 
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
@@ -120,7 +120,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function RegisterDataUserTable(option) {
+export default function RegisterDataUserTable() {
+  let { id } = useParams();
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const dt = React.useRef(null);
@@ -132,19 +133,25 @@ export default function RegisterDataUserTable(option) {
     Meteor.subscribe("user");
     let a = [];
     try {
-       RegisterDataUsersCollection.find(option.selector?option.selector:{}).map((register) => {
-        // Meteor.users.findOne(register.userAfectado) = await Meteor.users.findOne(register.userAfectado);
-        // Meteor.users.findOne(register.userAdmin) = await Meteor.users.findOne(register.userAdmin);
-        // register&&
-let b = Meteor.users.findOne(register.userId)
-        a.push({
-          id: register._id,
-          user:b.profile.firstName + " " + b.profile.lastName,
-          megasGastadosinBytes: Number.parseFloat(register.megasGastadosinBytes / 1000000).toFixed(2),
-          megasGastadosinBytesGeneral: Number.parseFloat(register.megasGastadosinBytesGeneral / 1000000).toFixed(2),
-          createdAt: register.fecha&&(register.fecha + ""),
-        });
-      });
+       RegisterDataUsersCollection.find(id ? { userId: id } : {}).map(
+         (register) => {
+           // Meteor.users.findOne(register.userAfectado) = await Meteor.users.findOne(register.userAfectado);
+           // Meteor.users.findOne(register.userAdmin) = await Meteor.users.findOne(register.userAdmin);
+           // register&&
+           let b = Meteor.users.findOne(register.userId);
+           a.push({
+             id: register._id,
+             user: b.profile.firstName + " " + b.profile.lastName,
+             megasGastadosinBytes: Number.parseFloat(
+               register.megasGastadosinBytes / 1000000
+             ).toFixed(2),
+             megasGastadosinBytesGeneral: Number.parseFloat(
+               register.megasGastadosinBytesGeneral / 1000000
+             ).toFixed(2),
+             createdAt: register.fecha && register.fecha + "",
+           });
+         }
+       );
     } catch (error) {}
      return a;
 

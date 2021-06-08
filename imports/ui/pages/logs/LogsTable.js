@@ -50,7 +50,7 @@ import {
   LogsCollection,
   OnlineCollection,
 } from "../collections/collections";
-import { useHistory } from "react-router-dom";
+import { useHistory} from "react-router-dom";
 
 const StyledBadge = withStyles((theme) => ({
   badge: {
@@ -119,7 +119,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function LogsTable(option) {
+export default function LogsTable() {
+  let { id } = useParams();
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const dt = React.useRef(null);
@@ -132,25 +133,33 @@ export default function LogsTable(option) {
     let a = [];
     try {
       
-       LogsCollection.find(option.selector?option.selector:{}).map((log) => {
-        // Meteor.users.findOne(log.userAfectado) = await Meteor.users.findOne(log.userAfectado);
-        // Meteor.users.findOne(log.userAdmin) = await Meteor.users.findOne(log.userAdmin);
-        log&&
-        a.push({
-          id: log._id,
-          type:log.type,
-          nombreUserAfectado:
-            (Meteor.users.findOne(log.userAfectado) && Meteor.users.findOne(log.userAfectado).profile && Meteor.users.findOne(log.userAfectado).profile.firstName) +
-            " " +
-            (Meteor.users.findOne(log.userAfectado)&& Meteor.users.findOne(log.userAfectado).profile && Meteor.users.findOne(log.userAfectado).profile.lastName),
-          nombreUserAdmin:
-          log.userAdmin=='server'?'SERVER':(Meteor.users.findOne(log.userAdmin) && Meteor.users.findOne(log.userAdmin).profile.firstName) +
-            " " +
-            (Meteor.users.findOne(log.userAdmin) && Meteor.users.findOne(log.userAdmin).profile.lastName),
-          mensaje: log.message,
-          createdAt: log.createdAt&&(log.createdAt + ""),
-        });
-      });
+       LogsCollection.find(id ? { userAfectado: id } : {}).map((log) => {
+         // Meteor.users.findOne(log.userAfectado) = await Meteor.users.findOne(log.userAfectado);
+         // Meteor.users.findOne(log.userAdmin) = await Meteor.users.findOne(log.userAdmin);
+         log &&
+           a.push({
+             id: log._id,
+             type: log.type,
+             nombreUserAfectado:
+               (Meteor.users.findOne(log.userAfectado) &&
+                 Meteor.users.findOne(log.userAfectado).profile &&
+                 Meteor.users.findOne(log.userAfectado).profile.firstName) +
+               " " +
+               (Meteor.users.findOne(log.userAfectado) &&
+                 Meteor.users.findOne(log.userAfectado).profile &&
+                 Meteor.users.findOne(log.userAfectado).profile.lastName),
+             nombreUserAdmin:
+               log.userAdmin == "server"
+                 ? "SERVER"
+                 : (Meteor.users.findOne(log.userAdmin) &&
+                     Meteor.users.findOne(log.userAdmin).profile.firstName) +
+                   " " +
+                   (Meteor.users.findOne(log.userAdmin) &&
+                     Meteor.users.findOne(log.userAdmin).profile.lastName),
+             mensaje: log.message,
+             createdAt: log.createdAt && log.createdAt + "",
+           });
+       });
     } catch (error) {}
      return a;
 

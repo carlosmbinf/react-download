@@ -95,9 +95,7 @@ export default function Main() {
             <>
               <Grid container style={{ textAlign: "center", marginTop: 100 }}>
                 <Grid item>
-                  <RegisterDataUserTable
-                    selector={{ userId: useractual._id }}
-                  />
+                  <RegisterDataUserTable/>
                 </Grid>
               </Grid>
               {useractual &&
@@ -108,8 +106,7 @@ export default function Main() {
                     style={{ textAlign: "center", marginTop: 100 }}
                   >
                     <Grid item>
-                      
-                      <LogsTable selector={{ userAfectado: useractual._id }} />
+                      <LogsTable/>
                     </Grid>
                   </Grid>
                 )}
