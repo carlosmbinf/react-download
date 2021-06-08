@@ -162,7 +162,7 @@ export default function RegisterConnectionsUser() {
   const loginAtBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-        <span className="p-column-title">Fecha de Inicio del proxy</span>
+        <span className="p-column-title">Fecha de Inicio de la conexion</span>
         {rowData.loginAt}
       </React.Fragment>
     );
@@ -186,7 +186,7 @@ export default function RegisterConnectionsUser() {
   const addressBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-        <span className="p-column-title">Nombre y Apellidos del Usuario Afectado</span>
+        <span className="p-column-title">Host</span>
         {rowData.address}
       </React.Fragment>
     );
@@ -194,7 +194,7 @@ export default function RegisterConnectionsUser() {
   const hostnameBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-        <span className="p-column-title">Usuario Admin</span>
+        <span className="p-column-title">Petición</span>
         {rowData.hostname}
       </React.Fragment>
     );
