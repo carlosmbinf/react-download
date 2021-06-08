@@ -132,7 +132,7 @@ if (Meteor.isServer) {
 
     cron
       .schedule(
-        "0-59 * * * *",
+        "0 0 1 * *",
         async () => {
           let users = await Meteor.users.find({});
           await users.forEach((user) => {
