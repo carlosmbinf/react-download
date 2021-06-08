@@ -505,7 +505,7 @@ if (Meteor.isServer) {
   Meteor.publish("conexionesUser", function (id) {
     return OnlineCollection.find({ userId: id });
   });
-  Meteor.publish("conexiones", function (id) {
+  Meteor.publish("conexiones", function () {
     return OnlineCollection.find({});
   });
   Meteor.publish("mensajes", function (id) {

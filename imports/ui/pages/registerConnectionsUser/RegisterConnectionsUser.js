@@ -129,7 +129,8 @@ export default function RegisterConnectionsUser() {
   
 
   const registroDeDatos = useTracker(() => {
-    Meteor.subscribe("registerDataUser");
+    id ? Meteor.subscribe("conexiones", id) : Meteor.subscribe("conexiones");
+    
     Meteor.subscribe("user");
     let a = [];
     try {
