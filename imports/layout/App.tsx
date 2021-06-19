@@ -52,6 +52,7 @@ import Footer from "./Footer";
 import SetPassword from "../ui/pages/users/SetPassword";
 import { Suspense } from "react";
 import SpinnerModal from "../ui/components/spinnerModal/SpinnerModal";
+import ImportExportIcon from '@material-ui/icons/ImportExport';
 
 const drawerWidth = 240;
 const StyledBadge = withStyles((theme) => ({
@@ -244,6 +245,7 @@ export default function PersistentDrawerLeft() {
     { title: "Registro de Logs", icon: <DashboardIcon />, url: "logs" },
     { title: "Registro de MB Consumidos", icon: <DashboardIcon />, url: "register-data" },
     { title: "Registro de Conexiones", icon: <DashboardIcon />, url: "connections" },
+    { title: "Export Data to MongoDB Server", icon: <ImportExportIcon />, url: "exportdata" },
   ];
 
   const handleDrawerOpen = () => {
@@ -429,7 +431,7 @@ export default function PersistentDrawerLeft() {
                 </Typography>
                   </ListItem>
                 </Link>
-              ) : text.url !== "users" && text.url !== "logs" && text.url !== "connections" && text.url !== "register-data" ? (
+              ) : text.url !== "users" && text.url !== "logs" && text.url !== "connections" && text.url !== "exportdata" && text.url !== "register-data" ? (
                 <Link key={index} to={"/" + text.url} className={classes.link}>
                   <ListItem button className={classes.item}>
                     <ListItemIcon color="primary">

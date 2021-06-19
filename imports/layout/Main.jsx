@@ -42,6 +42,7 @@ import Video from "../ui/pages/videos/VideoDetails";
 import LogsTable from "../ui/pages/logs/LogsTable";
 import RegisterDataUserTable from "../ui/pages/registerDataUser/RegisterDataUser";
 import RegisterConnectionsUser from "../ui/pages/registerConnectionsUser/RegisterConnectionsUser";
+import ExportDataToMongoDB from "../ui/pages/exportData/exportDataToMongoDB";
 
 const useStyles = makeStyles((theme) => ({
   // necessary for content to be below app bar
@@ -318,6 +319,27 @@ export default function Main() {
             </Zoom>
           )}
         </Route>
+        <Route path="/exportdata">
+          {useractual &&
+          useractual.profile &&
+          useractual.profile.role == "admin" ? (
+            // <Zoom in={true}>
+              <ExportDataToMongoDB />
+            // </Zoom>
+          ) : (
+            <Zoom in={true}>
+              <Grid
+                container
+                direction="row"
+                justify="center"
+                alignItems="center"
+              >
+                <h1>SIN ACCESO</h1>
+              </Grid>
+            </Zoom>
+          )}
+        </Route>
+        
         <Route path="/">
           <PelisCard clasificacion="AVENTURA" />
           <PelisCard clasificacion="ACCION" />

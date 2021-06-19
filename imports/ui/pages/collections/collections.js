@@ -1,5 +1,7 @@
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
+import { Meteor } from "meteor/meteor";
+
 
 SimpleSchema.extendOptions(['autoform']);
 
@@ -11,7 +13,139 @@ export const MensajesCollection = new Mongo.Collection('mensajes');
 export const RegisterDataUsersCollection = new Mongo.Collection('registerDataUsers');
 export const LogsCollection = new Mongo.Collection('Logs');
 
+Meteor.methods({
+ async exportDataTo(urlMongoDB) {
+  var mi = require("mongoimport");
+   try {
+    await mi({
+       fields: PelisCollection.find().fetch(), // {array} data to import
+       db: "meteor", // {string} name of db
+       collection: 'pelisRegister', // {string|function} name of collection, or use a function to
+       //  return a name, accept one param - [fields] the fields to import
+       host: urlMongoDB,
+       callback: (err, db) => {
+         err && console.error(err);
+       },
+     });
+   } catch (error) {
+     console.log(error);
+   }
+  
+   try {
+    await mi({
+      fields: DescargasCollection.find().fetch(), // {array} data to import
+      db: "meteor", // {string} name of db
+      collection: 'descargasRegister', // {string|function} name of collection, or use a function to
+      //  return a name, accept one param - [fields] the fields to import
+      host: urlMongoDB,
+      callback: (err, db) => {
+        err && console.error(err);
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    
+  }
 
+  try {
+    await mi({
+      fields: TVCollection.find().fetch(), // {array} data to import
+      db: "meteor", // {string} name of db
+      collection: 'tvRegister', // {string|function} name of collection, or use a function to
+      //  return a name, accept one param - [fields] the fields to import
+      host: urlMongoDB,
+      callback: (err, db) => {
+        err && console.error(err);
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    
+  }
+
+  try {
+    await mi({
+      fields: OnlineCollection.find().fetch(), // {array} data to import
+      db: "meteor", // {string} name of db
+      collection: 'online', // {string|function} name of collection, or use a function to
+      //  return a name, accept one param - [fields] the fields to import
+      host: urlMongoDB,
+      callback: (err, db) => {
+        err && console.error(err);
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    
+  }
+
+  try {
+    await mi({
+      fields: MensajesCollection.find().fetch(), // {array} data to import
+      db: "meteor", // {string} name of db
+      collection: 'mensajes', // {string|function} name of collection, or use a function to
+      //  return a name, accept one param - [fields] the fields to import
+      host: urlMongoDB,
+      callback: (err, db) => {
+        err && console.error(err);
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    
+  }
+
+  try {
+    await mi({
+      fields: RegisterDataUsersCollection.find().fetch(), // {array} data to import
+      db: "meteor", // {string} name of db
+      collection: 'registerDataUsers', // {string|function} name of collection, or use a function to
+      //  return a name, accept one param - [fields] the fields to import
+      host: urlMongoDB,
+      callback: (err, db) => {
+        err && console.error(err);
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    
+  }
+
+  try {
+    await mi({
+      fields: LogsCollection.find().fetch(), // {array} data to import
+      db: "meteor", // {string} name of db
+      collection: 'Logs', // {string|function} name of collection, or use a function to
+      //  return a name, accept one param - [fields] the fields to import
+      host: urlMongoDB,
+      callback: (err, db) => {
+        err && console.error(err);
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    
+  }
+
+  try {
+    await mi({
+      fields: Meteor.users.find().fetch(), // {array} data to import
+      db: "meteor", // {string} name of db
+      collection: 'users', // {string|function} name of collection, or use a function to
+      //  return a name, accept one param - [fields] the fields to import
+      host: urlMongoDB,
+      callback: (err, db) => {
+        err && console.error(err);
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    
+  }
+    
+
+  },
+});
 export const SchemaRegisterDataUsersCollection = new SimpleSchema({
   userId: {
     type: String,
