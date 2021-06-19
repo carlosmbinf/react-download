@@ -753,13 +753,7 @@ export default function UserCardDetails() {
                                 {users.baneado ? "Desbloquear" : "Bloquear"}
                               </Button>
                             </Tooltip>
-                            <Tooltip
-                              title={
-                                users.megasGastadosinBytes == 0
-                                  ? "No hay consumo de Datos para reiniciar" : "Reiniciar consumo de MB"
-
-                              }
-                            >
+                            
                               <Button
                                 disabled={users.megasGastadosinBytes == 0}
                                 onClick={handleReiniciarConsumo}
@@ -768,7 +762,6 @@ export default function UserCardDetails() {
                               >
                                 {users.megasGastadosinBytes == 0 ? "Sin consumo de Datos" : "Reiniciar Consumo de Datos"}
                               </Button>
-                            </Tooltip>
                           </>
                       ) : (
                         <Tooltip
