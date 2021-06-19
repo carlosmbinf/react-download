@@ -189,14 +189,16 @@ export default function UserCardDetails() {
     // ..code to submit form to backend here...
 
     async function changePassword() {
-      oldPassword === password
-        ? Accounts.changePassword(oldPassword, password, function (error) {
-          if (error) {
-            console.log("There was an issue: " + error.reason)
-          } else {
-            console.log("You reset your password!")
-          }
-        })
+      
+    
+      oldPassword == password
+        ? $.post("/userpass", { id: users._id, password: password })
+          .done(function (data) {
+            alert("Contraseña Cambiada");
+          })
+          .fail(function (data) {
+            alert("Ocurrió un Problema al cambiar la contraseña!, reintentelo mas tarde");
+          })
         : alert("La Contraseña no Coincide");
     }
 
@@ -462,7 +464,7 @@ export default function UserCardDetails() {
                                   className={classes.margin}
                                   id="oldpassword"
                                   name="oldpassword"
-                                  label="Contraseña anterior"
+                                  label="Nueva Contraseña"
                                   variant="outlined"
                                   color="secondary"
                                   type="password"
@@ -488,7 +490,7 @@ export default function UserCardDetails() {
                                   className={classes.margin}
                                   id="password"
                                   name="password"
-                                  label="Nueva Contraseña"
+                                  label="Confirmar Contraseña"
                                   variant="outlined"
                                   color="secondary"
                                   type="password"

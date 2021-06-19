@@ -227,8 +227,8 @@ export default function UsersTable(option) {
           username: data.username,
           conProxy: !data.baneado,
           megasGastadosinBytes: data.megasGastadosinBytes,
-          megasGastadosinBytesGeneral: data.megasGastadosinBytesGeneral
-          // address: OnlineCollection.find({ userId: data._id }).fetch(),
+          megasGastadosinBytesGeneral: data.megasGastadosinBytesGeneral,
+          connectionsCounts: OnlineCollection.find({ userId: data._id }).count()
         })
     );
 
@@ -241,6 +241,14 @@ export default function UsersTable(option) {
   const paginatorRight = (
     <Button type="button" icon="pi pi-cloud" className="p-button-text" />
   );
+  const connectionsCountsBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">Conexiones</span>
+        {rowData.connectionsCounts}
+      </React.Fragment>
+    );
+  };
   const iDBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
@@ -497,6 +505,12 @@ export default function UsersTable(option) {
                 field="megasGastadosinBytesGeneral"
                 header="Megas x Server"
                 body={megasGastadosinBytesGeneralTemplate}
+                reorderable={true}
+              />
+              <Column
+                field="connectionsCounts"
+                header="Conexiones"
+                body={connectionsCountsBodyTemplate}
                 reorderable={true}
               />
                 <Column field="urlReal" header="" body={urlBodyTemplate} />
