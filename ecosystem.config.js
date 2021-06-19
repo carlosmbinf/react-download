@@ -1,7 +1,7 @@
 module.exports = {
   apps : [{
     name: "app",
-    script: "meteor run",
+    script: "npm start",
     env: {
       NODE_ENV: "development",
       "ROOT_URL": "https://srv5119-206152.vps.etecsa.cu",

@@ -69,6 +69,54 @@ if (Meteor.isClient) {
 }
 
 if (Meteor.isServer) {
+
+  Meteor.startup(() => {
+    
+    process.env.ROOT_URL = Meteor.settings.public.ROOT_URL;
+    process.env.MONGO_URL = Meteor.settings.public.MONGO_URL;
+
+    console.log("ROOT_URL: " + process.env.ROOT_URL);
+    console.log("MONGO_URL: " + process.env.MONGO_URL);
+
+    OnlineCollection.remove({});
+
+    ServiceConfiguration.configurations.remove({
+      service: "facebook",
+    });
+
+    ServiceConfiguration.configurations.insert({
+      service: "facebook",
+      appId: "1062947454216548",
+      secret: "dcaf7178a57c9431681977b77ccb60d1",
+    });
+    if (Meteor.users.find({ "profile.role": "admin" }).count() == 0) {
+      console.log("CREANDO USER ADMIN");
+      const user = {
+        email: "carlosmbinf@nauta.cu",
+        password: "lastunas123",
+        firstName: "Carlos",
+        lastName: "Medina",
+        role: "admin",
+        creadoPor: "N/A",
+        baneado: false,
+        edad: 26,
+      };
+      try {
+        Accounts.createUser(user);
+        console.log("ADD OK");
+      } catch (error) {
+        console.log("NO SE PUDO CREAR EL USER ADMIN");
+      }
+    }
+    console.log("YA HAY UN USER ADMIN");
+    // const youtubedl = require('youtube-dl')
+    // const url = 'http://www.youtube.com/watch?v=WKsjaOqDXgg'
+    // youtubedl.exec(url, ['-x', '--audio-format', 'mp3'], {}, function(err, output) {
+    //   if (err) throw err
+    //   // console.log(output.join('\n'))
+    // })
+  });
+
   var cron = require("node-cron");
   // console.log(` la fecha inicial es mayor q la segunda ` + (new Date() > new Date()));
   const send = require('gmail-send')({
@@ -554,47 +602,6 @@ if (Meteor.isServer) {
       },
     });
   });
-  Meteor.startup(() => {
-    OnlineCollection.remove({});
-    process.env.ROOT_URL = "https://srv5119-206152.vps.etecsa.cu";
-    console.log("ROOT_URL" + process.env.ROOT_URL);
-
-    ServiceConfiguration.configurations.remove({
-      service: "facebook",
-    });
-
-    ServiceConfiguration.configurations.insert({
-      service: "facebook",
-      appId: "1062947454216548",
-      secret: "dcaf7178a57c9431681977b77ccb60d1",
-    });
-    if (Meteor.users.find({ "profile.role": "admin" }).count() == 0) {
-      console.log("CREANDO USER ADMIN");
-      const user = {
-        email: "carlosmbinf@nauta.cu",
-        password: "lastunas123",
-        firstName: "Carlos",
-        lastName: "Medina",
-        role: "admin",
-        creadoPor: "N/A",
-        baneado: false,
-        edad: 26,
-      };
-      try {
-        Accounts.createUser(user);
-        console.log("ADD OK");
-      } catch (error) {
-        console.log("NO SE PUDO CREAR EL USER ADMIN");
-      }
-    }
-    console.log("YA HAY UN USER ADMIN");
-    // const youtubedl = require('youtube-dl')
-    // const url = 'http://www.youtube.com/watch?v=WKsjaOqDXgg'
-    // youtubedl.exec(url, ['-x', '--audio-format', 'mp3'], {}, function(err, output) {
-    //   if (err) throw err
-    //   // console.log(output.join('\n'))
-    // })
-  });
 }
 
 var appRoot = require("app-root-path");
@@ -797,6 +804,31 @@ server2.on("requestFailed", ({ request, error }) => {
   console.log(`Request ${request.url} failed`);
   console.error(error);
 });
+try {
+  cron
+    .schedule(
+      "0-59 * * * *",
+      async () => {
+        let arrayIds = await server2.getConnectionIds();
+        await OnlineCollection.find({ address: "proxy" }).forEach(
+          async (connection) => {
+           await !arrayIds.find((id) => connection.connectionId == id) &&
+              (await OnlineCollection.remove({
+                connectionId: connection.connectionId,
+              }));
+          }
+        );
+      },
+      {
+        scheduled: true,
+        timezone: "America/Sao_Paulo",
+      }
+    )
+    .start();
+} catch (error) {
+  console.log(error);
+}
+
 
 // var httpProxy = require('http-proxy');
 // const http = require("http");

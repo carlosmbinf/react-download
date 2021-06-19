@@ -1,28 +1,10 @@
 {
-	"ROOT_URL":"https://srv5119-206152.vps.etecsa.cu",
 	"public": {
-		"baseUrl": "http://localhost:5500/"
+		"baseUrl": "http://localhost:5500/",
+		"MONGO_URL":"mongodb://127.0.0.1:27017/meteor",
+		"ROOT_URL": "https://srv5119-206152.vps.etecsa.cu"
 	 },
-	 "private": {
-	   "emailToSendRootPassword": "admin@vr.com",
-	   "apiCredentials": {
-		 "user": "user",
-		 "password": "password"
-	   },
-	   "SES": {
-		 "region": "us-east-1",
-		 "accessKeyId": "AKIAIDAOLWBZ633EMRTQ",
-		 "secretAccessKey": "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",
-		 "from": "activations@vacancyrewards.com"
-	   },
-	   "identityProvider": {
-		 "service": "FusionAuth",
-		 "clientId": "0fbeada9-e2b3-4e81-98a1-a998b6b853d0",
-		 "scope": [],
-		 "secret": "f4-HVMd1iMuByVeqfsr2T0JWoymX-yfr0Ufc1oTKUtY",
-		 "baseUrl": "https://auth.vrewardsapps.com/",
-		 "loginUrl": "https://auth.vrewardsapps.com/oauth2/authorize",
-		 "loginStyle": "popup"
-	   }
+	 "private":{
+
 	 }
 }
