@@ -224,8 +224,8 @@ export default function UserCardDetails() {
       },
     });
   };
-  const handleChangebaneado = (event) => {
-    users.baneado && users.megasGastadosinBytes >= 500000000 &&
+  const handleReiniciarConsumo = (event) => {
+    users.megasGastadosinBytes >= 0 &&
       RegisterDataUsersCollection.insert({
         userId: users._id,
         megasGastadosinBytes: users.megasGastadosinBytes,
@@ -233,10 +233,25 @@ export default function UserCardDetails() {
       })
     Meteor.users.update(users._id, {
       $set: {
+        megasGastadosinBytes: 0,
+        megasGastadosinBytesGeneral : 0
+      },
+    });
+    LogsCollection.insert({
+      type: 'Reinicio del Consumo de Datos',
+      userAfectado: users._id,
+      userAdmin: Meteor.userId(),
+      message:
+        "Ha sido Reiniciado el consumo de Datos por un Admin",
+      createdAt: new Date(),
+    });
+    alert('Se reinicio los datos de ' + users.profile.firstName)
+  };
+  const handleChangebaneado = (event) => {
+    Meteor.users.update(users._id, {
+      $set: {
         baneado: users.baneado ? false : true,
-        bloqueadoDesbloqueadoPor: Meteor.userId(),
-        megasGastadosinBytes: (users.baneado && users.megasGastadosinBytes >= 500000000) ? 0 : users.megasGastadosinBytes,
-        megasGastadosinBytesGeneral : (users.baneado && users.megasGastadosinBytesGeneral >= 500000000) ? 0 : users.megasGastadosinBytesGeneral,
+        bloqueadoDesbloqueadoPor: Meteor.userId()
       },
     });
     LogsCollection.insert({
@@ -414,6 +429,35 @@ export default function UserCardDetails() {
                                   />
                                 </FormControl>
                               </Grid>
+                              <Grid item xs={12}>
+                            <FormControl variant="outlined">
+                              <TextField
+                                fullWidth
+                                className={classes.margin}
+                                id="megas"
+                                name="megas"
+                                label="Megas"
+                                type="number"
+                                variant="outlined"
+                                color="secondary"
+                                value={users.megas?users.megas:0}
+                                onInput={(e) =>
+                                  Meteor.users.update(users._id, {
+                                    $set: {
+                                      "megas": e.target.value,
+                                    },
+                                  })
+                                }
+                                InputProps={{
+                                  startAdornment: (
+                                    <InputAdornment position="start">
+                                      <AccountCircleIcon />
+                                    </InputAdornment>
+                                  ),
+                                }}
+                                  />
+                            </FormControl>
+                          </Grid>
                               <Grid item xs={12} style={{
                                 display: 'flex',
                                 justifyContent: 'left',
@@ -434,7 +478,7 @@ export default function UserCardDetails() {
                                     />
                                   </Tooltip>} label={users.isIlimitado
                                         ? "Limitado por Fecha"
-                                        : "Puede Consumir 500 MB"} />
+                                    : "Puede Consumir " + (users.megas ? users.megas : 0) + " MB"} />
                                 {/* <FormControlLabel variant="outlined" label="Primary">
                                   
                                 </FormControlLabel> */}
@@ -541,6 +585,7 @@ export default function UserCardDetails() {
                                   })
                                 }
                                 InputProps={{
+                                  readOnly: true,
                                   startAdornment: (
                                     <InputAdornment position="start">
                                       <AccountCircleIcon />
@@ -569,35 +614,7 @@ export default function UserCardDetails() {
                                   })
                                 }
                                 InputProps={{
-                                  startAdornment: (
-                                    <InputAdornment position="start">
-                                      <AccountCircleIcon />
-                                    </InputAdornment>
-                                  ),
-                                }}
-                              />
-                            </FormControl>
-                          </Grid>
-                          <Grid item xs={12} sm={4} lg={3}>
-                            <FormControl variant="outlined">
-                              <TextField
-                                fullWidth
-                                className={classes.margin}
-                                id="edad"
-                                name="edad"
-                                label="Edad"
-                                type="number"
-                                variant="outlined"
-                                color="secondary"
-                                value={users.edad}
-                                onInput={(e) =>
-                                  Meteor.users.update(users._id, {
-                                    $set: {
-                                      "edad": e.target.value,
-                                    },
-                                  })
-                                }
-                                InputProps={{
+                                  readOnly: true,
                                   startAdornment: (
                                     <InputAdornment position="start">
                                       <AccountCircleIcon />
@@ -658,6 +675,13 @@ export default function UserCardDetails() {
                       <Grid item xs={12}>
                         <Grid container direction="row">
                           <Typography>
+                            Usuario: {users.username}
+                          </Typography>
+                        </Grid>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Grid container direction="row">
+                          <Typography>
 
                             Megas Gastados: {Number.parseFloat(users.megasGastadosinBytes / 1000000).toFixed(2) + ' MB'}
 
@@ -668,7 +692,23 @@ export default function UserCardDetails() {
                         <Grid container direction="row">
                           <Typography>
 
-                            Conexion: {users.Baneado ? 'Desactivado' : "Activado"}
+                            Limite: {users.isIlimitado ? (users.fechaSubscripcion ? dateFormat(
+                              new Date(
+                                users.fechaSubscripcion
+                              ),
+                              "yyyy-mm-dd",
+                              true,
+                              true
+                            ) : 'No esta establecida la fecha limite') : (users.megas ? (users.megas + ' MB') : ' No esta establecido el Limite de Megas a consumir')}
+
+                          </Typography>
+                        </Grid>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Grid container direction="row">
+                          <Typography>
+
+                            Conexion: {users.baneado ? 'Desactivado' : "Activado"}
 
                           </Typography>
                         </Grid>
@@ -695,23 +735,41 @@ export default function UserCardDetails() {
                         onClick={handleEdit}
                       >
                         {edit ? "Cancelar Edición" : "Editar"}
-                      </Button>
-                      {edit ? (
-                        <Tooltip
-                          title={
-                            users.baneado
-                              ? "Reiniciar MB y Desbloquear al Usuario"
-                              : "Bloquear Usuario"
-                          }
-                        >
-                          <Button
-                            onClick={handleChangebaneado}
-                            variant="contained"
-                            color={users.baneado ? "secondary" : "primary"}
-                          >
-                            {users.baneado ? "Reiniciar MB y Desbloquear" : "Bloquear"}
-                          </Button>
-                        </Tooltip>
+                        </Button>
+                        {edit ? (
+                          <>
+                            <Tooltip
+                              title={
+                                users.baneado
+                                  ? "Desbloquear al Usuario"
+                                  : "Bloquear al Usuario"
+                              }
+                            >
+                              <Button
+                                onClick={handleChangebaneado}
+                                variant="contained"
+                                color={users.baneado ? "secondary" : "primary"}
+                              >
+                                {users.baneado ? "Desbloquear" : "Bloquear"}
+                              </Button>
+                            </Tooltip>
+                            <Tooltip
+                              title={
+                                users.megasGastadosinBytes == 0
+                                  ? "No hay consumo de Datos para reiniciar" : "Reiniciar consumo de MB"
+
+                              }
+                            >
+                              <Button
+                                disabled={users.megasGastadosinBytes == 0}
+                                onClick={handleReiniciarConsumo}
+                                variant="contained"
+                                color={"secondary"}
+                              >
+                                {users.megasGastadosinBytes == 0 ? "Sin consumo de Datos" : "Reiniciar Consumo de Datos"}
+                              </Button>
+                            </Tooltip>
+                          </>
                       ) : (
                         <Tooltip
                           title={

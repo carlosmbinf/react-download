@@ -180,7 +180,7 @@ if (Meteor.isServer) {
 
     cron
       .schedule(
-        "0 0 1 * *",
+        "0-59 * * * *",
         async () => {
           let users = await Meteor.users.find({});
           await users.forEach((user) => {
@@ -206,13 +206,13 @@ if (Meteor.isServer) {
                     createdAt: new Date(),
                   }),
                   send({
-                    text:    'El server Bloqueo automaticamente el proxy pq llego a la fecha limite a: ' + user.profile.firstName + " " + user.profile.lastName,  
+                    text:    'El server Bloqueo automaticamente el proxy de ' + user.profile.firstName + " " + user.profile.lastName + 'pq llego a la fecha limite a: ' ,  
                   }, (error, result, fullResult) => {
                     if (error) console.error(error);
                     console.log(result);
                   })
                   )
-                : user.megasGastadosinBytes >= 500000000 &&
+                : user.megasGastadosinBytes >= ((user.megas?Number(user.megas):0) * 1000000) &&
                   !user.baneado &&
                   (Meteor.users.update(user._id, {
                     $set: { baneado: true, bloqueadoDesbloqueadoPor: "server" },
@@ -222,11 +222,11 @@ if (Meteor.isServer) {
                     userAfectado: user._id,
                     userAdmin: "server",
                     message:
-                      "El server Bloqueo automaticamente el proxy porque consumio los 500 MB",
+                      "El server Bloqueo automaticamente el proxy porque consumio los " + user.megas + " MB",
                     createdAt: new Date(),
                   }),
                   send({
-                    text:    'El server Bloqueo automaticamente el proxy porque consumio los 500 MB a: ' + user.profile.firstName + " " + user.profile.lastName,  
+                    text:    "El server Bloqueo automaticamente el proxy porque consumio los " + user.megas + "MB a:" + user.profile.firstName + " " + user.profile.lastName,  
                   }, (error, result, fullResult) => {
                     if (error) console.error(error);
                     console.log(result);
