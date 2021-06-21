@@ -8,7 +8,7 @@
   "prebuildScript": "",
   "meteorBuildFlags": "--architecture os.linux.x86_64",
   "env": {
-    "ROOT_URL": "https://srv5119-206152.vps.etecsa.cu",
+    "ROOT_URL": "https://srv9118-206152.vps.etecsa.cu",
     "PORT": 3000,
     "MONGO_URL": ""
   },
