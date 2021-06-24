@@ -128,7 +128,7 @@ if (Meteor.isServer) {
   try {
     cron
       .schedule(
-        "0 * 1 * *",
+        "0 0 1 * *",
         async () => {
           let users = await Meteor.users.find({});
           // await console.log("Count " + users.count());
