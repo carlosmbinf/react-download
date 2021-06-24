@@ -90,7 +90,10 @@ const SmallAvatar = withStyles((theme) => ({
 const useStyles = makeStyles((theme) => ({
   [theme.breakpoints.down("sm")]: {},
   [theme.breakpoints.down("md")]: {},
-  [theme.breakpoints.up("md")]: {},
+  [theme.breakpoints.up("md")]: {
+    columnSmoll: {
+    }
+  },
   clasificado: {
     background: theme.palette.secondary.main,
     padding: 10,
@@ -123,6 +126,7 @@ export default function UsersTable(option) {
   const [open, setOpen] = React.useState(true);
   const [selectedOnline, setSelectedOnline] = React.useState(null);
   const [selectedRole, setSelectedRole] = React.useState(null);
+  const [selectedLimites, setSelectedLimites] = React.useState(null);
   const [selectedConProxy, setSelectedConProxy] = React.useState(null);
   const dt = React.useRef(null);
   const history = useHistory();
@@ -133,6 +137,7 @@ export default function UsersTable(option) {
   // });
   const statuses = ["ONLINE", "DISCONECTED"];
   const statusesRole = ["admin", "user"];
+  const statusesLimites = ["Ilimitado", "Megas" , "Fecha"];
   const statusesConProxy = ["true", "false"];
   const onStatusChange = (e) => {
     dt.current.filter(e.value, "online", "equals");
@@ -141,6 +146,10 @@ export default function UsersTable(option) {
   const onRoleChange = (e) => {
     dt.current.filter(e.value, "role", "equals");
     setSelectedRole(e.value);
+  };
+  const onLimitesChange = (e) => {
+    dt.current.filter(e.value, "limites", "equals");
+    setSelectedLimites(e.value);
   };
   const onConProxyChange = (e) => {
     dt.current.filter(e.value, "conProxy", "equals");
@@ -151,6 +160,10 @@ export default function UsersTable(option) {
     // ;
   };
   const roleItemTemplate = (option) => {
+    return <span className={`customer-badge`}><Chip onClick={()=>{}} color="primary" label={option} /></span>;
+    // ;
+  };
+  const limitesItemTemplate = (option) => {
     return <span className={`customer-badge`}><Chip onClick={()=>{}} color="primary" label={option} /></span>;
     // ;
   };
@@ -179,7 +192,19 @@ export default function UsersTable(option) {
       className="p-column-filter"
       showClear
     />
-  );const conProxyFilter = (
+  );
+  const limitesFilter = (
+    <Dropdown
+      value={selectedLimites}
+      options={statusesLimites}
+      onChange={onLimitesChange}
+      itemTemplate={limitesItemTemplate}
+      placeholder="Select a Limit"
+      className="p-column-filter"
+      showClear
+    />
+  );
+  const conProxyFilter = (
     <Dropdown
       value={selectedConProxy}
       options={statusesConProxy}
@@ -228,7 +253,8 @@ export default function UsersTable(option) {
           conProxy: !data.baneado,
           megasGastadosinBytes: data.megasGastadosinBytes,
           megasGastadosinBytesGeneral: data.megasGastadosinBytesGeneral,
-          connectionsCounts: OnlineCollection.find({ userId: data._id }).count()
+          connectionsCounts: OnlineCollection.find({ userId: data._id }).count(),
+          limites: data.profile.role=='admin'?'Ilimitado':(data.isIlimitado?"Fecha":"Megas")
         })
     );
 
@@ -254,6 +280,14 @@ export default function UsersTable(option) {
       <React.Fragment>
         <span className="p-column-title">ID</span>
         {rowData.id}
+      </React.Fragment>
+    );
+  };
+  const limitesBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">Tipo de Limite</span>
+        <Chip color="primary" label={rowData.limites} />
       </React.Fragment>
     );
   };
@@ -457,14 +491,14 @@ export default function UsersTable(option) {
                   filterPlaceholder="Nombre y Apellidos"
                   filterMatchMode="contains"
                 />
-                <Column
+                {/* <Column
                   field="email"
                   header="Correo"
                   body={emailBodyTemplate}
                   filter
                   filterPlaceholder="Correo"
                   filterMatchMode="contains"
-                />
+                /> */}
                 <Column
                   field="username"
                   header="UserName"
@@ -495,18 +529,25 @@ export default function UsersTable(option) {
                   filter
                   filterElement={conProxyFilter}
                 />
+                <Column
+                  field="limites"
+                  header="Tipo de Limite"
+                  body={limitesBodyTemplate}
+                  filter
+                  filterElement={limitesFilter}
+                />
               <Column
                   field="megasGastadosinBytes"
                   header="Megas x Cliente"
                   body={megasGastadosinBytesTemplate}
                   reorderable={true}
                 />
-                <Column
+                {/* <Column
                 field="megasGastadosinBytesGeneral"
                 header="Megas x Server"
                 body={megasGastadosinBytesGeneralTemplate}
                 reorderable={true}
-              />
+              /> */}
               <Column
                 field="connectionsCounts"
                 header="Conexiones"

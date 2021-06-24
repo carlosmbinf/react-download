@@ -214,7 +214,7 @@ export default function LogsTable() {
   const mensajeBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-        <span className="p-column-title">Apellido</span>
+        <span className="p-column-title">Mensaje</span>
         {rowData.mensaje}
       </React.Fragment>
     );

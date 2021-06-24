@@ -166,7 +166,7 @@ export default function RegisterDataUserTable() {
   const createAtBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-        <span className="p-column-title">Fecha del Log</span>
+        <span className="p-column-title">Fecha del Registro</span>
         {rowData.createdAt}
       </React.Fragment>
     );
@@ -182,7 +182,7 @@ export default function RegisterDataUserTable() {
   const userBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-        <span className="p-column-title">Tipo de Log</span>
+        <span className="p-column-title">Nombre y Apellido del Usuario</span>
         {rowData.user}
       </React.Fragment>
     );
@@ -190,7 +190,7 @@ export default function RegisterDataUserTable() {
   const megasGastadosinBytesBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-        <span className="p-column-title">Nombre y Apellidos del Usuario Afectado</span>
+        <span className="p-column-title">Megas Consumidos por el Usuario</span>
         {rowData.megasGastadosinBytes}
       </React.Fragment>
     );
@@ -198,7 +198,7 @@ export default function RegisterDataUserTable() {
   const megasGastadosinBytesGeneralBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-        <span className="p-column-title">Usuario Admin</span>
+        <span className="p-column-title">Megas Consumidos por el Server</span>
         {rowData.megasGastadosinBytesGeneral}
       </React.Fragment>
     );
@@ -242,17 +242,17 @@ export default function RegisterDataUserTable() {
                   filterMatchMode="contains"
                 />
                 <Column
-                  field="megasGastadosinBytesGeneral"
-                  header="Megas Gastados en el Servidor"
-                  body={megasGastadosinBytesGeneralBodyTemplate}
+                  field="megasGastadosinBytes"
+                  header="Megas Gastados por el Usuario"
+                  body={megasGastadosinBytesBodyTemplate}
                   filter
                   filterPlaceholder="Search"
                   filterMatchMode="contains"
                 />
                 <Column
-                  field="megasGastadosinBytes"
-                  header="Megas Gastados por el Usuario"
-                  body={megasGastadosinBytesBodyTemplate}
+                  field="megasGastadosinBytesGeneral"
+                  header="Megas Gastados en el Servidor"
+                  body={megasGastadosinBytesGeneralBodyTemplate}
                   filter
                   filterPlaceholder="Search"
                   filterMatchMode="contains"
