@@ -247,7 +247,7 @@ export default function RegisterConnectionsUser() {
                   filterMatchMode="contains"
                 />
                 <Column
-                  field="megasGastadosinBytesGeneral"
+                  field="hostname"
                   header="Petición"
                   body={hostnameBodyTemplate}
                   filter
@@ -255,7 +255,7 @@ export default function RegisterConnectionsUser() {
                   filterMatchMode="contains"
                 />
                 <Column
-                  field="hostname"
+                  field="loginAt"
                   header="Fecha del Registro"
                   body={loginAtBodyTemplate}
                   filter

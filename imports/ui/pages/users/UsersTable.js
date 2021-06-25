@@ -177,7 +177,7 @@ export default function UsersTable(option) {
       options={statuses}
       onChange={onStatusChange}
       itemTemplate={onlineItemTemplate}
-      placeholder="Select a Status"
+      placeholder="Select"
       className="p-column-filter"
       showClear
     />
@@ -210,7 +210,7 @@ export default function UsersTable(option) {
       options={statusesConProxy}
       onChange={onConProxyChange}
       itemTemplate={conProxyItemTemplate}
-      placeholder="Select a Role"
+      placeholder="Select"
       className="p-column-filter"
       showClear
     />
