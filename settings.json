@@ -2,7 +2,7 @@
 	"public": {
 		"baseUrl": "http://localhost:5500/",
 		"MONGO_URL":"mongodb://127.0.0.1:27017/meteor",
-		"ROOT_URL": "https://srv9118-206152.vps.etecsa.cu"
+		"ROOT_URL": "https://srv22118-206152.vps.etecsa.cu"
 	 },
 	 "private":{
 
