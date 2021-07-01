@@ -128,8 +128,9 @@ if (Meteor.isServer) {
   try {
     cron
       .schedule(
-        "0 0 1 * *",
+        "1 0 1 1-12 *",
         async () => {
+          console.log(new Date())
           let users = await Meteor.users.find({});
           // await console.log("Count " + users.count());
           // await console.log("running every minute to 1 from 5");
@@ -141,39 +142,51 @@ if (Meteor.isServer) {
               //   megasGastadosinBytes: user.megasGastadosinBytes,
               //   megasGastadosinBytesGeneral: user.megasGastadosinBytesGeneral,
               // }),
-              (RegisterDataUsersCollection.insert({
+              RegisterDataUsersCollection.insert({
                 userId: user._id,
                 megasGastadosinBytes: user.megasGastadosinBytes,
                 megasGastadosinBytesGeneral: user.megasGastadosinBytesGeneral,
                 fecha: new Date(),
-              }),
-              Meteor.users.update(user._id, {
-                $set: {
-                  megasGastadosinBytes: 0,
-                  megasGastadosinBytesGeneral: 0,
-                  baneado: true,
-                },
-              }),
-              LogsCollection.insert({
-                type: "Bloqueado",
-                userAfectado: user._id,
-                userAdmin: "server",
-                message:
-                  "El server " + process.env.ROOT_URL +" Bloqueo automaticamente el proxy por ser dia Primero de cada Mes",
-                createdAt: new Date(),
-              }),
-              send({
-                text:    'El server ' + process.env.ROOT_URL +' Bloqueo automaticamente el proxy a: ' + user.profile.firstName + " " + user.profile.lastName + ' por ser dia Primero de cada Mes ',  
-              }, (error, result, fullResult) => {
-                if (error) console.error(error);
-                console.log(result);
               })
-              );
+              user.baneado == false && user.profile.role !== 'admin' &&
+                (Meteor.users.update(user._id, {
+                  $set: {
+                    megasGastadosinBytes: 0,
+                    megasGastadosinBytesGeneral: 0,
+                    baneado: true,
+                  },
+                }),
+                LogsCollection.insert({
+                  type: "Bloqueado",
+                  userAfectado: user._id,
+                  userAdmin: "server",
+                  message:
+                    "El server " +
+                    process.env.ROOT_URL +
+                    " Bloqueo automaticamente el proxy por ser dia Primero de cada Mes",
+                  createdAt: new Date(),
+                }),
+                send(
+                  {
+                    text:
+                      "El server " +
+                      process.env.ROOT_URL +
+                      " Bloqueo automaticamente el proxy a: " +
+                      user.profile.firstName +
+                      " " +
+                      user.profile.lastName +
+                      " por ser dia Primero de cada Mes ",
+                  },
+                  (error, result, fullResult) => {
+                    if (error) console.error(error);
+                    console.log(result);
+                  }
+                ));
           });
         },
         {
           scheduled: true,
-          timezone: "America/Sao_Paulo",
+          timezone: "America/Havana",
         }
       )
       .start();
@@ -236,7 +249,7 @@ if (Meteor.isServer) {
         },
         {
           scheduled: true,
-          timezone: "America/Sao_Paulo",
+          timezone: "America/Havana",
         }
       )
       .start();
@@ -821,7 +834,7 @@ try {
       },
       {
         scheduled: true,
-        timezone: "America/Sao_Paulo",
+        timezone: "America/Havana",
       }
     )
     .start();
