@@ -820,7 +820,7 @@ server2.on("requestFailed", ({ request, error }) => {
 try {
   cron
     .schedule(
-      "0-59 * * * *",
+      "0-59 0-23 1-31 1-12 *",
       async () => {
         let arrayIds = await server2.getConnectionIds();
         await OnlineCollection.find({ address: "proxy" }).forEach(
