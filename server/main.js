@@ -73,7 +73,7 @@ if (Meteor.isServer) {
   Meteor.startup(() => {
     
     process.env.ROOT_URL = Meteor.settings.public.ROOT_URL;
-    process.env.MONGO_URL = Meteor.settings.public.MONGO_URL;
+    // process.env.MONGO_URL = Meteor.settings.public.MONGO_URL;
 
     console.log("ROOT_URL: " + process.env.ROOT_URL);
     console.log("MONGO_URL: " + process.env.MONGO_URL);
