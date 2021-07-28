@@ -86,8 +86,8 @@ if (Meteor.isServer) {
 
     ServiceConfiguration.configurations.insert({
       service: "facebook",
-      appId: "1062947454216548",
-      secret: "dcaf7178a57c9431681977b77ccb60d1",
+      appId: "581482823014129",
+      secret: "aeeca3e355143de86008e194c31fb691",
     });
     if (Meteor.users.find({ "profile.role": "admin" }).count() == 0) {
       console.log("CREANDO USER ADMIN");
