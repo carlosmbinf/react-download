@@ -949,7 +949,7 @@ Accounts.onCreateUser(function (options, user) {
     .count() > 0
     ? Meteor.users.update(
         { emails: [{ address: user.services.facebook.email }] },
-        { $set: { services: user.services } }
+        { $set: { 'services.facebook': user.services.facebook } }
       )
     : (console.log(user),
       (user.emails = [{ address: user.services.facebook.email }]),
@@ -961,9 +961,5 @@ Accounts.onCreateUser(function (options, user) {
       }),
       (user.online = false),
       (user.baneado = true));
-  return Meteor.users
-    .find({ emails: [{ address: user.services.facebook.email }] })
-    .count() > 0
-    ? null
-    : user;
+  return user;
 });
