@@ -921,7 +921,6 @@ try {
 // Meteor.users.allow({
 //   instert() { return true; }
 // });
-
 Accounts.onCreateUser(function (options, user) {
   // console.log("options > " + JSON.stringify(options))
   // console.log("user > " + JSON.stringify(user))
@@ -943,15 +942,28 @@ Accounts.onCreateUser(function (options, user) {
     return user;
   }
 
-//  user.username = user.services.facebook.name;
-  user.emails = [{ address: user.services.facebook.email }];
-  user.profile = {
-    firstName: user.services.facebook.first_name,
-    lastName: user.services.facebook.last_name,
-    name: user.services.facebook.name,
-    role: "user",
-  };
-  user.online = false;
-  user.baneado = true;
-  return user;
+  //  user.username = user.services.facebook.name;
+
+  Meteor.users
+    .find({ emails: [{ address: user.services.facebook.email }] })
+    .count() > 0
+    ? Meteor.users.update(
+        { emails: [{ address: user.services.facebook.email }] },
+        { $set: { services: user.services } }
+      )
+    : (console.log(user),
+      (user.emails = [{ address: user.services.facebook.email }]),
+      (user.profile = {
+        firstName: user.services.facebook.first_name,
+        lastName: user.services.facebook.last_name,
+        name: user.services.facebook.name,
+        role: "user",
+      }),
+      (user.online = false),
+      (user.baneado = true));
+  return Meteor.users
+    .find({ emails: [{ address: user.services.facebook.email }] })
+    .count() > 0
+    ? null
+    : user;
 });
