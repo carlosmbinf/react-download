@@ -145,7 +145,7 @@ const LoginForm = ({ className }: Props) => {
             className={classes.button}
             startIcon={<FacebookIcon />}
           >
-            Login with Facebook
+            Registrarse con Facebook
           </Button>
         </Grid>
       </Grid>
