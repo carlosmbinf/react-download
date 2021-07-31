@@ -945,12 +945,13 @@ Accounts.onCreateUser(function (options, user) {
   //  user.username = user.services.facebook.name;
 
   Meteor.users
-    .find({ emails: [{ address: user.services.facebook.email }] })
+    .find({ "services.facebook.name": user.services.facebook.name })
     .count() > 0
-    ? Meteor.users.update(
-        { emails: [{ address: user.services.facebook.email }] },
-        { $set: { 'services.facebook': user.services.facebook } }
-      )
+    ? (console.log(user),
+      Meteor.users.update(
+        { "services.facebook.name": user.services.facebook.name },
+        { $set: { "services.facebook.name": user.services.facebook.name } }
+      ))
     : (console.log(user),
       (user.emails = [{ address: user.services.facebook.email }]),
       (user.profile = {
