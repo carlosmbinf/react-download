@@ -10,6 +10,7 @@ import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import LockIcon from "@material-ui/icons/Lock";
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import FacebookIcon from "@material-ui/icons/Facebook";
+import Tooltip from "@material-ui/core/Tooltip";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -137,6 +138,11 @@ const LoginForm = ({ className }: Props) => {
       <Divider/>
       <Grid container direction="column" justify="center" alignContent="center">
         <Grid item xs={12}>
+        <Tooltip
+          title={
+            "Inicia Session con su cuenta de Facebook o Crea una cuenta nueva en caso de que no se haya Registrado anteriormente"
+          }
+        >
           <Button
             onClick={handleLoginFacebook}
             variant="contained"
@@ -147,6 +153,7 @@ const LoginForm = ({ className }: Props) => {
           >
             Registrarse con Facebook
           </Button>
+        </Tooltip>          
         </Grid>
       </Grid>
     </>
