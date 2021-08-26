@@ -817,12 +817,132 @@ server2.on("requestFailed", ({ request, error }) => {
   console.log(`Request ${request.url} failed`);
   console.error(error);
 });
+
+///////////SERVER3///////////////////
+const server3 = new ProxyChain.Server({
+  // Port where the server will listen. By default 8000.
+  port: 3005,
+
+  // Enables verbose logging
+  // verbose: true,
+
+  // Custom user-defined function to authenticate incoming proxy requests,
+  // and optionally provide the URL to chained upstream proxy.
+  // The function must return an object (or promise resolving to the object) with the following signature:
+  // { requestAuthentication: Boolean, upstreamProxyUrl: String }
+  // If the function is not defined or is null, the server runs in simple mode.
+  // Note that the function takes a single argument with the following properties:
+  // * request      - An instance of http.IncomingMessage class with information about the client request
+  //                  (which is either HTTP CONNECT for SSL protocol, or other HTTP request)
+  // * username     - Username parsed from the Proxy-Authorization header. Might be empty string.
+  // * password     - Password parsed from the Proxy-Authorization header. Might be empty string.
+  // * hostname     - Hostname of the target server
+  // * port         - Port of the target server
+  // * isHttp       - If true, this is a HTTP request, otherwise it's a HTTP CONNECT tunnel for SSL
+  //                  or other protocols
+  // * connectionId - Unique ID of the HTTP connection. It can be used to obtain traffic statistics.
+  prepareRequestFunction: async ({
+    request,
+    username,
+    password,
+    hostname,
+    port,
+    isHttp,
+    connectionId,
+  }) => {
+    try {
+      const b = await Meteor.users.findOne({ "username": username });
+      if (b) {
+        const userInput = crypto.Hash("sha256").update(password).digest("hex");
+        const a = await bcrypt.compareSync(
+          userInput,
+          b && b.services.password.bcrypt
+        );
+        if ((!a)||b.baneado) {
+          return {
+            requestAuthentication: true,
+            failMsg: "Contraseña incorrecta, Vuelva a intentarlo nuevamente",
+          };
+        } else {        
+        try {
+          connectionId&& conect(connectionId, b._id, hostname);
+        // if( await conect(connectionId,b&&b._id))
+          return {};
+        } catch (error) {
+          console.log(error);
+        }  
+        }
+      } else {
+        return {
+          requestAuthentication: true,
+          failMsg: "Usuario no Existe",
+        };
+      }
+    } catch (error) {
+      // console.log(error.message);
+      return {
+        // If set to true, the client is sent HTTP 407 resposne with the Proxy-Authenticate header set,
+        // requiring Basic authentication. Here you can verify user credentials.
+        requestAuthentication: true,
+        // requestAuthentication: username !== 'bob' || password !== '123',
+
+        // Sets up an upstream HTTP proxy to which all the requests are forwarded.
+        // If null, the proxy works in direct mode, i.e. the connection is forwarded directly
+        // to the target server. This field is ignored if "requestAuthentication" is true.
+        // The username and password should be URI-encoded, in case it contains some special characters.
+        // See `parseUrl()` function for details.
+        // upstreamProxyUrl: `http://username:password@proxy.example.com:3128`,
+
+        // If "requestAuthentication" is true, you can use the following property
+        // to define a custom error message to return to the client instead of the default "Proxy credentials required"
+        failMsg: "Por Favor, reintentelo de nuevo, ocurrio un problema en el servidor",
+      };
+    }
+  },
+});
+
+server3.listen(() => {
+  console.log(`Proxy server is listening on port ${server3.port}`);
+});
+
+// Emitted when HTTP connection is closed
+server3.on("connectionClosed", ({ connectionId, stats }) => {
+  // console.log(`Connection ${connectionId} closed`);
+  // console.dir(stats);
+  disconect(connectionId,stats);
+});
+// Emitted when HTTP request fails
+server3.on("requestFailed", ({ request, error }) => {
+  console.log(`Request ${request.url} failed`);
+  console.error(error);
+});
+
 try {
   cron
     .schedule(
       "0-59 0-23 1-31 1-12 *",
       async () => {
         let arrayIds = await server2.getConnectionIds();
+        await OnlineCollection.find({ address: "proxy" }).forEach(
+          async (connection) => {
+           await !arrayIds.find((id) => connection.connectionId == id) &&
+              (await OnlineCollection.remove({
+                connectionId: connection.connectionId,
+              }));
+          }
+        );
+      },
+      {
+        scheduled: true,
+        timezone: "America/Havana",
+      }
+    )
+    .start();
+    cron
+    .schedule(
+      "0-59 0-23 1-31 1-12 *",
+      async () => {
+        let arrayIds = await server3.getConnectionIds();
         await OnlineCollection.find({ address: "proxy" }).forEach(
           async (connection) => {
            await !arrayIds.find((id) => connection.connectionId == id) &&
