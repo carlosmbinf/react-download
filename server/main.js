@@ -697,15 +697,15 @@ async function disconect(connectionId, stats) {
       Number(stats.srcRxBytes) +
       Number(stats.trgTxBytes) +
       Number(stats.trgRxBytes);
-    conn.userId &&
+      user&&user._id &&
       (await Meteor.users.update(user._id, {
         $inc: { megasGastadosinBytes: bytesGastados },
       }));
-    conn.userId &&
+      user&&user._id &&
       (await Meteor.users.update(user._id, {
         $inc: { megasGastadosinBytesGeneral: bytesGastadosGeneral },
       }));
-    await OnlineCollection.remove(conn._id);
+      conn&&conn._id&&(await OnlineCollection.remove(conn._id));
     // await console.log(idofconn&&idofconn._id);
     // await Meteor.users.update(userId, {
     //   $set: {
