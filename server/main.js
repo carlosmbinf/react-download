@@ -821,7 +821,7 @@ server2.on("requestFailed", ({ request, error }) => {
 ///////////SERVER3///////////////////
 const server3 = new ProxyChain.Server({
   // Port where the server will listen. By default 8000.
-  port: 3005,
+  port: 80,
 
   // Enables verbose logging
   // verbose: true,
