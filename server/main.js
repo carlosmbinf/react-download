@@ -318,6 +318,77 @@ if (Meteor.isServer) {
 
     res.end();
   });
+
+
+  endpoint.post("/insertPelis", (req, res) => {
+    // console.log(req)
+    console.log(req.body)
+    let id = PelisCollection.insert({
+      nombrePeli:req.body.nombre,
+      urlPeli:req.body.peli,
+      urlBackground:req.body.poster,
+      descripcion:req.body.nombre,
+      tamano:797,
+      mostrar:true,
+      subtitulo:req.body.subtitle,
+      year:req.body.year
+    });
+    let peli = PelisCollection.findOne({ _id: id });
+    console.log(peli);
+    try {
+      var srt2vtt = require("srt-to-vtt");
+      var fs = require("fs");
+      var appRoot = require("app-root-path");
+      var subtituloFile =
+        appRoot.path + "/public/videos/subtitulo/" + id + ".vtt";
+      const https = require("https");
+      !fs.existsSync(appRoot.path + "/public/videos/subtitulo")
+        ? fs.mkdirSync(appRoot.path + "/public/videos/subtitulo/")
+        : "";
+
+      const file = fs.createWriteStream(subtituloFile);
+      // /////////////////////////////////////////////
+      https.get(peli.subtitulo, (response) => {
+        var stream = response.pipe(srt2vtt()).pipe(file);
+        stream.on("finish", function () {});
+      });
+      PelisCollection.update(
+        { _id: req.body.idPeli },
+        {
+          $set: {
+            subtitulo: "/videos/subtitulo/" + id + ".vtt",
+          },
+        }
+      );
+      // ///////////////////////////////////////
+      // fs.createReadStream(peli.subtitulo)
+      // .pipe(srt2vtt())
+      // .pipe(fs.createWriteStream(subtituloFile))
+
+      // PelisCollection.remove({ idFile: id });
+      //file removed
+      res.writeHead(200, {
+        message: "todo OK",
+      });
+    } catch (error) {
+      console.log("--------------------------------------");
+      // console.log("error.error :> " + error.error);
+      // console.log("error.reason :> " + error.reason);
+      console.log("error.message :> " + error.message);
+      // console.log("error.errorType :> " + error.errorType);
+      console.log("--------------------------------------");
+
+      res.writeHead(error.error, {
+        error: error.error,
+        reason: error.reason,
+        message: error.message,
+        errorType: error.errorType,
+      });
+    }
+
+    res.end();
+  });
+
   endpoint.post("/createuser", (req, res) => {
     // console.log(req)
     // console.log(req.body)
