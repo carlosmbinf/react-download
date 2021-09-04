@@ -994,6 +994,7 @@ try {
       "0-59 0-23 1-31 1-12 *",
       async () => {
         let arrayIds = await server2.getConnectionIds();
+        await server3.getConnectionIds() && arrayIds.push( await server3.getConnectionIds())
         await OnlineCollection.find({ address: "proxy" }).forEach(
           async (connection) => {
            await !arrayIds.find((id) => connection.connectionId == id) &&
@@ -1009,26 +1010,26 @@ try {
       }
     )
     .start();
-    cron
-    .schedule(
-      "0-59 0-23 1-31 1-12 *",
-      async () => {
-        let arrayIds = await server3.getConnectionIds();
-        await OnlineCollection.find({ address: "proxy" }).forEach(
-          async (connection) => {
-           await !arrayIds.find((id) => connection.connectionId == id) &&
-              (await OnlineCollection.remove({
-                connectionId: connection.connectionId,
-              }));
-          }
-        );
-      },
-      {
-        scheduled: true,
-        timezone: "America/Havana",
-      }
-    )
-    .start();
+    // cron
+    // .schedule(
+    //   "0-59 0-23 1-31 1-12 *",
+    //   async () => {
+    //     let arrayIds = await server3.getConnectionIds();
+    //     await OnlineCollection.find({ address: "proxy" }).forEach(
+    //       async (connection) => {
+    //        await !arrayIds.find((id) => connection.connectionId == id) &&
+    //           (await OnlineCollection.remove({
+    //             connectionId: connection.connectionId,
+    //           }));
+    //       }
+    //     );
+    //   },
+    //   {
+    //     scheduled: true,
+    //     timezone: "America/Havana",
+    //   }
+    // )
+    // .start();
 } catch (error) {
   console.log(error);
 }
