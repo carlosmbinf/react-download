@@ -738,7 +738,7 @@ async function conect(connectionId, userId, hostname) {
   try {
     await OnlineCollection.insert({
       connectionId: connectionId.toString(),
-      address: "proxy",
+      address: "proxy: " + Meteor.settings.public.IP,
       userId: userId,
       loginAt: new Date(),
       hostname: hostname,
