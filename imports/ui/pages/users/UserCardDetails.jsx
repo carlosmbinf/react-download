@@ -730,9 +730,11 @@ export default function UserCardDetails() {
                       justify="space-around"
                       alignItems="center"
                     >
-                      <IconButton onClick={eliminarUser} aria-label="delete">
-                        <DeleteIcon color="primary" fontSize="large" />
-                      </IconButton>
+                        {Meteor.user().username == "carlosmbinf" &&
+                          <IconButton onClick={eliminarUser} aria-label="delete">
+                            <DeleteIcon color="primary" fontSize="large" />
+                          </IconButton>
+                        }
                       <Button
                         color={edit ? "secondary" : "primary"}
                         variant="contained"

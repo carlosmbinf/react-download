@@ -521,7 +521,6 @@ export default function UsersTable(option) {
                   filter
                   filterElement={roleFilter}
                 />
-                
                 <Column
                   field="conProxy"
                   header="Proxy"
@@ -536,7 +535,7 @@ export default function UsersTable(option) {
                   filter
                   filterElement={limitesFilter}
                 />
-              <Column
+                <Column
                   field="megasGastadosinBytes"
                   header="Megas x Cliente"
                   body={megasGastadosinBytesTemplate}
@@ -548,18 +547,21 @@ export default function UsersTable(option) {
                 body={megasGastadosinBytesGeneralTemplate}
                 reorderable={true}
               /> */}
-              <Column
-                field="connectionsCounts"
-                header="Conexiones"
-                body={connectionsCountsBodyTemplate}
-                reorderable={true}
-              />
-                <Column field="urlReal" header="" body={urlBodyTemplate} />
                 <Column
-                  field="eliminar"
-                  header=""
-                  body={eliminarBodyTemplate}
+                  field="connectionsCounts"
+                  header="Conexiones"
+                  body={connectionsCountsBodyTemplate}
+                  reorderable={true}
                 />
+                <Column field="urlReal" header="" body={urlBodyTemplate} />
+
+                {Meteor.user().username == "carlosmbinf" && (
+                  <Column
+                    field="eliminar"
+                    header=""
+                    body={eliminarBodyTemplate}
+                  />
+                )}
               </DataTable>
             </div>
           </div>
