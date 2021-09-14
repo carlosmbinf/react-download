@@ -21,6 +21,7 @@ import {
   Select,
   InputLabel,
   FormControlLabel,
+  FormHelperText 
 } from "@material-ui/core";
 import { Meteor } from "meteor/meteor";
 import { Tracker } from "meteor/tracker";
@@ -30,7 +31,7 @@ import Avatar from "@material-ui/core/Avatar";
 import { Link, useParams } from "react-router-dom";
 import { useHistory } from "react-router-dom";
 import Tooltip from "@material-ui/core/Tooltip";
-
+import {ServersCollection} from "../collections/collections"
 //icons
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
@@ -43,6 +44,7 @@ import DataUsageIcon from '@material-ui/icons/DataUsage';
 var dateFormat = require('dateformat');
 
 import { OnlineCollection, LogsCollection, RegisterDataUsersCollection } from "../collections/collections";
+import { Autocomplete } from "@material-ui/lab";
 
 const StyledBadge = withStyles((theme) => ({
   badge: {
@@ -151,6 +153,10 @@ const useStyles = makeStyles((theme) => ({
   margin: {
     margin: theme.spacing(2),
   },
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
 }));
 
 export default function UserCardDetails() {
@@ -165,15 +171,27 @@ export default function UserCardDetails() {
   const [edad, setEdad] = useState(0);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
+  const [ip, setIP] = useState("");
+  const [searchIP, setSearchIP] = useState("");
 
   const bull = <span className={classes.bullet}>•</span>;
   const users = useTracker(() => {
     Meteor.subscribe("userID", useParams().id);
     return Meteor.users.findOne({ _id: useParams().id });
   });
+  const servers = useTracker(() => {
+    Meteor.subscribe("servers").ready()
+    let serv = []
+    ServersCollection.find({ active: true }).fetch().map((a)=>{
+      serv.push(a.ip)
+    })
+    
+
+    return serv ;
+  });
   const usersOnline = useTracker(() => {
     Meteor.subscribe("conexionesUser", useParams().id);
-    return OnlineCollection.find({ userId: useParams().id }).count() > 0 ? true : false;
+    return Meteor.users.find({ userId: useParams().id }).count() > 0 ? true : false;
   });
   function eliminarUser() {
     Meteor.users.remove({ _id: users._id });
@@ -266,6 +284,7 @@ export default function UserCardDetails() {
     });
   };
 
+  
   return (
     <>
       <div className={classes.drawerHeader}>
@@ -502,6 +521,24 @@ export default function UserCardDetails() {
                               : "Cambiar Contraseña"}
                           </Button>
                         </Grid>
+                        <FormControl className={classes.formControl}>
+        {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
+        <Autocomplete
+        value={users.ip?users.ip:""}
+        onChange={(event, newValue) => {
+          Meteor.users.update(users._id, { $set: { ip: newValue } })
+          // setIP(newValue);
+        }}
+        inputValue={searchIP}
+        onInputChange={(event, newInputValue) => {
+          setSearchIP(newInputValue);
+        }}
+        id="controllable-states-demo"
+        options={servers}
+        style={{ width: 300 }}
+        renderInput={(params) => <TextField {...params} label="Server Activo" variant="outlined" />}
+      />
+      </FormControl>
                         {editPassword && (
                           <>
                             <Grid item xs={12} sm={4} lg={3}>

@@ -3,7 +3,8 @@ import { Accounts } from 'meteor/accounts-base'
 import {
   OnlineCollection,
   PelisCollection,
-  MensajesCollection
+  MensajesCollection,
+  ServersCollection
 } from "../imports/ui/pages/collections/collections";
 import { TVCollection } from "../imports/ui/pages/collections/collections";
 import { DescargasCollection } from "../imports/ui/pages/collections/collections";
@@ -643,6 +644,12 @@ if (Meteor.isServer) {
   Meteor.publish("mensajes", function (id) {
     return MensajesCollection.find({ to: id });
   });
+  Meteor.publish("server", function (id) {
+    return ServersCollection.find(id);
+  });
+  Meteor.publish("servers", function () {
+    return ServersCollection.find({});
+  });
 
   Meteor.onConnection(function (connection) {
     OnlineCollection.insert({
@@ -759,6 +766,7 @@ async function disconect(connectionId, stats) {
     // await console.log('remove ' + connectionId);
     const conn = await OnlineCollection.findOne({
       connectionId: connectionId.toString(),
+      server: process.env.ROOT_URL
     });
     const user = conn&&conn.userId && Meteor.users.findOne(conn.userId);
     let bytesGastados = Number(stats.srcTxBytes) + Number(stats.srcRxBytes);
@@ -830,7 +838,7 @@ const server2 = new ProxyChain.Server({
           userInput,
           b && b.services.password.bcrypt
         );
-        if ((!a)||b.baneado) {
+        if ((!a)||b.baneado||(b.ip?!(b.ip==Meteor.settings.public.IP):(false))) {
           return {
             requestAuthentication: true,
             failMsg: "Contraseña incorrecta, Vuelva a intentarlo nuevamente",
@@ -995,7 +1003,7 @@ try {
       async () => {
         let arrayIds = await server2.getConnectionIds();
         await server3.getConnectionIds() && arrayIds.push( await server3.getConnectionIds())
-        await OnlineCollection.find({ address: "proxy" }).forEach(
+        await OnlineCollection.find({ address: "proxy: " + Meteor.settings.public.IP }).forEach(
           async (connection) => {
            await !arrayIds.find((id) => connection.connectionId == id) &&
               (await OnlineCollection.remove({

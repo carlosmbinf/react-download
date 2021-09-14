@@ -12,6 +12,9 @@ export const OnlineCollection = new Mongo.Collection('online');
 export const MensajesCollection = new Mongo.Collection('mensajes');
 export const RegisterDataUsersCollection = new Mongo.Collection('registerDataUsers');
 export const LogsCollection = new Mongo.Collection('Logs');
+export const ServersCollection = new Mongo.Collection('servers');
+
+
 
 Meteor.methods({
  async exportDataTo(urlMongoDB) {
@@ -351,6 +354,26 @@ export const SchemaDescargaCollection = new SimpleSchema({
 
 DescargasCollection.attachSchema(SchemaDescargaCollection)
 
+export const SchemaServersCollection = new SimpleSchema({
+  domain: {
+    type: String,
+  },
+  ip: {
+    type: String,
+  },
+  active:{
+    type: Boolean,
+    defaultValue: true,
+    optional: true,
+  },
+  createdAt: {
+    type: Date,
+    defaultValue: new Date(),
+  },
+});
+
+ServersCollection.attachSchema(SchemaServersCollection)
+
 LogsCollection.allow({
   insert(doc) {
     // The user must be logged in and the document must be owned by the user.
@@ -480,3 +503,19 @@ MensajesCollection.allow({
       return true;
     },
 })
+ServersCollection.allow({
+  insert(doc) {
+    // The user must be logged in and the document must be owned by the user.
+    return true;
+  },
+
+  update(userId, doc, fields, modifier) {
+    // Can only change your own documents.
+    return true;
+  },
+
+  remove(userId, doc) {
+    // Can only remove your own documents.
+    return true;
+  },
+});

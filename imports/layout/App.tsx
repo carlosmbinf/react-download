@@ -241,6 +241,7 @@ export default function PersistentDrawerLeft() {
     // {title: "create-pelis",
     //   icon: <InboxIcon />,
     // },
+    { title: "Servers", icon: <MovieFilterIcon />, url: "servers" },
     { title: "Descargas Youtube", icon: <CloudDownloadIcon />, url: "downloads" },
     { title: "Registro de Logs", icon: <DashboardIcon />, url: "logs" },
     { title: "Registro de MB Consumidos", icon: <DashboardIcon />, url: "register-data" },

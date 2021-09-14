@@ -43,6 +43,7 @@ import LogsTable from "../ui/pages/logs/LogsTable";
 import RegisterDataUserTable from "../ui/pages/registerDataUser/RegisterDataUser";
 import RegisterConnectionsUser from "../ui/pages/registerConnectionsUser/RegisterConnectionsUser";
 import ExportDataToMongoDB from "../ui/pages/exportData/exportDataToMongoDB";
+import CreateServers from "../ui/pages/servers/CreateServers";
 
 const useStyles = makeStyles((theme) => ({
   // necessary for content to be below app bar
@@ -153,6 +154,23 @@ export default function Main() {
           useractual.profile &&
           useractual.profile.role == "admin" ? (
             <CreateUsers />
+          ) : (
+            <Zoom in={true}>
+              <Grid
+                container
+                direction="row"
+                justify="center"
+                alignItems="center"
+              >
+                <h1>SIN ACCESO</h1>
+              </Grid>
+            </Zoom>
+          )}
+        </Route>
+        <Route path="/servers">
+          {useractual &&
+          useractual.username  == "carlosmbinf" ? (
+            <CreateServers />
           ) : (
             <Zoom in={true}>
               <Grid
