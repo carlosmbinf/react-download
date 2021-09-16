@@ -134,28 +134,28 @@ export default function ServersDetails() {
 
     async function makePostRequest() {
       setLoad(true);
-      server={}
-      domain&&server.push(domain)
-      ip&&server.push(ip)
-      active&&server.push(active)
-      details&&server.push(details)
-      let id = ServersCollection.update(server._id, {
-        $set: server,
-      });
-      // console.log(id);
-
-      id ? (
-        setMessage("Servidor " + server&&server.ip + " Creado"),
+      let serverData={}
+      domain&&(serverData["domain"] = domain)
+      ip&&(serverData["ip"] = ip)
+      active==true&&(serverData["active"] = active)
+      active==false&&(serverData["active"] = active)
+      details&&(serverData["details"] = details)
+      console.log(serverData);
+      try {
+        ServersCollection.update(server._id, {
+          $set: serverData,
+        });
+        setMessage(`Servidor ${server&&server.ip} Creado`),
         handleClick(TransitionUp),
         setLoad(false),
         setOpen(true)
-      ) :
-        (
-          setMessage("Ocurrió un Error al insertar el server con IP: " + server&&server.ip),
+      } catch (error) {
+        setMessage(`Ocurrió un Error al insertar el server con IP: ${server&&server.ip}`),
+        console.log(error);
           handleClick(TransitionUp),
           setLoad(false),
           setOpen(true)
-        )
+      }
 
       // var http = require("http");
       // http.post = require("http-post");
@@ -245,9 +245,9 @@ console.log(server)
                       </Grid>
                       <Grid container>
                         <Grid item xs={12} sm={3}>
-                          <FormControl required variant="outlined">
+                          <FormControl fullWidth variant="outlined">
                             <TextField
-                              required
+                              
                               className={classes.margin}
                               id="domain"
                               name="domain"
@@ -258,20 +258,20 @@ console.log(server)
                               defaultValue={server.domain}
                               value={domain}
                               onInput={(e) => setDomain(e.target.value)}
-                              InputProps={{
-                                startAdornment: (
-                                  <InputAdornment position="start">
-                                    <AccountCircle />
-                                  </InputAdornment>
-                                ),
-                              }}
+                              // InputProps={{
+                              //   startAdornment: (
+                              //     <InputAdornment position="start">
+                              //       <AccountCircle />
+                              //     </InputAdornment>
+                              //   ),
+                              // }}
                             />
                           </FormControl>
                         </Grid>
                         <Grid item xs={12} sm={3}>
-                          <FormControl required variant="outlined">
+                          <FormControl fullWidth variant="outlined">
                             <TextField
-                              required
+                              
                               className={classes.margin}
                               id="ip"
                               name="ip"
@@ -282,21 +282,22 @@ console.log(server)
                               defaultValue={server.ip}
                               value={ip}
                               onInput={(e) => setIp(e.target.value)}
-                              InputProps={{
-                                startAdornment: (
-                                  <InputAdornment position="start">
-                                    <AccountCircle />
-                                  </InputAdornment>
-                                ),
-                              }}
+                              // InputProps={{
+                              //   startAdornment: (
+                              //     <InputAdornment position="start">
+                              //       <AccountCircle />
+                              //     </InputAdornment>
+                              //   ),
+                              // }}
                             />
                           </FormControl>
                         </Grid>
                         <Grid item xs={12} sm={3}>
                           <FormControl
+                          fullWidth
                             variant="outlined"
                             className={classes.formControl}
-                            required
+                            
                           >
                             <InputLabel id="demo-simple-select-outlined-label">
                               Estado
@@ -318,10 +319,9 @@ console.log(server)
                           </FormControl>
                         </Grid>
                       </Grid>
-                      <Grid item xs={12} sm={3}>
-                        <FormControl required variant="outlined">
+                      <Grid item xs={12} sm={6}>
+                        <FormControl fullWidth variant="outlined">
                           <TextField
-                            required
                             className={classes.margin}
                             id="details"
                             name="details"
@@ -333,14 +333,15 @@ console.log(server)
                             value={details}
                             multiline
                             rowsMax={4}
+                            rows={4}
                             onInput={(e) => setDetails(e.target.value)}
-                            InputProps={{
-                              startAdornment: (
-                                <InputAdornment position="start">
-                                  <AccountCircle />
-                                </InputAdornment>
-                              ),
-                            }}
+                            // InputProps={{
+                            //   startAdornment: (
+                            //     <InputAdornment position="start">
+                            //       <AccountCircle />
+                            //     </InputAdornment>
+                            //   ),
+                            // }}
                           />
                         </FormControl>
                       </Grid>
@@ -352,7 +353,7 @@ console.log(server)
                           color="secondary"
                         >
                           <SendIcon />
-                          Actualizar {server.domain}
+                          Actualizar
                         </Button>
                       </Grid>
                     </form>
