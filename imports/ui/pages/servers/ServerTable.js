@@ -304,7 +304,7 @@ export default function ServerTable(option) {
             aria-label="delete"
             color="primary"
             onClick={() => {
-              history.push("/server/" + rowData.id);
+              history.push("/servers/" + rowData.id);
             }}
           >
             <ListAltIcon fontSize="large" />

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
@@ -79,16 +79,40 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function CreateServers() {
-  const [domain, setDomain] = useState("");
-  const [ip, setIp] = useState("");
-  const [active, setActive] = useState(true);
+export default function ServersDetails() {
+  
+  const [domain, setDomain] = useState();
+  const [ip, setIp] = useState();
+  const [active, setActive] = useState();
+  const [details, setDetails] = useState();
 
-  const [open, setOpen] = React.useState(false);
-  const [message, setMessage] = React.useState("");
-  const [transition, setTransition] = React.useState(undefined);
-  const [load, setLoad] = React.useState(false);
-  const [details, setDetails] = React.useState("");
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [transition, setTransition] = useState(undefined);
+  const [load, setLoad] = useState(false);
+  
+  const server = useTracker(() => {
+    Meteor.subscribe("server", useParams().id)
+    return ServersCollection.findOne(useParams().id)
+  });
+
+  // useEffect(() => {
+  //   console.log(useParams().id)
+  //   console.log(server);
+  //   server&&(
+  //   setDomain(server.domain),
+  //   setIp(server.ip),
+  //   setActive(server.active),
+  //   setDetails(server.details)
+  // )
+  // });
+  // Meteor.subscribe("server", useParams().id).ready&&(
+  //   setDomain(ServersCollection.findOne(useParams().id)&&ServersCollection.findOne(useParams().id).domain),
+  //   setIp(ServersCollection.findOne(useParams().id)&&ServersCollection.findOne(useParams().id).ip),
+  //   setActive(ServersCollection.findOne(useParams().id)&&ServersCollection.findOne(useParams().id).active),
+  //   setDetails(ServersCollection.findOne(useParams().id)&&ServersCollection.findOne(useParams().id).details)
+  // )
+   
 
   function TransitionUp(props) {
     return <Slide {...props} direction="up" />;
@@ -110,16 +134,24 @@ export default function CreateServers() {
 
     async function makePostRequest() {
       setLoad(true);
+      server={}
+      domain&&server.push(domain)
+      ip&&server.push(ip)
+      active&&server.push(active)
+      details&&server.push(details)
+      let id = ServersCollection.update(server._id, {
+        $set: server,
+      });
+      // console.log(id);
 
-      let id = ServersCollection.insert({domain, ip, active, details})
       id ? (
-        setMessage("Servidor " + ip + " Creado"),
+        setMessage("Servidor " + server&&server.ip + " Creado"),
         handleClick(TransitionUp),
         setLoad(false),
         setOpen(true)
       ) :
         (
-          setMessage("Ocurrió un Error al insertar el server con IP: " + ip),
+          setMessage("Ocurrió un Error al insertar el server con IP: " + server&&server.ip),
           handleClick(TransitionUp),
           setLoad(false),
           setOpen(true)
@@ -154,16 +186,16 @@ export default function CreateServers() {
 
 
   const classes = useStyles();
-
+console.log(server)
   return (
-    <>
+    server?<>
       <div className={classes.drawerHeader}>
         <IconButton
           color="primary"
           aria-label="delete"
           className={classes.margin}
         >
-          <Link to={"/users"}>
+          <Link to={"/servers"}>
             <ArrowBackIcon fontSize="large" color="secondary" />
           </Link>
         </IconButton>
@@ -182,6 +214,7 @@ export default function CreateServers() {
             TransitionComponent={transition}
             message={message}
             key={transition ? transition.name : ""}
+            style={{zIndex:1}}
           />
           {/* <Button onClick={handleClick(TransitionUp)}>Up</Button> */}
           <Grid container spacing={3}>
@@ -208,7 +241,7 @@ export default function CreateServers() {
                       autoComplete="true"
                     >
                       <Grid container className={classes.margin}>
-                        <h3>Agregar Server</h3>
+                        <h3>Actualizar Server</h3>
                       </Grid>
                       <Grid container>
                         <Grid item xs={12} sm={3}>
@@ -222,6 +255,7 @@ export default function CreateServers() {
                               variant="outlined"
                               color="secondary"
                               type="text"
+                              defaultValue={server.domain}
                               value={domain}
                               onInput={(e) => setDomain(e.target.value)}
                               InputProps={{
@@ -245,6 +279,7 @@ export default function CreateServers() {
                               variant="outlined"
                               color="secondary"
                               type="text"
+                              defaultValue={server.ip}
                               value={ip}
                               onInput={(e) => setIp(e.target.value)}
                               InputProps={{
@@ -272,7 +307,7 @@ export default function CreateServers() {
                               value={active}
                               onChange={(e) => setActive(e.target.value)}
                               label="Estado"
-                              defaultValue={true}
+                              defaultValue={server.active}
                             >
                               {/* <MenuItem value="">
                               <em>None</em>
@@ -283,17 +318,18 @@ export default function CreateServers() {
                           </FormControl>
                         </Grid>
                       </Grid>
-                      <Grid item xs={12}>
+                      <Grid item xs={12} sm={3}>
                         <FormControl required variant="outlined">
                           <TextField
                             required
                             className={classes.margin}
-                            id="deatils"
+                            id="details"
                             name="details"
                             label="Detalles del Server"
                             variant="outlined"
                             color="secondary"
                             type="text"
+                            defaultValue={server.details}
                             value={details}
                             multiline
                             rowsMax={4}
@@ -316,19 +352,19 @@ export default function CreateServers() {
                           color="secondary"
                         >
                           <SendIcon />
-                          Create
+                          Actualizar {server.domain}
                         </Button>
                       </Grid>
                     </form>
                   </Grid>
                   <Divider />
-                  <ServerTable />
+                  {/* <ServerTable /> */}
                 </Grid>
               </Grid>
             </Grid>
           </Grid>
         </Paper>
       </Rotate>
-    </>
+    </>:""
   );
 }

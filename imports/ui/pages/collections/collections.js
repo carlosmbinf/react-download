@@ -366,6 +366,11 @@ export const SchemaServersCollection = new SimpleSchema({
     defaultValue: true,
     optional: true,
   },
+  details:{
+    type: String,
+    defaultValue: "",
+    optional:true
+  },
   createdAt: {
     type: Date,
     defaultValue: new Date(),

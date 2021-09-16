@@ -552,36 +552,15 @@ export default function UserCardDetails() {
                               : "Cambiar Contraseña"}
                           </Button>
                         </Grid>
-                        <FormControl className={classes.formControl}>
-                          {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
-                          <Autocomplete
-                            value={users.ip ? users.ip : ""}
-                            onChange={(event, newValue) => {
-                              Meteor.users.update(users._id, {
-                                $set: { ip: newValue },
-                              });
-                              // setIP(newValue);
-                            }}
-                            inputValue={searchIP}
-                            onInputChange={(event, newInputValue) => {
-                              setSearchIP(newInputValue);
-                            }}
-                            id="controllable-states-demo"
-                            options={servers}
-                            style={{ maxWidth: 300 }}
-                            renderInput={(params) => (
-                              <TextField
-                                {...params}
-                                label="Server Activo"
-                                variant="outlined"
-                              />
-                            )}
-                          />
-                        </FormControl>
+
                         {editPassword && (
                           <>
                             <Grid item xs={12} sm={4} lg={3}>
-                              <FormControl required variant="outlined">
+                              <FormControl
+                                fullWidth
+                                required
+                                variant="outlined"
+                              >
                                 <TextField
                                   fullWidth
                                   required
@@ -607,7 +586,11 @@ export default function UserCardDetails() {
                               </FormControl>
                             </Grid>
                             <Grid item xs={12} sm={4} lg={3}>
-                              <FormControl required variant="outlined">
+                              <FormControl
+                                fullWidth
+                                required
+                                variant="outlined"
+                              >
                                 <TextField
                                   fullWidth
                                   required
@@ -642,6 +625,35 @@ export default function UserCardDetails() {
                             </Grid>
                           </>
                         )}
+                        <Grid item xs={12} sm={4}>
+                          <FormControl fullWidth>
+                            {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
+                            <Autocomplete
+                              fullWidth
+                              value={users.ip ? users.ip : ""}
+                              onChange={(event, newValue) => {
+                                Meteor.users.update(users._id, {
+                                  $set: { ip: newValue },
+                                });
+                                // setIP(newValue);
+                              }}
+                              inputValue={searchIP}
+                              className={classes.margin}
+                              onInputChange={(event, newInputValue) => {
+                                setSearchIP(newInputValue);
+                              }}
+                              id="controllable-states-demo"
+                              options={servers}
+                              renderInput={(params) => (
+                                <TextField
+                                  {...params}
+                                  label="Server Activo"
+                                  variant="outlined"
+                                />
+                              )}
+                            />
+                          </FormControl>
+                        </Grid>
                         <Grid container className={classes.margin}>
                           Datos Personales
                         </Grid>
@@ -804,62 +816,105 @@ export default function UserCardDetails() {
                       alignItems="center"
                     >
                       {Meteor.user().username == "carlosmbinf" && (
-                        <IconButton onClick={eliminarUser} aria-label="delete">
-                          <DeleteIcon color="primary" fontSize="large" />
-                        </IconButton>
+                        <Grid
+                          item
+                          xs={12}
+                          sm={4}
+                          style={{ textAlign: "center" }}
+                        >
+                          <IconButton
+                            onClick={eliminarUser}
+                            aria-label="delete"
+                          >
+                            <DeleteIcon color="primary" fontSize="large" />
+                          </IconButton>
+                        </Grid>
                       )}
-                      <Button
-                        color={edit ? "secondary" : "primary"}
-                        variant="contained"
-                        onClick={handleEdit}
-                      >
-                        {edit ? "Cancelar Edición" : "Editar"}
-                      </Button>
+                      <Grid item xs={12} sm={4} style={{ textAlign: "center" }}>
+                        <Button
+                          color={edit ? "secondary" : "primary"}
+                          variant="contained"
+                          onClick={handleEdit}
+                        >
+                          {edit ? "Cancelar Edición" : "Editar"}
+                        </Button>
+                      </Grid>
                       {edit ? (
                         <>
-                          <Tooltip
-                            title={
-                              users.baneado
-                                ? "Desbloquear al Usuario"
-                                : "Bloquear al Usuario"
-                            }
+                          <Grid
+                            item
+                            xs={12}
+                            sm={4}
+                            style={{ textAlign: "center", padding:3}}
                           >
-                            <Button
-                              onClick={handleChangebaneado}
-                              variant="contained"
-                              color={users.baneado ? "secondary" : "primary"}
-                            >
-                              {users.baneado ? "Desbloquear" : "Bloquear"}
-                            </Button>
-                          </Tooltip>
-
-                          <Button
-                            disabled={users.megasGastadosinBytes == 0}
-                            onClick={handleReiniciarConsumo}
-                            variant="contained"
-                            color={"secondary"}
-                          >
-                            {users.megasGastadosinBytes == 0
-                              ? "Sin consumo de Datos"
-                              : "Reiniciar Consumo de Datos"}
-                          </Button>
+                            <Grid container>
+                              <Grid
+                                item
+                                xs={12}
+                                lg={5}
+                                style={{ textAlign: "center" , padding:3 }}
+                              >
+                                <Tooltip
+                                  title={
+                                    users.baneado
+                                      ? "Desbloquear al Usuario"
+                                      : "Bloquear al Usuario"
+                                  }
+                                >
+                                  <Button
+                                    onClick={handleChangebaneado}
+                                    variant="contained"
+                                    color={
+                                      users.baneado ? "secondary" : "primary"
+                                    }
+                                  >
+                                    {users.baneado ? "Desbloquear" : "Bloquear"}
+                                  </Button>
+                                </Tooltip>
+                              </Grid>
+                              <Grid
+                                item
+                                xs={12}
+                                lg={7}
+                                style={{ textAlign: "center", padding:3 }}
+                              >
+                                <Button
+                                  disabled={users.megasGastadosinBytes == 0}
+                                  onClick={handleReiniciarConsumo}
+                                  variant="contained"
+                                  color={"secondary"}
+                                >
+                                  {users.megasGastadosinBytes == 0
+                                    ? "Sin consumo de Datos"
+                                    : "Reiniciar Consumo de Datos"}
+                                </Button>
+                              </Grid>
+                            </Grid>
+                          </Grid>
                         </>
                       ) : (
                         Meteor.user().username == "carlosmbinf" && (
-                          <Tooltip
-                            title={
-                              users.profile.role == "admin"
-                                ? "Cambiar a user"
-                                : "Cambiar a admin"
-                            }
+                          <Grid
+                            item
+                            xs={12}
+                            sm={4}
+                            style={{ textAlign: "center"}}
                           >
-                            <Switch
-                              checked={users.profile.role == "admin"}
-                              onChange={handleChange}
-                              name="Roles"
-                              color="primary"
-                            />
-                          </Tooltip>
+                            <Tooltip
+                              title={
+                                users.profile.role == "admin"
+                                  ? "Cambiar a user"
+                                  : "Cambiar a admin"
+                              }
+                            >
+                              <Switch
+                                checked={users.profile.role == "admin"}
+                                onChange={handleChange}
+                                name="Roles"
+                                color="primary"
+                              />
+                            </Tooltip>
+                          </Grid>
                         )
                       )}
                     </Grid>
