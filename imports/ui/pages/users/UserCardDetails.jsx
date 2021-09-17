@@ -887,6 +887,7 @@ export default function UserCardDetails() {
                           style={{ textAlign: "center" }}
                         >
                           <IconButton
+                          disabled
                             onClick={eliminarUser}
                             aria-label="delete"
                           >

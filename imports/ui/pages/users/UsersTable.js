@@ -372,7 +372,7 @@ export default function UsersTable(option) {
   };
   
   
-  const eliminarVideo = (id) => {
+  const eliminarUser = (id) => {
     Meteor.users.remove(id);
   };
   const eliminarBodyTemplate = (rowData) => {
@@ -383,10 +383,11 @@ export default function UsersTable(option) {
           title={"Eliminar a " + rowData.name}
         >
           <IconButton
+          disabled
             aria-label="delete"
             color="primary"
             onClick={() => {
-              eliminarVideo(rowData.id);
+              eliminarUser(rowData.id);
             }}
           >
             <DeleteIcon fontSize="large" />
