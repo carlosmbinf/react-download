@@ -145,7 +145,7 @@ export default function ServersDetails() {
         ServersCollection.update(server._id, {
           $set: serverData,
         });
-        setMessage(`Servidor ${server&&server.ip} Creado`),
+        setMessage(`Servidor ${server&&server.ip} Actualizado`),
         handleClick(TransitionUp),
         setLoad(false),
         setOpen(true)
@@ -186,7 +186,6 @@ export default function ServersDetails() {
 
 
   const classes = useStyles();
-console.log(server)
   return (
     server?<>
       <div className={classes.drawerHeader}>

@@ -79,7 +79,8 @@ if (Meteor.isServer) {
     console.log("ROOT_URL: " + process.env.ROOT_URL);
     console.log("MONGO_URL: " + process.env.MONGO_URL);
 
-    OnlineCollection.remove({});
+    OnlineCollection.remove({address: `proxy ${Meteor.settings.public.IP}`});
+    OnlineCollection.remove({address: `127.0.0.1`});
 
     ServiceConfiguration.configurations.remove({
       service: "facebook",
@@ -123,7 +124,7 @@ if (Meteor.isServer) {
   const send = require('gmail-send')({
     user: 'carlosmbinf@gmail.com',
     pass: 'Lastunas@123',
-    to:   'carlosmbinf@gmail.com',
+    to:   'carlosmbinf9405@icloud.com',
     subject: 'VidKar Reporte',
   });
   try {

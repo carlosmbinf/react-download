@@ -77,10 +77,12 @@ const StyledBadge = withStyles((theme) => ({
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    minWidth: 300,
-    maxWidth: "100%",
     borderRadius: 20,
     padding: "2em",
+    borderColor: '#f50057',
+    borderWidth: 13,
+    borderStyle: 'groove',
+    margin: 20,
   },
   primary: {
     // minWidth: 370,
@@ -173,6 +175,7 @@ export default function UserCardDetails() {
   const [email, setEmail] = useState("");
   const [ip, setIP] = useState("");
   const [searchIP, setSearchIP] = useState("");
+  const [megas, setMegas] = useState();
 
   const bull = <span className={classes.bullet}>•</span>;
   const users = useTracker(() => {
@@ -229,6 +232,27 @@ export default function UserCardDetails() {
 
   }
 
+  function handleLimite(event) {
+    event.preventDefault();
+
+    // You should see email and password in console.
+    // ..code to submit form to backend here...
+    try {
+      megas>=0 ? 
+      Meteor.users.update(users._id, { $set: { megas: megas } }) : console.log('no se inserto nada');
+      LogsCollection.insert({
+        type: 'Megas',
+        userAfectado: users._id,
+        userAdmin: Meteor.userId(),
+        message:
+          `Ha sido Cambiado el consumo de Datos a: ${megas}MB`,
+        createdAt: new Date(),
+      });
+    } catch (error) {
+      
+    }
+    
+  } 
   const handleEdit = (event) => {
     setEdit(!edit);
   };
@@ -256,11 +280,11 @@ export default function UserCardDetails() {
       },
     });
     LogsCollection.insert({
-      type: 'Reinicio del Consumo de Datos',
+      type: 'Reinicio',
       userAfectado: users._id,
       userAdmin: Meteor.userId(),
       message:
-        "Ha sido Reiniciado el consumo de Datos por un Admin",
+        `Ha sido Reiniciado el consumo de Datos por ${users.profile.firstName} ${users.profile.lastName}`,
       createdAt: new Date(),
     });
     alert('Se reinicio los datos de ' + users.profile.firstName)
@@ -326,20 +350,13 @@ export default function UserCardDetails() {
                       </Grid>
                     </Grid>
                     <Grid item xs={12}>
-                      <form
-                        action="/hello"
-                        method="post"
-                        className={classes.root}
-                        onSubmit={handleSubmit}
-                        // noValidate
-                        autoComplete="true"
-                      >
+                      
                         <Grid container className={classes.margin}>
                           Datos del Usuario
                         </Grid>
                         <Grid
                           container
-                          spacing={3}
+                          // spacing={3}
                           style={{ paddingBottom: 20 }}
                         >
                           <Grid item xs={12} lg={3}>
@@ -393,169 +410,33 @@ export default function UserCardDetails() {
                               />
                             </FormControl>
                           </Grid>
-                          {Meteor.user().profile.role == "admin" &&
-                            !(users.profile.role == "admin") && (
-                              <>
-                                {users.isIlimitado && (
-                                  <Grid item xs={12}>
-                                    <FormControl variant="outlined">
-                                      <TextField
-                                        fullWidth
-                                        className={classes.margin}
-                                        id="fechaSubscripcion"
-                                        name="fechaSubscripcion"
-                                        label="Fecha Limite"
-                                        variant="outlined"
-                                        color="secondary"
-                                        type="date"
-                                        value={dateFormat(
-                                          new Date(
-                                            users.fechaSubscripcion
-                                              ? users.fechaSubscripcion
-                                              : new Date()
-                                          ),
-                                          "yyyy-mm-dd",
-                                          true,
-                                          true
-                                        )}
-                                        onInput={(e) => {
-                                          Meteor.users.update(users._id, {
-                                            $set: {
-                                              fechaSubscripcion: e.target.value
-                                                ? new Date(e.target.value)
-                                                : "",
-                                              baneado: e.target.value
-                                                ? false
-                                                : users.baneado,
-                                            },
-                                          });
-                                          e.target.value &&
-                                            LogsCollection.insert({
-                                              type: "Fecha Limite Proxy",
-                                              userAfectado: users._id,
-                                              userAdmin: Meteor.userId(),
-                                              message:
-                                                "La Fecha Limite del Proxy se cambió para: " +
-                                                dateFormat(
-                                                  new Date(e.target.value),
-                                                  "yyyy-mm-dd",
-                                                  true,
-                                                  true
-                                                ),
-                                              createdAt: new Date(),
-                                            });
-                                          e.target.value &&
-                                            LogsCollection.insert({
-                                              type: "Desbloqueado",
-                                              userAfectado: users._id,
-                                              userAdmin: Meteor.userId(),
-                                              message:
-                                                "Ha sido Desbloqueado por un Admin",
-                                              createdAt: new Date(),
-                                            });
-                                        }}
-                                      />
-                                    </FormControl>
-                                  </Grid>
-                                )}
-                                {!users.isIlimitado && (
-                                  <Grid item xs={12}>
-                                    <FormControl variant="outlined">
-                                      <TextField
-                                        fullWidth
-                                        className={classes.margin}
-                                        id="megas"
-                                        name="megas"
-                                        label="Megas"
-                                        type="number"
-                                        variant="outlined"
-                                        color="secondary"
-                                        value={users.megas ? users.megas : 0}
-                                        onInput={(e) =>
-                                          Meteor.users.update(users._id, {
-                                            $set: {
-                                              megas: e.target.value,
-                                            },
-                                          })
-                                        }
-                                        InputProps={{
-                                          startAdornment: (
-                                            <InputAdornment position="start">
-                                              <AccountCircleIcon />
-                                            </InputAdornment>
-                                          ),
-                                        }}
-                                      />
-                                    </FormControl>
-                                  </Grid>
-                                )}
-
-                                <Grid
-                                  item
-                                  xs={12}
-                                  style={{
-                                    display: "flex",
-                                    justifyContent: "left",
-                                    alignItems: "center",
-                                  }}
-                                >
-                                  <FormControlLabel
-                                    control={
-                                      <Tooltip
-                                        title={
-                                          users.isIlimitado
-                                            ? "Cambiar consumo por MB"
-                                            : "Cambiar consumo por Fecha"
-                                        }
-                                      >
-                                        <Switch
-                                          checked={users.isIlimitado}
-                                          onChange={() => {
-                                            Meteor.users.update(users._id, {
-                                              $set: {
-                                                isIlimitado: !users.isIlimitado,
-                                              },
-                                            });
-                                          }}
-                                          name="Ilimitado"
-                                          color={
-                                            users.isIlimitado
-                                              ? "secondary"
-                                              : "primary"
-                                          }
-                                        />
-                                      </Tooltip>
-                                    }
-                                    label={
-                                      users.isIlimitado
-                                        ? "Limitado por Fecha"
-                                        : "Puede Consumir " +
-                                          (users.megas ? users.megas : 0) +
-                                          " MB"
-                                    }
-                                  />
-                                  {/* <FormControlLabel variant="outlined" label="Primary">
-                                  
-                                </FormControlLabel> */}
-                                </Grid>
-                              </>
-                            )}
+                          <Grid item xs={12}>
+                        <Divider className={classes.padding10} />
+                        <Grid container className={classes.margin}>
+                          Contraseña
                         </Grid>
-                        <Grid item xs={12}>
                           <Button
                             color={editPassword ? "secondary" : "primary"}
                             variant="contained"
                             onClick={handleEditPassword}
                           >
                             {editPassword
-                              ? "Cancelar Cambio de Contraseña"
-                              : "Cambiar Contraseña"}
+                              ? "Cancelar"
+                              : "Cambiar"}
                           </Button>
+                          
                         </Grid>
 
                         {editPassword && (
-                          <>
-                            <Grid item xs={12} sm={4} lg={3}>
+                          <form
+                          action="/hello"
+                          method="post"
+                          className={classes.root}
+                          onSubmit={handleSubmit}
+                          // noValidate
+                          autoComplete="true"
+                        >
+                            <Grid item xs={12} sm={10}>
                               <FormControl
                                 fullWidth
                                 required
@@ -585,7 +466,8 @@ export default function UserCardDetails() {
                                 />
                               </FormControl>
                             </Grid>
-                            <Grid item xs={12} sm={4} lg={3}>
+                            
+                            <Grid item xs={12} sm={10}>
                               <FormControl
                                 fullWidth
                                 required
@@ -623,41 +505,16 @@ export default function UserCardDetails() {
                                 Send
                               </Button>
                             </Grid>
-                          </>
+                        </form>
                         )}
-                        <Grid item xs={12} sm={4}>
-                          <FormControl fullWidth>
-                            {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
-                            <Autocomplete
-                              fullWidth
-                              value={users.ip ? users.ip : ""}
-                              onChange={(event, newValue) => {
-                                Meteor.users.update(users._id, {
-                                  $set: { ip: newValue },
-                                });
-                                // setIP(newValue);
-                              }}
-                              inputValue={searchIP}
-                              className={classes.margin}
-                              onInputChange={(event, newInputValue) => {
-                                setSearchIP(newInputValue);
-                              }}
-                              id="controllable-states-demo"
-                              options={servers}
-                              renderInput={(params) => (
-                                <TextField
-                                  {...params}
-                                  label="Server Activo"
-                                  variant="outlined"
-                                />
-                              )}
-                            />
-                          </FormControl>
-                        </Grid>
-                        <Grid container className={classes.margin}>
-                          Datos Personales
-                        </Grid>
                         <Grid container spacing={3}>
+                          <Grid item xs={12}> <Divider className={classes.padding10} /></Grid>
+
+                          <Grid container className={classes.margin}>
+
+
+                            Datos Personales
+                          </Grid>
                           <Grid item xs={12} sm={4} lg={3}>
                             <FormControl variant="outlined">
                               <TextField
@@ -717,7 +574,214 @@ export default function UserCardDetails() {
                             </FormControl>
                           </Grid>
                         </Grid>
-                      </form>
+                        {Meteor.user().profile.role == "admin" &&
+                          !(users.profile.role == "admin") && (
+                            <>
+                            <Grid container className={classes.margin}>
+                              Limites
+                            </Grid>
+                                {users.isIlimitado && (
+                                  <Grid item xs={12} >
+                                    <Divider className={classes.padding10} />
+                                    <FormControl variant="outlined">
+                                      <TextField
+                                        fullWidth
+                                        className={classes.margin}
+                                        id="fechaSubscripcion"
+                                        name="fechaSubscripcion"
+                                        label="Fecha Limite"
+                                        variant="outlined"
+                                        color="secondary"
+                                        type="date"
+                                        value={dateFormat(
+                                          new Date(
+                                            users.fechaSubscripcion
+                                              ? users.fechaSubscripcion
+                                              : new Date()
+                                          ),
+                                          "yyyy-mm-dd",
+                                          true,
+                                          true
+                                        )}
+                                        onInput={(e) => {
+                                          Meteor.users.update(users._id, {
+                                            $set: {
+                                              fechaSubscripcion: e.target.value
+                                                ? new Date(e.target.value)
+                                                : "",
+                                              baneado: e.target.value
+                                                ? false
+                                                : users.baneado,
+                                            },
+                                          });
+                                          e.target.value &&
+                                            LogsCollection.insert({
+                                              type: "Fecha Limite Proxy",
+                                              userAfectado: users._id,
+                                              userAdmin: Meteor.userId(),
+                                              message:
+                                                "La Fecha Limite del Proxy se cambió para: " +
+                                                dateFormat(
+                                                  new Date(e.target.value),
+                                                  "yyyy-mm-dd",
+                                                  true,
+                                                  true
+                                                ),
+                                              createdAt: new Date(),
+                                            });
+                                          e.target.value &&
+                                            LogsCollection.insert({
+                                              type: "Desbloqueado",
+                                              userAfectado: users._id,
+                                              userAdmin: Meteor.userId(),
+                                              message:
+                                                "Ha sido Desbloqueado por un Admin",
+                                              createdAt: new Date(),
+                                            });
+                                        }}
+                                      />
+                                  </FormControl>
+                                  
+                                </Grid>
+                                )}
+                                {!users.isIlimitado && (
+                              <Grid item xs={12}>
+                                <Divider className={classes.padding10} />
+                                <form
+                                  action="/limite"
+                                  method="post"
+                                  // className={classes.root}
+                                  onSubmit={handleLimite}
+                                  // noValidate
+                                  autoComplete="true"
+                                >
+                                  <Grid container>
+                                  <Grid item xs={8} sm={6} md={4} lg={3} className={classes.flex}>
+                                    <FormControl fullWidth variant="outlined">
+                                      <TextField
+                                        fullWidth
+                                        className={classes.margin}
+                                        id="megas"
+                                        name="megas"
+                                        label="Megas"
+                                        type="number"
+                                        variant="outlined"
+                                        color="secondary"
+                                        defaultValue={users.megas ? users.megas : 0}
+                                        value={megas}
+                                        onChange={(e) =>
+                                          setMegas(e.target.value)
+                                        }
+                                        InputProps={{
+                                          startAdornment: (
+                                            <InputAdornment position="start">
+                                              <AccountCircleIcon />
+                                            </InputAdornment>
+                                          ),
+                                        }}
+                                      />
+                                    </FormControl>
+                                  </Grid>
+
+                                  <Grid item xs={4} md={2} className={classes.flex} style={{alignSelf: 'center', textAlign: 'center'}}>
+                                    <Button
+                                      variant="contained"
+                                      type="submit"
+                                      color="secondary"
+                                    >
+                                      <SendIcon />
+                                    </Button>
+                                  </Grid>
+                                  </Grid>
+                                </form>
+                              </Grid>
+                                )}
+
+                                <Grid
+                                  item
+                                  xs={12}
+                                  style={{
+                                    display: "flex",
+                                    justifyContent: "left",
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  <FormControlLabel
+                                    control={
+                                      <Tooltip
+                                        title={
+                                          users.isIlimitado
+                                            ? "Cambiar consumo por MB"
+                                            : "Cambiar consumo por Fecha"
+                                        }
+                                      >
+                                        <Switch
+                                          checked={users.isIlimitado}
+                                          onChange={() => {
+                                            Meteor.users.update(users._id, {
+                                              $set: {
+                                                isIlimitado: !users.isIlimitado,
+                                              },
+                                            });
+                                          }}
+                                          name="Ilimitado"
+                                          color={
+                                            users.isIlimitado
+                                              ? "secondary"
+                                              : "primary"
+                                          }
+                                        />
+                                      </Tooltip>
+                                    }
+                                    label={
+                                      users.isIlimitado
+                                        ? "Limitado por Fecha"
+                                        : "Puede Consumir " +
+                                        (users.megas ? users.megas : 0) +
+                                        " MB"
+                                    }
+                                  />
+                                  {/* <FormControlLabel variant="outlined" label="Primary">
+                                  
+                                </FormControlLabel> */}
+                                </Grid>
+                              
+                            </>
+                          )}
+                      </Grid>
+
+                      <Divider className={classes.padding10} />
+                      <Grid item xs={12} sm={4}>
+                        <FormControl fullWidth>
+                          {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
+                          <Autocomplete
+                            fullWidth
+                            value={users.ip ? users.ip : ""}
+                            onChange={(event, newValue) => {
+                              Meteor.users.update(users._id, {
+                                $set: { ip: newValue },
+                              });
+                              // setIP(newValue);
+                            }}
+                            inputValue={searchIP}
+                            className={classes.margin}
+                            onInputChange={(event, newInputValue) => {
+                              setSearchIP(newInputValue);
+                            }}
+                            id="controllable-states-demo"
+                            options={servers}
+                            renderInput={(params) => (
+                              <TextField
+                                {...params}
+                                label="Server Activo"
+                                variant="outlined"
+                              />
+                            )}
+                          />
+                        </FormControl>
+                      </Grid>
+
+
                     </Grid>
                   </>
                 ) : (
@@ -733,8 +797,8 @@ export default function UserCardDetails() {
                           }
                           src={
                             users.services &&
-                            users.services.facebook &&
-                            users.services.facebook.picture.data.url
+                              users.services.facebook &&
+                              users.services.facebook.picture.data.url
                               ? users.services.facebook.picture.data.url
                               : "/"
                           }
@@ -770,8 +834,8 @@ export default function UserCardDetails() {
                           Megas Gastados:{" "}
                           {users.megasGastadosinBytes
                             ? Number.parseFloat(
-                                users.megasGastadosinBytes / 1000000
-                              ).toFixed(2)
+                              users.megasGastadosinBytes / 1000000
+                            ).toFixed(2)
                             : 0 + " MB"}
                         </Typography>
                       </Grid>
@@ -783,15 +847,15 @@ export default function UserCardDetails() {
                           {users.isIlimitado
                             ? users.fechaSubscripcion
                               ? dateFormat(
-                                  new Date(users.fechaSubscripcion),
-                                  "yyyy-mm-dd",
-                                  true,
-                                  true
-                                )
+                                new Date(users.fechaSubscripcion),
+                                "yyyy-mm-dd",
+                                true,
+                                true
+                              )
                               : "No esta establecida la fecha limite"
                             : users.megas
-                            ? users.megas + " MB"
-                            : " No esta establecido el Limite de Megas a consumir"}
+                              ? users.megas + " MB"
+                              : " No esta establecido el Limite de Megas a consumir"}
                         </Typography>
                       </Grid>
                     </Grid>
