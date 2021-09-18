@@ -79,7 +79,7 @@ if (Meteor.isServer) {
     console.log("ROOT_URL: " + process.env.ROOT_URL);
     console.log("MONGO_URL: " + process.env.MONGO_URL);
 
-   // OnlineCollection.remove({address: `proxy ${Meteor.settings.public.IP}`});
+    OnlineCollection.remove({});
    // OnlineCollection.remove({address: `127.0.0.1`});
 
     ServiceConfiguration.configurations.remove({
