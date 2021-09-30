@@ -50,6 +50,7 @@ import {
   OnlineCollection,
 } from "../collections/collections";
 import { useHistory } from "react-router-dom";
+import dateFormat from "dateformat";
 
 const StyledBadge = withStyles((theme) => ({
   badge: {
@@ -137,7 +138,7 @@ export default function UsersTable(option) {
   // });
   const statuses = ["ONLINE", "DISCONECTED"];
   const statusesRole = ["admin", "user"];
-  const statusesLimites = ["Ilimitado", "Megas" , "Fecha"];
+  const statusesLimites = ["Ilimitado", "Megas", "Fecha"];
   const statusesConProxy = ["true", "false"];
   const onStatusChange = (e) => {
     dt.current.filter(e.value, "online", "equals");
@@ -156,19 +157,19 @@ export default function UsersTable(option) {
     setSelectedConProxy(e.value);
   };
   const onlineItemTemplate = (option) => {
-    return <span className={`customer-badge`}><Chip onClick={()=>{}} color="primary" label={option} /></span>;
+    return <span className={`customer-badge`}><Chip onClick={() => { }} color="primary" label={option} /></span>;
     // ;
   };
   const roleItemTemplate = (option) => {
-    return <span className={`customer-badge`}><Chip onClick={()=>{}} color="primary" label={option} /></span>;
+    return <span className={`customer-badge`}><Chip onClick={() => { }} color="primary" label={option} /></span>;
     // ;
   };
   const limitesItemTemplate = (option) => {
-    return <span className={`customer-badge`}><Chip onClick={()=>{}} color="primary" label={option} /></span>;
+    return <span className={`customer-badge`}><Chip onClick={() => { }} color="primary" label={option} /></span>;
     // ;
   };
   const conProxyItemTemplate = (option) => {
-    return <span className={`customer-badge`}><Chip onClick={()=>{}} color="primary" label={option} /></span>;
+    return <span className={`customer-badge`}><Chip onClick={() => { }} color="primary" label={option} /></span>;
     // ;
   };
   const onlineFilter = (
@@ -220,8 +221,8 @@ export default function UsersTable(option) {
     Meteor.subscribe("conexiones");
     let a = [];
 
-    Meteor.users.find(option.selector?option.selector:{},{
-      sort: { megasGastadosinBytes : -1, 'profile.firstName' : 1 , 'profile.lastName' : 1 }
+    Meteor.users.find(option.selector ? option.selector : {}, {
+      sort: { megasGastadosinBytes: -1, 'profile.firstName': 1, 'profile.lastName': 1 }
     }).map(
       (data) =>
         data &&
@@ -241,8 +242,8 @@ export default function UsersTable(option) {
           edad: data.edad,
           foto:
             data.services &&
-            data.services.facebook &&
-            data.services.facebook.picture.data.url
+              data.services.facebook &&
+              data.services.facebook.picture.data.url
               ? data.services.facebook.picture.data.url
               : "/",
           online:
@@ -254,7 +255,13 @@ export default function UsersTable(option) {
           megasGastadosinBytes: data.megasGastadosinBytes,
           megasGastadosinBytesGeneral: data.megasGastadosinBytesGeneral,
           connectionsCounts: OnlineCollection.find({ userId: data._id }).count(),
-          limites: data.profile.role=='admin'?'Ilimitado':(data.isIlimitado?"Fecha":"Megas")
+          limites: data.profile.role == 'admin' ? 'Ilimitado' : (data.isIlimitado ? "Fecha" : "Megas"),
+          limiteData: data.profile.role == 'admin' ? 'Ilimitado' : (data.isIlimitado ? (data.fechaSubscripcion ? (dateFormat(
+            new Date(data.fechaSubscripcion),
+            "yyyy-mm-dd",
+            true,
+            true
+          )) : 'N/A') : (data.megas ? `${data.megas} MB` : 'N/A'))
         })
     );
 
@@ -275,6 +282,14 @@ export default function UsersTable(option) {
       </React.Fragment>
     );
   };
+  const limiteDataBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">Datos del Límite</span>
+        {rowData.limiteData}
+      </React.Fragment>
+    );
+  };
   const iDBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
@@ -288,6 +303,14 @@ export default function UsersTable(option) {
       <React.Fragment>
         <span className="p-column-title">Tipo de Limite</span>
         <Chip color="primary" label={rowData.limites} />
+      </React.Fragment>
+    );
+  };
+  const limiteBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">Tipo de Limite</span>
+        <Chip color="primary" label={rowData.limite} />
       </React.Fragment>
     );
   };
@@ -346,7 +369,7 @@ export default function UsersTable(option) {
     return (
       <React.Fragment>
         <span className="p-column-title">Con Proxy</span>
-        <Chip color={rowData.conProxy?"primary":"secondary"} label={rowData.conProxy?<CheckIcon/>:<BlockIcon/>} />
+        <Chip color={rowData.conProxy ? "primary" : "secondary"} label={rowData.conProxy ? <CheckIcon /> : <BlockIcon />} />
       </React.Fragment>
     );
   };
@@ -370,8 +393,8 @@ export default function UsersTable(option) {
       </React.Fragment>
     );
   };
-  
-  
+
+
   const eliminarUser = (id) => {
     Meteor.users.remove(id);
   };
@@ -383,7 +406,7 @@ export default function UsersTable(option) {
           title={"Eliminar a " + rowData.name}
         >
           <IconButton
-          disabled
+            disabled
             aria-label="delete"
             color="primary"
             onClick={() => {
@@ -422,7 +445,7 @@ export default function UsersTable(option) {
     return (
       <React.Fragment>
         <span className="p-column-title"></span>
-        {rowData.online=="ONLINE" ? (
+        {rowData.online == "ONLINE" ? (
           <StyledBadge
             overlap="circle"
             anchorOrigin={{
@@ -473,6 +496,8 @@ export default function UsersTable(option) {
                 rowsPerPageOptions={[5, 10, 20, 50, 100]}
                 paginatorLeft={paginatorLeft}
                 paginatorRight={paginatorRight}
+                reorderableColumns={true}
+                resizableColumns={true}
               >
                 <Column field="img" header="IMG" body={thumbnailBodyTemplate} />
                 {/* <Column
@@ -553,6 +578,15 @@ export default function UsersTable(option) {
                   header="Conexiones"
                   body={connectionsCountsBodyTemplate}
                   reorderable={true}
+                />
+                <Column
+                  field="limiteData"
+                  header="Datos del Límite"
+                  body={limiteDataBodyTemplate}
+                  reorderable={true}
+                  filter
+                  filterPlaceholder="Search"
+                  filterMatchMode="contains"
                 />
                 <Column field="urlReal" header="" body={urlBodyTemplate} />
 

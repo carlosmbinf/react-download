@@ -577,12 +577,12 @@ export default function UserCardDetails() {
                         {Meteor.user().profile.role == "admin" &&
                           !(users.profile.role == "admin") && (
                             <>
-                            <Grid container className={classes.margin}>
+                            <Grid item xs={12} className={classes.margin}>
+                            <Divider className={classes.padding10} />
                               Limites
                             </Grid>
                                 {users.isIlimitado && (
                                   <Grid item xs={12} >
-                                    <Divider className={classes.padding10} />
                                     <FormControl variant="outlined">
                                       <TextField
                                         fullWidth
@@ -607,7 +607,7 @@ export default function UserCardDetails() {
                                           Meteor.users.update(users._id, {
                                             $set: {
                                               fechaSubscripcion: e.target.value
-                                                ? new Date(e.target.value)
+                                                ? (new Date(e.target.value))
                                                 : "",
                                               baneado: e.target.value
                                                 ? false
@@ -621,8 +621,7 @@ export default function UserCardDetails() {
                                               userAdmin: Meteor.userId(),
                                               message:
                                                 "La Fecha Limite del Proxy se cambió para: " +
-                                                dateFormat(
-                                                  new Date(e.target.value),
+                                                dateFormat(e.target.value,
                                                   "yyyy-mm-dd",
                                                   true,
                                                   true
@@ -646,7 +645,6 @@ export default function UserCardDetails() {
                                 )}
                                 {!users.isIlimitado && (
                               <Grid item xs={12}>
-                                <Divider className={classes.padding10} />
                                 <form
                                   action="/limite"
                                   method="post"
@@ -950,8 +948,8 @@ export default function UserCardDetails() {
                                   color={"secondary"}
                                 >
                                   {users.megasGastadosinBytes == 0
-                                    ? "Sin consumo de Datos"
-                                    : "Reiniciar Consumo de Datos"}
+                                    ? "Sin Consumo/Datos"
+                                    : "Reiniciar Consumo/Datos"}
                                 </Button>
                               </Grid>
                             </Grid>
