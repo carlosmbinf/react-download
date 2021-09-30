@@ -766,8 +766,8 @@ async function disconect(connectionId, stats) {
   try {
     // await console.log('remove ' + connectionId);
     const conn = await OnlineCollection.findOne({
-      connectionId: connectionId.toString(),
-      server: process.env.ROOT_URL
+      connectionId: connectionId.toString()
+      // server: process.env.ROOT_URL
     });
     const user = conn&&conn.userId && Meteor.users.findOne(conn.userId);
     let bytesGastados = Number(stats.srcTxBytes) + Number(stats.srcRxBytes);
