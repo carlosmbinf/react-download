@@ -496,8 +496,8 @@ export default function UsersTable(option) {
                 rowsPerPageOptions={[5, 10, 20, 50, 100]}
                 paginatorLeft={paginatorLeft}
                 paginatorRight={paginatorRight}
-                reorderableColumns={true}
-                resizableColumns={true}
+                // reorderableColumns={true}
+                // resizableColumns={true}
               >
                 <Column field="img" header="IMG" body={thumbnailBodyTemplate} />
                 {/* <Column
