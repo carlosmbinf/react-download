@@ -586,6 +586,65 @@ if (Meteor.isServer) {
 
     res.end();
   });
+  
+
+  endpoint.route('/consulta')
+  .get(function (req, res) {
+    // this is GET /pet/:id
+    console.log(req.query);
+    let q = req.query?req.query:{}
+    res.setHeader('Content-Type', 'application/json')
+    res.end(JSON.stringify(Meteor.users.find(req.query).fetch()))
+  })
+  .post(function (req, res) {
+    // this is DELETE /pet/:id
+
+try {
+  let query = req.query.query?JSON.parse(req.query.query):{}
+let data = req.query.data?JSON.parse(req.query.data):{}
+
+console.log(query);
+console.log(data);
+
+
+    Meteor.users.update(
+      query,
+      { $set: data },
+      {
+        upsert: true,
+        multi: true
+      }
+    )
+
+
+    console.log(req.query);
+    res.end(JSON.stringify({
+      name: 'RESULTADO OK'
+    }))
+} catch (error) {
+  res.end(JSON.stringify({
+    error: `Error: ${error}`
+  }))
+}
+
+  })
+
+  endpoint.param('id', function (req, res, next, id) {
+    User.find(id, function (err, user) {
+      if (err) {
+        return next(err)
+      } else if (!user) {
+        return next(new Error('failed to load user'))
+      }
+      req.user = user
+   
+      // continue processing the request
+      next()
+    })
+  })
+
+
+
   WebApp.connectHandlers.use(bodyParser.urlencoded({ extended: true }));
   WebApp.connectHandlers.use(endpoint);
 
