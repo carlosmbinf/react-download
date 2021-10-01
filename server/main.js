@@ -610,7 +610,7 @@ console.log(query);
 console.log(data);
 
 
-    Meteor.users.update(
+  var update =  Meteor.users.update(
       query,
      {$set: data},
       {
@@ -618,10 +618,10 @@ console.log(data);
         upsert: true        
       }
     )
-
+console.log(update);
     // console.log(req.query);
     res.end(JSON.stringify({
-      name: 'RESULTADO OK'
+      result: update
     }))
 // } catch (error) {
 //   res.end(JSON.stringify({
