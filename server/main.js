@@ -588,7 +588,7 @@ if (Meteor.isServer) {
   });
   
 
-  endpoint.route('/consulta')
+  endpoint.route('/users')
   .get(function (req, res) {
     // this is GET /pet/:id
     console.log(req.query);
@@ -596,51 +596,39 @@ if (Meteor.isServer) {
     res.setHeader('Content-Type', 'application/json')
     res.end(JSON.stringify(Meteor.users.find(q).fetch()))
   })
+  
+
+  endpoint.route('/updateuser')
   .post(function (req, res) {
     // this is DELETE /pet/:id
 
-try {
-  let query = req.query.query?JSON.parse(req.query.query):{}
-let data = req.query.data?JSON.parse(req.query.data):{}
-
+// try {
+  let query = req.query.id?req.query.id:{}
+let data = req.query?req.query:{}
+delete data[0]
 console.log(query);
 console.log(data);
 
 
     Meteor.users.update(
       query,
-      data,
+     {$set: data},
       {
-        upsert: true,
-        multi: true
+        multi: true,
+        upsert: true        
       }
     )
 
-
-    console.log(req.query);
+    // console.log(req.query);
     res.end(JSON.stringify({
       name: 'RESULTADO OK'
     }))
-} catch (error) {
-  res.end(JSON.stringify({
-    error: `Error: ${error}`
-  }))
-}
+// } catch (error) {
+//   res.end(JSON.stringify({
+//     error: `Error: ${error}`
+//   }))
+// }
 
-  })
-
-  endpoint.param('id', function (req, res, next, id) {
-    User.find(id, function (err, user) {
-      if (err) {
-        return next(err)
-      } else if (!user) {
-        return next(new Error('failed to load user'))
-      }
-      req.user = user
-   
-      // continue processing the request
-      next()
-    })
   })
 
 
