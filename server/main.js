@@ -594,7 +594,7 @@ if (Meteor.isServer) {
     console.log(req.query);
     let q = req.query?req.query:{}
     res.setHeader('Content-Type', 'application/json')
-    res.end(JSON.stringify(Meteor.users.find(req.query).fetch()))
+    res.end(JSON.stringify(Meteor.users.find(q).fetch()))
   })
   .post(function (req, res) {
     // this is DELETE /pet/:id
@@ -609,7 +609,7 @@ console.log(data);
 
     Meteor.users.update(
       query,
-      { $set: data },
+      data,
       {
         upsert: true,
         multi: true
