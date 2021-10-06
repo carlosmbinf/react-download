@@ -588,7 +588,7 @@ if (Meteor.isServer) {
   });
   
 
-  endpoint.route('/users')
+  endpoint.route('/usersjson')
   .get(function (req, res) {
     // this is GET /pet/:id
     console.log(req.query);
