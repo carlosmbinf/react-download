@@ -150,6 +150,13 @@ if (Meteor.isServer) {
                 megasGastadosinBytesGeneral: user.megasGastadosinBytesGeneral,
                 fecha: new Date(),
               })
+              user.profile.role == 'admin' &&
+                Meteor.users.update(user._id, {
+                  $set: {
+                    megasGastadosinBytes: 0,
+                    megasGastadosinBytesGeneral: 0,
+                  },
+                })
               user.baneado == false && user.profile.role !== 'admin' &&
                 (Meteor.users.update(user._id, {
                   $set: {
