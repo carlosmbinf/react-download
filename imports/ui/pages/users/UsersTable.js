@@ -217,11 +217,11 @@ export default function UsersTable(option) {
     />
   );
   const usersRegister = useTracker(() => {
-    Meteor.subscribe("users");
+    Meteor.subscribe("users",option.selector ? option.selector : {});
     Meteor.subscribe("conexiones");
     let a = [];
 
-    Meteor.users.find(option.selector ? option.selector : {}, {
+    Meteor.users.find({}, {
       sort: { megasGastadosinBytes: -1, 'profile.firstName': 1, 'profile.lastName': 1 }
     }).map(
       (data) =>
