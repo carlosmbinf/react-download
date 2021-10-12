@@ -150,6 +150,13 @@ if (Meteor.isServer) {
                 megasGastadosinBytesGeneral: user.megasGastadosinBytesGeneral,
                 fecha: new Date(),
               })
+              user.profile.role == 'admin' &&
+                Meteor.users.update(user._id, {
+                  $set: {
+                    megasGastadosinBytes: 0,
+                    megasGastadosinBytesGeneral: 0,
+                  },
+                })
               user.baneado == false && user.profile.role !== 'admin' &&
                 (Meteor.users.update(user._id, {
                   $set: {
@@ -674,8 +681,8 @@ console.log(update);
   Meteor.publish("descarga", function (id) {
     return DescargasCollection.find({ _id: id });
   });
-  Meteor.publish("user", function () {
-    return Meteor.users.find({});
+  Meteor.publish("user", function (selector) {
+    return Meteor.users.find(selector?selector:{});
   });
   Meteor.publish("userID", function (id) {
     return Meteor.users.find({ _id: id });
@@ -1183,6 +1190,7 @@ Accounts.onCreateUser(function (options, user) {
     // user.username = options.firstName + options.lastName
     user.profile = profile;
     user.creadoPor = options.creadoPor;
+    user.bloqueadoDesbloqueadoPor = options.creadoPor;
     user.edad = options.edad;
     user.online = false;
     user.baneado = true;
@@ -1209,6 +1217,7 @@ Accounts.onCreateUser(function (options, user) {
         role: "user",
       }),
       (user.online = false),
+      (user.creadoPor = "Facebook"),
       (user.baneado = true));
   return user;
 });

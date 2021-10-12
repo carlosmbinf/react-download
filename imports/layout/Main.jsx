@@ -132,8 +132,24 @@ export default function Main() {
                 <UserCard withCreate="true" />
               </Grid>
               <Grid item xs={12}>
-                <UserCard />
-                <UsersTable />
+              <UserCard />
+                {useractual &&
+                useractual.profile &&
+                useractual.profile.role == "admin" ? (
+                    useractual.username == "carlosmbinf" ? <UsersTable /> : <UsersTable selector={{"bloqueadoDesbloqueadoPor": Meteor.userId()}}/>
+                  ) : (
+                    <Zoom in={true}>
+                    <Grid
+                      container
+                      direction="row"
+                      justify="center"
+                      alignItems="center"
+                    >
+                      <h1>SIN ACCESO</h1>
+                    </Grid>
+                  </Zoom>
+                )}
+                
               </Grid>
             </Grid>
           ) : (

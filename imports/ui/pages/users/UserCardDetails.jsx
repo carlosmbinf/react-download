@@ -175,6 +175,7 @@ export default function UserCardDetails() {
   const [email, setEmail] = useState("");
   const [ip, setIP] = useState("");
   const [searchIP, setSearchIP] = useState("");
+  const [searchAdmin, setSearchAdmin] = useState("");
   const [megas, setMegas] = useState();
 
   const bull = <span className={classes.bullet}>•</span>;
@@ -188,9 +189,17 @@ export default function UserCardDetails() {
     ServersCollection.find({ active: true }).fetch().map((a)=>{
       serv.push(a.ip)
     })
-    
+    return serv
+  });
+    const admins = useTracker(() => {
+      Meteor.subscribe("user",{"profile.role":"admin"}).ready()
+      let admins = []
+      Meteor.users.find({"profile.role":"admin"}).fetch().map((a)=>{
+        // admins.push({ value: a._id , text: `${a.profile.firstName} ${a.profile.lastName}`})
+        admins.push(a.username)
+      })
 
-    return serv ;
+    return admins ;
   });
   const usersOnline = useTracker(() => {
     Meteor.subscribe("conexionesUser", useParams().id);
@@ -747,38 +756,84 @@ export default function UserCardDetails() {
                             </>
                           )}
                       </Grid>
-
-                      <Divider className={classes.padding10} />
-                      <Grid item xs={12} sm={4}>
-                        <FormControl fullWidth>
-                          {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
-                          <Autocomplete
-                            fullWidth
-                            value={users.ip ? users.ip : ""}
-                            onChange={(event, newValue) => {
-                              Meteor.users.update(users._id, {
-                                $set: { ip: newValue },
-                              });
-                              // setIP(newValue);
-                            }}
-                            inputValue={searchIP}
-                            className={classes.margin}
-                            onInputChange={(event, newInputValue) => {
-                              setSearchIP(newInputValue);
-                            }}
-                            id="controllable-states-demo"
-                            options={servers}
-                            renderInput={(params) => (
-                              <TextField
-                                {...params}
-                                label="Server Activo"
-                                variant="outlined"
+                      {
+                        Meteor.user().profile.role == "admin" &&
+                        <>
+                          <Divider className={classes.padding10} />
+                          <h3>
+                            Conectarse por el Server:
+                          </h3>
+                          <Grid item xs={12} sm={4}>
+                            <FormControl fullWidth>
+                              {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
+                              <Autocomplete
+                                fullWidth
+                                value={users.ip ? users.ip : ""}
+                                onChange={(event, newValue) => {
+                                  Meteor.users.update(users._id, {
+                                    $set: { ip: newValue },
+                                  });
+                                  // setIP(newValue);
+                                }}
+                                inputValue={searchIP}
+                                className={classes.margin}
+                                onInputChange={(event, newInputValue) => {
+                                  setSearchIP(newInputValue);
+                                }}
+                                id="controllable-states-demo"
+                                options={servers}
+                                renderInput={(params) => (
+                                  <TextField
+                                    {...params}
+                                    label="Server Activo"
+                                    variant="outlined"
+                                  />
+                                )}
                               />
-                            )}
-                          />
-                        </FormControl>
-                      </Grid>
-
+                            </FormControl>
+                          </Grid>
+                          {Meteor.user().username == users.username || users.username == 'carlosmbinf' ||
+                          <>
+                          <Divider className={classes.padding10} />
+                          <h3>
+                            Administrado por:
+                          </h3>
+                          <Grid item xs={12} sm={4}>
+                            <FormControl fullWidth>
+                              {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
+                              <Autocomplete
+                                fullWidth
+                                value={users.bloqueadoDesbloqueadoPor ? Meteor.users.findOne({_id:users.bloqueadoDesbloqueadoPor}).username  : ""}
+                                onChange={(event, newValue) => {
+                                  let admin = newValue != "" && Meteor.users.findOne({ username: newValue })
+                                  let valueId = newValue && admin && admin._id
+                                  valueId && Meteor.users.update(users._id, {
+                                    $set: { bloqueadoDesbloqueadoPor: valueId },
+                                  });
+                                  // setIP(newValue);
+                                }}
+                                inputValue={searchAdmin}
+                                className={classes.margin}
+                                onInputChange={(event, newInputValue) => {
+                                  setSearchAdmin(newInputValue);
+                                }}
+                                id="controllable-states-demo"
+                                options={admins}
+                                renderInput={(params) => (
+                                  <TextField
+                                    {...params}
+                                    label="Administrado por:"
+                                    variant="outlined"
+                                  />
+                                )}
+                              />
+                            </FormControl>
+                          </Grid>
+                          </>
+                          }
+                          
+                        </>
+                      }
 
                     </Grid>
                   </>
