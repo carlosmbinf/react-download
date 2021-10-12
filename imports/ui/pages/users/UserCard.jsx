@@ -136,7 +136,7 @@ export default function UserCard(withAdd) {
   const bull = <span className={classes.bullet}>•</span>;
 
   const users = useTracker(() => {
-    Meteor.subscribe("user");
+    Meteor.user().username=="carlosmbinf" &&  Meteor.subscribe("user",{"profile.role":"admin"});
     return Meteor.users.find({"profile.role":"admin"}, { fields: {} }).fetch();
   });
 
