@@ -251,6 +251,7 @@ export default function UsersTable(option) {
               ? "ONLINE"
               : "DISCONECTED",
           username: data.username,
+          creadoPor: data.creadoPor?`${Meteor.users.findOne(data.creadoPor).profile.firstName} ${Meteor.users.findOne(data.creadoPor).profile.lastName}`:"Facebook",
           conProxy: !data.baneado,
           megasGastadosinBytes: data.megasGastadosinBytes,
           megasGastadosinBytesGeneral: data.megasGastadosinBytesGeneral,
@@ -343,6 +344,14 @@ export default function UsersTable(option) {
       <React.Fragment>
         <span className="p-column-title">Email</span>
         {rowData.email}
+      </React.Fragment>
+    );
+  };
+  const creadoPorTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">Creado por:</span>
+        {rowData.creadoPor}
       </React.Fragment>
     );
   };
@@ -531,6 +540,14 @@ export default function UsersTable(option) {
                   body={usernameBodyTemplate}
                   filter
                   filterPlaceholder="UserName"
+                  filterMatchMode="contains"
+                />
+                <Column
+                  field="creadoPor"
+                  header="Creado Por"
+                  body={creadoPorTemplate}
+                  filter
+                  filterPlaceholder="Creado Por:"
                   filterMatchMode="contains"
                 />
                 <Column

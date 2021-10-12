@@ -1190,6 +1190,7 @@ Accounts.onCreateUser(function (options, user) {
     // user.username = options.firstName + options.lastName
     user.profile = profile;
     user.creadoPor = options.creadoPor;
+    user.bloqueadoDesbloqueadoPor = options.creadoPor;
     user.edad = options.edad;
     user.online = false;
     user.baneado = true;
@@ -1216,6 +1217,7 @@ Accounts.onCreateUser(function (options, user) {
         role: "user",
       }),
       (user.online = false),
+      (user.creadoPor = "Facebook"),
       (user.baneado = true));
   return user;
 });

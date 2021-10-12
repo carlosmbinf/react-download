@@ -19,7 +19,7 @@ import Carousel from "../../components/carousel/Carousel";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
 import PermContactCalendarRoundedIcon from "@material-ui/icons/PermContactCalendarRounded";
-import MailIcon from "@material-ui/icons/Mail";
+import DataSaverOnIcon from '@mui/icons-material/DataSaverOn';
 
 const StyledBadge = withStyles((theme) => ({
   badge: {
@@ -158,36 +158,7 @@ export default function UserCard(withAdd) {
                 >
                   <Grid container spacing={3}>
                     <Grid item xs={12}>
-                      <Grid container direction="row">
-                        <Grid item xs={12}>
-                          <AccountCircleIcon />
-                        <Typography color="textSecondary" noWrap>
-                          <strong>
-                            {usersGeneral.profile &&
-                              usersGeneral.profile.firstName}{" "}
-                            {usersGeneral.profile &&
-                              usersGeneral.profile.lastName}
-                          </strong>
-                        </Typography>
-                        </Grid>                        
-                      </Grid>
-                    </Grid>
-                   
-                    <Grid item xs={12}>
-                      <Grid container direction="row">
-                        <Grid item xs={12}>
-                          <MailIcon />
-                        <Typography color="textSecondary" noWrap>
-                          <strong>
-                            {usersGeneral.emails &&
-                              usersGeneral.emails[0].address}
-                          </strong>
-                        </Typography>
-                        </Grid>                        
-                      </Grid>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Grid container direction="row" justify="center">
+                    <Grid container direction="row" justify="center">
                         <Avatar
                           className={classes.large}
                           alt={
@@ -206,6 +177,37 @@ export default function UserCard(withAdd) {
                           }
                         />
                       </Grid>
+                      <Grid container direction="row">
+                        <Grid item xs={12}>
+                          {/* <AccountCircleIcon /> */}
+                          <br/>
+                        <Typography color="textSecondary" noWrap>
+                          <strong>
+                            {usersGeneral.profile &&
+                              usersGeneral.profile.firstName}{" "}
+                            {usersGeneral.profile &&
+                              usersGeneral.profile.lastName}
+                          </strong>
+                        </Typography>
+                        </Grid>                        
+                      </Grid>
+                    </Grid>
+                   
+                    <Grid item xs={12}>
+                      <Grid container direction="row">
+                        <Grid item xs={12}>
+                          <DataSaverOnIcon />
+                        <Typography color="textSecondary" noWrap>
+                          <strong>
+                            {usersGeneral.megasGastadosinBytes ?
+                              (usersGeneral.megasGastadosinBytes/1000000).toFixed(2) : 0} MB
+                          </strong>
+                        </Typography>
+                        </Grid>                        
+                      </Grid>
+                    </Grid>
+                    <Grid item xs={12}>
+                      
                       {/* <Divider className={classes.padding10} /> */}
                       <Grid container direction="row" justify="center">
                         <Typography

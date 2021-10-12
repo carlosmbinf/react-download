@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.8.4",
+    "@emotion/react": "^11.4.1",
+    "@emotion/styled": "^11.3.0",
     "@inovua/reactdatagrid-community": "^4.0.10",
     "@material-ui/core": "^4.11.0",
     "@material-ui/data-grid": "^4.0.0-alpha.9",
@@ -17,6 +19,8 @@
     "@material-ui/styles": "^4.10.0",
     "@material-ui/x-grid": "^4.0.0-alpha.9",
     "@material-ui/x-grid-data-generator": "^4.0.0-alpha.9",
+    "@mui/icons-material": "^5.0.3",
+    "@mui/material": "^5.0.3",
     "@ucipass/proxy": "^1.2.0",
     "accounts": "^0.2.1",
     "anychart-react": "^1.4.1",
