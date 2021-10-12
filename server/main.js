@@ -593,6 +593,53 @@ if (Meteor.isServer) {
 
     res.end();
   });
+  
+
+  endpoint.route('/users')
+  .get(function (req, res) {
+    // this is GET /pet/:id
+    console.log(req.query);
+    let q = req.query?req.query:{}
+    res.setHeader('Content-Type', 'application/json')
+    res.end(JSON.stringify(Meteor.users.find(q).fetch()))
+  })
+  
+
+  endpoint.route('/updateuser')
+  .post(function (req, res) {
+    // this is DELETE /pet/:id
+
+// try {
+  let query = req.query.id?req.query.id:{}
+let data = req.query?req.query:{}
+delete data[0]
+console.log(query);
+console.log(data);
+
+
+  var update =  Meteor.users.update(
+      query,
+     {$set: data},
+      {
+        multi: true,
+        upsert: true        
+      }
+    )
+console.log(update);
+    // console.log(req.query);
+    res.end(JSON.stringify({
+      result: update
+    }))
+// } catch (error) {
+//   res.end(JSON.stringify({
+//     error: `Error: ${error}`
+//   }))
+// }
+
+  })
+
+
+
   WebApp.connectHandlers.use(bodyParser.urlencoded({ extended: true }));
   WebApp.connectHandlers.use(endpoint);
 
