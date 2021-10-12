@@ -132,11 +132,11 @@ export default function Main() {
                 <UserCard withCreate="true" />
               </Grid>
               <Grid item xs={12}>
-                
+              <UserCard />
                 {useractual &&
                 useractual.profile &&
-                useractual.profile.role == "admin" ? (useractual &&
-                    useractual.username == "carlosmbinf" ? <UserCard /> : <UserCard selector={JSON.stringify(`{"bloqueadoDesbloqueadoPor": "${Meteor.userId()}"}`)}/>
+                useractual.profile.role == "admin" ? (
+                    useractual.username == "carlosmbinf" ? <UsersTable /> : <UsersTable selector={{"bloqueadoDesbloqueadoPor": Meteor.userId()}}/>
                   ) : (
                     <Zoom in={true}>
                     <Grid
