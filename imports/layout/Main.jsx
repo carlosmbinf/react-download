@@ -47,6 +47,7 @@ import CreateServers from "../ui/pages/servers/CreateServers";
 import ServersDetails from "../ui/pages/servers/ServersDetails";
 import CreatePrecios from "../ui/pages/precios/CreatePrecios";
 import PreciosTable from "../ui/pages/precios/PreciosTable";
+import VentasTable from "../ui/pages/ventas/VentasTable";
 
 const useStyles = makeStyles((theme) => ({
   // necessary for content to be below app bar
@@ -260,6 +261,43 @@ export default function Main() {
           )}
         </Route>
 
+        <Route path="/ventas/:id">
+          {useractual &&
+            useractual.username == "carlosmbinf" ? (
+              <VentasTable />
+          ) : (
+            <Zoom in={true}>
+              <Grid
+                container
+                direction="row"
+                justify="center"
+                alignItems="center"
+              >
+                <h1>SIN ACCESO</h1>
+              </Grid>
+            </Zoom>
+          )}
+        </Route>
+        <Route path="/ventas">
+          {useractual &&
+            useractual.username == "carlosmbinf" ? (
+            <>
+              {/* <CreatePrecios /> */}
+              <VentasTable />
+            </>
+          ) : (
+            <Zoom in={true}>
+              <Grid
+                container
+                direction="row"
+                justify="center"
+                alignItems="center"
+              >
+                <h1>SIN ACCESO</h1>
+              </Grid>
+            </Zoom>
+          )}
+        </Route>
         <Route path="/tv/:id">
           <TV />
         </Route>

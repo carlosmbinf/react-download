@@ -14,6 +14,7 @@ export const RegisterDataUsersCollection = new Mongo.Collection('registerDataUse
 export const LogsCollection = new Mongo.Collection('Logs');
 export const ServersCollection = new Mongo.Collection('servers');
 export const PreciosCollection = new Mongo.Collection('precios');
+export const VentasCollection = new Mongo.Collection('ventas');
 
 
 
@@ -173,6 +174,38 @@ export const SchemaRegisterDataUsersCollection = new SimpleSchema({
 });
 
 RegisterDataUsersCollection.attachSchema(SchemaRegisterDataUsersCollection);
+
+export const SchemaVentasCollection = new SimpleSchema({
+  adminId: {
+    type: String,
+    optional: false,
+  },
+  userId: {
+    type: String,
+    optional: false,
+  },
+  createdAt: {
+    type: Date,
+    defaultValue: new Date(),
+    optional: true,
+  },
+  cobrado: {
+    type: Boolean,
+    defaultValue: false,
+    optional: true,
+  },
+  precio: {
+    type: Number,
+    defaultValue: 0,
+    optional: true,
+  },
+  comentario: {
+    type: String,
+    optional: true,
+  },
+});
+
+VentasCollection.attachSchema(SchemaVentasCollection);
 
 export const SchemaPreciosCollection = new SimpleSchema({
   userId: {
