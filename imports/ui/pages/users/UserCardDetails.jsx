@@ -803,7 +803,7 @@ export default function UserCardDetails() {
                               {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
                               <Autocomplete
                                 fullWidth
-                                value={users.bloqueadoDesbloqueadoPor ? Meteor.users.findOne({_id:users.bloqueadoDesbloqueadoPor}).username  : ""}
+                                value={users.bloqueadoDesbloqueadoPor ? Meteor.users.findOne({_id:users.bloqueadoDesbloqueadoPor})&&Meteor.users.findOne({_id:users.bloqueadoDesbloqueadoPor}).username  : ""}
                                 onChange={(event, newValue) => {
                                   let admin = newValue != "" && Meteor.users.findOne({ username: newValue })
                                   let valueId = newValue && admin && admin._id

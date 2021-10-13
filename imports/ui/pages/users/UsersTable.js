@@ -251,7 +251,8 @@ export default function UsersTable(option) {
               ? "ONLINE"
               : "DISCONECTED",
           username: data.username,
-          creadoPor: data.creadoPor?`${Meteor.users.findOne(data.creadoPor).profile.firstName} ${Meteor.users.findOne(data.creadoPor).profile.lastName}`:"Facebook",
+          creadoPor: data.creadoPor=='Server'?"Server":(data.creadoPor?(`${Meteor.users.findOne(data.creadoPor)&&Meteor.users.findOne(data.creadoPor).profile.firstName} ${Meteor.users.findOne(data.creadoPor)&&Meteor.users.findOne(data.creadoPor).profile.lastName}`):"Facebook"),
+          administradoPor: data.bloqueadoDesbloqueadoPor?(Meteor.users.findOne(data.bloqueadoDesbloqueadoPor)?(`${Meteor.users.findOne(data.bloqueadoDesbloqueadoPor)&&Meteor.users.findOne(data.bloqueadoDesbloqueadoPor).profile.firstName} ${Meteor.users.findOne(data.bloqueadoDesbloqueadoPor)&&Meteor.users.findOne(data.bloqueadoDesbloqueadoPor).profile.lastName}`):"Carlos Medina"):"Carlos Medina",
           conProxy: !data.baneado,
           megasGastadosinBytes: data.megasGastadosinBytes,
           megasGastadosinBytesGeneral: data.megasGastadosinBytesGeneral,
@@ -352,6 +353,14 @@ export default function UsersTable(option) {
       <React.Fragment>
         <span className="p-column-title">Creado por:</span>
         {rowData.creadoPor}
+      </React.Fragment>
+    );
+  };
+  const administradoPorTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">Administrado por:</span>
+        {rowData.administradoPor}
       </React.Fragment>
     );
   };
@@ -550,6 +559,16 @@ export default function UsersTable(option) {
                   filterPlaceholder="Creado Por:"
                   filterMatchMode="contains"
                 />
+                {Meteor.user().username == "carlosmbinf" && (
+                <Column
+                  field="administradoPor"
+                  header="Administrado Por"
+                  body={administradoPorTemplate}
+                  filter
+                  filterPlaceholder="Creado Por:"
+                  filterMatchMode="contains"
+                />
+                )}
                 <Column
                   field="online"
                   header="ONLINE"

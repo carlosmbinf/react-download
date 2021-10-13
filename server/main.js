@@ -99,7 +99,7 @@ if (Meteor.isServer) {
         firstName: "Carlos",
         lastName: "Medina",
         role: "admin",
-        creadoPor: "N/A",
+        creadoPor: "Server",
         baneado: false,
         edad: 26,
       };
@@ -1190,7 +1190,7 @@ Accounts.onCreateUser(function (options, user) {
     // user.username = options.firstName + options.lastName
     user.profile = profile;
     user.creadoPor = options.creadoPor;
-    user.bloqueadoDesbloqueadoPor = options.creadoPor;
+    options.creadoPor == 'Server' || (user.bloqueadoDesbloqueadoPor = options.creadoPor);
     user.edad = options.edad;
     user.online = false;
     user.baneado = true;
