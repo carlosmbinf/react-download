@@ -4,7 +4,8 @@ import {
   OnlineCollection,
   PelisCollection,
   MensajesCollection,
-  ServersCollection
+  ServersCollection,
+  PreciosCollection
 } from "../imports/ui/pages/collections/collections";
 import { TVCollection } from "../imports/ui/pages/collections/collections";
 import { DescargasCollection } from "../imports/ui/pages/collections/collections";
@@ -704,6 +705,9 @@ console.log(update);
   });
   Meteor.publish("servers", function () {
     return ServersCollection.find({});
+  });
+  Meteor.publish("precios", function () {
+    return PreciosCollection.find({});
   });
 
   Meteor.onConnection(function (connection) {

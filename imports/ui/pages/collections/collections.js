@@ -13,6 +13,7 @@ export const MensajesCollection = new Mongo.Collection('mensajes');
 export const RegisterDataUsersCollection = new Mongo.Collection('registerDataUsers');
 export const LogsCollection = new Mongo.Collection('Logs');
 export const ServersCollection = new Mongo.Collection('servers');
+export const PreciosCollection = new Mongo.Collection('precios');
 
 
 
@@ -172,6 +173,39 @@ export const SchemaRegisterDataUsersCollection = new SimpleSchema({
 });
 
 RegisterDataUsersCollection.attachSchema(SchemaRegisterDataUsersCollection);
+
+export const SchemaPreciosCollection = new SimpleSchema({
+  userId: {
+    type: String,
+    optional: false,
+  },
+  createdAt: {
+    type: Date,
+    defaultValue: new Date(),
+    optional: true,
+  },
+  precio: {
+    type: Number,
+    defaultValue: 0,
+    optional: true,
+  },
+  fecha: {
+    type: Boolean,
+    defaultValue: false,
+    optional: true,
+  },
+  megas: {
+    type: Number,
+    defaultValue: 0,
+    optional: true,
+  },
+  comentario: {
+    type: String,
+    optional: true,
+  },
+});
+
+PreciosCollection.attachSchema(SchemaPreciosCollection);
 
 export const SchemaOnlineCollection = new SimpleSchema({
   address: {
@@ -510,6 +544,23 @@ MensajesCollection.allow({
 })
 ServersCollection.allow({
   insert(doc) {
+    // The user must be logged in and the document must be owned by the user.
+    return true;
+  },
+
+  update(userId, doc, fields, modifier) {
+    // Can only change your own documents.
+    return true;
+  },
+
+  remove(userId, doc) {
+    // Can only remove your own documents.
+    return true;
+  },
+});
+
+PreciosCollection.allow({
+  insert(userId,doc) {
     // The user must be logged in and the document must be owned by the user.
     return true;
   },

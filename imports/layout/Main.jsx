@@ -45,6 +45,8 @@ import RegisterConnectionsUser from "../ui/pages/registerConnectionsUser/Registe
 import ExportDataToMongoDB from "../ui/pages/exportData/exportDataToMongoDB";
 import CreateServers from "../ui/pages/servers/CreateServers";
 import ServersDetails from "../ui/pages/servers/ServersDetails";
+import CreatePrecios from "../ui/pages/precios/CreatePrecios";
+import PreciosTable from "../ui/pages/precios/PreciosTable";
 
 const useStyles = makeStyles((theme) => ({
   // necessary for content to be below app bar
@@ -219,6 +221,45 @@ export default function Main() {
             </Zoom>
           )}
         </Route>
+
+        <Route path="/precios/:id">
+          {useractual &&
+            useractual.username == "carlosmbinf" ? (
+            <CreatePrecios />
+          ) : (
+            <Zoom in={true}>
+              <Grid
+                container
+                direction="row"
+                justify="center"
+                alignItems="center"
+              >
+                <h1>SIN ACCESO</h1>
+              </Grid>
+            </Zoom>
+          )}
+        </Route>
+        <Route path="/precios">
+          {useractual &&
+            useractual.username == "carlosmbinf" ? (
+            <>
+              <CreatePrecios />
+              <PreciosTable />
+            </>
+          ) : (
+            <Zoom in={true}>
+              <Grid
+                container
+                direction="row"
+                justify="center"
+                alignItems="center"
+              >
+                <h1>SIN ACCESO</h1>
+              </Grid>
+            </Zoom>
+          )}
+        </Route>
+
         <Route path="/tv/:id">
           <TV />
         </Route>
