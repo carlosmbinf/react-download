@@ -113,7 +113,7 @@ export default function CreatePrecios() {
         createdAt,
         precio,
         fecha,
-        megas,
+        megas: fecha ? null : megas,
         comentario,
       };
       try {

@@ -21,8 +21,22 @@ import {
   Select,
   InputLabel,
   FormControlLabel,
-  FormHelperText 
+  FormHelperText ,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle
 } from "@material-ui/core";
+
+// import Button from '@mui/material/Button';
+// import TextField from '@mui/material/TextField';
+// import Dialog from '@mui/material/Dialog';
+// import DialogActions from '@mui/material/DialogActions';
+// import DialogContent from '@mui/material/DialogContent';
+// import DialogContentText from '@mui/material/DialogContentText';
+// import DialogTitle from '@mui/material/DialogTitle';
+
 import { Meteor } from "meteor/meteor";
 import { Tracker } from "meteor/tracker";
 import { useTracker } from "meteor/react-meteor-data";
@@ -31,7 +45,7 @@ import Avatar from "@material-ui/core/Avatar";
 import { Link, useParams } from "react-router-dom";
 import { useHistory } from "react-router-dom";
 import Tooltip from "@material-ui/core/Tooltip";
-import {ServersCollection} from "../collections/collections"
+import {ServersCollection, VentasCollection,PreciosCollection} from "../collections/collections"
 //icons
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
@@ -164,6 +178,7 @@ const useStyles = makeStyles((theme) => ({
 export default function UserCardDetails() {
   const history = useHistory();
   const classes = useStyles();
+  const [open, setOpen] = React.useState(false);
   var [edit, setEdit] = useState(false);
   var [editPassword, setEditPassword] = useState(false);
   const [password, setPassword] = useState("");
@@ -177,6 +192,7 @@ export default function UserCardDetails() {
   const [searchIP, setSearchIP] = useState("");
   const [searchAdmin, setSearchAdmin] = useState("");
   const [megas, setMegas] = useState();
+  const [mensaje, setMensaje] = useState("");
 
   const bull = <span className={classes.bullet}>•</span>;
   const users = useTracker(() => {
@@ -201,6 +217,11 @@ export default function UserCardDetails() {
 
     return admins ;
   });
+  const precios = useTracker(() => {
+    Meteor.subscribe("precios").ready()
+    
+  return PreciosCollection.find().fetch() ;
+});
   const usersOnline = useTracker(() => {
     Meteor.subscribe("conexionesUser", useParams().id);
     return Meteor.users.find({ userId: useParams().id }).count() > 0 ? true : false;
@@ -298,13 +319,26 @@ export default function UserCardDetails() {
     });
     alert('Se reinicio los datos de ' + users.profile.firstName)
   };
-  const handleChangebaneado = (event) => {
-    Meteor.users.update(users._id, {
+  const addVenta = () => {
+    // console.log(`Precio MEGAS ${precios}`);
+let validacion = false;
+
+    users.isIlimitado && (new Date() < new Date(users.fechaSubscripcion)) && (validacion = true)
+    users.isIlimitado || ((users.megasGastadosinBytes / 1000000) < users.megas) && (validacion = true)
+    
+    validacion || (
+      setMensaje("Revise los Límites del Usuario"),
+      handleClickOpen()
+)
+    // validacion = ((users.profile.role == "admin") ? true  : false);
+
+    users.baneado || 
+   ( Meteor.users.update(users._id, {
       $set: {
         baneado: users.baneado ? false : true,
         bloqueadoDesbloqueadoPor: Meteor.userId()
       },
-    });
+    }),
     LogsCollection.insert({
       type: !users.baneado ? "Bloqueado" : "Desbloqueado",
       userAfectado: users._id,
@@ -314,12 +348,66 @@ export default function UserCardDetails() {
         (!users.baneado ? "Bloqueado" : "Desbloqueado") +
         " por un Admin",
       createdAt: new Date(),
-    });
+    }))
+
+    validacion && users.baneado && (
+      Meteor.users.update(users._id, {
+        $set: {
+          baneado: users.baneado ? false : true,
+          bloqueadoDesbloqueadoPor: Meteor.userId()
+        },
+      }),
+      LogsCollection.insert({
+        type: !users.baneado ? "Bloqueado" : "Desbloqueado",
+        userAfectado: users._id,
+        userAdmin: Meteor.userId(),
+        message:
+          "Ha sido " +
+          (!users.baneado ? "Bloqueado" : "Desbloqueado") +
+          " por un Admin",
+        createdAt: new Date(),
+      }),
+      precios.map(precio => {
+
+        users.isIlimitado && precio.fecha && (VentasCollection.insert({
+          adminId: Meteor.userId(),
+          userId: users._id,
+          precio: precio.precio,
+          comentario: precio.comentario
+        }),
+          setMensaje(precio.comentario),
+          handleClickOpen()
+        )
+
+        // console.log("Precio MEGAS " + precio.megas);
+        // console.log("User MEGAS " + users.megas);
+        users.isIlimitado || (precio.megas == users.megas) && (
+          VentasCollection.insert({
+            adminId: Meteor.userId(),
+            userId: users._id,
+            precio: precio.precio,
+            comentario: precio.comentario
+          }),
+          setMensaje(precio.comentario),
+          handleClickOpen()
+        )
+      }));
+  }
+  const handleChangebaneado = (event) => {
+  addVenta();
+  };
+  const handleClickOpen = () => {
+    setOpen(true);
   };
 
-  
+  const handleClose = () => {
+    setOpen(false);
+  };
+ 
+
   return (
     <>
+      
       <div className={classes.drawerHeader}>
         <IconButton
           color="primary"
@@ -332,6 +420,26 @@ export default function UserCardDetails() {
           <ArrowBackIcon fontSize="large" color="secondary" />
         </IconButton>
       </div>
+      <Dialog open={open} >
+        <DialogTitle>Atención!!!</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {mensaje}
+          </DialogContentText>
+          {/* <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="Email Address"
+            // type="email"
+            fullWidth
+            variant="standard"
+          /> */}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>OK</Button>
+        </DialogActions>
+      </Dialog>
       <div className={classes.drawerItem}>
         {users && (
           <Zoom in={true}>
@@ -618,9 +726,9 @@ export default function UserCardDetails() {
                                               fechaSubscripcion: e.target.value
                                                 ? (new Date(e.target.value))
                                                 : "",
-                                              baneado: e.target.value
-                                                ? false
-                                                : users.baneado,
+                                              // baneado: e.target.value
+                                              //   ? false
+                                              //   : users.baneado,
                                             },
                                           });
                                           e.target.value &&

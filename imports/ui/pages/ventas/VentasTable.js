@@ -30,7 +30,7 @@ import "primereact/resources/themes/bootstrap4-dark-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import "primeflex/primeflex.css";
-import "./ventasTable.css";
+import "./VentasTable.css";
 import { Dropdown } from "primereact/dropdown";
 //icons
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
@@ -137,7 +137,7 @@ export default function VentasTable(option) {
   // });
 
   const ventas = useTracker(() => {
-    // Meteor.subscribe("users");
+    Meteor.subscribe("user");
     let a = [];
     Meteor.subscribe("ventas",option.selector?option.selector:{}).ready()&&   
 
@@ -148,8 +148,8 @@ export default function VentasTable(option) {
         data &&
         a.push({
           id: data._id,
-          adminId: Meteor.users().findOne(data.adminId)?Meteor.users().findOne(data.adminId).username:"N/A",
-          userId: Meteor.users().findOne(data.userId)?Meteor.users().findOne(data.userId).username:"N/A",
+          adminId: Meteor.users.findOne(data.adminId)?Meteor.users.findOne(data.adminId).username:"N/A",
+          userId: Meteor.users.findOne(data.userId)?Meteor.users.findOne(data.userId).username:"N/A",
           createdAt: data.createdAt&&data.createdAt.toString(),
           precio: data.precio&&data.precio,
           comentario: data.comentario&&data.comentario
@@ -185,7 +185,7 @@ export default function VentasTable(option) {
     return (
       <React.Fragment>
         <span className="p-column-title">Usuario:</span>
-        {Meteor.users().findOne(rowData.userId)&&Meteor.users().findOne(rowData.userId).username}
+        {rowData.userId}
       </React.Fragment>
     );
   };
@@ -294,19 +294,19 @@ export default function VentasTable(option) {
                   filterMatchMode="contains"
                 /> */}
                 <Column
-                  field="userId"
-                  header="Usuario"
-                  body={userIdBodyTemplate}
-                  filter
-                  filterPlaceholder="Usuario"
-                  filterMatchMode="contains"
-                />
-                <Column
                   field="adminId"
                   header="Admin"
                   body={adminIdBodyTemplate}
                   filter
                   filterPlaceholder="Admin"
+                  filterMatchMode="contains"
+                />
+                <Column
+                  field="userId"
+                  header="Usuario"
+                  body={userIdBodyTemplate}
+                  filter
+                  filterPlaceholder="Usuario"
                   filterMatchMode="contains"
                 />
                 <Column

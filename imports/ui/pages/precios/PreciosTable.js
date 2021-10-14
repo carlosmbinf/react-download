@@ -148,11 +148,11 @@ export default function PreciosTable(option) {
         data &&
         a.push({
           id: data._id,
-          createdAt: data.createdAt&&data.createdAt.toString(),
-          precio: data.precio&&data.precio,
-          fecha: data.fecha&&data.fecha,
-          megas: data.megas&&data.megas,
-          comentario: data.comentario&&data.comentario
+          createdAt: data.createdAt && data.createdAt.toString(),
+          precio: data.precio && data.precio,
+          fecha: data.fecha && data.fecha,
+          megas: data.megas ? data.megas : 0,
+          comentario: data.comentario && data.comentario
         })
     );
 
