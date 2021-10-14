@@ -14,7 +14,7 @@ import Avatar from "@material-ui/core/Avatar";
 import { Link } from "react-router-dom";
 import Fade from 'react-reveal/Fade';
 import Carousel from "../../components/carousel/Carousel";
-
+import {VentasCollection} from "../collections/collections";
 //icons
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
@@ -141,7 +141,16 @@ export default function UserCard(withAdd) {
     return usuarios
   });
 
+  
   const items = users.map((usersGeneral, i) => {
+    const gastos = () => {
+      Meteor.subscribe("ventas", { adminId: usersGeneral._id })
+      let totalAPagar = 0;
+      VentasCollection.find({ adminId: usersGeneral._id }).map(element => {
+       totalAPagar += element.precio
+     })
+      return totalAPagar
+    };
     return (
       <>
         <Link to={"/users/" + usersGeneral._id} className={classes.link}>
@@ -220,7 +229,7 @@ export default function UserCard(withAdd) {
                           }
                         >
                           <PermContactCalendarRoundedIcon />{" "}
-                          {usersGeneral.profile && usersGeneral.profile.role}
+                          {gastos && gastos}
                         </Typography>
                       </Grid>
                     </Grid>
