@@ -324,7 +324,7 @@ export default function UserCardDetails() {
 let validacion = false;
 
     users.isIlimitado && (new Date() < new Date(users.fechaSubscripcion)) && (validacion = true)
-    users.isIlimitado || ((users.megasGastadosinBytes / 1000000) < users.megas) && (validacion = true)
+    users.isIlimitado || ((users.megasGastadosinBytes?(users.megasGastadosinBytes/ 1000000):0 ) < (users.megas?users.megas:0)) && (validacion = true)
     
     validacion || (
       setMensaje("Revise los Límites del Usuario"),
@@ -332,66 +332,88 @@ let validacion = false;
 )
     // validacion = ((users.profile.role == "admin") ? true  : false);
 
-    users.baneado || 
-   ( Meteor.users.update(users._id, {
-      $set: {
-        baneado: users.baneado ? false : true,
-        bloqueadoDesbloqueadoPor: Meteor.userId()
-      },
-    }),
-    LogsCollection.insert({
-      type: !users.baneado ? "Bloqueado" : "Desbloqueado",
-      userAfectado: users._id,
-      userAdmin: Meteor.userId(),
-      message:
-        "Ha sido " +
-        (!users.baneado ? "Bloqueado" : "Desbloqueado") +
-        " por un Admin",
-      createdAt: new Date(),
-    }))
-
-    validacion && users.baneado && (
-      Meteor.users.update(users._id, {
+    users.profile.role == 'admin' ? (
+      (Meteor.users.update(users._id, {
         $set: {
           baneado: users.baneado ? false : true,
           bloqueadoDesbloqueadoPor: Meteor.userId()
         },
       }),
-      LogsCollection.insert({
-        type: !users.baneado ? "Bloqueado" : "Desbloqueado",
-        userAfectado: users._id,
-        userAdmin: Meteor.userId(),
-        message:
-          "Ha sido " +
-          (!users.baneado ? "Bloqueado" : "Desbloqueado") +
-          " por un Admin",
-        createdAt: new Date(),
+        LogsCollection.insert({
+          type: !users.baneado ? "Bloqueado" : "Desbloqueado",
+          userAfectado: users._id,
+          userAdmin: Meteor.userId(),
+          message:
+            "Ha sido " +
+            (!users.baneado ? "Bloqueado" : "Desbloqueado") +
+            " por un Admin",
+          createdAt: new Date(),
+        }))
+    ) : (
+
+      users.baneado ||
+      (Meteor.users.update(users._id, {
+        $set: {
+          baneado: users.baneado ? false : true,
+          bloqueadoDesbloqueadoPor: Meteor.userId()
+        },
       }),
-      precios.map(precio => {
+        LogsCollection.insert({
+          type: !users.baneado ? "Bloqueado" : "Desbloqueado",
+          userAfectado: users._id,
+          userAdmin: Meteor.userId(),
+          message:
+            "Ha sido " +
+            (!users.baneado ? "Bloqueado" : "Desbloqueado") +
+            " por un Admin",
+          createdAt: new Date(),
+        })),
 
-        users.isIlimitado && precio.fecha && (VentasCollection.insert({
-          adminId: Meteor.userId(),
-          userId: users._id,
-          precio: precio.precio,
-          comentario: precio.comentario
+      validacion && users.baneado && (
+        Meteor.users.update(users._id, {
+          $set: {
+            baneado: users.baneado ? false : true,
+            bloqueadoDesbloqueadoPor: Meteor.userId()
+          },
         }),
-          setMensaje(precio.comentario),
-          handleClickOpen()
-        )
+        LogsCollection.insert({
+          type: !users.baneado ? "Bloqueado" : "Desbloqueado",
+          userAfectado: users._id,
+          userAdmin: Meteor.userId(),
+          message:
+            "Ha sido " +
+            (!users.baneado ? "Bloqueado" : "Desbloqueado") +
+            " por un Admin",
+          createdAt: new Date(),
+        }),
+        precios.map(precio => {
 
-        // console.log("Precio MEGAS " + precio.megas);
-        // console.log("User MEGAS " + users.megas);
-        users.isIlimitado || (precio.megas == users.megas) && (
-          VentasCollection.insert({
+          users.isIlimitado && precio.fecha && (VentasCollection.insert({
             adminId: Meteor.userId(),
             userId: users._id,
             precio: precio.precio,
             comentario: precio.comentario
           }),
-          setMensaje(precio.comentario),
-          handleClickOpen()
-        )
-      }));
+            setMensaje(precio.comentario),
+            handleClickOpen()
+          ),
+
+            // console.log("Precio MEGAS " + precio.megas);
+            // console.log("User MEGAS " + users.megas);
+            users.isIlimitado || (precio.megas == users.megas) && (
+              VentasCollection.insert({
+                adminId: Meteor.userId(),
+                userId: users._id,
+                precio: precio.precio,
+                comentario: precio.comentario
+              }),
+              setMensaje(precio.comentario),
+              handleClickOpen()
+            )
+        }))
+    )
+
+
   }
   const handleChangebaneado = (event) => {
   addVenta();

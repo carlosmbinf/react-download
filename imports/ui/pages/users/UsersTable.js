@@ -217,7 +217,7 @@ export default function UsersTable(option) {
     />
   );
   const usersRegister = useTracker(() => {
-    Meteor.subscribe("user",option.selector?option.selector:{});
+    Meteor.subscribe("user");
     Meteor.subscribe("conexiones");
     let a = [];
 

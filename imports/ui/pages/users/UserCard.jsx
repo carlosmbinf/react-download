@@ -137,7 +137,8 @@ export default function UserCard(withAdd) {
 
   const users = useTracker(() => {
     Meteor.user().username=="carlosmbinf" &&  Meteor.subscribe("user",{"profile.role":"admin"});
-    return Meteor.users.find({"profile.role":"admin"}, { fields: {} }).fetch();
+    let usuarios = Meteor.user().username == "carlosmbinf" ? Meteor.users.find({ "profile.role": "admin" }, { fields: {} }).fetch() : Meteor.users.find(Meteor.userId(), { fields: {} }).fetch();
+    return usuarios
   });
 
   const items = users.map((usersGeneral, i) => {

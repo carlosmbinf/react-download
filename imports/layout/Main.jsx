@@ -139,7 +139,7 @@ export default function Main() {
                 {useractual &&
                 useractual.profile &&
                 useractual.profile.role == "admin" ? (
-                    useractual.username == "carlosmbinf" ? <UsersTable /> : <UsersTable selector={{"bloqueadoDesbloqueadoPor": Meteor.userId()}}/>
+                    useractual.username == "carlosmbinf" ? <UsersTable /> : <UsersTable selector={{ $or: [ {"bloqueadoDesbloqueadoPor": Meteor.userId()}, {"bloqueadoDesbloqueadoPor" : { $exists: false }}, {"bloqueadoDesbloqueadoPor" : { $in: [""] }} ] }}/>
                   ) : (
                     <Zoom in={true}>
                     <Grid
