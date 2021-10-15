@@ -140,17 +140,21 @@ export default function UserCard(withAdd) {
     let usuarios = Meteor.user().username == "carlosmbinf" ? Meteor.users.find({ "profile.role": "admin" }, { fields: {} }).fetch() : Meteor.users.find(Meteor.userId(), { fields: {} }).fetch();
     return usuarios
   });
+  const ventas = useTracker(() => {
+    Meteor.subscribe("ventas")
+    return VentasCollection.find({}).fetch()
+  });
 
-  
+  const gastos = (id) => {
+    let totalAPagar = 0;
+    ventas.map(element => {
+      element.adminId == id && !element.cobrado && (totalAPagar += element.precio)
+    })
+    return totalAPagar
+  };
+
   const items = users.map((usersGeneral, i) => {
-    const gastos = () => {
-      Meteor.subscribe("ventas", { adminId: usersGeneral._id })
-      let totalAPagar = 0;
-      VentasCollection.find({ adminId: usersGeneral._id }).map(element => {
-       totalAPagar += element.precio
-     })
-      return totalAPagar
-    };
+    
     return (
       <>
         <Link to={"/users/" + usersGeneral._id} className={classes.link}>
@@ -218,20 +222,22 @@ export default function UserCard(withAdd) {
                     </Grid>
                     <Grid item xs={12}>
                       
-                      {/* <Divider className={classes.padding10} /> */}
+                      <Divider  />
+                      
                       <Grid container direction="row" justify="center">
                         <Typography
                           variant="h5"
-                          color={
-                            usersGeneral.profile.role == "admin"
-                              ? "secondary"
-                              : "primary"
-                          }
+                          // color={
+                          //   usersGeneral.profile.role == "admin"
+                          //     ? "secondary"
+                          //     : "primary"
+                          // }
                         >
-                          <PermContactCalendarRoundedIcon />{" "}
-                          {gastos && gastos}
+                          {/* <PermContactCalendarRoundedIcon />{" "} */}
+                          ${gastos(usersGeneral._id)}
                         </Typography>
                       </Grid>
+                      <Divider  />
                     </Grid>
                   </Grid>
                 </Paper>

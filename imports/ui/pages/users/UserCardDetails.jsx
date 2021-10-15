@@ -1052,7 +1052,7 @@ let validacion = false;
                   </>
                 )}
 
-                {Meteor.user().profile.role &&
+                {Meteor.user()&&Meteor.user().profile&&Meteor.user().profile.role &&
                 Meteor.user().profile.role == "admin" ? (
                   <Grid item xs={12}>
                     <Divider className={classes.padding10} />

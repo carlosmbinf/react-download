@@ -43,6 +43,8 @@ import ListAltIcon from "@material-ui/icons/ListAlt";
 import DeleteIcon from "@material-ui/icons/Delete";
 import CheckIcon from '@material-ui/icons/Check';
 import BlockIcon from '@material-ui/icons/Block';
+import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
+import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked';
 
 //Collections
 import {
@@ -152,7 +154,8 @@ export default function VentasTable(option) {
           userId: Meteor.users.findOne(data.userId)?Meteor.users.findOne(data.userId).username:"N/A",
           createdAt: data.createdAt&&data.createdAt.toString(),
           precio: data.precio&&data.precio,
-          comentario: data.comentario&&data.comentario
+          comentario: data.comentario&&data.comentario,
+          cobrado: data.cobrado&&data.cobrado
         })
     );
 
@@ -223,7 +226,7 @@ export default function VentasTable(option) {
       <React.Fragment>
         <span className="p-column-title"></span>
         <Tooltip
-          title={`Eliminar Compra del usuario ${rowData.userId} CUP`}
+          title={`Eliminar Compra`}
         >
           <IconButton
             // disabled
@@ -239,24 +242,37 @@ export default function VentasTable(option) {
       </React.Fragment>
     );
   };
-  const urlBodyTemplate = (rowData) => {
+  const cobradoBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-        <span className="p-column-title"></span>
+        <span className="p-column-title">Cobrado: </span>
         <Tooltip
           title={
-            "Ver Detalles"
+            rowData.cobrado ? "Cobrado" : "Sin Cobrar"
           }
         >
           <IconButton
+            // disabled
             aria-label="delete"
-            color="primary"
+            color={rowData.cobrado ? "primary" : "secondary"}
             onClick={() => {
-              history.push("/precio/" + rowData.id);
+              VentasCollection.update(rowData.id, { $set: { cobrado: rowData.cobrado ? false : true } })
             }}
           >
-            <ListAltIcon fontSize="large" />
+            {rowData.cobrado
+              ? <RadioButtonCheckedIcon fontSize="large"/>
+              : <RadioButtonUncheckedIcon fontSize="large"/>}
           </IconButton>
+          {/* <Button
+            color={rowData.cobrado ? "primary" : "secondary"}
+            // variant="contained"
+            onClick={VentasCollection.update(rowData._id,{$set:{cobrado: !rowData.cobrado}})}
+            label={rowData.cobrado?"Cobrado":"Sin Cobrar"}
+          >
+            {rowData.cobrado
+              ? <RadioButtonCheckedIcon fontSize="large"/>
+              : <RadioButtonUncheckedIcon fontSize="large"/>}
+          </Button> */}
         </Tooltip>
       </React.Fragment>
     );
@@ -335,8 +351,8 @@ export default function VentasTable(option) {
                 />
                 <Column
                   field="url"
-                  header="Detalles"
-                  body={urlBodyTemplate}
+                  header="Cobrado"
+                  body={cobradoBodyTemplate}
                 />
                 <Column
                   field="eliminar"
