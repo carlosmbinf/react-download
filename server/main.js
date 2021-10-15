@@ -596,7 +596,26 @@ if (Meteor.isServer) {
     res.end();
   });
   
-
+  endpoint.route('/ventasjson')
+  .get(function (req, res) {
+    const gastos = (id) => {
+      let totalAPagar = 0;
+      VentasCollection.find({}).map(element => {
+        element.adminId == id && !element.cobrado && (totalAPagar += element.precio)
+      })
+      return totalAPagar
+    };
+    // this is GET /pet/:id
+    let resultado = []
+    Meteor.users.find().map(usuario => {
+      let pago = gastos(usuario._id)
+      pago && resultado.push({usuario:`${usuario.profile.firstName} ${usuario.profile.lastName}`,debe: pago})
+    })
+    
+    res.setHeader('Content-Type', 'application/json')
+    res.end(JSON.stringify(resultado))
+  })
+  
   endpoint.route('/usersjson')
   .get(function (req, res) {
     // this is GET /pet/:id
