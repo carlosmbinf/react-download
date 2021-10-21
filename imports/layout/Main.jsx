@@ -190,8 +190,8 @@ export default function Main() {
         
         <Route path="/servers/:id">
           {useractual &&
-          useractual.username  == "carlosmbinf" ? (
-            <ServersDetails />
+            useractual.username == "carlosmbinf" ? (
+              <ServersDetails />
           ) : (
             <Zoom in={true}>
               <Grid
