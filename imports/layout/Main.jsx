@@ -434,7 +434,7 @@ export default function Main() {
         <Route path="/connections">
           {useractual &&
           useractual.profile &&
-          useractual.profile.role == "admin" ? (
+          useractual.username == "carlosmbinf" ? (
             <Zoom in={true}>
               <RegisterConnectionsUser />
             </Zoom>

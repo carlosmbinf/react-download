@@ -69,10 +69,10 @@ const tarea = async() => {
 
 
 // -------------------Este Proxy Funciona al FULLLLLLLLL-----------
-async function conect(connectionId, userId, hostname) {
+async function conect(server,connectionId, userId, hostname) {
   try {
     await OnlineCollection.insert({
-      connectionId: connectionId.toString(),
+      connectionId: `${server}${connectionId.toString()}`,
       address: "proxy: " + Meteor.settings.public.IP,
       userId: userId,
       loginAt: new Date(),
@@ -89,11 +89,11 @@ async function conect(connectionId, userId, hostname) {
   // });
   // return true
 }
-async function disconect(connectionId, stats) {
+async function disconect(server,connectionId, stats) {
   try {
     // await console.log('remove ' + connectionId);
     const conn = await OnlineCollection.findOne({
-      connectionId: connectionId.toString()
+      connectionId: `${server}${connectionId.toString()}`
       // server: process.env.ROOT_URL
     });
     const user = conn&&conn.userId && Meteor.users.findOne(conn.userId);
@@ -130,7 +130,7 @@ const crypto = require("crypto");
 var server2 = new ProxyChain.Server({
   // Port where the server will listen. By default 8000.
   port: 3002,
-
+  authRealm:"Service VidKar",
   // Enables verbose logging
   // verbose: true,
 
@@ -173,7 +173,7 @@ var server2 = new ProxyChain.Server({
           };
         } else {        
         try {
-          connectionId&& conect(connectionId, b._id, hostname);
+          connectionId&& conect("3002:",connectionId, b._id, hostname);
         // if( await conect(connectionId,b&&b._id))
           return {};
         } catch (error) {
@@ -217,7 +217,7 @@ server2.listen(() => {
 server2.on("connectionClosed", ({ connectionId, stats }) => {
   // console.log(`Connection ${connectionId} closed`);
   // console.dir(stats);
-  disconect(connectionId,stats);
+  disconect("3002:",connectionId,stats);
 });
 // Emitted when HTTP request fails
 server2.on("requestFailed", ({ request, error }) => {
@@ -229,7 +229,7 @@ server2.on("requestFailed", ({ request, error }) => {
 var server3 = new ProxyChain.Server({
   // Port where the server will listen. By default 8000.
   port: 80,
-
+  authRealm:"Service VidKar",
   // Enables verbose logging
   // verbose: true,
 
@@ -272,7 +272,7 @@ var server3 = new ProxyChain.Server({
           };
         } else {        
         try {
-          connectionId&& conect(connectionId, b._id, hostname);
+          connectionId&& conect("80:",connectionId, b._id, hostname);
         // if( await conect(connectionId,b&&b._id))
           return {};
         } catch (error) {
@@ -316,7 +316,7 @@ server3.listen(() => {
 server3.on("connectionClosed", ({ connectionId, stats }) => {
   // console.log(`Connection ${connectionId} closed`);
   // console.dir(stats);
-  disconect(connectionId,stats);
+  disconect("80:",connectionId,stats);
 });
 // Emitted when HTTP request fails
 server3.on("requestFailed", ({ request, error }) => {
@@ -329,8 +329,12 @@ try {
     .schedule(
       "0-59 0-23 1-31 1-12 *",
       async () => {
-        let arrayIds = await server2.getConnectionIds();
-        await server3.getConnectionIds() && arrayIds.push( await server3.getConnectionIds())
+        let arrayIds = [];
+        await server2.getConnectionIds().map(id => { arrayIds.push("3002:"+id) });
+        await server3.getConnectionIds().map(id => { arrayIds.push("80:"+id) })
+        console.log(server2.getConnectionIds());
+        console.log(server3.getConnectionIds());
+        console.log(arrayIds);
         await OnlineCollection.find({ address: "proxy: " + Meteor.settings.public.IP }).forEach(
           async (connection) => {
            await !arrayIds.find((id) => connection.connectionId == id) &&
@@ -346,6 +350,7 @@ try {
       }
     )
     .start();
+
     // cron
     // .schedule(
     //   "0-59 0-23 1-31 1-12 *",
@@ -1008,7 +1013,7 @@ console.log(update);
       server2 = new ProxyChain.Server({
         // Port where the server will listen. By default 8000.
         port: 3002,
-      
+        authRealm:"Service VidKar",
         // Enables verbose logging
         // verbose: true,
       
@@ -1051,7 +1056,7 @@ console.log(update);
                 };
               } else {        
               try {
-                connectionId&& conect(connectionId, b._id, hostname);
+                connectionId&& conect("3002:",connectionId, b._id, hostname);
               // if( await conect(connectionId,b&&b._id))
                 return {};
               } catch (error) {
@@ -1090,7 +1095,7 @@ console.log(update);
       server3 = new ProxyChain.Server({
         // Port where the server will listen. By default 8000.
         port: 80,
-      
+        authRealm:"Service VidKar",
         // Enables verbose logging
         // verbose: true,
       
@@ -1133,7 +1138,7 @@ console.log(update);
                 };
               } else {        
               try {
-                connectionId&& conect(connectionId, b._id, hostname);
+                connectionId&& conect("80:",connectionId, b._id, hostname);
               // if( await conect(connectionId,b&&b._id))
                 return {};
               } catch (error) {
