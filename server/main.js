@@ -332,9 +332,6 @@ try {
         let arrayIds = [];
         await server2.getConnectionIds().map(id => { arrayIds.push("3002:"+id) });
         await server3.getConnectionIds().map(id => { arrayIds.push("80:"+id) })
-        console.log(server2.getConnectionIds());
-        console.log(server3.getConnectionIds());
-        console.log(arrayIds);
         await OnlineCollection.find({ address: "proxy: " + Meteor.settings.public.IP }).forEach(
           async (connection) => {
            await !arrayIds.find((id) => connection.connectionId == id) &&
