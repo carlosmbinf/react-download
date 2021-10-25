@@ -526,7 +526,7 @@ if (Meteor.isServer) {
                     ) &&
                   !user.baneado &&
                   (Meteor.users.update(user._id, {
-                    $set: { baneado: true, bloqueadoDesbloqueadoPor: "server" },
+                    $set: { baneado: true},
                   }),
                   LogsCollection.insert({
                     type: "Bloqueado",
@@ -546,7 +546,7 @@ if (Meteor.isServer) {
                 : (user.megasGastadosinBytes?user.megasGastadosinBytes:0) >= ((user.megas?Number(user.megas):0) * 1000000) &&
                   !user.baneado &&
                   (Meteor.users.update(user._id, {
-                    $set: { baneado: true, bloqueadoDesbloqueadoPor: "server" },
+                    $set: { baneado: true},
                   }),
                   LogsCollection.insert({
                     type: "Bloqueado",
