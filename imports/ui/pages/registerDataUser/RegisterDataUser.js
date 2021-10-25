@@ -167,7 +167,7 @@ export default function RegisterDataUserTable() {
     return (
       <React.Fragment>
         <span className="p-column-title">Fecha del Registro</span>
-        {rowData.createdAt}
+        {Date(rowData.createdAt)}
       </React.Fragment>
     );
   };

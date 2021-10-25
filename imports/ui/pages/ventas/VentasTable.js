@@ -196,7 +196,7 @@ export default function VentasTable(option) {
     return (
       <React.Fragment>
         <span className="p-column-title">Creado:</span>
-        {rowData.createdAt}
+        {Date(rowData.createdAt).toString()}
       </React.Fragment>
     );
   };

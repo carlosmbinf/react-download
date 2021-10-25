@@ -190,6 +190,7 @@ export default function UserCardDetails() {
   const [email, setEmail] = useState("");
   const [ip, setIP] = useState("");
   const [searchIP, setSearchIP] = useState("");
+  const [searchPrecio, setSearchPrecio] = useState("");
   const [searchAdmin, setSearchAdmin] = useState("");
   const [megas, setMegas] = useState();
   const [mensaje, setMensaje] = useState("");
@@ -199,6 +200,7 @@ export default function UserCardDetails() {
     Meteor.subscribe("userID", useParams().id);
     return Meteor.users.findOne({ _id: useParams().id });
   });
+
   const servers = useTracker(() => {
     Meteor.subscribe("servers").ready()
     let serv = []
@@ -207,6 +209,16 @@ export default function UserCardDetails() {
     })
     return serv
   });
+
+  const preciosList = useTracker(() => {
+    Meteor.subscribe("precios").ready()
+    let precioslist = []
+    PreciosCollection.find({ fecha: false }).fetch().map((a)=>{
+      precioslist.push({value: a.megas, label: a.megas+'MB • $'+ a.precio})
+    })
+    return precioslist
+  });
+
     const admins = useTracker(() => {
       Meteor.subscribe("user",{"profile.role":"admin"}).ready()
       let admins = []
@@ -783,55 +795,99 @@ let validacion = false;
                                 </Grid>
                                 )}
                                 {!users.isIlimitado && (
-                              <Grid item xs={12}>
-                                <form
-                                  action="/limite"
-                                  method="post"
-                                  // className={classes.root}
-                                  onSubmit={handleLimite}
-                                  // noValidate
-                                  autoComplete="true"
-                                >
-                                  <Grid container>
-                                  <Grid item xs={8} sm={6} md={4} lg={3} className={classes.flex}>
-                                    <FormControl fullWidth variant="outlined">
-                                      <TextField
-                                        fullWidth
-                                        className={classes.margin}
-                                        id="megas"
-                                        name="megas"
-                                        label="Megas"
-                                        type="number"
-                                        variant="outlined"
+                                  <>
+                                  {Meteor.user().username == "carlosmbinf" &&
+                                  <Grid item xs={12}>
+                                  <form
+                                    action="/limite"
+                                    method="post"
+                                    // className={classes.root}
+                                    onSubmit={handleLimite}
+                                    // noValidate
+                                    autoComplete="true"
+                                  >
+                                    <Grid container>
+                                    <Grid item xs={8} sm={6} md={4} lg={3} className={classes.flex}>
+                                      <FormControl fullWidth variant="outlined">
+                                        <TextField
+                                          fullWidth
+                                          className={classes.margin}
+                                          id="megas"
+                                          name="megas"
+                                          label="Megas"
+                                          type="number"
+                                          variant="outlined"
+                                          color="secondary"
+                                          // defaultValue={users.megas ? users.megas : 0}
+                                          value={megas}
+                                          onChange={(e) =>
+                                            setMegas(e.target.value)
+                                          }
+                                          InputProps={{
+                                            startAdornment: (
+                                              <InputAdornment position="start">
+                                                <AccountCircleIcon />
+                                              </InputAdornment>
+                                            ),
+                                          }}
+                                        />
+                                      </FormControl>
+                                    </Grid>
+  
+                                    <Grid item xs={4} md={2} className={classes.flex} style={{alignSelf: 'center', textAlign: 'center'}}>
+                                      <Button
+                                        variant="contained"
+                                        type="submit"
                                         color="secondary"
-                                        defaultValue={users.megas ? users.megas : 0}
-                                        value={megas}
-                                        onChange={(e) =>
-                                          setMegas(e.target.value)
-                                        }
-                                        InputProps={{
-                                          startAdornment: (
-                                            <InputAdornment position="start">
-                                              <AccountCircleIcon />
-                                            </InputAdornment>
-                                          ),
-                                        }}
-                                      />
-                                    </FormControl>
-                                  </Grid>
-
-                                  <Grid item xs={4} md={2} className={classes.flex} style={{alignSelf: 'center', textAlign: 'center'}}>
-                                    <Button
-                                      variant="contained"
-                                      type="submit"
-                                      color="secondary"
-                                    >
-                                      <SendIcon />
-                                    </Button>
-                                  </Grid>
-                                  </Grid>
-                                </form>
-                              </Grid>
+                                      >
+                                        <SendIcon />
+                                      </Button>
+                                    </Grid>
+                                    </Grid>
+                                  </form>
+                                </Grid>
+                                  }
+                              
+                              <Grid item xs={12} sm={4}>
+                            <FormControl fullWidth>
+                              {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
+                              <Autocomplete
+                                fullWidth
+                                value={users.megas&&PreciosCollection.findOne({ fecha: false, megas: users.megas })?{ value: users.megas, label: (users.megas + 'MB • $' + (PreciosCollection.findOne({ fecha: false, megas: users.megas }).precio&&PreciosCollection.findOne({ fecha: false, megas: users.megas }).precio)) }:""}
+                                onChange={(event, newValue) => {
+                                  Meteor.users.update(users._id, {
+                                    $set: { megas: newValue.value },
+                                  });
+                                  LogsCollection.insert({
+                                    type: 'Megas',
+                                    userAfectado: users._id,
+                                    userAdmin: Meteor.userId(),
+                                    message:
+                                      `Ha sido Cambiado el consumo de Datos a: ${newValue.value}MB`,
+                                    createdAt: new Date(),
+                                  });
+                                  // setIP(newValue);
+                                }}
+                                inputValue={searchPrecio}
+                                className={classes.margin}
+                                onInputChange={(event, newInputValue) => {
+                                  setSearchPrecio(newInputValue);
+                                }}
+                                id="controllable-states-demo"
+                                options={preciosList}
+                                getOptionLabel= {(option) => option.label}
+                                renderInput={(params) => (
+                                  <TextField
+                                    {...params}
+                                    label="Precios"
+                                    variant="outlined"
+                                  />
+                                )}
+                              />
+                            </FormControl>
+                            
+                          </Grid>
+                              </>
                                 )}
 
                                 <Grid
@@ -883,6 +939,7 @@ let validacion = false;
                                 </FormControlLabel> */}
                                 </Grid>
                               
+                                
                             </>
                           )}
                       </Grid>
