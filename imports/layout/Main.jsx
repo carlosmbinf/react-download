@@ -48,6 +48,7 @@ import ServersDetails from "../ui/pages/servers/ServersDetails";
 import CreatePrecios from "../ui/pages/precios/CreatePrecios";
 import PreciosTable from "../ui/pages/precios/PreciosTable";
 import VentasTable from "../ui/pages/ventas/VentasTable";
+import Chats from "../ui/pages/chats/Chats";
 
 const useStyles = makeStyles((theme) => ({
   // necessary for content to be below app bar
@@ -378,6 +379,26 @@ export default function Main() {
           useractual.profile &&
           useractual.profile.role == "admin" ? (
             <CreateArchivo />
+          ) : (
+            <Zoom in={true}>
+              <Grid
+                container
+                direction="row"
+                justify="center"
+                alignItems="center"
+              >
+                <h1>SIN ACCESO</h1>
+              </Grid>
+            </Zoom>
+          )}
+        </Route>
+        <Route path="/chat">
+          {useractual &&
+          useractual.profile &&
+          useractual.profile.role == "admin" ? (
+            <Zoom in={true}>
+              <Chats />
+            </Zoom>
           ) : (
             <Zoom in={true}>
               <Grid

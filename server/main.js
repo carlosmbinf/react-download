@@ -1261,8 +1261,8 @@ console.log(update);
   Meteor.publish("conexiones", function () {
     return OnlineCollection.find({});
   });
-  Meteor.publish("mensajes", function (id) {
-    return MensajesCollection.find({ to: id });
+  Meteor.publish("mensajes", function (selector) {
+    return MensajesCollection.find(selector?selector:{});
   });
   Meteor.publish("server", function (id) {
     return ServersCollection.find(id);
