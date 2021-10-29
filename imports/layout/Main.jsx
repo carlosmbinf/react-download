@@ -49,6 +49,7 @@ import CreatePrecios from "../ui/pages/precios/CreatePrecios";
 import PreciosTable from "../ui/pages/precios/PreciosTable";
 import VentasTable from "../ui/pages/ventas/VentasTable";
 import Chats from "../ui/pages/chats/Chats";
+import ChatDetails from "../ui/pages/chats/ChatDetails";
 
 const useStyles = makeStyles((theme) => ({
   // necessary for content to be below app bar
@@ -391,6 +392,9 @@ export default function Main() {
               </Grid>
             </Zoom>
           )}
+        </Route>
+        <Route path="/chat/:id">
+          <ChatDetails />
         </Route>
         <Route path="/chat">
           {useractual &&
