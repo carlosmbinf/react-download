@@ -56,7 +56,7 @@ export default ChatDetails = () => {
     const [acti, setActi] = React.useState(false)
     const [inputMessage, setInputMessage] = React.useState("")
 
-    const id = useParams().id
+    let {id} = useParams()
     const users = useTracker(() => {
         Meteor.subscribe("user");
         return Meteor.users.find({}).fetch();
