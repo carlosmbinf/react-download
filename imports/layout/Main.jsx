@@ -50,6 +50,7 @@ import PreciosTable from "../ui/pages/precios/PreciosTable";
 import VentasTable from "../ui/pages/ventas/VentasTable";
 import Chats from "../ui/pages/chats/Chats";
 import ChatDetails from "../ui/pages/chats/ChatDetails";
+import Footer from "./Footer";
 
 const useStyles = makeStyles((theme) => ({
   // necessary for content to be below app bar
@@ -87,6 +88,7 @@ export default function Main() {
       <Switch>
         <Route path="/dashboard">
           <DashboardInit />
+          <Footer />
         </Route>
         <Route path="/downloads">
           {useractual &&
@@ -97,6 +99,7 @@ export default function Main() {
             ""
           )}
           <TableDescarga />
+          <Footer />
         </Route>
         <Route path="/users/:id">
           <UserCardDetails />
@@ -122,6 +125,7 @@ export default function Main() {
                 )}
             </>
           </Zoom>
+          <Footer />
         </Route>
         <Route path="/users">
           {useractual &&
@@ -169,8 +173,11 @@ export default function Main() {
               </Grid>
             </Zoom>
           )}
+          <Footer />
         </Route>
-        <Route path="/calendar"></Route>
+        <Route path="/calendar">
+          <Footer />
+        </Route>
         <Route path="/create-user">
           {useractual &&
           useractual.profile &&
@@ -188,6 +195,7 @@ export default function Main() {
               </Grid>
             </Zoom>
           )}
+          <Footer />
         </Route>
         
         <Route path="/servers/:id">
@@ -206,6 +214,8 @@ export default function Main() {
               </Grid>
             </Zoom>
           )}
+          
+          <Footer />
         </Route>
         <Route path="/servers">
           {useractual &&
@@ -223,6 +233,8 @@ export default function Main() {
               </Grid>
             </Zoom>
           )}
+          
+          <Footer />
         </Route>
 
         <Route path="/precios/:id">
@@ -241,6 +253,7 @@ export default function Main() {
               </Grid>
             </Zoom>
           )}
+          <Footer />
         </Route>
         <Route path="/precios">
           {useractual &&
@@ -261,6 +274,7 @@ export default function Main() {
               </Grid>
             </Zoom>
           )}
+          <Footer />
         </Route>
 
         <Route path="/ventas/:id">
@@ -279,6 +293,7 @@ export default function Main() {
               </Grid>
             </Zoom>
           )}
+          <Footer />
         </Route>
         <Route path="/ventas">
           {useractual &&
@@ -299,9 +314,11 @@ export default function Main() {
               </Grid>
             </Zoom>
           )}
+          <Footer />
         </Route>
         <Route path="/tv/:id">
           <TV />
+          <Footer />
         </Route>
         <Route path="/tv">
           <Grid container direction="row" justify="center" alignItems="center">
@@ -324,6 +341,7 @@ export default function Main() {
               )}
             </Grid>
           </Grid>
+          <Footer />
         </Route>
         <Route path="/create-tv">
           {useractual &&
@@ -342,12 +360,15 @@ export default function Main() {
               </Grid>
             </Zoom>
           )}
+          <Footer />
         </Route>
         <Route path="/videos/:id">
           <Video />
+          <Footer />
         </Route>
         <Route path="/pelis/:id">
           <PelisDetails />
+          <Footer />
         </Route>
         <Route path="/pelis">
           <Grid container direction="row" justify="center" alignItems="center">
@@ -374,6 +395,7 @@ export default function Main() {
               <PelisCard clasificacion="TERROR" />
             </Grid>
           </Grid>
+          <Footer />
         </Route>
         <Route path="/create-pelis">
           {useractual &&
@@ -392,6 +414,7 @@ export default function Main() {
               </Grid>
             </Zoom>
           )}
+          <Footer />
         </Route>
         <Route path="/chat/:id">
           <ChatDetails />
@@ -435,6 +458,7 @@ export default function Main() {
               </Grid>
             </Zoom>
           )}
+          <Footer />
         </Route>
         <Route path="/register-data">
           {useractual &&
@@ -455,6 +479,7 @@ export default function Main() {
               </Grid>
             </Zoom>
           )}
+          <Footer />
         </Route>
         <Route path="/connections">
           {useractual &&
@@ -475,6 +500,7 @@ export default function Main() {
               </Grid>
             </Zoom>
           )}
+          <Footer />
         </Route>
         <Route path="/exportdata">
           {useractual &&
@@ -495,6 +521,7 @@ export default function Main() {
               </Grid>
             </Zoom>
           )}
+          <Footer />
         </Route>
         
         <Route path="/">
@@ -502,6 +529,7 @@ export default function Main() {
           <PelisCard clasificacion="ACCION" />
           <PelisCard clasificacion="CIENCIA Y FICCION" />
           <PelisCard clasificacion="TERROR" />
+          <Footer />
         </Route>
       </Switch>
     </>

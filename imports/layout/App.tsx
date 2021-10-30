@@ -484,7 +484,6 @@ export default function PersistentDrawerLeft() {
         </main>
         
       </div>
-      <Footer />
           <Suspense
             fallback={<SpinnerModal/>}
           >

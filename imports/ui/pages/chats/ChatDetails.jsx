@@ -11,7 +11,7 @@ import { Navbar } from 'react-chat-elements'
 import { Input } from 'react-chat-elements'
 
 import { makeStyles, withStyles } from "@material-ui/core/styles";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useHistory } from "react-router-dom";
 import { Button } from 'react-chat-elements'
 
 import {
@@ -52,28 +52,15 @@ const useStyles = makeStyles((theme) => ({
 
 export default ChatDetails = () => {
     const classes = useStyles();
-
-    const [acti, setActi] = React.useState(false)
+    const history = useHistory();
     const [inputMessage, setInputMessage] = React.useState("")
 
     let {id} = useParams()
-    const users = useTracker(() => {
-        Meteor.subscribe("user");
-        return Meteor.users.find({}).fetch();
+    const user = useTracker(() => {
+        Meteor.subscribe("user",id);
+        return Meteor.users.findOne(id);
     });
 
-    // const a = () => {
-    //     let mensajes = MensajesCollection.find({ $or: [{ from: Meteor.userId() }, { to: Meteor.userId() }] }, { sort: { createdAt: -1 } }).fetch()
-
-    //     mensajes = mensajes.filter((thing, index, self) =>
-    //         index === self.findIndex((t) => (
-    //             t.from === thing.from
-    //         ))
-    //     )
-
-    //     return mensajes
-    // }
-    const user = (id) => Meteor.users.findOne(id)
 
     
     const mensajesList = useTracker(() => {
@@ -88,7 +75,7 @@ export default ChatDetails = () => {
                 // let lastName = user(element.from) && user(element.from).profile && user(element.from).profile.lastName
                 list.push(
                     {
-                        position: id == Meteor.userId() ? "right" : "left",
+                        position: element.from == Meteor.userId() ? "right" : "left",
                         type: 'text',
                         text: <p style={{ color: 'black', margin: 0 }}>{element.mensaje}</p>,
                         date: new Date(element.createdAt),
@@ -123,12 +110,11 @@ export default ChatDetails = () => {
                             color="primary"
                             aria-label="delete"
                             className={classes.margin}
-                            onClick={() => {history.back()
-                            }}
+                            onClick={() => {history.push('/chat')}}
                         >
                             <ArrowBackIcon fontSize="large" color="secondary" />
                         </IconButton>
-                        <h2>{`${user(id) && user(id).profile.firstName} ${user(id) && user(id).profile.lastName}`}</h2>
+                        <h2>{`${user && user.profile.firstName} ${user && user.profile.lastName}`}</h2>
                     </Grid>
                 </Grid>
                 :
