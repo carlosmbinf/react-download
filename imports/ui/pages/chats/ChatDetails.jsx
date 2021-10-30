@@ -4,45 +4,22 @@ import { useTracker } from "meteor/react-meteor-data";
 // RCE CSS
 import 'react-chat-elements/dist/main.css';
 
-import { ChatList } from 'react-chat-elements'
 import { Meteor } from "meteor/meteor";
 import { MessageList } from 'react-chat-elements'
-import { Navbar } from 'react-chat-elements'
-import { Input } from 'react-chat-elements'
 
-import { makeStyles, withStyles } from "@material-ui/core/styles";
-import { Link, useParams, useHistory } from "react-router-dom";
+import { makeStyles } from "@material-ui/core/styles";
+import { useParams, useHistory } from "react-router-dom";
 import { Button } from 'react-chat-elements'
 
 import {
-    Paper,
-    Box,
     Grid,
-    Icon,
-    Divider,
-    Zoom,
     IconButton,
-    Switch,
-    FormControl,
-    TextField,
-    InputAdornment,
-    MenuItem,
-    Select,
-    InputLabel,
-    FormControlLabel,
-    FormHelperText,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
 } from "@material-ui/core";
 
 import { MensajesCollection } from "../collections/collections";
 
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import { SettingsInputAntenna } from "@material-ui/icons";
-
+import Input from "./Input";
 
 const useStyles = makeStyles((theme) => ({
     margin: {
@@ -86,15 +63,6 @@ export default ChatDetails = () => {
             return list;
         });
 
-    const styles = {
-        active: {
-            display: "none"
-        },
-        inactive: {
-            display: "block"
-        }
-    }
-
     return <>
         <Grid
             container
@@ -132,15 +100,18 @@ export default ChatDetails = () => {
                         dataSource={mensajesList} />
                     
                 </Grid>
-                <Grid item xs={12} style={{ bottom: 0, position: 'absolute',width:'100%' }}>
+                
+
+        </Grid>
+        {/* <Grid item xs={12} style={{ bottom: 0, position: 'absolute',width:'100%', height:"100%" }}>
                 <Input
-                    onChange={mensaj => { 
-                        setInputMessage(mensaj)
-                        alert(JSON.stringify(mensaj) + "")
-                     }}
+                    // onChange={mensaj => { 
+                    //     setInputMessage(mensaj)
+                    //     alert(JSON.stringify(mensaj) + "")
+                    //  }}
                     // ref={mensaj => (setInputMessage(mensaj))}
-                    placeholder="Type here..."
-                    // multiline={true}
+                    // placeholder="Type here..."
+                    multiline={true}
                     rightButtons={
                         <Button
                             // type="transparent"
@@ -160,8 +131,7 @@ export default ChatDetails = () => {
                     }
                     placeholder="Escriba el mensaje aqui!!!"
                 />
-            </Grid>
-
-        </Grid>
+            </Grid> */}
+            <Input />
     </>
 }

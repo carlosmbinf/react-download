@@ -170,7 +170,7 @@ const useStyles = makeStyles((theme) =>
       backgroundPosition: "center",
       backgroundSize: "cover",
       backgroundRepeat: "no-repeat",
-      paddingBottom: "7em",
+      // paddingBottom: "7em",
       transition: theme.transitions.create("margin", {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,

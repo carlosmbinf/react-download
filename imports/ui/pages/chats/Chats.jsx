@@ -5,44 +5,16 @@ import { useTracker } from "meteor/react-meteor-data";
 import 'react-chat-elements/dist/main.css';
 
 import { ChatList } from 'react-chat-elements'
+
 import { Meteor } from "meteor/meteor";
-import { MessageList } from 'react-chat-elements'
-import { Navbar } from 'react-chat-elements'
-import { Input } from 'react-chat-elements'
 
 import { makeStyles, withStyles } from "@material-ui/core/styles";
-import { Link, useParams } from "react-router-dom";
-import { Button } from 'react-chat-elements'
 import { useHistory } from 'react-router-dom';
 import {
-    Paper,
-    Box,
     Grid,
-    Icon,
-    Divider,
-    Zoom,
-    IconButton,
-    Switch,
-    FormControl,
-    TextField,
-    InputAdornment,
-    MenuItem,
-    Select,
-    InputLabel,
-    FormControlLabel,
-    FormHelperText,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
 } from "@material-ui/core";
 
 import { MensajesCollection } from "../collections/collections";
-
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import { SettingsInputAntenna } from "@material-ui/icons";
-
 
 const useStyles = makeStyles((theme) => ({
     margin: {
@@ -58,22 +30,6 @@ export default Chat = () => {
     const [from, setFrom] = useState()
     const [input, setInput] = useState("")
     
-    const users = useTracker(() => {
-        Meteor.subscribe("user");
-        return Meteor.users.find({}).fetch();
-    });
-
-    // const a = () => {
-    //     let mensajes = MensajesCollection.find({ $or: [{ from: Meteor.userId() }, { to: Meteor.userId() }] }, { sort: { createdAt: -1 } }).fetch()
-
-    //     mensajes = mensajes.filter((thing, index, self) =>
-    //         index === self.findIndex((t) => (
-    //             t.from === thing.from
-    //         ))
-    //     )
-
-    //     return mensajes
-    // }
     const user = (id) => { Meteor.subscribe("user",id); return Meteor.users.findOne(id) }
 
     const listFromMensajes = useTracker(() => {
@@ -138,8 +94,6 @@ export default Chat = () => {
                     onClick={(elemento) => { history.push(`/chat/${elemento.from}`) }}
                 />
             </Grid>
-
-
         </Grid>
     </>
 }

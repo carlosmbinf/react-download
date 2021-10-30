@@ -69,7 +69,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     padding: 5,
     marginLeft: 0,
-    height:"100%",
+    height: "100%",
   },
 }));
 
@@ -87,448 +87,521 @@ export default function Main() {
 
       <Switch>
         <Route path="/dashboard">
-          <DashboardInit />
+
+          <div style={{ paddingBottom: "7em" }}>
+            <DashboardInit />
+          </div>
+
           <Footer />
         </Route>
         <Route path="/downloads">
-          {useractual &&
-          useractual.profile &&
-          useractual.profile.role == "admin" ? (
-            <AddDescargas />
-          ) : (
-            ""
-          )}
-          <TableDescarga />
+          <div style={{ paddingBottom: "7em" }}>
+            {useractual &&
+              useractual.profile &&
+              useractual.profile.role == "admin" ? (
+              <AddDescargas />
+            ) : (
+              ""
+            )}
+            <TableDescarga />
+          </div>
+
           <Footer />
         </Route>
         <Route path="/users/:id">
-          <UserCardDetails />
-          <Zoom in={true}>
-            <>
-              <Grid container style={{ textAlign: "center", marginTop: 100 }}>
-                <Grid item>
-                  <RegisterDataUserTable/>
-                </Grid>
-              </Grid>
-              {useractual &&
-                useractual.profile &&
-                useractual.profile.role == "admin" && (
-                  <Grid
-                    container
-                    style={{ textAlign: "center", marginTop: 100 }}
-                  >
-                    <Grid item>
-                      <LogsTable/>
-                      <RegisterConnectionsUser/>
-                    </Grid>
+          <div style={{ paddingBottom: "7em" }}>
+            <UserCardDetails />
+            <Zoom in={true}>
+              <>
+                <Grid container style={{ textAlign: "center", marginTop: 100 }}>
+                  <Grid item>
+                    <RegisterDataUserTable />
                   </Grid>
-                )}
-            </>
-          </Zoom>
+                </Grid>
+                {useractual &&
+                  useractual.profile &&
+                  useractual.profile.role == "admin" && (
+                    <Grid
+                      container
+                      style={{ textAlign: "center", marginTop: 100 }}
+                    >
+                      <Grid item>
+                        <LogsTable />
+                        <RegisterConnectionsUser />
+                      </Grid>
+                    </Grid>
+                  )}
+              </>
+            </Zoom>
+          </div>
+
           <Footer />
         </Route>
         <Route path="/users">
-          {useractual &&
-          useractual.profile &&
-          useractual.profile.role == "admin" ? (
-            <Grid
-              container
-              direction="row"
-              justify="center"
-              alignItems="center"
-            >
-              <Grid item xs={12} className={classes.root}>
-                <UserCard withCreate="true" />
-              </Grid>
-              <Grid item xs={12}>
-              <UserCard />
-                {useractual &&
-                useractual.profile &&
-                useractual.profile.role == "admin" ? (
-                    useractual.username == "carlosmbinf" ? <UsersTable /> : <UsersTable selector={{ $or: [ {"bloqueadoDesbloqueadoPor": Meteor.userId()}, {"bloqueadoDesbloqueadoPor" : { $exists: false }}, {"bloqueadoDesbloqueadoPor" : { $in: [""] }} ] }}/>
-                  ) : (
-                    <Zoom in={true}>
-                    <Grid
-                      container
-                      direction="row"
-                      justify="center"
-                      alignItems="center"
-                    >
-                      <h1>SIN ACCESO</h1>
-                    </Grid>
-                  </Zoom>
-                )}
-                
-              </Grid>
-            </Grid>
-          ) : (
-            <Zoom in={true}>
+          <div style={{ paddingBottom: "7em" }}>
+            {useractual &&
+              useractual.profile &&
+              useractual.profile.role == "admin" ? (
               <Grid
                 container
                 direction="row"
                 justify="center"
                 alignItems="center"
               >
-                <h1>SIN ACCESO</h1>
+                <Grid item xs={12} className={classes.root}>
+                  <UserCard withCreate="true" />
+                </Grid>
+                <Grid item xs={12}>
+                  <UserCard />
+                  {useractual &&
+                    useractual.profile &&
+                    useractual.profile.role == "admin" ? (
+                    useractual.username == "carlosmbinf" ? <UsersTable /> : <UsersTable selector={{ $or: [{ "bloqueadoDesbloqueadoPor": Meteor.userId() }, { "bloqueadoDesbloqueadoPor": { $exists: false } }, { "bloqueadoDesbloqueadoPor": { $in: [""] } }] }} />
+                  ) : (
+                    <Zoom in={true}>
+                      <Grid
+                        container
+                        direction="row"
+                        justify="center"
+                        alignItems="center"
+                      >
+                        <h1>SIN ACCESO</h1>
+                      </Grid>
+                    </Zoom>
+                  )}
+
+                </Grid>
               </Grid>
-            </Zoom>
-          )}
+            ) : (
+              <Zoom in={true}>
+                <Grid
+                  container
+                  direction="row"
+                  justify="center"
+                  alignItems="center"
+                >
+                  <h1>SIN ACCESO</h1>
+                </Grid>
+              </Zoom>
+            )}
+          </div>
+
           <Footer />
         </Route>
         <Route path="/calendar">
           <Footer />
         </Route>
         <Route path="/create-user">
-          {useractual &&
-          useractual.profile &&
-          useractual.profile.role == "admin" ? (
-            <CreateUsers />
-          ) : (
-            <Zoom in={true}>
-              <Grid
-                container
-                direction="row"
-                justify="center"
-                alignItems="center"
-              >
-                <h1>SIN ACCESO</h1>
-              </Grid>
-            </Zoom>
-          )}
+          <div style={{ paddingBottom: "7em" }}>
+            {useractual &&
+              useractual.profile &&
+              useractual.profile.role == "admin" ? (
+              <CreateUsers />
+            ) : (
+              <Zoom in={true}>
+                <Grid
+                  container
+                  direction="row"
+                  justify="center"
+                  alignItems="center"
+                >
+                  <h1>SIN ACCESO</h1>
+                </Grid>
+              </Zoom>
+            )}
+          </div>
+
           <Footer />
         </Route>
-        
+
         <Route path="/servers/:id">
-          {useractual &&
-            useractual.username == "carlosmbinf" ? (
+          <div style={{ paddingBottom: "7em" }}>
+            {useractual &&
+              useractual.username == "carlosmbinf" ? (
               <ServersDetails />
-          ) : (
-            <Zoom in={true}>
-              <Grid
-                container
-                direction="row"
-                justify="center"
-                alignItems="center"
-              >
-                <h1>SIN ACCESO</h1>
-              </Grid>
-            </Zoom>
-          )}
-          
+            ) : (
+              <Zoom in={true}>
+                <Grid
+                  container
+                  direction="row"
+                  justify="center"
+                  alignItems="center"
+                >
+                  <h1>SIN ACCESO</h1>
+                </Grid>
+              </Zoom>
+            )}
+          </div>
+
+
           <Footer />
         </Route>
         <Route path="/servers">
-          {useractual &&
-          useractual.username  == "carlosmbinf" ? (
-            <CreateServers />
-          ) : (
-            <Zoom in={true}>
-              <Grid
-                container
-                direction="row"
-                justify="center"
-                alignItems="center"
-              >
-                <h1>SIN ACCESO</h1>
-              </Grid>
-            </Zoom>
-          )}
-          
+          <div style={{ paddingBottom: "7em" }}>
+            {useractual &&
+              useractual.username == "carlosmbinf" ? (
+              <CreateServers />
+            ) : (
+              <Zoom in={true}>
+                <Grid
+                  container
+                  direction="row"
+                  justify="center"
+                  alignItems="center"
+                >
+                  <h1>SIN ACCESO</h1>
+                </Grid>
+              </Zoom>
+            )}
+          </div>
+
+
           <Footer />
         </Route>
 
         <Route path="/precios/:id">
-          {useractual &&
-            useractual.username == "carlosmbinf" ? (
-            <CreatePrecios />
-          ) : (
-            <Zoom in={true}>
-              <Grid
-                container
-                direction="row"
-                justify="center"
-                alignItems="center"
-              >
-                <h1>SIN ACCESO</h1>
-              </Grid>
-            </Zoom>
-          )}
+          <div style={{ paddingBottom: "7em" }}>
+            {useractual &&
+              useractual.username == "carlosmbinf" ? (
+              <CreatePrecios />
+            ) : (
+              <Zoom in={true}>
+                <Grid
+                  container
+                  direction="row"
+                  justify="center"
+                  alignItems="center"
+                >
+                  <h1>SIN ACCESO</h1>
+                </Grid>
+              </Zoom>
+            )}
+          </div>
+
           <Footer />
         </Route>
         <Route path="/precios">
-          {useractual &&
-            useractual.username == "carlosmbinf" ? (
-            <>
-              <CreatePrecios />
-              <PreciosTable />
-            </>
-          ) : (
-            <Zoom in={true}>
-              <Grid
-                container
-                direction="row"
-                justify="center"
-                alignItems="center"
-              >
-                <h1>SIN ACCESO</h1>
-              </Grid>
-            </Zoom>
-          )}
+          <div style={{ paddingBottom: "7em" }}>
+            {useractual &&
+              useractual.username == "carlosmbinf" ? (
+              <>
+                <CreatePrecios />
+                <PreciosTable />
+              </>
+            ) : (
+              <Zoom in={true}>
+                <Grid
+                  container
+                  direction="row"
+                  justify="center"
+                  alignItems="center"
+                >
+                  <h1>SIN ACCESO</h1>
+                </Grid>
+              </Zoom>
+            )}
+          </div>
+
           <Footer />
         </Route>
 
         <Route path="/ventas/:id">
-          {useractual &&
-            useractual.username == "carlosmbinf" ? (
+          <div style={{ paddingBottom: "7em" }}>
+            {useractual &&
+              useractual.username == "carlosmbinf" ? (
               <VentasTable />
-          ) : (
-            <Zoom in={true}>
-              <Grid
-                container
-                direction="row"
-                justify="center"
-                alignItems="center"
-              >
-                <h1>SIN ACCESO</h1>
-              </Grid>
-            </Zoom>
-          )}
+            ) : (
+              <Zoom in={true}>
+                <Grid
+                  container
+                  direction="row"
+                  justify="center"
+                  alignItems="center"
+                >
+                  <h1>SIN ACCESO</h1>
+                </Grid>
+              </Zoom>
+            )}
+          </div>
+
           <Footer />
         </Route>
         <Route path="/ventas">
-          {useractual &&
-            useractual.username == "carlosmbinf" ? (
-            <>
-              {/* <CreatePrecios /> */}
-              <VentasTable />
-            </>
-          ) : (
-            <Zoom in={true}>
-              <Grid
-                container
-                direction="row"
-                justify="center"
-                alignItems="center"
-              >
-                <h1>SIN ACCESO</h1>
-              </Grid>
-            </Zoom>
-          )}
+          <div style={{ paddingBottom: "7em" }}>
+            {useractual &&
+              useractual.username == "carlosmbinf" ? (
+              <>
+                {/* <CreatePrecios /> */}
+                <VentasTable />
+              </>
+            ) : (
+              <Zoom in={true}>
+                <Grid
+                  container
+                  direction="row"
+                  justify="center"
+                  alignItems="center"
+                >
+                  <h1>SIN ACCESO</h1>
+                </Grid>
+              </Zoom>
+            )}
+          </div>
+
           <Footer />
         </Route>
         <Route path="/tv/:id">
-          <TV />
+          <div style={{ paddingBottom: "7em" }}>
+            <TV />
+          </div>
+
           <Footer />
         </Route>
         <Route path="/tv">
-          <Grid container direction="row" justify="center" alignItems="center">
-            <Grid item xs={12} className={classes.root}>
-              {useractual &&
-              useractual.profile &&
-              useractual.profile.role == "admin" ? (
-                <TVonline withCreate="true" />
-              ) : (
-                ""
-              )}
+          <div style={{ paddingBottom: "7em" }}>
+            <Grid container direction="row" justify="center" alignItems="center">
+              <Grid item xs={12} className={classes.root}>
+                {useractual &&
+                  useractual.profile &&
+                  useractual.profile.role == "admin" ? (
+                  <TVonline withCreate="true" />
+                ) : (
+                  ""
+                )}
+              </Grid>
+              <Grid item xs={12}>
+                {useractual &&
+                  useractual.profile &&
+                  useractual.profile.role == "admin" ? (
+                  <TVonline admin />
+                ) : (
+                  <TVonline />
+                )}
+              </Grid>
             </Grid>
-            <Grid item xs={12}>
-              {useractual &&
-              useractual.profile &&
-              useractual.profile.role == "admin" ? (
-                <TVonline admin />
-              ) : (
-                <TVonline />
-              )}
-            </Grid>
-          </Grid>
+          </div>
+
           <Footer />
         </Route>
         <Route path="/create-tv">
-          {useractual &&
-          useractual.profile &&
-          useractual.profile.role == "admin" ? (
-            <CreateTV />
-          ) : (
-            <Zoom in={true}>
-              <Grid
-                container
-                direction="row"
-                justify="center"
-                alignItems="center"
-              >
-                <h1>SIN ACCESO</h1>
-              </Grid>
-            </Zoom>
-          )}
+          <div style={{ paddingBottom: "7em" }}>
+            {useractual &&
+              useractual.profile &&
+              useractual.profile.role == "admin" ? (
+              <CreateTV />
+            ) : (
+              <Zoom in={true}>
+                <Grid
+                  container
+                  direction="row"
+                  justify="center"
+                  alignItems="center"
+                >
+                  <h1>SIN ACCESO</h1>
+                </Grid>
+              </Zoom>
+            )}
+          </div>
+
           <Footer />
         </Route>
         <Route path="/videos/:id">
-          <Video />
+          <div style={{ paddingBottom: "7em" }}>
+            <Video />
+          </div>
+
           <Footer />
         </Route>
         <Route path="/pelis/:id">
-          <PelisDetails />
+          <div style={{ paddingBottom: "7em" }}>
+            <PelisDetails />
+          </div>
+
           <Footer />
         </Route>
         <Route path="/pelis">
-          <Grid container direction="row" justify="center" alignItems="center">
-            <Grid item xs={12} className={classes.root}>
-              {useractual &&
-              useractual.profile &&
-              useractual.profile.role == "admin" ? (
-                <PelisCard withCreate="true" />
-              ) : (
-                ""
-              )}
+          <div style={{ paddingBottom: "7em" }}>
+            <Grid container direction="row" justify="center" alignItems="center">
+              <Grid item xs={12} className={classes.root}>
+                {useractual &&
+                  useractual.profile &&
+                  useractual.profile.role == "admin" ? (
+                  <PelisCard withCreate="true" />
+                ) : (
+                  ""
+                )}
+              </Grid>
+              <Grid item xs={12}>
+                {useractual &&
+                  useractual.profile &&
+                  useractual.profile.role == "admin" ? (
+                  <PelisCard clasificacion="All" />
+                ) : (
+                  ""
+                )}
+                <PelisCard clasificacion="AVENTURA" />
+                <PelisCard clasificacion="ACCION" />
+                <PelisCard clasificacion="CIENCIA Y FICCION" />
+                <PelisCard clasificacion="TERROR" />
+              </Grid>
             </Grid>
-            <Grid item xs={12}>
-              {useractual &&
-              useractual.profile &&
-              useractual.profile.role == "admin" ? (
-                <PelisCard clasificacion="All" />
-              ) : (
-                ""
-              )}
-              <PelisCard clasificacion="AVENTURA" />
-              <PelisCard clasificacion="ACCION" />
-              <PelisCard clasificacion="CIENCIA Y FICCION" />
-              <PelisCard clasificacion="TERROR" />
-            </Grid>
-          </Grid>
+          </div>
+
           <Footer />
         </Route>
         <Route path="/create-pelis">
-          {useractual &&
-          useractual.profile &&
-          useractual.profile.role == "admin" ? (
-            <CreateArchivo />
-          ) : (
-            <Zoom in={true}>
-              <Grid
-                container
-                direction="row"
-                justify="center"
-                alignItems="center"
-              >
-                <h1>SIN ACCESO</h1>
-              </Grid>
-            </Zoom>
-          )}
+          <div style={{ paddingBottom: "7em" }}>
+            {useractual &&
+              useractual.profile &&
+              useractual.profile.role == "admin" ? (
+              <CreateArchivo />
+            ) : (
+              <Zoom in={true}>
+                <Grid
+                  container
+                  direction="row"
+                  justify="center"
+                  alignItems="center"
+                >
+                  <h1>SIN ACCESO</h1>
+                </Grid>
+              </Zoom>
+            )}
+          </div>
+
           <Footer />
         </Route>
         <Route path="/chat/:id">
           <ChatDetails />
         </Route>
         <Route path="/chat">
-          {useractual &&
-          useractual.profile &&
-          useractual.profile.role == "admin" ? (
-            <Zoom in={true}>
-              <Chats />
-            </Zoom>
-          ) : (
-            <Zoom in={true}>
-              <Grid
-                container
-                direction="row"
-                justify="center"
-                alignItems="center"
-              >
-                <h1>SIN ACCESO</h1>
-              </Grid>
-            </Zoom>
-          )}
+          <div style={{ paddingBottom: "7em" }}>
+            {useractual &&
+              useractual.profile &&
+              useractual.profile.role == "admin" ? (
+              <Zoom in={true}>
+                <Chats />
+              </Zoom>
+            ) : (
+              <Zoom in={true}>
+                <Grid
+                  container
+                  direction="row"
+                  justify="center"
+                  alignItems="center"
+                >
+                  <h1>SIN ACCESO</h1>
+                </Grid>
+              </Zoom>
+            )}
+          </div>
+          <Footer />
         </Route>
         <Route path="/logs">
-          {useractual &&
-          useractual.profile &&
-          useractual.profile.role == "admin" ? (
-            <Zoom in={true}>
-              <LogsTable />
-            </Zoom>
-          ) : (
-            <Zoom in={true}>
-              <Grid
-                container
-                direction="row"
-                justify="center"
-                alignItems="center"
-              >
-                <h1>SIN ACCESO</h1>
-              </Grid>
-            </Zoom>
-          )}
+          <div style={{ paddingBottom: "7em" }}>
+            {useractual &&
+              useractual.profile &&
+              useractual.profile.role == "admin" ? (
+              <Zoom in={true}>
+                <LogsTable />
+              </Zoom>
+            ) : (
+              <Zoom in={true}>
+                <Grid
+                  container
+                  direction="row"
+                  justify="center"
+                  alignItems="center"
+                >
+                  <h1>SIN ACCESO</h1>
+                </Grid>
+              </Zoom>
+            )}
+          </div>
+
           <Footer />
         </Route>
         <Route path="/register-data">
-          {useractual &&
-          useractual.profile &&
-          useractual.profile.role == "admin" ? (
-            <Zoom in={true}>
-              <RegisterDataUserTable />
-            </Zoom>
-          ) : (
-            <Zoom in={true}>
-              <Grid
-                container
-                direction="row"
-                justify="center"
-                alignItems="center"
-              >
-                <h1>SIN ACCESO</h1>
-              </Grid>
-            </Zoom>
-          )}
+          <div style={{ paddingBottom: "7em" }}>
+            {useractual &&
+              useractual.profile &&
+              useractual.profile.role == "admin" ? (
+              <Zoom in={true}>
+                <RegisterDataUserTable />
+              </Zoom>
+            ) : (
+              <Zoom in={true}>
+                <Grid
+                  container
+                  direction="row"
+                  justify="center"
+                  alignItems="center"
+                >
+                  <h1>SIN ACCESO</h1>
+                </Grid>
+              </Zoom>
+            )}
+          </div>
+
           <Footer />
         </Route>
         <Route path="/connections">
-          {useractual &&
-          useractual.profile &&
-          useractual.username == "carlosmbinf" ? (
-            <Zoom in={true}>
-              <RegisterConnectionsUser />
-            </Zoom>
-          ) : (
-            <Zoom in={true}>
-              <Grid
-                container
-                direction="row"
-                justify="center"
-                alignItems="center"
-              >
-                <h1>SIN ACCESO</h1>
-              </Grid>
-            </Zoom>
-          )}
+          <div style={{ paddingBottom: "7em" }}>
+            {useractual &&
+              useractual.profile &&
+              useractual.username == "carlosmbinf" ? (
+              <Zoom in={true}>
+                <RegisterConnectionsUser />
+              </Zoom>
+            ) : (
+              <Zoom in={true}>
+                <Grid
+                  container
+                  direction="row"
+                  justify="center"
+                  alignItems="center"
+                >
+                  <h1>SIN ACCESO</h1>
+                </Grid>
+              </Zoom>
+            )}
+          </div>
+
           <Footer />
         </Route>
         <Route path="/exportdata">
-          {useractual &&
-          useractual.profile &&
-          useractual.profile.role == "admin" ? (
-            // <Zoom in={true}>
+          <div style={{ paddingBottom: "7em" }}>
+            {useractual &&
+              useractual.profile &&
+              useractual.profile.role == "admin" ? (
+              // <Zoom in={true}>
               <ExportDataToMongoDB />
-            // </Zoom>
-          ) : (
-            <Zoom in={true}>
-              <Grid
-                container
-                direction="row"
-                justify="center"
-                alignItems="center"
-              >
-                <h1>SIN ACCESO</h1>
-              </Grid>
-            </Zoom>
-          )}
+              // </Zoom>
+            ) : (
+              <Zoom in={true}>
+                <Grid
+                  container
+                  direction="row"
+                  justify="center"
+                  alignItems="center"
+                >
+                  <h1>SIN ACCESO</h1>
+                </Grid>
+              </Zoom>
+            )}
+          </div>
+
           <Footer />
         </Route>
-        
+
         <Route path="/">
-          <PelisCard clasificacion="AVENTURA" />
-          <PelisCard clasificacion="ACCION" />
-          <PelisCard clasificacion="CIENCIA Y FICCION" />
-          <PelisCard clasificacion="TERROR" />
+          <div style={{ paddingBottom: "7em" }}>
+            <PelisCard clasificacion="AVENTURA" />
+            <PelisCard clasificacion="ACCION" />
+            <PelisCard clasificacion="CIENCIA Y FICCION" />
+            <PelisCard clasificacion="TERROR" />
+          </div>
+
           <Footer />
         </Route>
       </Switch>
