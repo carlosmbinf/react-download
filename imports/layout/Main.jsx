@@ -476,24 +476,9 @@ export default function Main() {
         </Route>
         <Route path="/chat">
           <div style={{ paddingBottom: "7em" }}>
-            {useractual &&
-              useractual.profile &&
-              useractual.profile.role == "admin" ? (
               <Zoom in={true}>
                 <Chats />
               </Zoom>
-            ) : (
-              <Zoom in={true}>
-                <Grid
-                  container
-                  direction="row"
-                  justify="center"
-                  alignItems="center"
-                >
-                  <h1>SIN ACCESO</h1>
-                </Grid>
-              </Zoom>
-            )}
           </div>
           <Footer />
         </Route>
