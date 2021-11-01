@@ -3,13 +3,14 @@ import { useHistory } from 'react-router-dom';
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
-import { makeStyles,useTheme  } from "@material-ui/core/styles";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
 import { Button, Grid, IconButton } from "@material-ui/core";
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { useTracker } from "meteor/react-meteor-data";
 import { Meteor } from 'meteor/meteor';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import SendRoundedIcon from '@mui/icons-material/SendRounded';
 
 const drawerWidth = 240;
 
@@ -40,7 +41,7 @@ type Props = {
 };
 
 const NavBar = ({ className }: Props) => {
-  
+
   const theme = useTheme();
   const [error, setError] = useState('');
   const history = useHistory();
@@ -49,13 +50,13 @@ const NavBar = ({ className }: Props) => {
   const userActual = useTracker(() => {
     return Meteor.user();
   });
-  
+
   const handlelogIn = (event) => {
     event.preventDefault();
     setError('');
-  
+
     history.push('/')
-    
+
   };
 
   const handleDrawerOpen = () => {
@@ -69,7 +70,7 @@ const NavBar = ({ className }: Props) => {
   const handleLogOut = (event) => {
     event.preventDefault();
     setError('');
-  
+
     Meteor.logout((error) => {
       error
         ? setError(error.message)
@@ -103,10 +104,12 @@ const NavBar = ({ className }: Props) => {
                     )}
                   </IconButton>
                 </div>
-                <strong>INVITATIONS</strong>
               </Typography>
             </Grid>
             <Grid item>
+            <IconButton aria-label="delete" className={classes.margin}>
+                <SendRoundedIcon />
+              </IconButton>
               <Typography
                 variant="h6"
                 className={classes.textTittle}
@@ -116,8 +119,8 @@ const NavBar = ({ className }: Props) => {
                 {
                   <strong>
                     {userActual &&
-                    userActual.profile &&
-                    userActual.profile.firstName
+                      userActual.profile &&
+                      userActual.profile.firstName
                       ? userActual.profile.firstName
                       : userActual.profile.name}{" "}
                     {userActual &&

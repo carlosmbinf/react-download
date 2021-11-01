@@ -295,6 +295,11 @@ export const SchemaMensajesCollection = new SimpleSchema({
     defaultValue: new Date(),
     optional: true,
   },
+  type:{
+    type: String,
+    defaultValue: "text",
+    optional: true,
+  }
 });
 
 MensajesCollection.attachSchema(SchemaMensajesCollection);

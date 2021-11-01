@@ -66,7 +66,7 @@ export default Chat = () => {
             list.push({
                 from: iam?element.to:element.from,
                 avatar: user(iam?element.to:element.from) && user(iam?element.to:element.from).services && user(iam?element.to:element.from).services.facebook && user(iam?element.to:element.from).services.facebook.picture.data.url,
-                alt: 'Reactjs',
+                alt: "N/A",
                 title: <p style={{ color: 'black', margin: 0 }}>{firstName + " " + lastName}</p>,
                 subtitle: element.mensaje,
                 date: element.createdAt,

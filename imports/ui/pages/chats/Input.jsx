@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { makeStyles,createStyles } from '@material-ui/core/styles';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
@@ -10,6 +10,8 @@ import {
   Link,
   useParams
 } from "react-router-dom";
+import { MensajesCollection } from "../collections/collections";
+import { Meteor } from "meteor/meteor";
 
 //ICONS
 import FolderIcon from '@material-ui/icons/Folder';
@@ -22,7 +24,7 @@ import MovieFilterIcon from '@material-ui/icons/MovieFilter';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import { AppBar, Container, Grid, IconButton, TextField, Toolbar, Typography } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
-
+import SendRoundedIcon from '@mui/icons-material/SendRounded';
 const useStyles = makeStyles((theme) =>
 createStyles({
     root: {
@@ -67,7 +69,7 @@ export default function Input() {
   
     const history = useHistory();
     const classes = useStyles();
-    const [mensaje, setMensaje] = React.useState('');
+    const [mensaje, setMensaje] = useState("");
     // We can use the `useParams` hook here to access
     // the dynamic pieces of the URL.
     let { id } = useParams();
@@ -75,16 +77,24 @@ export default function Input() {
  
 
     const handleSubmit = (event) => {
-      alert(mensaje)
+      // console.log(mensaje)
+      MensajesCollection.insert({
+        from: Meteor.userId(),
+        to: id,
+        mensaje: mensaje,
+        createdAt: new Date()
+      })
+      setMensaje("")
     };
   
   return <form action="#" method="GET" noValidate autoComplete="off" onSubmit={handleSubmit} className={classes.input}>
-    <Grid container>
-      <Grid item xs={10}>
+    <Grid container style={{padding:"2px 40px 2px 40px"}} spacing={2}>
+      <Grid item xs >
         <TextField
           id="outlined"
           label="Mensaje"
-          onChange={mensaje => setMensaje(mensaje)}
+          value={mensaje}
+          onChange={event => setMensaje(event.target.value)}
           // className={classes.text}
           color="secondary"
           // InputProps={{
@@ -94,13 +104,13 @@ export default function Input() {
           // variant="outlined"
           required
           fullWidth
-          multiline
-          maxRows={4}
+          // multiline
+          // maxRows={4}
         />
       </Grid>
-      <Grid item xs={2}>
-        <IconButton submit aria-label="delete" className={classes.margin}>
-          <DeleteIcon />
+      <Grid item xs={2} md={1}>
+        <IconButton type='submit' aria-label="delete" className={classes.margin}>
+          <SendRoundedIcon />
         </IconButton>
       </Grid>
     </Grid>

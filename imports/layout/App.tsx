@@ -33,7 +33,7 @@ import Badge from "@material-ui/core/Badge";
 import Avatar from "@material-ui/core/Avatar";
 import { Meteor } from "meteor/meteor";
 import Fade from "react-reveal/Fade";
-import { OnlineCollection } from "../ui/pages/collections/collections";
+import { MensajesCollection, OnlineCollection } from "../ui/pages/collections/collections";
 
 
 
@@ -53,6 +53,7 @@ import SetPassword from "../ui/pages/users/SetPassword";
 import { Suspense } from "react";
 import SpinnerModal from "../ui/components/spinnerModal/SpinnerModal";
 import ImportExportIcon from '@material-ui/icons/ImportExport';
+import MailOutlineRoundedIcon from '@mui/icons-material/MailOutlineRounded';
 
 const drawerWidth = 240;
 const StyledBadge = withStyles((theme) => ({
@@ -213,7 +214,46 @@ export default function PersistentDrawerLeft() {
   const [open, setOpen] = React.useState(false);
   const [error, setError] = useState("");
 
- 
+
+  if (!("Notification" in window)) {
+    console.log("This browser does not support desktop notification");
+  } else {
+    Notification.requestPermission();
+  }
+
+
+  const mensajes = useTracker(() => {
+    
+    var notification = null 
+
+    Meteor.subscribe("mensajes", {
+      $or: [
+        // { from: Meteor.userId() },
+        { to: Meteor.userId() }
+      ]
+    });
+    
+    let mens = MensajesCollection.find({
+      $or: [
+        // { from: Meteor.userId() },
+        { to: Meteor.userId() }
+      ], leido: false
+    }).fetch()
+
+    let options = {
+      
+      body: `Tienes ${mens.length} Mensajes sin leer...`,
+      icon: "/favicon.ico",
+      // dir: "ltr",
+      // onClick: ()=>{alert("hola")} 
+    };
+
+    mens.length > 0 && (notification = new Notification("VIDKAR", options))
+    
+    return mens;
+  });
+  
+
   const userActual = useTracker(() => {
 
     Meteor.subscribe("userID", Meteor.userId());
@@ -268,6 +308,12 @@ export default function PersistentDrawerLeft() {
       error && error ? setError(error.message) : "";
     });
   };
+
+  
+
+  
+  
+
   return (
     <>
     
@@ -319,6 +365,13 @@ export default function PersistentDrawerLeft() {
                       // color="textSecondary"
                       noWrap
                     >
+                      <IconButton disabled={mensajes.length > 0 ? false : true} type='submit' aria-label="delete" onClick={() => 
+                        history.push(`/chat`)
+                        // showNotification()
+                        }>
+                        <MailOutlineRoundedIcon />
+                      </IconButton>
+
                       <Button
                         // style={{
                         //   color: "white",
