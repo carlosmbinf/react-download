@@ -148,7 +148,7 @@ export default function RegisterDataUserTable() {
              megasGastadosinBytesGeneral: Number.parseFloat(
                register.megasGastadosinBytesGeneral / 1000000
              ).toFixed(2),
-             createdAt: register.fecha && register.fecha + "",
+             createdAt: register.fecha && register.fecha.toString(),
            });
          }
        );
@@ -167,7 +167,7 @@ export default function RegisterDataUserTable() {
     return (
       <React.Fragment>
         <span className="p-column-title">Fecha del Registro</span>
-        {Date(rowData.createdAt)}
+        {rowData.createdAt}
       </React.Fragment>
     );
   };

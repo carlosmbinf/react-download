@@ -404,7 +404,8 @@ let validacion = false;
             adminId: Meteor.userId(),
             userId: users._id,
             precio: precio.precio,
-            comentario: precio.comentario
+            comentario: precio.comentario,
+            createdAt: new Date()
           }),
             setMensaje(precio.comentario),
             handleClickOpen()
@@ -417,7 +418,8 @@ let validacion = false;
                 adminId: Meteor.userId(),
                 userId: users._id,
                 precio: precio.precio,
-                comentario: precio.comentario
+                comentario: precio.comentario,
+                createdAt: new Date()
               }),
               setMensaje(precio.comentario),
               handleClickOpen()

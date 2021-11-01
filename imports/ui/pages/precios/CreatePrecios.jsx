@@ -78,7 +78,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function CreatePrecios() {
-  const [createdAt, setcreatedAt] = useState("");
+  // const [createdAt, setcreatedAt] = useState("");
   const [precio, setprecio] = useState(0);
   const [fecha, setfecha] = useState(false);
   const [megas, setmegas] = useState(0);
@@ -110,7 +110,7 @@ export default function CreatePrecios() {
       setLoad(true);
       const datosPrecios = {
         userId: Meteor.userId(),
-        createdAt,
+        createdAt: new Date(),
         precio,
         fecha,
         megas: fecha ? null : megas,

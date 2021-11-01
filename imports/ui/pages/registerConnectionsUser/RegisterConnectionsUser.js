@@ -146,7 +146,7 @@ export default function RegisterConnectionsUser() {
              user: b.profile.firstName + " " + b.profile.lastName,
              address: register.address,
              hostname: register.hostname,
-             loginAt: register.loginAt && register.loginAt + "",
+             loginAt: register.loginAt && register.loginAt.toString(),
            });
          }
        );

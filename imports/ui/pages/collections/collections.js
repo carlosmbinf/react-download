@@ -186,8 +186,7 @@ export const SchemaVentasCollection = new SimpleSchema({
   },
   createdAt: {
     type: Date,
-    defaultValue: new Date(),
-    optional: true,
+    optional: false,
   },
   cobrado: {
     type: Boolean,
@@ -214,8 +213,7 @@ export const SchemaPreciosCollection = new SimpleSchema({
   },
   createdAt: {
     type: Date,
-    defaultValue: new Date(),
-    optional: true,
+    optional: false,
   },
   precio: {
     type: Number,
