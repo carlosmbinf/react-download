@@ -78,16 +78,18 @@ export default function Input() {
 
     const handleSubmit = (event) => {
       // console.log(mensaje)
+      mensaje != "" && (
       MensajesCollection.insert({
-        from: Meteor.userId(),
-        to: id,
-        mensaje: mensaje,
-        createdAt: new Date()
-      })
-      setMensaje("")
+              from: Meteor.userId(),
+              to: id,
+              mensaje: mensaje,
+              createdAt: new Date()
+            }),
+            setMensaje("")
+            )
     };
   
-  return <form action="#" method="GET" noValidate autoComplete="off" onSubmit={handleSubmit} className={classes.input}>
+  return <form action="/" method="POST" noValidate autoComplete="off" onSubmit={handleSubmit} className={classes.input}>
     <Grid container style={{padding:"2px 40px 2px 40px"}} spacing={2}>
       <Grid item xs >
         <TextField
