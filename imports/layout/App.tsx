@@ -288,6 +288,7 @@ export default function PersistentDrawerLeft() {
     { title: "Registro de Conexiones", icon: <DashboardIcon />, url: "connections" },
     { title: "Precios", icon: <DashboardIcon />, url: "precios" },
     { title: "Ventas", icon: <DashboardIcon />, url: "ventas" },
+    { title: "Chats", icon: <DashboardIcon />, url: "chat" },
     
     { title: "Export Data to MongoDB Server", icon: <ImportExportIcon />, url: "exportdata" },
   ];
@@ -488,7 +489,7 @@ export default function PersistentDrawerLeft() {
                 </Typography>
                   </ListItem>
                 </Link>
-              ) : text.url !== "ventas" && text.url !== "precios" && text.url !== "users" && text.url !== "logs" && text.url !== "connections" && text.url !== "exportdata" && text.url !== "register-data" && text.url !== "servers" ? (
+              ) : text.url !== "chat" && text.url !== "ventas" && text.url !== "precios" && text.url !== "users" && text.url !== "logs" && text.url !== "connections" && text.url !== "exportdata" && text.url !== "register-data" && text.url !== "servers" ? (
                 <Link key={index} to={"/" + text.url} className={classes.link}>
                   <ListItem button className={classes.item}>
                     <ListItemIcon color="primary">
