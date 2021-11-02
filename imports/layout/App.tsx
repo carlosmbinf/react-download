@@ -54,6 +54,7 @@ import { Suspense } from "react";
 import SpinnerModal from "../ui/components/spinnerModal/SpinnerModal";
 import ImportExportIcon from '@material-ui/icons/ImportExport';
 import MailOutlineRoundedIcon from '@mui/icons-material/MailOutlineRounded';
+import Badge from '@mui/material/Badge';
 
 const drawerWidth = 240;
 const StyledBadge = withStyles((theme) => ({
@@ -215,11 +216,11 @@ export default function PersistentDrawerLeft() {
   const [error, setError] = useState("");
 
 
-  if (!("Notification" in window)) {
-    console.log("This browser does not support desktop notification");
-  } else {
-    Notification.requestPermission();
-  }
+  //if (!("Notification" in window)) {
+  //  console.log("This browser does not support desktop notification");
+ // } else {
+  //  Notification.requestPermission();
+// }
 
 
   const mensajes = useTracker(() => {
@@ -248,7 +249,10 @@ export default function PersistentDrawerLeft() {
       // onClick: ()=>{alert("hola")} 
     };
 
-    mens.length > 0 && (notification = new Notification("VIDKAR", options))
+    //mens.length > 0 && (
+     // notification = new Notification("VIDKAR", options)
+    // alert(options.body)
+    //  )
     
     return mens;
   });
@@ -370,7 +374,10 @@ export default function PersistentDrawerLeft() {
                         history.push(`/chat`)
                         // showNotification()
                         }>
-                        <MailOutlineRoundedIcon />
+                        <Badge badgeContent={mensajes.length} color="secondary">
+                          <MailOutlineRoundedIcon />
+                        </Badge>
+                        
                       </IconButton>
 
                       <Button

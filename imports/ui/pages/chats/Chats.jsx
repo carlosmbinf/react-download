@@ -91,7 +91,13 @@ export default Chat = () => {
                 <ChatList
                     className='chat-list'
                     dataSource={listFromMensajes}
-                    onClick={(elemento) => { history.push(`/chat/${elemento.from}`) }}
+                    onClick={(elemento) =>
+                    (
+                        MensajesCollection.find({ from: elemento.from, to: Meteor.userId() }).map(e =>
+                            MensajesCollection.update(e._id, { $set: { leido: true } }, { multi: true })
+                        ),
+                        history.push(`/chat/${elemento.from}`))
+                    }
                 />
             </Grid>
         </Grid>

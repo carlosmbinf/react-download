@@ -77,6 +77,7 @@ export default function Input() {
  
 
     const handleSubmit = (event) => {
+      event.preventDefault();
       // console.log(mensaje)
       mensaje != "" && (
       MensajesCollection.insert({
@@ -89,7 +90,7 @@ export default function Input() {
             )
     };
   
-  return <form action="/" method="POST" noValidate autoComplete="off" onSubmit={handleSubmit} className={classes.input}>
+  return <form autoComplete="off" onSubmit={handleSubmit} className={classes.input}>
     <Grid container style={{padding:"2px 40px 2px 40px"}} spacing={2}>
       <Grid item xs >
         <TextField
@@ -111,7 +112,7 @@ export default function Input() {
         />
       </Grid>
       <Grid item xs={2} md={1}>
-        <IconButton type='submit' aria-label="delete" className={classes.margin}>
+        <IconButton disabled={mensaje == "" ? true : false} type='submit' aria-label="delete" className={classes.margin}>
           <SendRoundedIcon />
         </IconButton>
       </Grid>
