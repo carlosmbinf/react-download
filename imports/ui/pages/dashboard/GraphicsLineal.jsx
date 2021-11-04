@@ -41,7 +41,6 @@ import {
   PieChart,
   Pie,
 } from "recharts";
-import GraphicsPieChart from "./GraphicsPieChart";
 
 const StyledBadge = withStyles((theme) => ({
   badge: {
@@ -205,6 +204,47 @@ export default function DashboardInit() {
     { name: "Group F", value: 4800 },
   ];
 
+  const datausers = useTracker(() => {
+
+    let data01 = [
+        // { name: "Group A", value: 400 },
+        // { name: "Group B", value: 300 },
+        // { name: "Group C", value: 300 },
+        // { name: "Group D", value: 200 },
+        // { name: "Group E", value: 278 },
+        // { name: "Group F", value: 189 },
+      ];
+    Meteor.subscribe("user");
+    let users = Meteor.users.find({});
+    let adminsCount = 0
+    let usersCount = 0
+    users.map((usersGeneral) => (
+        
+       (usersGeneral.profile.role == "admin")?adminsCount ++ : usersCount ++
+       
+    ));
+    data01.push({name: "Admin",value: adminsCount}) 
+    data01.push({name: "Users",value: usersCount}) 
+    return data01;
+  });
+
+  const datausersEdad = useTracker(() => {
+    let data01 = [];
+    Meteor.subscribe("user");
+     Meteor.users.find({}).map(
+        (usersGeneral) =>
+
+          data01.push({
+            name:
+              usersGeneral.profile.firstName +
+              " " +
+              usersGeneral.profile.lastName,
+            value: 26,
+          })
+      );
+    return data01;
+    
+  });
   
   return (
     <>
@@ -220,37 +260,6 @@ export default function DashboardInit() {
           }
         >
           <Grid container spacing={3}>
-            <Grid item xs={12}>
-              <AnyChart
-                type="column"
-                data={[
-                  { x: "John", value: 10000 },
-                  { x: "Jake", value: 12000 },
-                  {
-                    x: "Peter",
-                    value: 13000,
-                    normal: {
-                      fill: "#5cd65c",
-                      stroke: null,
-                      label: { enabled: true },
-                    },
-                    hovered: {
-                      fill: "#4554",
-                      stroke: null,
-                      label: { enabled: true },
-                    },
-                    selected: {
-                      fill: "#5cd65c",
-                      stroke: null,
-                      label: { enabled: true },
-                    },
-                  },
-                  { x: "James", value: 10000 },
-                  { x: "Mary", value: 9000 },
-                ]}
-                title="Simple pie chart"
-              />
-            </Grid>
             <Grid item xs={12}>
               <div style={{ width: "100%", height: 300 }}>
                 <ResponsiveContainer>
@@ -281,10 +290,6 @@ export default function DashboardInit() {
                   </ComposedChart>
                 </ResponsiveContainer>
               </div>
-            </Grid>
-
-            <Grid item xs={12}>
-            <GraphicsPieChart/>
             </Grid>
           </Grid>
         </Paper>
