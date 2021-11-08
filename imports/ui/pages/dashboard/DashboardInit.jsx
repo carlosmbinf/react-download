@@ -42,6 +42,7 @@ import {
   Pie,
 } from "recharts";
 import GraphicsPieChart from "./GraphicsPieChart";
+import GraphicsLineal from "./GraphicsLinealTotalVentasyDeudas";
 
 const StyledBadge = withStyles((theme) => ({
   badge: {
@@ -154,7 +155,7 @@ export default function DashboardInit() {
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
 
-  
+
 
   const data = [
     {
@@ -194,7 +195,7 @@ export default function DashboardInit() {
       amt: 1700,
     },
   ];
-  
+
 
   const data02 = [
     { name: "Group A", value: 2400 },
@@ -205,22 +206,14 @@ export default function DashboardInit() {
     { name: "Group F", value: 4800 },
   ];
 
-  
+
   return (
     <>
       <div className={classes.drawerHeader}></div>
 
       <Zoom in={true}>
-        <Paper
-          elevation={5}
-          className={
-            Meteor.user().profile.role !== "admin"
-              ? classes.primary
-              : classes.secundary
-          }
-        >
-          <Grid container spacing={3}>
-            <Grid item xs={12}>
+        <>
+          {/* <Grid item xs={12}>
               <AnyChart
                 type="column"
                 data={[
@@ -250,44 +243,20 @@ export default function DashboardInit() {
                 ]}
                 title="Simple pie chart"
               />
-            </Grid>
+            </Grid> */}
+
+          {Meteor.user().username == "carlosmbinf" &&
             <Grid item xs={12}>
               <div style={{ width: "100%", height: 300 }}>
-                <ResponsiveContainer>
-                  <ComposedChart
-                    width={500}
-                    height={400}
-                    data={data}
-                    margin={{
-                      top: 20,
-                      right: 20,
-                      bottom: 20,
-                      left: 20,
-                    }}
-                  >
-                    <CartesianGrid stroke="#f5f5f5" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Area
-                      type="monotone"
-                      dataKey="amt"
-                      fill="#8884d8"
-                      stroke="#8884d8"
-                    />
-                    <Bar dataKey="pv" barSize={20} fill="#413ea0" />
-                    <Line type="monotone" dataKey="uv" stroke="#ff7300" />
-                  </ComposedChart>
-                </ResponsiveContainer>
+                <GraphicsLineal />
               </div>
-            </Grid>
+            </Grid>}
 
-            <Grid item xs={12}>
-            <GraphicsPieChart/>
-            </Grid>
+          <Grid item xs={12}>
+            Cantidad de Usuarios:
+            <GraphicsPieChart />
           </Grid>
-        </Paper>
+        </>
       </Zoom>
     </>
   );

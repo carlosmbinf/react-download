@@ -41,6 +41,7 @@ import {
   PieChart,
   Pie,
 } from "recharts";
+import { VentasCollection } from "../collections/collections";
 
 const StyledBadge = withStyles((theme) => ({
   badge: {
@@ -149,7 +150,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function DashboardInit() {
+export default function GraphicsLineal() {
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
 
@@ -193,53 +194,41 @@ export default function DashboardInit() {
       amt: 1700,
     },
   ];
-  
-
-  const data02 = [
-    { name: "Group A", value: 2400 },
-    { name: "Group B", value: 4567 },
-    { name: "Group C", value: 1398 },
-    { name: "Group D", value: 9800 },
-    { name: "Group E", value: 3908 },
-    { name: "Group F", value: 4800 },
-  ];
-
-  const datausers = useTracker(() => {
-
-    let data01 = [
-        // { name: "Group A", value: 400 },
-        // { name: "Group B", value: 300 },
-        // { name: "Group C", value: 300 },
-        // { name: "Group D", value: 200 },
-        // { name: "Group E", value: 278 },
-        // { name: "Group F", value: 189 },
-      ];
-    Meteor.subscribe("user");
-    let users = Meteor.users.find({});
-    let adminsCount = 0
-    let usersCount = 0
-    users.map((usersGeneral) => (
-        
-       (usersGeneral.profile.role == "admin")?adminsCount ++ : usersCount ++
-       
-    ));
-    data01.push({name: "Admin",value: adminsCount}) 
-    data01.push({name: "Users",value: usersCount}) 
-    return data01;
+  const ventas = useTracker(() => {
+    Meteor.subscribe("ventas")
+    return VentasCollection.find({}).fetch()
   });
 
-  const datausersEdad = useTracker(() => {
+  const gastos = (id) =>{
+      let totalAPagar = 0;
+      ventas.map(element => {
+        element.adminId == id && !element.cobrado && (totalAPagar += element.precio)
+      })
+      return totalAPagar
+    }
+
+  const aporte = (id) =>{
+      let totalAPagar = 0;
+      ventas.map(element => {
+        element.adminId == id && (totalAPagar += element.precio)
+      })
+      return totalAPagar
+    }
+
+  const datausers = useTracker(() => {
     let data01 = [];
     Meteor.subscribe("user");
-     Meteor.users.find({}).map(
-        (usersGeneral) =>
+     Meteor.users.find({"profile.role":"admin"}).map(
+        (usersGeneral,index) =>
 
-          data01.push({
+        aporte(usersGeneral._id) > 0 && data01.push({
             name:
               usersGeneral.profile.firstName +
               " " +
               usersGeneral.profile.lastName,
-            value: 26,
+              TotalVendido: aporte(usersGeneral._id),
+              Debe: gastos(usersGeneral._id),
+              amt: aporte(usersGeneral._id)
           })
       );
     return data01;
@@ -247,53 +236,35 @@ export default function DashboardInit() {
   });
   
   return (
-    <>
-      <div className={classes.drawerHeader}></div>
-
-      <Zoom in={true}>
-        <Paper
-          elevation={5}
-          className={
-            Meteor.user().profile.role !== "admin"
-              ? classes.primary
-              : classes.secundary
-          }
+    <Zoom in={true}>
+      <ResponsiveContainer>
+        <ComposedChart
+          // width={500}
+          // height={400}
+          data={datausers}
+          margin={{
+            top: 20,
+            right: 20,
+            bottom: 20,
+            left: 20,
+          }}
         >
-          <Grid container spacing={3}>
-            <Grid item xs={12}>
-              <div style={{ width: "100%", height: 300 }}>
-                <ResponsiveContainer>
-                  <ComposedChart
-                    width={500}
-                    height={400}
-                    data={data}
-                    margin={{
-                      top: 20,
-                      right: 20,
-                      bottom: 20,
-                      left: 20,
-                    }}
-                  >
-                    <CartesianGrid stroke="#f5f5f5" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Area
-                      type="monotone"
-                      dataKey="amt"
-                      fill="#8884d8"
-                      stroke="#8884d8"
-                    />
-                    <Bar dataKey="pv" barSize={20} fill="#413ea0" />
-                    <Line type="monotone" dataKey="uv" stroke="#ff7300" />
-                  </ComposedChart>
-                </ResponsiveContainer>
-              </div>
-            </Grid>
-          </Grid>
-        </Paper>
-      </Zoom>
-    </>
+          <CartesianGrid stroke="#f5f5f5" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          {/* <Area
+            type="monotone"
+            dataKey="amt"
+            fill="#8884d8"
+            stroke="#8884d8"
+          /> */}
+          <Bar dataKey="TotalVendido" barSize={20} fill="#02ab10" />
+          <Bar dataKey="Debe" barSize={20} fill="#f50057" />
+          {/* <Line type="monotone" dataKey="uv" stroke="#ff7300" /> */}
+        </ComposedChart>
+      </ResponsiveContainer>
+    </Zoom>
   );
 }
