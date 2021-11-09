@@ -33,6 +33,7 @@
     "connect": "^3.7.0",
     "crypto": "^1.0.1",
     "dateformat": "^4.5.1",
+    "fechas": "^0.2.2",
     "gmail-send": "^1.8.10",
     "http": "0.0.1-security",
     "http-post": "^0.1.1",
