@@ -42,7 +42,7 @@ import {
   Pie,
 } from "recharts";
 import { VentasCollection } from "../collections/collections";
-
+import { addMeses } from "fechas";
 const StyledBadge = withStyles((theme) => ({
   badge: {
     backgroundColor: "#44b700",
@@ -199,10 +199,12 @@ export default function GraphicsLineal() {
     return VentasCollection.find({}).fetch()
   });
 
-  const gastos = (id) =>{
+  const gastos = (id,fechaStart, fechaEnd) =>{
       let totalAPagar = 0;
       ventas.map(element => {
-        element.adminId == id && !element.cobrado && (totalAPagar += element.precio)
+        element.createdAt >= fechaStart && element.createdAt < fechaEnd && console.log(element.userId)
+      element.adminId == id && !element.cobrado && (totalAPagar += element.precio)
+
       })
       return totalAPagar
     }
@@ -219,7 +221,12 @@ export default function GraphicsLineal() {
     let data01 = [];
     Meteor.subscribe("user");
      Meteor.users.find({"profile.role":"admin"}).map(
-        (usersGeneral,index) =>
+        (usersGeneral,index) =>{
+
+        let  dateStart = new Date()
+        let  dateEnd = new Date()
+        dateStart.setDate(dateStart.getDate() - (1000 * 60 * 60 * 24))
+        console.log(dateStart); 
 
         aporte(usersGeneral._id) > 0 && data01.push({
             name:
@@ -230,6 +237,8 @@ export default function GraphicsLineal() {
               Debe: gastos(usersGeneral._id),
               amt: aporte(usersGeneral._id)
           })
+        
+        }
       );
     return data01;
     
