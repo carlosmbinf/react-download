@@ -27,6 +27,9 @@ import PermContactCalendarRoundedIcon from "@material-ui/icons/PermContactCalend
 import MailIcon from "@material-ui/icons/Mail";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import AnyChart from "anychart-react";
+
+import moment from 'moment';
+
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -41,10 +44,7 @@ import {
   PieChart,
   Pie,
 } from "recharts";
-import GraphicsPieChart from "./GraphicsPieChart";
-import GraphicsLinealMensualVentasyDeudas from "./GraphicsLinealMensualVentasyDeudas";
-import GraphicsLinealTotalVentasyDeudas from "./GraphicsLinealTotalVentasyDeudas";
-
+import { VentasCollection } from "../collections/collections";
 const StyledBadge = withStyles((theme) => ({
   badge: {
     backgroundColor: "#44b700",
@@ -152,11 +152,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function DashboardInit() {
+export default function GraphicsLinealMensualVentasyDeudas() {
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
 
-
+ 
 
   const data = [
     {
@@ -196,76 +196,116 @@ export default function DashboardInit() {
       amt: 1700,
     },
   ];
+  const ventas = useTracker(() => {
+    Meteor.subscribe("ventas")
+    return VentasCollection.find({}).fetch()
+  });
 
+  const gastos = (id,fechaStart, fechaEnd) =>{
+      let totalAPagar = 0;
+      let fechaInicial = new Date(fechaStart)
+      let fechaFinal = new Date(fechaEnd)
 
-  const data02 = [
-    { name: "Group A", value: 2400 },
-    { name: "Group B", value: 4567 },
-    { name: "Group C", value: 1398 },
-    { name: "Group D", value: 9800 },
-    { name: "Group E", value: 3908 },
-    { name: "Group F", value: 4800 },
-  ];
+      // console.log(`fechaInicial: ${fechaInicial}`);
+      // console.log(`fechaFinal: ${fechaFinal}`);
 
+      ventas.map(element => {
+        let fechaElement = new Date(element.createdAt)
 
+      // console.log(`fechaElement: ${fechaElement}`);
+
+        // fechaElement >= fechaInicial && fechaElement < fechaFinal && console.log(element.userId)
+      element.adminId == id && fechaElement >= fechaInicial && fechaElement < fechaFinal && !element.cobrado && (totalAPagar += element.precio)
+
+      })
+      return totalAPagar
+    }
+
+  const aporte = (id,fechaStart, fechaEnd) =>{
+      let totalAPagar = 0;
+      let fechaInicial = new Date(fechaStart)
+      let fechaFinal = new Date(fechaEnd)
+      
+      // console.log(`fechaStart: ${fechaStart}`);
+      // console.log(`fechaEnd: ${fechaEnd}`);
+      // console.log(`fechaInicial: ${fechaInicial}`);
+      // console.log(`fechaFinal: ${fechaFinal}`);
+
+      ventas.map(element => {
+      let fechaElement = new Date(element.createdAt)
+
+      // console.log(`fechaElement: ${fechaElement}`);
+      
+
+        // fechaElement >= fechaInicial && fechaElement < fechaFinal && console.log(element.userId)
+        element.adminId == id && fechaElement >= fechaInicial && fechaElement < fechaFinal && (totalAPagar += element.precio)
+      })
+      return totalAPagar
+    }
+
+  const datausers = useTracker(() => {
+    let data01 = [];
+
+    let dateStartMonth = moment(new Date())
+    let dateEndMonth = moment(new Date())
+    dateStartMonth.startOf('month')
+    dateEndMonth.startOf('month').add(1,'month')
+
+    Meteor.subscribe("user");
+     Meteor.users.find({"profile.role":"admin"}).map(
+        (usersGeneral,index) =>{
+
+        
+        // console.log("FECHA ACTUAL: " + new Date().getMilliseconds()); 
+        // console.log("INICIO DE MES MOMENT: " + dateStartMonth.toISOString()); 
+        // console.log("Fin DE MES MOMENT: " + dateEndMonth.toISOString()); 
+
+        aporte(usersGeneral._id,dateStartMonth.toISOString(),dateEndMonth.toISOString()) > 0 && data01.push({
+            name:
+              usersGeneral.profile.firstName +
+              " " +
+              usersGeneral.profile.lastName,
+              TotalVendido: aporte(usersGeneral._id,dateStartMonth.toISOString(),dateEndMonth.toISOString()),
+              Debe: gastos(usersGeneral._id,dateStartMonth.toISOString(),dateEndMonth.toISOString()),
+              amt: aporte(usersGeneral._id,dateStartMonth.toISOString(),dateEndMonth.toISOString())
+          })
+        
+        }
+      );
+    return data01;
+    
+  });
+  
   return (
-    <>
-      <div className={classes.drawerHeader}></div>
-
-      <Zoom in={true}>
-        <>
-          {/* <Grid item xs={12}>
-              <AnyChart
-                type="column"
-                data={[
-                  { x: "John", value: 10000 },
-                  { x: "Jake", value: 12000 },
-                  {
-                    x: "Peter",
-                    value: 13000,
-                    normal: {
-                      fill: "#5cd65c",
-                      stroke: null,
-                      label: { enabled: true },
-                    },
-                    hovered: {
-                      fill: "#4554",
-                      stroke: null,
-                      label: { enabled: true },
-                    },
-                    selected: {
-                      fill: "#5cd65c",
-                      stroke: null,
-                      label: { enabled: true },
-                    },
-                  },
-                  { x: "James", value: 10000 },
-                  { x: "Mary", value: 9000 },
-                ]}
-                title="Simple pie chart"
-              />
-            </Grid> */}
-
-          {Meteor.user().username == "carlosmbinf" &&
-            <>
-              <Grid item xs={12}>
-                <div style={{ width: "100%", height: 300 }}>
-                  <GraphicsLinealMensualVentasyDeudas />
-                </div>
-              </Grid>
-              <Grid item xs={12}>
-                <div style={{ width: "100%", height: 300 }}>
-                  <GraphicsLinealTotalVentasyDeudas />
-                </div>
-              </Grid>
-            </>}
-
-          <Grid item xs={12}>
-            Cantidad de Usuarios:
-            <GraphicsPieChart />
-          </Grid>
-        </>
-      </Zoom>
-    </>
+    <Zoom in={true}>
+      <ResponsiveContainer>
+        <ComposedChart
+          // width={500}
+          // height={400}
+          data={datausers}
+          margin={{
+            top: 20,
+            right: 20,
+            bottom: 20,
+            left: 20,
+          }}
+        >
+          <CartesianGrid stroke="#f5f5f5" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          {/* <Area
+            type="monotone"
+            dataKey="amt"
+            fill="#8884d8"
+            stroke="#8884d8"
+          /> */}
+          <Bar dataKey="TotalVendido" barSize={20} fill="#02ab10" />
+          <Bar dataKey="Debe" barSize={20} fill="#f50057" />
+          {/* <Line type="monotone" dataKey="uv" stroke="#ff7300" /> */}
+        </ComposedChart>
+      </ResponsiveContainer>
+    </Zoom>
   );
 }

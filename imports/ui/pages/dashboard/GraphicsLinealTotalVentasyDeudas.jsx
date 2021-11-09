@@ -27,6 +27,9 @@ import PermContactCalendarRoundedIcon from "@material-ui/icons/PermContactCalend
 import MailIcon from "@material-ui/icons/Mail";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import AnyChart from "anychart-react";
+
+import moment from 'moment';
+
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -42,7 +45,6 @@ import {
   Pie,
 } from "recharts";
 import { VentasCollection } from "../collections/collections";
-import { addMeses } from "fechas";
 const StyledBadge = withStyles((theme) => ({
   badge: {
     backgroundColor: "#44b700",
@@ -150,11 +152,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function GraphicsLineal() {
+export default function GraphicsLinealTotalVentasyDeudas() {
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
 
-  
+ 
 
   const data = [
     {
@@ -199,34 +201,70 @@ export default function GraphicsLineal() {
     return VentasCollection.find({}).fetch()
   });
 
-  const gastos = (id,fechaStart, fechaEnd) =>{
+  const gastos = (id) =>{
       let totalAPagar = 0;
-      ventas.map(element => {
-        element.createdAt >= fechaStart && element.createdAt < fechaEnd && console.log(element.userId)
-      element.adminId == id && !element.cobrado && (totalAPagar += element.precio)
 
+      ventas.map(element => {
+      element.adminId == id && !element.cobrado && (totalAPagar += element.precio)
       })
       return totalAPagar
     }
 
   const aporte = (id) =>{
       let totalAPagar = 0;
+
       ventas.map(element => {
         element.adminId == id && (totalAPagar += element.precio)
       })
       return totalAPagar
     }
 
+    const TotalGanados = useTracker(() => {
+      let data01 = 0;
+    
+      Meteor.subscribe("user");
+       Meteor.users.find({"profile.role":"admin"}).map(
+          (usersGeneral,index) =>{
+  
+           aporte(usersGeneral._id) > 0 && (data01 += aporte(usersGeneral._id))
+          
+          }
+        );
+      return data01;
+      
+    });
+
+    const TotalDeudas = useTracker(() => {
+      let data01 = 0;
+    
+      Meteor.subscribe("user");
+       Meteor.users.find({"profile.role":"admin"}).map(
+          (usersGeneral,index) =>{
+  
+            gastos(usersGeneral._id) > 0 && (data01 += gastos(usersGeneral._id))
+          
+          }
+        );
+      return data01;
+      
+    });
+
   const datausers = useTracker(() => {
     let data01 = [];
+
+    let dateStartMonth = moment(new Date())
+    let dateEndMonth = moment(new Date())
+    dateStartMonth.startOf('month')
+    dateEndMonth.startOf('month').add(1,'month')
+
     Meteor.subscribe("user");
      Meteor.users.find({"profile.role":"admin"}).map(
         (usersGeneral,index) =>{
 
-        let  dateStart = new Date()
-        let  dateEnd = new Date()
-        dateStart.setDate(dateStart.getDate() - (1000 * 60 * 60 * 24))
-        console.log(dateStart); 
+        
+        // console.log("FECHA ACTUAL: " + new Date().getMilliseconds()); 
+        // console.log("INICIO DE MES MOMENT: " + dateStartMonth.toISOString()); 
+        // console.log("Fin DE MES MOMENT: " + dateEndMonth.toISOString()); 
 
         aporte(usersGeneral._id) > 0 && data01.push({
             name:
