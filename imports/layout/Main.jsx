@@ -89,7 +89,22 @@ export default function Main() {
         <Route path="/dashboard">
 
           <div style={{ paddingBottom: "7em" }}>
-            <DashboardInit />
+          {useractual &&
+              useractual.username == "carlosmbinf" ? (
+                <DashboardInit />
+            ) : (
+              <Zoom in={true}>
+                <Grid
+                  container
+                  direction="row"
+                  justify="center"
+                  alignItems="center"
+                >
+                  <h1>SIN ACCESO</h1>
+                </Grid>
+              </Zoom>
+            )}
+            
           </div>
 
           <Footer />

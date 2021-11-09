@@ -6,7 +6,6 @@ import CardContent from "@material-ui/core/CardContent";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import {
-  Paper,
   Box,
   Grid,
   Icon,
@@ -14,6 +13,7 @@ import {
   Zoom,
   IconButton,
 } from "@material-ui/core";
+import Paper from '@mui/material/Paper';
 import { Meteor } from "meteor/meteor";
 import { Tracker } from "meteor/tracker";
 import { useTracker } from "meteor/react-meteor-data";
@@ -27,6 +27,7 @@ import PermContactCalendarRoundedIcon from "@material-ui/icons/PermContactCalend
 import MailIcon from "@material-ui/icons/Mail";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import AnyChart from "anychart-react";
+import Chip from '@mui/material/Chip';
 
 import moment from 'moment';
 
@@ -275,37 +276,37 @@ export default function GraphicsLinealMensualVentasyDeudas() {
     return data01;
     
   });
-  
+
   return (
-    <Zoom in={true}>
-      <ResponsiveContainer>
-        <ComposedChart
-          // width={500}
-          // height={400}
-          data={datausers}
-          margin={{
-            top: 20,
-            right: 20,
-            bottom: 20,
-            left: 20,
-          }}
-        >
-          <CartesianGrid stroke="#f5f5f5" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          {/* <Area
+      <Zoom in={true}>
+        <ResponsiveContainer>
+          <ComposedChart
+            // width={500}
+            // height={400}
+            data={datausers}
+            margin={{
+              top: 20,
+              right: 20,
+              bottom: 20,
+              left: 20,
+            }}
+          >
+            {/* <CartesianGrid stroke="#f5f5f5" /> */}
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            {/* <Area
             type="monotone"
             dataKey="amt"
             fill="#8884d8"
             stroke="#8884d8"
           /> */}
-          <Bar dataKey="TotalVendido" barSize={20} fill="#02ab10" />
-          <Bar dataKey="Debe" barSize={20} fill="#f50057" />
-          {/* <Line type="monotone" dataKey="uv" stroke="#ff7300" /> */}
-        </ComposedChart>
-      </ResponsiveContainer>
-    </Zoom>
-  );
+            <Bar dataKey="TotalVendido" barSize={20} fill="#2e7d32" radius={5} />
+            <Bar dataKey="Debe" barSize={20} fill="#d32f2f" radius={5} />
+            {/* <Line type="monotone" dataKey="uv" stroke="#ff7300" /> */}
+          </ComposedChart>
+        </ResponsiveContainer>
+      </Zoom>
+        );
 }

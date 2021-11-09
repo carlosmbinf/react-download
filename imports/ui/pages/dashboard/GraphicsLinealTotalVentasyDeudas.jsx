@@ -296,19 +296,19 @@ export default function GraphicsLinealTotalVentasyDeudas() {
             left: 20,
           }}
         >
-          <CartesianGrid stroke="#f5f5f5" />
+          {/* <CartesianGrid stroke="#f5f5f5" /> */}
           <XAxis dataKey="name" />
           <YAxis />
           <Tooltip />
           <Legend />
           {/* <Area
-            type="monotone"
-            dataKey="amt"
+            type="basis"
+            dataKey="TotalVendido"
             fill="#8884d8"
             stroke="#8884d8"
           /> */}
-          <Bar dataKey="TotalVendido" barSize={20} fill="#02ab10" />
-          <Bar dataKey="Debe" barSize={20} fill="#f50057" />
+          <Bar dataKey="TotalVendido" barSize={20} fill="#2e7d32" radius={5}/>
+          <Bar dataKey="Debe" barSize={20} fill="#d32f2f" radius={5}/>
           {/* <Line type="monotone" dataKey="uv" stroke="#ff7300" /> */}
         </ComposedChart>
       </ResponsiveContainer>

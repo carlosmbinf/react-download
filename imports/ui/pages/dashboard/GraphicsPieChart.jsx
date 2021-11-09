@@ -118,13 +118,13 @@ export default function GraphicsPieChart() {
 
     return (
         <Zoom in={true}>
-            <PieChart width={500} height={400}>
+            <PieChart width={200} height={200}>
                 <Pie
                     dataKey="value"
                     isAnimationActive={false}
                     data={datausers}
-                    cx={200}
-                    cy={200}
+                    // cx={100}
+                    // cy={100}
                     innerRadius={40}
                     outerRadius={80}
                     fill="#82ca9d"

@@ -265,7 +265,7 @@ export default function PersistentDrawerLeft() {
   });
 
   const listaDeLinks = [
-    // { title: "dashboard", icon: <DashboardIcon />, url: "dashboard" },
+    { title: "dashboard", icon: <DashboardIcon />, url: "dashboard" },
     // {title: "guest",
     //   icon: <InboxIcon />,
     // },
@@ -496,7 +496,7 @@ export default function PersistentDrawerLeft() {
                 </Typography>
                   </ListItem>
                 </Link>
-              ) : text.url !== "chat" && text.url !== "ventas" && text.url !== "precios" && text.url !== "users" && text.url !== "logs" && text.url !== "connections" && text.url !== "exportdata" && text.url !== "register-data" && text.url !== "servers" ? (
+              ) : text.url !== "dashboard" && text.url !== "chat" && text.url !== "ventas" && text.url !== "precios" && text.url !== "users" && text.url !== "logs" && text.url !== "connections" && text.url !== "exportdata" && text.url !== "register-data" && text.url !== "servers" ? (
                 <Link key={index} to={"/" + text.url} className={classes.link}>
                   <ListItem button className={classes.item}>
                     <ListItemIcon color="primary">
