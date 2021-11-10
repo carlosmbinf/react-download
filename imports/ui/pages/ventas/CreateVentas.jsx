@@ -26,7 +26,7 @@ import AccountCircle from "@material-ui/icons/AccountCircle";
 import SendIcon from "@material-ui/icons/Send";
 import CloseIcon from "@material-ui/icons/Close";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import { PreciosCollection } from "../collections/collections";
+import { PreciosCollection, VentasCollection } from "../collections/collections";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -79,7 +79,6 @@ const useStyles = makeStyles((theme) => ({
 
 export default function CreateVentas() {
   const [userId, setuserId] = useState("");
-  const [createdAt, setcreatedAt] = useState("");
   const [precio, setprecio] = useState(0);
   const [comentario, setcomentario] = useState("");
   const [cobrado, setcobrado] = React.useState(false);
@@ -111,13 +110,12 @@ export default function CreateVentas() {
       const datosVentas = {
         userId: useParams().id,
         adminId: Meteor.userId(),
-        createdAt,
         precio,
         comentario,
         cobrado
       };
       try {
-        let id = await PreciosCollection.insert(datosVentas)
+        let id = await VentasCollection.insert(datosVentas)
         id && (
           setMessage(`Venta Creada`),
           handleClick(TransitionUp),

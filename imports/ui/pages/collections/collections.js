@@ -68,21 +68,21 @@ Meteor.methods({
     
   }
 
-  try {
-    await mi({
-      fields: OnlineCollection.find().fetch(), // {array} data to import
-      db: "meteor", // {string} name of db
-      collection: 'online', // {string|function} name of collection, or use a function to
-      //  return a name, accept one param - [fields] the fields to import
-      host: urlMongoDB,
-      callback: (err, db) => {
-        err && console.error(err);
-      },
-    });
-  } catch (error) {
-    console.log(error);
+  // try {
+  //   await mi({
+  //     fields: OnlineCollection.find().fetch(), // {array} data to import
+  //     db: "meteor", // {string} name of db
+  //     collection: 'online', // {string|function} name of collection, or use a function to
+  //     //  return a name, accept one param - [fields] the fields to import
+  //     host: urlMongoDB,
+  //     callback: (err, db) => {
+  //       err && console.error(err);
+  //     },
+  //   });
+  // } catch (error) {
+  //   console.log(error);
     
-  }
+  // }
 
   try {
     await mi({
@@ -134,6 +134,54 @@ Meteor.methods({
 
   try {
     await mi({
+      fields: ServersCollection.find().fetch(), // {array} data to import
+      db: "meteor", // {string} name of db
+      collection: 'servers', // {string|function} name of collection, or use a function to
+      //  return a name, accept one param - [fields] the fields to import
+      host: urlMongoDB,
+      callback: (err, db) => {
+        err && console.error(err);
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    
+  }
+
+  try {
+    await mi({
+      fields: PreciosCollection.find().fetch(), // {array} data to import
+      db: "meteor", // {string} name of db
+      collection: 'precios', // {string|function} name of collection, or use a function to
+      //  return a name, accept one param - [fields] the fields to import
+      host: urlMongoDB,
+      callback: (err, db) => {
+        err && console.error(err);
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    
+  }
+
+  try {
+    await mi({
+      fields: VentasCollection.find().fetch(), // {array} data to import
+      db: "meteor", // {string} name of db
+      collection: 'ventas', // {string|function} name of collection, or use a function to
+      //  return a name, accept one param - [fields] the fields to import
+      host: urlMongoDB,
+      callback: (err, db) => {
+        err && console.error(err);
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    
+  }
+
+  try {
+    await mi({
       fields: Meteor.users.find().fetch(), // {array} data to import
       db: "meteor", // {string} name of db
       collection: 'users', // {string|function} name of collection, or use a function to
@@ -158,7 +206,15 @@ export const SchemaRegisterDataUsersCollection = new SimpleSchema({
   },
   fecha: {
     type: Date,
-    defaultValue: new Date(),
+    autoValue: function() {
+      if (this.isInsert) {
+        return new Date();
+      } else if (this.isUpsert) {
+        return {$setOnInsert: new Date()};
+      } else {
+        this.unset();  // Prevent user from supplying their own value
+      }
+    },
     optional: true,
   },
   megasGastadosinBytes: {
@@ -186,6 +242,15 @@ export const SchemaVentasCollection = new SimpleSchema({
   },
   createdAt: {
     type: Date,
+    autoValue: function() {
+      if (this.isInsert) {
+        return new Date();
+      } else if (this.isUpsert) {
+        return {$setOnInsert: new Date()};
+      } else {
+        this.unset();  // Prevent user from supplying their own value
+      }
+    },
     optional: false,
   },
   cobrado: {
@@ -213,6 +278,15 @@ export const SchemaPreciosCollection = new SimpleSchema({
   },
   createdAt: {
     type: Date,
+    autoValue: function() {
+      if (this.isInsert) {
+        return new Date();
+      } else if (this.isUpsert) {
+        return {$setOnInsert: new Date()};
+      } else {
+        this.unset();  // Prevent user from supplying their own value
+      }
+    },
     optional: false,
   },
   precio: {
@@ -252,6 +326,15 @@ export const SchemaOnlineCollection = new SimpleSchema({
   },
   loginAt: {
     type: Date,
+    autoValue: function() {
+      if (this.isInsert) {
+        return new Date();
+      } else if (this.isUpsert) {
+        return {$setOnInsert: new Date()};
+      } else {
+        this.unset();  // Prevent user from supplying their own value
+      }
+    },
     optional: true,
   },
   hostname: {
@@ -290,8 +373,15 @@ export const SchemaMensajesCollection = new SimpleSchema({
   },
   createdAt: {
     type: Date,
-    defaultValue: new Date(),
-    optional: true,
+    autoValue: function() {
+      if (this.isInsert) {
+        return new Date();
+      } else if (this.isUpsert) {
+        return {$setOnInsert: new Date()};
+      } else {
+        this.unset();  // Prevent user from supplying their own value
+      }
+    }
   },
   type:{
     type: String,
@@ -321,7 +411,15 @@ export const SchemaTVCollection = new SimpleSchema({
   },
   createdAt: {
     type: Date,
-    defaultValue: new Date(),
+    autoValue: function() {
+      if (this.isInsert) {
+        return new Date();
+      } else if (this.isUpsert) {
+        return {$setOnInsert: new Date()};
+      } else {
+        this.unset();  // Prevent user from supplying their own value
+      }
+    }
   },
   vistas: {
     type: Number,
@@ -356,7 +454,15 @@ export const SchemaPelisCollection = new SimpleSchema({
   },
   createdAt: {
     type: Date,
-    defaultValue: new Date(),
+    autoValue: function() {
+      if (this.isInsert) {
+        return new Date();
+      } else if (this.isUpsert) {
+        return {$setOnInsert: new Date()};
+      } else {
+        this.unset();  // Prevent user from supplying their own value
+      }
+    }
   },
   subtitulo: {
     type: String,
@@ -400,7 +506,15 @@ export const SchemaDescargaCollection = new SimpleSchema({
   },
   createdAt: {
     type: Date,
-    defaultValue: new Date(),
+    autoValue: function() {
+      if (this.isInsert) {
+        return new Date();
+      } else if (this.isUpsert) {
+        return {$setOnInsert: new Date()};
+      } else {
+        this.unset();  // Prevent user from supplying their own value
+      }
+    }
   },
   descargadoPor:{
     type: String,
@@ -443,7 +557,15 @@ export const SchemaServersCollection = new SimpleSchema({
   },
   createdAt: {
     type: Date,
-    defaultValue: new Date(),
+    autoValue: function() {
+      if (this.isInsert) {
+        return new Date();
+      } else if (this.isUpsert) {
+        return {$setOnInsert: new Date()};
+      } else {
+        this.unset();  // Prevent user from supplying their own value
+      }
+    }
   },
 });
 

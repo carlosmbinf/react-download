@@ -83,8 +83,7 @@ export default function Input() {
       MensajesCollection.insert({
               from: Meteor.userId(),
               to: id,
-              mensaje: mensaje,
-              createdAt: new Date()
+              mensaje: mensaje
             }),
             setMensaje("")
             )

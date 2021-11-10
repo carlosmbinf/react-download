@@ -288,7 +288,6 @@ export default function UserCardDetails() {
         userAdmin: Meteor.userId(),
         message:
           `Ha sido Cambiado el consumo de Datos a: ${megas}MB`,
-        createdAt: new Date(),
       });
     } catch (error) {
       
@@ -327,7 +326,6 @@ export default function UserCardDetails() {
       userAdmin: Meteor.userId(),
       message:
         `Ha sido Reiniciado el consumo de Datos por ${users.profile.firstName} ${users.profile.lastName}`,
-      createdAt: new Date(),
     });
     alert('Se reinicio los datos de ' + users.profile.firstName)
   };
@@ -359,7 +357,6 @@ let validacion = false;
             "Ha sido " +
             (!users.baneado ? "Bloqueado" : "Desbloqueado") +
             " por un Admin",
-          createdAt: new Date(),
         }))
     ) : (
 
@@ -378,7 +375,6 @@ let validacion = false;
             "Ha sido " +
             (!users.baneado ? "Bloqueado" : "Desbloqueado") +
             " por un Admin",
-          createdAt: new Date(),
         })),
 
       validacion && users.baneado && (
@@ -396,7 +392,6 @@ let validacion = false;
             "Ha sido " +
             (!users.baneado ? "Bloqueado" : "Desbloqueado") +
             " por un Admin",
-          createdAt: new Date(),
         }),
         precios.map(precio => {
 
@@ -404,8 +399,7 @@ let validacion = false;
             adminId: Meteor.userId(),
             userId: users._id,
             precio: precio.precio,
-            comentario: precio.comentario,
-            createdAt: new Date()
+            comentario: precio.comentario
           }),
             setMensaje(precio.comentario),
             handleClickOpen()
@@ -418,8 +412,7 @@ let validacion = false;
                 adminId: Meteor.userId(),
                 userId: users._id,
                 precio: precio.precio,
-                comentario: precio.comentario,
-                createdAt: new Date()
+                comentario: precio.comentario
               }),
               setMensaje(precio.comentario),
               handleClickOpen()
@@ -779,7 +772,6 @@ let validacion = false;
                                                   true,
                                                   true
                                                 ),
-                                              createdAt: new Date(),
                                             });
                                           e.target.value &&
                                             LogsCollection.insert({
@@ -788,7 +780,6 @@ let validacion = false;
                                               userAdmin: Meteor.userId(),
                                               message:
                                                 "Ha sido Desbloqueado por un Admin",
-                                              createdAt: new Date(),
                                             });
                                         }}
                                       />
@@ -866,7 +857,6 @@ let validacion = false;
                                     userAdmin: Meteor.userId(),
                                     message:
                                       `Ha sido Cambiado el consumo de Datos a: ${newValue.value}MB`,
-                                    createdAt: new Date(),
                                   });
                                   // setIP(newValue);
                                 }}

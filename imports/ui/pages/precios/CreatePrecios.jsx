@@ -110,7 +110,6 @@ export default function CreatePrecios() {
       setLoad(true);
       const datosPrecios = {
         userId: Meteor.userId(),
-        createdAt: new Date(),
         precio,
         fecha,
         megas: fecha ? null : megas,

@@ -36,7 +36,6 @@ function insertDescarga({
     nombreFile,
     tamanoFile,
     comentarios,
-    createdAt: new Date(),
     descargadoPor,
     thumbnail,
   });
@@ -57,9 +56,7 @@ const tarea = async() => {
     RegisterDataUsersCollection.insert({
       userId: user._id,
       megasGastadosinBytes: user.megasGastadosinBytes,
-      megasGastadosinBytesGeneral: user.megasGastadosinBytesGeneral,
-      fecha: new Date(),
-      
+      megasGastadosinBytesGeneral: user.megasGastadosinBytesGeneral,      
     });
     Meteor.users.update(user._id, {
       $set: { megasGastadosinBytes: 0, megasGastadosinBytesGeneral: 0 },
@@ -75,7 +72,6 @@ async function conect(server,connectionId, userId, hostname) {
       connectionId: `${server}${connectionId.toString()}`,
       address: "proxy: " + Meteor.settings.public.IP,
       userId: userId,
-      loginAt: new Date(),
       hostname: hostname,
     });
   } catch (error) {
@@ -456,8 +452,7 @@ if (Meteor.isServer) {
               RegisterDataUsersCollection.insert({
                 userId: user._id,
                 megasGastadosinBytes: user.megasGastadosinBytes,
-                megasGastadosinBytesGeneral: user.megasGastadosinBytesGeneral,
-                fecha: new Date(),
+                megasGastadosinBytesGeneral: user.megasGastadosinBytesGeneral
               })
               user.profile.role == 'admin' &&
                 Meteor.users.update(user._id, {
@@ -482,7 +477,6 @@ if (Meteor.isServer) {
                     "El server " +
                     process.env.ROOT_URL +
                     " Bloqueo automaticamente el proxy por ser dia Primero de cada Mes",
-                  createdAt: new Date(),
                 }),
                 send(
                   {
@@ -534,7 +528,6 @@ if (Meteor.isServer) {
                     userAdmin: "server",
                     message:
                       "El server " + process.env.ROOT_URL +" Bloqueo automaticamente el proxy porque llego a la fecha limite",
-                    createdAt: new Date(),
                   }),
                   send({
                     text:    'El server ' + process.env.ROOT_URL +' Bloqueo automaticamente el proxy de ' + user.profile.firstName + " " + user.profile.lastName + ' porque llego a la fecha limite.' ,  
@@ -554,7 +547,6 @@ if (Meteor.isServer) {
                     userAdmin: "server",
                     message:
                       "El server " + process.env.ROOT_URL +" Bloqueo automaticamente el proxy porque consumio los " + user.megas + " MB",
-                    createdAt: new Date(),
                   }),
                   send({
                     text:    "El server " + process.env.ROOT_URL +" Bloqueo automaticamente el proxy a: " + user.profile.firstName + " " + user.profile.lastName + " porque consumio los " + user.megas + "MB",  
