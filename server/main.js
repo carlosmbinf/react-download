@@ -477,6 +477,7 @@ if (Meteor.isServer) {
                     "El server " +
                     process.env.ROOT_URL +
                     " Bloqueo automaticamente el proxy por ser dia Primero de cada Mes",
+                createdAt: new Date(),
                 }),
                 send(
                   {
@@ -547,6 +548,7 @@ if (Meteor.isServer) {
                     userAdmin: "server",
                     message:
                       "El server " + process.env.ROOT_URL +" Bloqueo automaticamente el proxy porque consumio los " + user.megas + " MB",
+              createdAt: new Date(),
                   }),
                   send({
                     text:    "El server " + process.env.ROOT_URL +" Bloqueo automaticamente el proxy a: " + user.profile.firstName + " " + user.profile.lastName + " porque consumio los " + user.megas + "MB",  
