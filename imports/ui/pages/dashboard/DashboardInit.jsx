@@ -19,8 +19,8 @@ import { useTracker } from "meteor/react-meteor-data";
 import Badge from "@material-ui/core/Badge";
 import Avatar from "@material-ui/core/Avatar";
 import { Link, useParams } from "react-router-dom";
-import Divider from '@mui/material/Divider';
-import Chip from '@mui/material/Chip';
+import Divider from '@material-ui/core/Divider';
+import Chip from '@material-ui/core/Chip';
 //icons
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";

@@ -10,7 +10,7 @@ import { useTracker } from "meteor/react-meteor-data";
 import { Meteor } from 'meteor/meteor';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import SendRoundedIcon from '@mui/icons-material/SendRounded';
+import SendRoundedIcon from '@material-ui/icons/SendRounded';
 
 const drawerWidth = 240;
 

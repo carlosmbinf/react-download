@@ -29,7 +29,6 @@ import { Button, Grid, Slide } from "@material-ui/core";
 import { useHistory } from 'react-router-dom';
 import { useTracker } from "meteor/react-meteor-data";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
-import Badge from "@material-ui/core/Badge";
 import Avatar from "@material-ui/core/Avatar";
 import { Meteor } from "meteor/meteor";
 import Fade from "react-reveal/Fade";
@@ -53,8 +52,8 @@ import SetPassword from "../ui/pages/users/SetPassword";
 import { Suspense } from "react";
 import SpinnerModal from "../ui/components/spinnerModal/SpinnerModal";
 import ImportExportIcon from '@material-ui/icons/ImportExport';
-import MailOutlineRoundedIcon from '@mui/icons-material/MailOutlineRounded';
-import Badge from '@mui/material/Badge';
+import MailOutlineRoundedIcon from '@material-ui/icons/MailOutlineRounded';
+import Badge from '@material-ui/core/Badge';
 
 const drawerWidth = 240;
 const StyledBadge = withStyles((theme) => ({

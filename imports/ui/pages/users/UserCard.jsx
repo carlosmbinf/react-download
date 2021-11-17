@@ -19,8 +19,7 @@ import {VentasCollection} from "../collections/collections";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
 import PermContactCalendarRoundedIcon from "@material-ui/icons/PermContactCalendarRounded";
-import DataSaverOnIcon from '@mui/icons-material/DataSaverOn';
-
+import MailOutlineOutlinedIcon from '@material-ui/icons/MailOutlineOutlined';
 const StyledBadge = withStyles((theme) => ({
   badge: {
     backgroundColor: "#44b700",
@@ -210,7 +209,7 @@ export default function UserCard(withAdd) {
                     <Grid item xs={12}>
                       <Grid container direction="row">
                         <Grid item xs={12}>
-                          <DataSaverOnIcon />
+                          <MailOutlineOutlinedIcon />
                         <Typography color="textSecondary" noWrap>
                           <strong>
                             {usersGeneral.megasGastadosinBytes ?

@@ -13,21 +13,10 @@ import {
   Zoom,
   IconButton,
 } from "@material-ui/core";
-import Paper from '@mui/material/Paper';
 import { Meteor } from "meteor/meteor";
 import { Tracker } from "meteor/tracker";
 import { useTracker } from "meteor/react-meteor-data";
 import Badge from "@material-ui/core/Badge";
-import Avatar from "@material-ui/core/Avatar";
-import { Link, useParams } from "react-router-dom";
-//icons
-import AccountCircleIcon from "@material-ui/icons/AccountCircle";
-import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
-import PermContactCalendarRoundedIcon from "@material-ui/icons/PermContactCalendarRounded";
-import MailIcon from "@material-ui/icons/Mail";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import AnyChart from "anychart-react";
-import Chip from '@mui/material/Chip';
 
 import moment from 'moment';
 

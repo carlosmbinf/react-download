@@ -24,7 +24,7 @@ import MovieFilterIcon from '@material-ui/icons/MovieFilter';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import { AppBar, Container, Grid, IconButton, TextField, Toolbar, Typography } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
-import SendRoundedIcon from '@mui/icons-material/SendRounded';
+import SendRoundedIcon from '@material-ui/icons/SendRounded';
 const useStyles = makeStyles((theme) =>
 createStyles({
     root: {
