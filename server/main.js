@@ -6,7 +6,8 @@ import {
   MensajesCollection,
   ServersCollection,
   PreciosCollection,
-  VentasCollection
+  VentasCollection,
+  FilesCollection
 } from "../imports/ui/pages/collections/collections";
 import { TVCollection } from "../imports/ui/pages/collections/collections";
 import { DescargasCollection } from "../imports/ui/pages/collections/collections";
@@ -1269,6 +1270,9 @@ console.log(update);
   });
   Meteor.publish("ventas", function (selector) {
     return VentasCollection.find(selector?selector:{});
+  });
+  Meteor.publish("files", function (selector) {
+    return FilesCollection.find(selector?selector:{});
   });
 
   Meteor.onConnection(function (connection) {

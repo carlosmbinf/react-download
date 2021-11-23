@@ -15,6 +15,7 @@ export const LogsCollection = new Mongo.Collection('Logs');
 export const ServersCollection = new Mongo.Collection('servers');
 export const PreciosCollection = new Mongo.Collection('precios');
 export const VentasCollection = new Mongo.Collection('ventas');
+export const FilesCollection = new Mongo.Collection('files');
 
 
 
@@ -570,6 +571,54 @@ export const SchemaServersCollection = new SimpleSchema({
 });
 
 ServersCollection.attachSchema(SchemaServersCollection)
+
+export const SchemaFilesCollection = new SimpleSchema({
+  nombre: {
+    type: String,
+    optional:false
+
+  },
+  url: {
+    type: String,
+    optional:false
+  },
+  details:{
+    type: String,
+    defaultValue: "",
+    optional:true
+  },
+  createdAt: {
+    type: Date,
+    autoValue: function() {
+      if (this.isInsert) {
+        return new Date();
+      } else if (this.isUpsert) {
+        return {$setOnInsert: new Date()};
+      } else {
+        this.unset();  // Prevent user from supplying their own value
+      }
+    }
+  },
+});
+
+FilesCollection.attachSchema(SchemaFilesCollection)
+
+FilesCollection.allow({
+  insert(doc) {
+    // The user must be logged in and the document must be owned by the user.
+    return true;
+  },
+
+  update() {
+    // Can only change your own documents.
+    return true;
+  },
+
+  remove(userId, doc) {
+    // Can only remove your own documents.
+    return true;
+  },
+});
 
 LogsCollection.allow({
   insert(doc) {

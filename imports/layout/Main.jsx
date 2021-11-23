@@ -51,6 +51,9 @@ import VentasTable from "../ui/pages/ventas/VentasTable";
 import Chats from "../ui/pages/chats/Chats";
 import ChatDetails from "../ui/pages/chats/ChatDetails";
 import Footer from "./Footer";
+import InsertFiles from "../ui/pages/files/InsertFiles";
+import InsertFilesTable from "../ui/pages/files/InsertFilesTable";
+import FileDetails from "../ui/pages/files/FileDetails";
 
 const useStyles = makeStyles((theme) => ({
   // necessary for content to be below app bar
@@ -302,6 +305,52 @@ export default function Main() {
               <>
                 <CreatePrecios />
                 <PreciosTable />
+              </>
+            ) : (
+              <Zoom in={true}>
+                <Grid
+                  container
+                  direction="row"
+                  justify="center"
+                  alignItems="center"
+                >
+                  <h1>SIN ACCESO</h1>
+                </Grid>
+              </Zoom>
+            )}
+          </div>
+
+          <Footer />
+        </Route>
+
+        <Route path="/files/:id">
+          <div style={{ paddingBottom: "7em" }}>
+            {useractual &&
+              useractual.username == "carlosmbinf" ? (
+              <FileDetails />
+            ) : (
+              <Zoom in={true}>
+                <Grid
+                  container
+                  direction="row"
+                  justify="center"
+                  alignItems="center"
+                >
+                  <h1>SIN ACCESO</h1>
+                </Grid>
+              </Zoom>
+            )}
+          </div>
+
+          <Footer />
+        </Route>
+        <Route path="/files">
+          <div style={{ paddingBottom: "7em" }}>
+            {useractual &&
+              useractual.username == "carlosmbinf" ? (
+              <>
+                <InsertFiles />
+                <InsertFilesTable />
               </>
             ) : (
               <Zoom in={true}>
