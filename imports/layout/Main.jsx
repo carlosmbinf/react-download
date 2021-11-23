@@ -54,6 +54,7 @@ import Footer from "./Footer";
 import InsertFiles from "../ui/pages/files/InsertFiles";
 import InsertFilesTable from "../ui/pages/files/InsertFilesTable";
 import FileDetails from "../ui/pages/files/FileDetails";
+import CodeDetails from "../ui/pages/files/CodeDetails";
 
 const useStyles = makeStyles((theme) => ({
   // necessary for content to be below app bar
@@ -327,7 +328,9 @@ export default function Main() {
           <div style={{ paddingBottom: "7em" }}>
             {useractual &&
               useractual.username == "carlosmbinf" ? (
-              <FileDetails />
+                <>
+                  <FileDetails />
+                </>
             ) : (
               <Zoom in={true}>
                 <Grid

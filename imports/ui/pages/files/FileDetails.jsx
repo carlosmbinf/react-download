@@ -29,6 +29,7 @@ import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 
 
 import { FilesCollection } from "../collections/collections"
+import CodeDetails from "./CodeDetails";
 const useStyles = makeStyles((theme) => ({
   root: {
     minWidth: 275,
@@ -334,6 +335,8 @@ export default function FileDetails() {
               </Grid>
             </Grid>
           </Grid>
+          
+          <CodeDetails />
         </Paper>
       </Rotate>
     </>:""
