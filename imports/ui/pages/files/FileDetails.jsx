@@ -89,7 +89,8 @@ export default function FileDetails() {
   const [message, setMessage] = useState("");
   const [transition, setTransition] = useState(undefined);
   const [load, setLoad] = useState(false);
-  
+ 
+
   const server = useTracker(() => {
     Meteor.subscribe("files", useParams().id)
     return FilesCollection.findOne(useParams().id)
@@ -139,14 +140,17 @@ export default function FileDetails() {
       details&&(fileData["details"] = details)
       console.log(fileData);
       try {
-      let id = null
-        nombre || url || details || (id = await FilesCollection.update(server._id, {
-          $set: fileData,
-        }))
-        id && (setMessage(`File ${server && server.nombre} Actualizado`),
+        nombre == "" || url  == "" || details  == "" || (
+          await FilesCollection.update(server._id, {
+            $set: fileData,
+          }),
+          setMessage(`File ${server && server.nombre} Actualizado`),
           handleClick(TransitionUp),
           setLoad(false),
-          setOpen(true))
+          setOpen(true)
+          )
+        
+        
       } catch (error) {
         setMessage(`Ocurrió un Error al actualizar el Archivo: ${server && server.nombre}`),
         console.log(error);
@@ -235,7 +239,7 @@ export default function FileDetails() {
                       className={classes.root}
                       onSubmit={handleSubmit}
                       // noValidate
-                      autoComplete="true"
+                      // autoComplete="true"
                     >
                       <Grid container className={classes.margin}>
                         <h3>Actualizar Server</h3>
@@ -253,7 +257,7 @@ export default function FileDetails() {
                               color="secondary"
                               type="text"
                               defaultValue={server.nombre}
-                              value={nombre}
+                              // value={nombre}
                               onInput={(e) => setnombre(e.target.value)}
                               // InputProps={{
                               //   startAdornment: (
@@ -277,7 +281,7 @@ export default function FileDetails() {
                               color="secondary"
                               type="text"
                               defaultValue={server.url}
-                              value={url}
+                              // value={url}
                               onInput={(e) => seturl(e.target.value)}
                               // InputProps={{
                               //   startAdornment: (
@@ -301,7 +305,7 @@ export default function FileDetails() {
                             color="secondary"
                             type="text"
                             defaultValue={server.details}
-                            value={details}
+                            // value={details}
                             multiline
                             rowsMax={4}
                             rows={6}
@@ -336,7 +340,7 @@ export default function FileDetails() {
             </Grid>
           </Grid>
           
-          <CodeDetails />
+          <CodeDetails/>
         </Paper>
       </Rotate>
     </>:""
