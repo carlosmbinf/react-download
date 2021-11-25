@@ -702,6 +702,65 @@ if (Meteor.isServer) {
     res.end();
   });
 
+  endpoint.post("/getfile", async (req, res) => {
+    // console.log(req)
+    // console.log(req.body)
+    try {
+      console.log("Get File " + JSON.stringify(req.body.nombre));
+
+     await fs.readFile(req.body.url, "utf-8", (err, data) => {
+        if (err) res.end("Error: " + err);
+        // console.log(data);
+       
+        res.end(data);
+      });
+      
+    } catch (error) {
+      console.log("error.error :> " + error.error);
+      console.log("error.reason :> " + error.reason);
+      console.log("error.message :> " + error.message);
+      console.log("error.errorType :> " + error.errorType);
+      console.log("--------------------------------------");
+
+      res.end(error);
+    }
+
+    
+  });
+
+
+  endpoint.post("/setfile", async (req, res) => {
+    // console.log(req)
+    // console.log(req.body)
+    try {
+      console.log("Set File " + JSON.stringify(req.body));
+
+    await  fs.writeFile(req.body.url, req.body.data, (err) => {
+      if (err) res.end("Error: " + err);
+        res.end("Datos Guardados Correctamente!!!")
+      });
+   
+    } catch (error) {
+      console.log("error.error :> " + error.error);
+      console.log("error.reason :> " + error.reason);
+      console.log("error.message :> " + error.message);
+      console.log("error.errorType :> " + error.errorType);
+      console.log("--------------------------------------");
+
+      res.writeHead(error.error, {
+        error: error.error,
+        reason: error.reason,
+        message: error.message,
+        errorType: error.errorType,
+      });
+
+      res.end(error);
+
+    }
+
+    
+  });
+
   endpoint.post("/createuser", (req, res) => {
     // console.log(req)
     // console.log(req.body)

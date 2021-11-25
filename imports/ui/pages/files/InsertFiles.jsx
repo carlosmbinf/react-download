@@ -198,7 +198,7 @@ export default function InsertFiles() {
                 <Grid container spacing={3}>
                   <Grid item xs={12}>
                     <Typography variant="h4" color="secondary" component="h2">
-                      Agregar Precios
+                      Agregar Archivos
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
@@ -211,7 +211,9 @@ export default function InsertFiles() {
                       autoComplete="true"
                     >
                       <Grid container className={classes.margin}>
-                        File:
+                      <Typography variant="h6" color="secondary" component="h2">
+                      Archivo
+                    </Typography>
                       </Grid>
                       <Grid container>
                         <Grid item xs={12} sm={4} lg={3}>

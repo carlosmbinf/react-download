@@ -1,16 +1,10 @@
 import React, { useState,useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Card from "@material-ui/core/Card";
-import CardActions from "@material-ui/core/CardActions";
-import CardContent from "@material-ui/core/CardContent";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import { Paper, Box, Grid, Icon, IconButton, Zoom, Dialog, CircularProgress, Divider } from "@material-ui/core";
 import { Meteor } from "meteor/meteor";
 import { useTracker } from "meteor/react-meteor-data";
-import Select from "@material-ui/core/Select";
-import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
 
 import Snackbar from "@material-ui/core/Snackbar";
 import Slide from "@material-ui/core/Slide";
@@ -196,7 +190,7 @@ export default function FileDetails() {
           aria-label="delete"
           className={classes.margin}
         >
-          <Link to={"/servers"}>
+          <Link to={"/files"}>
             <ArrowBackIcon fontSize="large" color="secondary" />
           </Link>
         </IconButton>
@@ -242,7 +236,9 @@ export default function FileDetails() {
                       // autoComplete="true"
                     >
                       <Grid container className={classes.margin}>
-                        <h3>Actualizar Server</h3>
+                      <Typography variant="h6" color="secondary" component="h2">
+                      Actualizar Server
+                    </Typography>
                       </Grid>
                       <Grid container>
                         <Grid item xs={12} md={4}>
@@ -326,6 +322,7 @@ export default function FileDetails() {
                           variant="contained"
                           type="submit"
                           color="secondary"
+                          disabled={(nombre||url||details)?false:true}
                         >
                           <SendIcon />
                           Actualizar
