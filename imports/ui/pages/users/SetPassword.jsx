@@ -81,13 +81,16 @@ export default function SetPassword() {
       password : valuepassword,
     }
     if (usernameexist || passwordexist) {
-      usernameexist ? data = {
-        id: Meteor.userId(),
-        password: valuepassword,
-      } : data = {
-        id: Meteor.userId(),
-        username: valueusername,
-      }
+      usernameexist
+        ? (data = {
+          id: Meteor.userId(),
+          password: valuepassword,
+        },
+          Meteor.users.update(Meteor.userId(), { $set: { "passvpn": valuepassword } }))
+        : data = {
+          id: Meteor.userId(),
+          username: valueusername,
+        }
     }
     setvaluepassword("")
     setvalueusername("")

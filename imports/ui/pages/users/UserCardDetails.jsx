@@ -1011,6 +1011,31 @@ let validacion = false;
                         </>
                       }
 
+
+{
+                        Meteor.user().profile.role == "admin" &&
+                        <>
+                          <Divider className={classes.padding10} />
+                          <h3>
+                            VPN:
+                          </h3>
+                          <Grid item xs={12} sm={4}
+                            style={{ textAlign: "center", padding: 3 }}
+                          >
+                              <Button
+                                disabled={users.megasGastadosinBytes == 0}
+                                onClick={handleVPNStatus}
+                                variant="contained"
+                                color={"secondary"}
+                              >
+                                {users.vpn
+                                  ? "Desactivar VPN"
+                                  : "Activar VPN"}
+                              </Button>
+                            </Grid>
+                        </>
+                      }
+
                     </Grid>
                   </>
                 ) : (
@@ -1108,22 +1133,22 @@ let validacion = false;
                       justify="space-around"
                       alignItems="center"
                     >
-                      {Meteor.user().username == "carlosmbinf" && (
-                        <Grid
-                          item
-                          xs={12}
-                          sm={4}
-                          style={{ textAlign: "center" }}
-                        >
-                          <IconButton
-                          disabled
-                            onClick={eliminarUser}
-                            aria-label="delete"
+                        {Meteor.user().username == "carlosmbinf" && (
+                          <Grid
+                            item
+                            xs={12}
+                            sm={4}
+                            style={{ textAlign: "center" }}
                           >
-                            <DeleteIcon color="primary" fontSize="large" />
-                          </IconButton>
-                        </Grid>
-                      )}
+                            <IconButton
+                              disabled
+                              onClick={eliminarUser}
+                              aria-label="delete"
+                            >
+                              <DeleteIcon color="primary" fontSize="large" />
+                            </IconButton>
+                          </Grid>
+                        )}
                       <Grid item xs={12} sm={4} style={{ textAlign: "center" }}>
                         <Button
                           color={edit ? "secondary" : "primary"}

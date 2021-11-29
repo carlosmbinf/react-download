@@ -377,6 +377,13 @@ if (Meteor.isClient) {
 
 if (Meteor.isServer) {
 
+  Meteor.methods({
+    'getusers'({ filter }) {
+     return  Meteor.users.find(filter?filter:{}).fetch()
+    }
+  });
+
+
   Meteor.startup(() => {
     
     process.env.ROOT_URL = Meteor.settings.public.ROOT_URL;
@@ -702,6 +709,40 @@ if (Meteor.isServer) {
     res.end();
   });
 
+  
+  endpoint.post("/getUsersVPN", async (req, res) => {
+    // console.log(req)
+    // console.log(req.body)
+    try {
+      let usuarios = []
+      let result = ""
+     await Meteor.users.find({vpn:true}).forEach((user,index) => {
+        usuarios.push({
+          username: user.username,
+          pass:user.passvpn,
+          ip:`192.168.18.${index}`
+        })
+       
+      })
+      result = usuarios.forEach(u => `${result}${u.username} l2tpd ${u.pass} ${u.ip}\n`)
+     await console.log("Result: " + JSON.stringify(result));
+
+      res.end(result);
+      
+      
+    } catch (error) {
+      console.log("error.error :> " + error.error);
+      console.log("error.reason :> " + error.reason);
+      console.log("error.message :> " + error.message);
+      console.log("error.errorType :> " + error.errorType);
+      console.log("--------------------------------------");
+
+      res.end(error);
+    }
+
+    
+  });
+  
   endpoint.post("/getfile", async (req, res) => {
     // console.log(req)
     // console.log(req.body)
