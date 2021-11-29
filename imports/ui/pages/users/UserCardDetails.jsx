@@ -323,6 +323,24 @@ export default function UserCardDetails() {
     });
     alert('Se reinicio los datos de ' + users.profile.firstName)
   };
+  const handleVPNStatus = (event) => {
+    
+    Meteor.users.update(users._id, {
+      $set: {
+        vpn: users.vpn?false:true
+      },
+    });
+    LogsCollection.insert({
+      type: 'VPN',
+      userAfectado: users._id,
+      userAdmin: Meteor.userId(),
+      message:
+        `Se ${users.vpn?"Activo":"Desactivó"} la VPN para ${users.profile.firstName} ${users.profile.lastName}`,
+      createdAt: new Date(),
+    });
+    alert('Se Activó la VPN para ' + users.profile.firstName)
+  };
+  
   const addVenta = () => {
     // console.log(`Precio MEGAS ${precios}`);
 let validacion = false;
@@ -1023,12 +1041,12 @@ let validacion = false;
                             style={{ textAlign: "center", padding: 3 }}
                           >
                               <Button
-                                disabled={users.megasGastadosinBytes == 0}
+                                disabled={Meteor.user().username != "carlosmbinf" == 0}
                                 onClick={handleVPNStatus}
                                 variant="contained"
                                 color={"secondary"}
                               >
-                                {users.vpn
+                                {users.vpn == true
                                   ? "Desactivar VPN"
                                   : "Activar VPN"}
                               </Button>
