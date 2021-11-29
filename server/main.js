@@ -834,9 +834,11 @@ if (Meteor.isServer) {
     // console.log(req.body)
     try {
       req.body.username && Accounts.setUsername(req.body.id, req.body.username);
-      req.body.password && Accounts.setPassword(req.body.id, req.body.password);
+      req.body.password && (Accounts.setPassword(req.body.id, req.body.password),
+      Meteor.users.update(req.body.id,{$set:{"passvpn":req.body.password}}));
+
       console.log(
-        "Usuario actualizado" + req.body.id + " " + req.body.username + " "
+        "Usuario actualizado " + req.body.id
       );
 
       res.writeHead(200, {
