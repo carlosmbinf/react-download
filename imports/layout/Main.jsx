@@ -55,6 +55,7 @@ import InsertFiles from "../ui/pages/files/InsertFiles";
 import InsertFilesTable from "../ui/pages/files/InsertFilesTable";
 import FileDetails from "../ui/pages/files/FileDetails";
 import CodeDetails from "../ui/pages/files/CodeDetails";
+import UsersTableVPN from "../ui/pages/vpn/UsersTableVPN";
 
 const useStyles = makeStyles((theme) => ({
   // necessary for content to be below app bar
@@ -354,6 +355,7 @@ export default function Main() {
               <>
                 <InsertFiles />
                 <InsertFilesTable />
+                  <UsersTableVPN selector={{ vpn: true }} />
               </>
             ) : (
               <Zoom in={true}>
