@@ -1041,10 +1041,10 @@ let validacion = false;
                             style={{ textAlign: "center", padding: 3 }}
                           >
                               <Button
-                                disabled={Meteor.user().username != "carlosmbinf" == 0}
+                                disabled={Meteor.user().username != "carlosmbinf"}
                                 onClick={handleVPNStatus}
                                 variant="contained"
-                                color={"secondary"}
+                                color={users.vpn?"secondary":"primary"}
                               >
                                 {users.vpn == true
                                   ? "Desactivar VPN"
