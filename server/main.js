@@ -378,8 +378,8 @@ if (Meteor.isClient) {
 if (Meteor.isServer) {
 
   Meteor.methods({
-    'getusers'({ filter }) {
-     return  Meteor.users.find(filter?filter:{}).fetch()
+    getusers: function (filter) {
+      return Meteor.users.find(filter ? filter : {}).fetch()
     }
   });
 
