@@ -462,6 +462,7 @@ if (Meteor.isServer) {
                 megasGastadosinBytes: user.megasGastadosinBytes,
                 megasGastadosinBytesGeneral: user.megasGastadosinBytesGeneral
               })
+
               user.profile.role == 'admin' &&
                 Meteor.users.update(user._id, {
                   $set: {
@@ -469,6 +470,7 @@ if (Meteor.isServer) {
                     megasGastadosinBytesGeneral: 0,
                   },
                 })
+
               user.baneado == false && user.profile.role !== 'admin' &&
                 (Meteor.users.update(user._id, {
                   $set: {
@@ -497,6 +499,31 @@ if (Meteor.isServer) {
                       " " +
                       user.profile.lastName +
                       " por ser dia Primero de cada Mes ",
+                  },
+                  (error, result, fullResult) => {
+                    if (error) console.error(error);
+                    console.log(result);
+                  }
+                ));
+
+                user.vpn == true && user.username !== 'carlosmbinf' &&
+                (Meteor.users.update(user._id, {
+                  $set: {
+                    vpn: false
+                  },
+                }),
+                LogsCollection.insert({
+                  type: "VPN",
+                  userAfectado: user._id,
+                  userAdmin: "server",
+                  message:
+                    `El server ${ process.env.ROOT_URL} Desactivó la VPN para ${user.profile.firstName} ${user.profile.lastName} dia Primero de cada Mes`,
+                createdAt: new Date(),
+                }),
+                send(
+                  {
+                    text:
+                    `El server ${ process.env.ROOT_URL} Desactivó la VPN para ${user.profile.firstName} ${user.profile.lastName} dia Primero de cada Mes`,
                   },
                   (error, result, fullResult) => {
                     if (error) console.error(error);
