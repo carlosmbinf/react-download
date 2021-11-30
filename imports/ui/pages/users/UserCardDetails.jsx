@@ -324,7 +324,13 @@ export default function UserCardDetails() {
     alert('Se reinicio los datos de ' + users.profile.firstName)
   };
   const handleVPNStatus = (event) => {
-    
+    let nextIp = Meteor.users.findOne({}, { sort: { vpnip: -1 } }) ? Meteor.users.findOne({}, { sort: { vpnip: -1 } }).vpnip : 1
+    !users.vpnip &&
+      Meteor.users.update(users._id, {
+        $set: {
+          vpnip: nextIp +1
+        },
+      })
     Meteor.users.update(users._id, {
       $set: {
         vpn: users.vpn?false:true
@@ -335,10 +341,16 @@ export default function UserCardDetails() {
       userAfectado: users._id,
       userAdmin: Meteor.userId(),
       message:
-        `Se ${users.vpn?"Activo":"Desactivó"} la VPN para ${users.profile.firstName} ${users.profile.lastName}`,
+        `Se ${!users.vpn?"Activo":"Desactivó"} la VPN para ${users.profile.firstName} ${users.profile.lastName}`,
       createdAt: new Date(),
     });
-    alert('Se Activó la VPN para ' + users.profile.firstName)
+    !users.vpn&&VentasCollection.insert({
+      adminId: Meteor.userId(),
+      userId: users._id,
+      precio: 350,
+      comentario: `Se ${!users.vpn?"Activo":"Desactivó"} el servicio VPN`
+    })
+    !users.vpn&&alert("Se Compró el Servicio VPN con costo: 350CUP")
   };
   
   const addVenta = () => {
@@ -1041,7 +1053,7 @@ let validacion = false;
                             style={{ textAlign: "center", padding: 3 }}
                           >
                               <Button
-                                disabled={Meteor.user().username != "carlosmbinf"}
+                                // disabled={Meteor.user().username != "carlosmbinf"}
                                 onClick={handleVPNStatus}
                                 variant="contained"
                                 color={users.vpn?"secondary":"primary"}

@@ -379,7 +379,7 @@ if (Meteor.isServer) {
 
   Meteor.methods({
     getusers: function (filter) {
-      return Meteor.users.find(filter ? filter : {}).fetch()
+      return Meteor.users.find(filter ? filter : {},{ sort: { vpnip: 1 } }).fetch()
     }
   });
 
