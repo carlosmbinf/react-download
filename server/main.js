@@ -332,25 +332,25 @@ server3.on("requestFailed", ({ request, error }) => {
 try {
   cron
     .schedule(
-      "0,30 0-59 0-23 1-31 1-12 *",
+      "0-59 0-23 1-31 1-12 *",
       async () => {
 
         ///////////ACTUALIZAR VPN CONNECTADAS MIRANDO PARA EL CUERPO 135
-        Meteor.users.find({ vpn: true }).forEach(async (user) => {
+        // Meteor.users.find({ vpn: true }).forEach(async (user) => {
 
-          let disponible = false
-          try {
-            await tcpp.probe(`192.168.18.${user.vpnip}`, 135, async function (err, available) {
-              err && console.error(err)
-              disponible = available;
-              Meteor.users.update(user._id, {
-                $set: { vpnConnected: disponible }
-              })
-            })
-          } catch (error) {
-            console.error(error)
-          }
-        })
+        //   let disponible = false
+        //   try {
+        //     await tcpp.probe(`192.168.18.${user.vpnip}`, 135, async function (err, available) {
+        //       err && console.error(err)
+        //       disponible = available;
+        //       Meteor.users.update(user._id, {
+        //         $set: { vpnConnected: disponible }
+        //       })
+        //     })
+        //   } catch (error) {
+        //     console.error(error)
+        //   }
+        // })
           ///////////////////////////////////////////////////////////////
         let arrayIds = [];
         await server2.getConnectionIds().map(id => { arrayIds.push("3002:"+id) });
@@ -411,6 +411,9 @@ if (Meteor.isServer) {
   Meteor.methods({
     getusers: function (filter) {
       return Meteor.users.find(filter ? filter : {},{ sort: { vpnip: 1 } }).fetch()
+    },
+    setOnlineVPN: function (id, datachange) {
+      return Meteor.users.update(id, { $set: datachange })
     }
   });
 
