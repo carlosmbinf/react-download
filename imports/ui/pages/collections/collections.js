@@ -313,6 +313,36 @@ export const SchemaPreciosCollection = new SimpleSchema({
 
 PreciosCollection.attachSchema(SchemaPreciosCollection);
 
+export const SchemaLogsCollection = new SimpleSchema({
+  type: {
+    type: String
+  },
+  userAdmin: {
+    type: String
+  },
+  userAfectado: {
+    type: String
+  },
+  message: {
+    type: String
+  },
+  createdAt: {
+    type: Date,
+    autoValue: function() {
+      if (this.isInsert) {
+        return new Date();
+      } else if (this.isUpsert) {
+        return {$setOnInsert: new Date()};
+      } else {
+        this.unset();  // Prevent user from supplying their own value
+      }
+    }
+  }
+  
+});
+
+LogsCollection.attachSchema(SchemaLogsCollection);
+
 export const SchemaOnlineCollection = new SimpleSchema({
   address: {
     type: String,

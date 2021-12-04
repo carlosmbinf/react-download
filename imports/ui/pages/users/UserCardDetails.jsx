@@ -279,8 +279,7 @@ export default function UserCardDetails() {
         userAfectado: users._id,
         userAdmin: Meteor.userId(),
         message:
-          `Ha sido Cambiado el consumo de Datos a: ${megas}MB`,
-        createdAt: new Date(),
+          `Ha sido Cambiado el consumo de Datos a: ${megas}MB`
       });
     } catch (error) {
       
@@ -318,8 +317,7 @@ export default function UserCardDetails() {
       userAfectado: users._id,
       userAdmin: Meteor.userId(),
       message:
-        `Ha sido Reiniciado el consumo de Datos por ${users.profile.firstName} ${users.profile.lastName}`,
-      createdAt: new Date(),
+        `Ha sido Reiniciado el consumo de Datos por ${users.profile.firstName} ${users.profile.lastName}`
     });
     alert('Se reinicio los datos de ' + users.profile.firstName)
   };
@@ -341,8 +339,7 @@ export default function UserCardDetails() {
       userAfectado: users._id,
       userAdmin: Meteor.userId(),
       message:
-        `Se ${!users.vpn?"Activo":"Desactivó"} la VPN para ${users.profile.firstName} ${users.profile.lastName}`,
-      createdAt: new Date(),
+        `Se ${!users.vpn?"Activo":"Desactivó"} la VPN para ${users.profile.firstName} ${users.profile.lastName}`
     });
     !users.vpn&&VentasCollection.insert({
       adminId: Meteor.userId(),
@@ -380,8 +377,7 @@ let validacion = false;
           message:
             "Ha sido " +
             (!users.baneado ? "Bloqueado" : "Desbloqueado") +
-            " por un Admin",
-        createdAt: new Date(),
+            " por un Admin"
         }))
     ) : (
 
@@ -399,8 +395,7 @@ let validacion = false;
           message:
             "Ha sido " +
             (!users.baneado ? "Bloqueado" : "Desbloqueado") +
-            " por un Admin",
-        createdAt: new Date(),
+            " por un Admin"
         })),
 
       validacion && users.baneado && (
@@ -417,8 +412,7 @@ let validacion = false;
           message:
             "Ha sido " +
             (!users.baneado ? "Bloqueado" : "Desbloqueado") +
-            " por un Admin",
-          createdAt: new Date(),
+            " por un Admin"
         }),
         precios.map(precio => {
 
@@ -1016,6 +1010,13 @@ let validacion = false;
                                   valueId && Meteor.users.update(users._id, {
                                     $set: { bloqueadoDesbloqueadoPor: valueId },
                                   });
+                                  LogsCollection.insert({
+                                    type: "cambio de Administrador",
+                                    userAfectado: users._id,
+                                    userAdmin: Meteor.userId(),
+                                    message:
+                                      "El usuario pasó a ser administrado por => " + admin.profile.firstName + " " + admin.profile.lastName
+                                  })
                                   // setIP(newValue);
                                 }}
                                 inputValue={searchAdmin}

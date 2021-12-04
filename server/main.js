@@ -520,8 +520,7 @@ if (Meteor.isServer) {
                   message:
                     "El server " +
                     process.env.ROOT_URL +
-                    " Bloqueo automaticamente el proxy por ser dia Primero de cada Mes",
-                createdAt: new Date(),
+                    " Bloqueo automaticamente el proxy por ser dia Primero de cada Mes"
                 }),
                 send(
                   {
@@ -551,8 +550,7 @@ if (Meteor.isServer) {
                   userAfectado: user._id,
                   userAdmin: "server",
                   message:
-                    `El server ${ process.env.ROOT_URL} Desactivó la VPN para ${user.profile.firstName} ${user.profile.lastName} dia Primero de cada Mes`,
-                createdAt: new Date(),
+                    `El server ${ process.env.ROOT_URL} Desactivó la VPN para ${user.profile.firstName} ${user.profile.lastName} dia Primero de cada Mes`
                 }),
                 send(
                   {
@@ -597,7 +595,7 @@ if (Meteor.isServer) {
                     userAfectado: user._id,
                     userAdmin: "server",
                     message:
-                      "El server " + process.env.ROOT_URL +" Bloqueo automaticamente el proxy porque llego a la fecha limite",
+                      "El server " + process.env.ROOT_URL +" Bloqueo automaticamente el proxy porque llego a la fecha limite"
                   }),
                   send({
                     text:    'El server ' + process.env.ROOT_URL +' Bloqueo automaticamente el proxy de ' + user.profile.firstName + " " + user.profile.lastName + ' porque llego a la fecha limite.' ,  
@@ -616,8 +614,7 @@ if (Meteor.isServer) {
                     userAfectado: user._id,
                     userAdmin: "server",
                     message:
-                      "El server " + process.env.ROOT_URL +" Bloqueo automaticamente el proxy porque consumio los " + user.megas + " MB",
-              createdAt: new Date(),
+                      "El server " + process.env.ROOT_URL +" Bloqueo automaticamente el proxy porque consumio los " + user.megas + " MB"
                   }),
                   send({
                     text:    "El server " + process.env.ROOT_URL +" Bloqueo automaticamente el proxy a: " + user.profile.firstName + " " + user.profile.lastName + " porque consumio los " + user.megas + "MB",  
