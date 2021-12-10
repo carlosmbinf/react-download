@@ -344,10 +344,10 @@ export default function UserCardDetails() {
     !users.vpn&&VentasCollection.insert({
       adminId: Meteor.userId(),
       userId: users._id,
-      precio: 350,
+      precio: 250,
       comentario: `Se ${!users.vpn?"Activo":"Desactivó"} el servicio VPN`
     })
-    !users.vpn&&alert("Se Compró el Servicio VPN con costo: 350CUP")
+    !users.vpn&&alert("Se Compró el Servicio VPN con costo: 250CUP")
   };
   
   const addVenta = () => {
