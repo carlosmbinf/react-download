@@ -414,6 +414,15 @@ if (Meteor.isServer) {
     },
     setOnlineVPN: function (id, datachange) {
       return Meteor.users.update(id, { $set: datachange })
+    },
+    addUser: function (user) {
+      try {
+      let id = Accounts.createUser(user)
+        return id ? "Usuario agregado correctamente!!!" : ""
+      } catch (error) {
+        return error
+      }
+      
     }
   });
 
