@@ -1371,14 +1371,14 @@ console.log(update);
   //   clientId: "????????????????.apps.googleusercontent.com",
   //   secret: "????????????????"
   // });
-  Meteor.publish("logs", function () {
-    return LogsCollection.find({});
+  Meteor.publish("logs", function (selector) {
+    return LogsCollection.find(selector?selector:{});
   });
   Meteor.publish("logsId", function (id) {
     return LogsCollection.find({ userAfectado: id });
   });
-  Meteor.publish("registerDataUser", function () {
-    return RegisterDataUsersCollection.find({});
+  Meteor.publish("registerDataUser", function (selector) {
+    return RegisterDataUsersCollection.find(selector?selector:{});
   });
   Meteor.publish("registerDataUserId", function (id) {
     return RegisterDataUsersCollection.find({ userAfectado: id });
@@ -1413,8 +1413,8 @@ console.log(update);
   Meteor.publish("conexionesUser", function (id) {
     return OnlineCollection.find({ userId: id });
   });
-  Meteor.publish("conexiones", function () {
-    return OnlineCollection.find({});
+  Meteor.publish("conexiones", function (selector) {
+    return OnlineCollection.find(selector?selector:{});
   });
   Meteor.publish("mensajes", function (selector) {
     return MensajesCollection.find(selector?selector:{});
