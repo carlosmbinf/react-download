@@ -150,7 +150,7 @@ export default function PreciosTable(option) {
           id: data._id,
           createdAt: data.createdAt && data.createdAt.toString(),
           precio: data.precio && data.precio,
-          fecha: data.fecha && data.fecha,
+          type: data.type && data.type,
           megas: data.megas ? data.megas : 0,
           comentario: data.comentario && data.comentario
         })
@@ -193,8 +193,8 @@ export default function PreciosTable(option) {
   const fechaBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-        <span className="p-column-title">Por Fecha</span>
-        <Chip color="primary" label={rowData.fecha?"Activo":"Inactivo"} />
+        <span className="p-column-title">Type</span>
+        <Chip color="primary" style={{ textTransform:"uppercase"}} label={rowData.type} />
       </React.Fragment>
     );
   };

@@ -295,10 +295,9 @@ export const SchemaPreciosCollection = new SimpleSchema({
     defaultValue: 0,
     optional: true,
   },
-  fecha: {
-    type: Boolean,
-    defaultValue: false,
-    optional: true,
+  type: {
+    type: String,
+    optional: false,
   },
   megas: {
     type: Number,

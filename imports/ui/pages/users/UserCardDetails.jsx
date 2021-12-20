@@ -203,9 +203,9 @@ export default function UserCardDetails() {
   });
 
   const preciosList = useTracker(() => {
-    Meteor.subscribe("precios").ready()
+    Meteor.subscribe("precios",{ type: "megas" }).ready()
     let precioslist = []
-    PreciosCollection.find({ fecha: false }).fetch().map((a)=>{
+    PreciosCollection.find({ type: "megas" }).fetch().map((a)=>{
       precioslist.push({value: a.megas, label: a.megas+'MB • $'+ a.precio})
     })
     return precioslist
@@ -867,7 +867,7 @@ let validacion = false;
                               {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
                               <Autocomplete
                                 fullWidth
-                                value={users.megas&&PreciosCollection.findOne({ fecha: false, megas: users.megas })?{ value: users.megas, label: (users.megas + 'MB • $' + (PreciosCollection.findOne({ fecha: false, megas: users.megas }).precio&&PreciosCollection.findOne({ fecha: false, megas: users.megas }).precio)) }:""}
+                                value={users.megas&&PreciosCollection.findOne({ type: "megas", megas: users.megas })?{ value: users.megas, label: (users.megas + 'MB • $' + (PreciosCollection.findOne({ type: "megas", megas: users.megas }).precio&&PreciosCollection.findOne({ type: "megas", megas: users.megas }).precio)) }:""}
                                 onChange={(event, newValue) => {
                                   Meteor.users.update(users._id, {
                                     $set: { megas: newValue.value },

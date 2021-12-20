@@ -80,7 +80,7 @@ const useStyles = makeStyles((theme) => ({
 export default function CreatePrecios() {
   // const [createdAt, setcreatedAt] = useState("");
   const [precio, setprecio] = useState(0);
-  const [fecha, setfecha] = useState(false);
+  const [type, setType] = useState("megas");
   const [megas, setmegas] = useState(0);
   const [comentario, setcomentario] = useState("");
   const [open, setOpen] = React.useState(false);
@@ -111,8 +111,8 @@ export default function CreatePrecios() {
       const datosPrecios = {
         userId: Meteor.userId(),
         precio,
-        fecha,
-        megas: fecha ? null : megas,
+        type,
+        megas: type == "megas" ? megas : null,
         comentario,
       };
       try {
@@ -157,7 +157,7 @@ export default function CreatePrecios() {
   }
 
   const handleChange = (event) => {
-    setfecha(event.target.value);
+    setType(event.target.value);
   };
 
   const classes = useStyles();
@@ -248,29 +248,30 @@ export default function CreatePrecios() {
                             required
                           >
                             <InputLabel id="demo-simple-select-outlined-label">
-                              Fecha
+                              Type
                             </InputLabel>
                             <Select
                               labelId="demo-simple-select-outlined-label"
                               id="demo-simple-select-outlined"
-                              value={fecha}
+                              value={type}
                               onChange={handleChange}
-                              label="Por Fecha"
-                              defaultValue={false}
+                              label="Type"
+                              defaultValue={'megas'}
                             >
                               {/* <MenuItem value="">
                               <em>None</em>
                             </MenuItem> */}
-                              <MenuItem value={true}>Activo</MenuItem>
-                              <MenuItem value={false}>Inactivo</MenuItem>
+                              <MenuItem value={"megas"}>Megas</MenuItem>
+                              <MenuItem value={"fecha"}>Fecha</MenuItem>
+                              <MenuItem value={"vpn"}>VPN</MenuItem>
                             </Select>
                           </FormControl>
                         </Grid>
-                        {fecha ||
+                        {type == "megas" &&
                           <Grid item xs={12} sm={4} lg={3}>
-                            <FormControl required={fecha?false:true} variant="outlined">
+                            <FormControl required={type == "megas"?true:false} variant="outlined">
                               <TextField
-                                required={fecha?false:true}
+                                required={type == "megas"?true:false}
                                 className={classes.margin}
                                 id="megas"
                                 name="megas"
