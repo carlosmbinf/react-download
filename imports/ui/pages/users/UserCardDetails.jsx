@@ -323,6 +323,7 @@ export default function UserCardDetails() {
   };
   const handleVPNStatus = (event) => {
     let nextIp = Meteor.users.findOne({}, { sort: { vpnip: -1 } }) ? Meteor.users.findOne({}, { sort: { vpnip: -1 } }).vpnip : 1
+    let precioVPN = PreciosCollection.findOne({ type: "vpn" }) ? PreciosCollection.findOne({ type: "vpn" }).precio : 350
     !users.vpnip &&
       Meteor.users.update(users._id, {
         $set: {
@@ -344,10 +345,10 @@ export default function UserCardDetails() {
     !users.vpn&&VentasCollection.insert({
       adminId: Meteor.userId(),
       userId: users._id,
-      precio: 250,
+      precio: precioVPN,
       comentario: `Se ${!users.vpn?"Activo":"Desactivó"} el servicio VPN`
     })
-    !users.vpn&&alert("Se Compró el Servicio VPN con costo: 250CUP")
+    !users.vpn&&alert(`Se Compró el Servicio VPN con costo: ${precioVPN}CUP`)
   };
   
   const addVenta = () => {
