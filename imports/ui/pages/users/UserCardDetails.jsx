@@ -340,7 +340,7 @@ export default function UserCardDetails() {
       userAfectado: users._id,
       userAdmin: Meteor.userId(),
       message:
-        `Se ${!users.vpn?"Activo":"Desactivó"} la VPN para ${users.profile.firstName} ${users.profile.lastName}`
+        `Se ${!users.vpn?"Activo":"Desactivó"} la VPN`
     });
     !users.vpn&&VentasCollection.insert({
       adminId: Meteor.userId(),
@@ -348,7 +348,7 @@ export default function UserCardDetails() {
       precio: precioVPN,
       comentario: `Se ${!users.vpn?"Activo":"Desactivó"} el servicio VPN`
     })
-    !users.vpn&&alert(`Se Compró el Servicio VPN con costo: ${precioVPN}CUP`)
+    !users.vpn&&alert(`Se Compró el Servicio VPN con un costo: ${precioVPN}CUP`)
   };
   
   const addVenta = () => {
