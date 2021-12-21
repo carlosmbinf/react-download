@@ -20,13 +20,28 @@ import fs from "fs";
 
 var cron = require("node-cron");
 const endpoint = router();
-function sendemail( usuarios, text ) {
-
- let send = require('gmail-send')({
+function sendemail(user, text, subject) {
+  let admin = Meteor.users.findOne({ _id: user.bloqueadoDesbloqueadoPor, "profile.role": "admin" })
+  // let emails = (admin
+  //   ? (admin.emails[0]
+  //     ? (admin.emails[0].address
+  //       ? ['carlosmbinf9405@icloud.com', admin.emails[0].address]
+  //       : ['carlosmbinf9405@icloud.com'])
+  //     : ['carlosmbinf9405@icloud.com']
+  //   )
+  //   : ['carlosmbinf9405@icloud.com'])
+  let emails = (admin && admin.emails[0] && admin.emails[0].address != "lestersm20@gmail.com")
+    ? ((user.emails[0] && user.emails[0].address)
+      ? ['carlosmbinf9405@icloud.com', admin.emails[0].address, user.emails[0].address]
+      : ['carlosmbinf9405@icloud.com', admin.emails[0].address])
+    : ((user.emails[0] && user.emails[0].address && user.emails[0].address != "lestersm20@gmail.com")
+      ? ['carlosmbinf9405@icloud.com', user.emails[0].address]
+      : ['carlosmbinf9405@icloud.com'])
+ require('gmail-send')({
     user: 'carlosmbinf@gmail.com',
     pass: 'Lastunas@123',
-   to: ['carlosmbinf9405@icloud.com', usuarios],
-    subject: 'VidKar Reporte'
+   to: emails,
+    subject: subject
   })(
     text,
     (error, result, fullResult) => {
@@ -534,7 +549,7 @@ if (Meteor.isServer) {
                     " Bloqueo automaticamente el proxy por ser dia Primero de cada Mes"
                 }),
                 sendemail(
-                  (Meteor.users.findOne({ _id: user.bloqueadoDesbloqueadoPor, "profile.role": "admin" }) ? (Meteor.users.findOne({ _id: user.bloqueadoDesbloqueadoPor, "profile.role": "admin" }).emails[0] && Meteor.users.findOne({ _id: user.bloqueadoDesbloqueadoPor, "profile.role": "admin" }).emails[0].address) : ''),
+                  user,
                   {
                     text:
                       "El server " +
@@ -544,7 +559,8 @@ if (Meteor.isServer) {
                       " " +
                       user.profile.lastName +
                       " por ser dia Primero de cada Mes ",
-                  })
+                  },
+                  'VidKar Bloqueo de Proxy')
               );
 
             user.vpn == true && user.username !== 'carlosmbinf' &&
@@ -561,11 +577,12 @@ if (Meteor.isServer) {
                     `El server ${process.env.ROOT_URL} Desactivó la VPN para ${user.profile.firstName} ${user.profile.lastName} dia Primero de cada Mes`
                 }),
                 sendemail(
-                  (Meteor.users.findOne({ _id: user.bloqueadoDesbloqueadoPor, "profile.role": "admin" }) ? (Meteor.users.findOne({ _id: user.bloqueadoDesbloqueadoPor, "profile.role": "admin" }).emails[0] && Meteor.users.findOne({ _id: user.bloqueadoDesbloqueadoPor, "profile.role": "admin" }).emails[0].address) : ''),
+                  user,
                   {
                     text:
                       `El server ${process.env.ROOT_URL} Desactivó la VPN para ${user.profile.firstName} ${user.profile.lastName} dia Primero de cada Mes`,
-                  })
+                  },
+                  'VidKar Bloqueo de VPN')
               );
           });
         },
@@ -603,10 +620,11 @@ if (Meteor.isServer) {
                       "El server " + process.env.ROOT_URL +" Bloqueo automaticamente el proxy porque llego a la fecha limite"
                   }),
                   sendemail(
-                    (Meteor.users.findOne({ _id: user.bloqueadoDesbloqueadoPor, "profile.role": "admin" }) ? (Meteor.users.findOne({ _id: user.bloqueadoDesbloqueadoPor, "profile.role": "admin" }).emails[0] && Meteor.users.findOne({ _id: user.bloqueadoDesbloqueadoPor, "profile.role": "admin" }).emails[0].address) : ''),
+                    user,
                     {
                       text:    'El server ' + process.env.ROOT_URL +' Bloqueo automaticamente el proxy de ' + user.profile.firstName + " " + user.profile.lastName + ' porque llego a la fecha limite.' ,  
-                    })
+                    },
+                    'VidKar Bloqueo de Proxy')
                   )
                 : (user.megasGastadosinBytes?user.megasGastadosinBytes:0) >= ((user.megas?Number(user.megas):0) * 1000000) &&
                   !user.baneado &&
@@ -618,12 +636,13 @@ if (Meteor.isServer) {
                     userAfectado: user._id,
                     userAdmin: "server",
                     message:
-                      "El server " + process.env.ROOT_URL +" Bloqueo automaticamente el proxy porque consumio los " + user.megas + " MB"
+                      "El server " + process.env.ROOT_URL +" Bloqueo automaticamente el proxy porque consumio: " + user.megas + " MB"
                   }),sendemail(
-                    (Meteor.users.findOne({ _id: user.bloqueadoDesbloqueadoPor, "profile.role": "admin" }) ? (Meteor.users.findOne({ _id: user.bloqueadoDesbloqueadoPor, "profile.role": "admin" }).emails[0] && Meteor.users.findOne({ _id: user.bloqueadoDesbloqueadoPor, "profile.role": "admin" }).emails[0].address) : ''),
+                    user,
                     {
-                      text:    "El server " + process.env.ROOT_URL +" Bloqueo automaticamente el proxy a: " + user.profile.firstName + " " + user.profile.lastName + " porque consumio los " + user.megas + "MB",  
-                    })
+                      text:    "El server " + process.env.ROOT_URL +" Bloqueo automaticamente el proxy a: " + user.profile.firstName + " " + user.profile.lastName + " porque consumio: " + user.megas + "MB",  
+                    },
+                    'VidKar Bloqueo de Proxy')
                   ));
           });
         },

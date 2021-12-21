@@ -356,7 +356,7 @@ export default function UserCardDetails() {
 let validacion = false;
 
     users.isIlimitado && (new Date() < new Date(users.fechaSubscripcion)) && (validacion = true)
-    users.isIlimitado || ((users.megasGastadosinBytes?(users.megasGastadosinBytes/ 1000000):0 ) < (users.megas?users.megas:0)) && (validacion = true)
+    users.isIlimitado || ((users.megasGastadosinBytes?(users.megasGastadosinBytes/ 1024000):0 ) < (users.megas?users.megas:0)) && (validacion = true)
     
     validacion || (
       setMensaje("Revise los Límites del Usuario"),
@@ -539,9 +539,17 @@ let validacion = false;
                                 color="secondary"
                                 type="email"
                                 value={users.emails[0].address}
-                                // onInput={(e) => setEmail(e.target.value)}
+                                onInput={(e) => {
+                                  e.target.value == "" ?
+                                  Meteor.users.update({ _id: users._id }, {
+                                    $set: { "emails": [{}] },
+                                  })
+                                  : Meteor.users.update({ _id: users._id }, {
+                                    $set: { "emails": [{ address: e.target.value }] },
+                                  })
+                                }}
                                 InputProps={{
-                                  readOnly: true,
+                                  // readOnly: true,
                                   startAdornment: (
                                     <InputAdornment position="start">
                                       <AccountCircleIcon />
@@ -703,11 +711,11 @@ let validacion = false;
                                 }
                                 InputProps={{
                                   readOnly: true,
-                                  startAdornment: (
-                                    <InputAdornment position="start">
-                                      <AccountCircleIcon />
-                                    </InputAdornment>
-                                  ),
+                                  // startAdornment: (
+                                  //   <InputAdornment position="start">
+                                  //     <AccountCircleIcon />
+                                  //   </InputAdornment>
+                                  // ),
                                 }}
                               />
                             </FormControl>
@@ -732,11 +740,11 @@ let validacion = false;
                                 }
                                 InputProps={{
                                   readOnly: true,
-                                  startAdornment: (
-                                    <InputAdornment position="start">
-                                      <AccountCircleIcon />
-                                    </InputAdornment>
-                                  ),
+                                  // startAdornment: (
+                                  //   <InputAdornment position="start">
+                                  //     <AccountCircleIcon />
+                                  //   </InputAdornment>
+                                  // ),
                                 }}
                               />
                             </FormControl>
@@ -839,9 +847,9 @@ let validacion = false;
                                             setMegas(e.target.value)
                                           }
                                           InputProps={{
-                                            startAdornment: (
-                                              <InputAdornment position="start">
-                                                <AccountCircleIcon />
+                                            endAdornment: (
+                                              <InputAdornment position="end">
+                                                MB
                                               </InputAdornment>
                                             ),
                                           }}
@@ -1119,9 +1127,9 @@ let validacion = false;
                         <Typography>
                           Megas Gastados:{" "}
                           {users.megasGastadosinBytes
-                            ? Number.parseFloat(
-                              users.megasGastadosinBytes / 1000000
-                            ).toFixed(2)
+                            ? (Number.parseFloat(
+                              users.megasGastadosinBytes / 1024000
+                            ).toFixed(2) + " MB")
                             : 0 + " MB"}
                         </Typography>
                       </Grid>
