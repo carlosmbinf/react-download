@@ -152,6 +152,7 @@ export default function UserCard(withAdd) {
     return totalAPagar
   };
 
+ 
   const items = users.map((usersGeneral, i) => {
     
     return (

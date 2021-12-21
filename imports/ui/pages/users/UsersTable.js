@@ -15,7 +15,13 @@ import {
   Zoom,
   IconButton,
   Chip,
+  Dialog,
+  DialogTitle,
+  DialogContentText,
+  DialogActions,
+  DialogContent,
 } from "@material-ui/core";
+
 import { Meteor } from "meteor/meteor";
 import { Tracker } from "meteor/tracker";
 import { useTracker } from "meteor/react-meteor-data";
@@ -47,7 +53,11 @@ import BlockIcon from '@material-ui/icons/Block';
 //Collections
 import {
   DescargasCollection,
+  LogsCollection,
+  MensajesCollection,
   OnlineCollection,
+  RegisterDataUsersCollection,
+  VentasCollection,
 } from "../collections/collections";
 import { useHistory } from "react-router-dom";
 import dateFormat from "dateformat";
@@ -131,7 +141,17 @@ export default function UsersTable(option) {
   const [selectedConProxy, setSelectedConProxy] = React.useState(null);
   const dt = React.useRef(null);
   const history = useHistory();
+  const [openAlert, setOpenAlert] = React.useState(false);
+  const [userid, setUserId] = React.useState();
 
+  const handleClickAlertOpen = (id) => {
+    setOpenAlert(true);
+    setUserId(id)
+  };
+  const handleAlertClose = () => {
+    setOpenAlert(false);
+    setUserId(null)
+  };
   // var userOnline = useTracker(() => {
 
   //   return OnlineCollection.find({"userId" : Meteor.userId()}).fetch();
@@ -413,9 +433,26 @@ export default function UsersTable(option) {
   };
 
 
-  const eliminarUser = (id) => {
-    Meteor.users.remove(id);
-  };
+  const eliminarUser = async (id) => {
+    await LogsCollection.find({ $or: [{ userAdmin: id }, { userAfectado: id }] }).map(element =>
+      LogsCollection.remove(element._id)
+    )
+    await RegisterDataUsersCollection.find({ userId: id }).map(element =>
+      RegisterDataUsersCollection.remove(element._id)
+    )
+    await VentasCollection.find({ $or: [{ userId: id }, { userAfectado: id }] }).map(element =>
+      VentasCollection.remove(element._id)
+    )
+    await MensajesCollection.find({ $or: [{ from: id }, { to: id }] }).map(element =>
+      MensajesCollection.remove(element._id)
+    )
+
+    await Meteor.users.remove(id);
+    setOpenAlert(false);
+    alert("Usuario Eliminado");
+
+    history.push("/users");
+  }
   const eliminarBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
@@ -424,11 +461,12 @@ export default function UsersTable(option) {
           title={"Eliminar a " + rowData.name}
         >
           <IconButton
-            disabled
+            // disabled
             aria-label="delete"
             color="primary"
             onClick={() => {
-              eliminarUser(rowData.id);
+              handleClickAlertOpen(rowData.id)
+              
             }}
           >
             <DeleteIcon fontSize="large" />
@@ -497,6 +535,27 @@ export default function UsersTable(option) {
 
   return (
     <>
+    <Dialog
+        open={openAlert}
+        // onClose={handleAlertClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Alerta!!!"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            {`Usted desea eliminar el usuario y sus datos correspondientes?`}?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleAlertClose} color="primary">
+            Cancelar
+          </Button>
+          <Button onClick={() => { eliminarUser(userid) }} color="secondary" autoFocus>
+            Eliminar
+          </Button>
+        </DialogActions>
+      </Dialog>
       <div className={classes.drawerHeader}></div>
 
       <Zoom in={true}>

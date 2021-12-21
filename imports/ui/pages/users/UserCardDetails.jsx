@@ -37,7 +37,7 @@ import Avatar from "@material-ui/core/Avatar";
 import { Link, useParams } from "react-router-dom";
 import { useHistory } from "react-router-dom";
 import Tooltip from "@material-ui/core/Tooltip";
-import {ServersCollection, VentasCollection,PreciosCollection} from "../collections/collections"
+import {ServersCollection, VentasCollection,PreciosCollection, MensajesCollection} from "../collections/collections"
 //icons
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
@@ -51,6 +51,7 @@ var dateFormat = require('dateformat');
 
 import { OnlineCollection, LogsCollection, RegisterDataUsersCollection } from "../collections/collections";
 import { Autocomplete } from "@material-ui/lab";
+
 
 const StyledBadge = withStyles((theme) => ({
   badge: {
@@ -187,6 +188,15 @@ export default function UserCardDetails() {
   const [megas, setMegas] = useState();
   const [mensaje, setMensaje] = useState("");
 
+  const [openAlert, setOpenAlert] = React.useState(false);
+
+  const handleClickAlertOpen = () => {
+    setOpenAlert(true);
+  };
+  const handleAlertClose = () => {
+    setOpenAlert(false);
+  };
+
   const bull = <span className={classes.bullet}>•</span>;
   const users = useTracker(() => {
     Meteor.subscribe("userID", useParams().id);
@@ -230,12 +240,58 @@ export default function UserCardDetails() {
     Meteor.subscribe("conexionesUser", useParams().id);
     return Meteor.users.find({ userId: useParams().id }).count() > 0 ? true : false;
   });
-  function eliminarUser() {
-    Meteor.users.remove({ _id: users._id });
+  const eliminarUser = async (id) => {
+    await LogsCollection.find({ $or: [{ userAdmin: id }, { userAfectado: id }] }).map(element =>
+      LogsCollection.remove(element._id)
+    )
+    await RegisterDataUsersCollection.find({ userId: id }).map(element =>
+      RegisterDataUsersCollection.remove(element._id)
+    )
+    await VentasCollection.find({ $or: [{ userId: id }, { userAfectado: id }] }).map(element =>
+      VentasCollection.remove(element._id)
+    )
+    await MensajesCollection.find({ $or: [{ from: id }, { to: id }] }).map(element =>
+      MensajesCollection.remove(element._id)
+    )
+
+    await Meteor.users.remove(id);
+    setOpenAlert(false);
     alert("Usuario Eliminado");
+
     history.push("/users");
   }
 
+  function sendemail(user, text, subject) {
+    let admin = Meteor.users.findOne({ _id: user.bloqueadoDesbloqueadoPor, "profile.role": "admin" })
+    // let emails = (admin
+    //   ? (admin.emails[0]
+    //     ? (admin.emails[0].address
+    //       ? ['carlosmbinf9405@icloud.com', admin.emails[0].address]
+    //       : ['carlosmbinf9405@icloud.com'])
+    //     : ['carlosmbinf9405@icloud.com']
+    //   )
+    //   : ['carlosmbinf9405@icloud.com'])
+    let emails = (admin && admin.emails[0] && admin.emails[0].address != "lestersm20@gmail.com")
+      ? ((user.emails[0] && user.emails[0].address)
+        ? ['carlosmbinf9405@icloud.com', admin.emails[0].address, user.emails[0].address]
+        : ['carlosmbinf9405@icloud.com', admin.emails[0].address])
+      : ((user.emails[0] && user.emails[0].address && user.emails[0].address != "lestersm20@gmail.com")
+        ? ['carlosmbinf9405@icloud.com', user.emails[0].address]
+        : ['carlosmbinf9405@icloud.com'])
+   require('gmail-send')({
+      user: 'carlosmbinf@gmail.com',
+      pass: 'Lastunas@123',
+     to: emails,
+      subject: subject
+    })(
+      text,
+      (error, result, fullResult) => {
+        if (error) console.error(error);
+        // console.log(result);
+        console.log(fullResult);
+      }
+    )
+  }
   function handleSubmit(event) {
     event.preventDefault();
     // console.log( 'Email:', email, 'Password: ', password, 'firstName: ', firstName);
@@ -471,6 +527,27 @@ let validacion = false;
           <ArrowBackIcon fontSize="large" color="secondary" />
         </IconButton>
       </div>
+      <Dialog
+        open={openAlert}
+        // onClose={handleAlertClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Alerta!!!"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            {`Usted desea eliminar el usuario ${users && users.profile.firstName} ${users && users.profile.lastName} y sus datos correspondientes?`}?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleAlertClose} color="primary">
+            Cancelar
+          </Button>
+          <Button onClick={() => { eliminarUser(users._id) }} color="secondary" autoFocus>
+            Eliminar
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Dialog open={open} >
         <DialogTitle>Atención!!!</DialogTitle>
         <DialogContent>
@@ -549,7 +626,7 @@ let validacion = false;
                                   })
                                 }}
                                 InputProps={{
-                                  // readOnly: true,
+                                  readOnly: (Meteor.user().profile.role == "user"),
                                   startAdornment: (
                                     <InputAdornment position="start">
                                       <AccountCircleIcon />
@@ -1181,8 +1258,8 @@ let validacion = false;
                             style={{ textAlign: "center" }}
                           >
                             <IconButton
-                              disabled
-                              onClick={eliminarUser}
+                              // disabled = {Meteor.user().username != "carlosmbinf"}
+                              onClick={handleClickAlertOpen}
                               aria-label="delete"
                             >
                               <DeleteIcon color="primary" fontSize="large" />

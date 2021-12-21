@@ -759,7 +759,7 @@ Meteor.users.allow({
   
     remove(userId, doc) {
       // Can only remove your own documents.
-      return Meteor.users.findOne({_id:Meteor.userId()}).profile.role == "admin";
+      return Meteor.users.findOne({ _id: userId }).profile.role == "admin";
     },
 })
 MensajesCollection.allow({
