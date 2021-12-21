@@ -355,6 +355,28 @@ export default function Main() {
               <>
                 <InsertFiles />
                 <InsertFilesTable />
+              </>
+            ) : (
+              <Zoom in={true}>
+                <Grid
+                  container
+                  direction="row"
+                  justify="center"
+                  alignItems="center"
+                >
+                  <h1>SIN ACCESO</h1>
+                </Grid>
+              </Zoom>
+            )}
+          </div>
+
+          <Footer />
+        </Route>
+        <Route path="/vpn">
+          <div style={{ paddingBottom: "7em" }}>
+            {useractual &&
+              useractual.username == "carlosmbinf" ? (
+              <>
                   <UsersTableVPN selector={{ vpn: true }} />
               </>
             ) : (

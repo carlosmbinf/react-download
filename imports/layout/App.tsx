@@ -292,7 +292,8 @@ export default function PersistentDrawerLeft() {
     { title: "Precios", icon: <DashboardIcon />, url: "precios" },
     { title: "Ventas", icon: <DashboardIcon />, url: "ventas" },
     { title: "Chats", icon: <DashboardIcon />, url: "chat" },
-    { title: "Config VPN", icon: <ImportExportIcon />, url: "files" },
+    { title: "Config Files", icon: <ImportExportIcon />, url: "files" },
+    { title: "VPN", icon: <ImportExportIcon />, url: "vpn" },
     
     { title: "Export Data to MongoDB Server", icon: <ImportExportIcon />, url: "exportdata" },
   ];
@@ -496,7 +497,7 @@ export default function PersistentDrawerLeft() {
                 </Typography>
                   </ListItem>
                 </Link>
-              ) : text.url !== "files" && text.url !== "dashboard" && text.url !== "chat" && text.url !== "ventas" && text.url !== "precios" && text.url !== "users" && text.url !== "logs" && text.url !== "connections" && text.url !== "exportdata" && text.url !== "register-data" && text.url !== "servers" ? (
+              ) : text.url !== "vpn" && text.url !== "files" && text.url !== "dashboard" && text.url !== "chat" && text.url !== "ventas" && text.url !== "precios" && text.url !== "users" && text.url !== "logs" && text.url !== "connections" && text.url !== "exportdata" && text.url !== "register-data" && text.url !== "servers" ? (
                 <Link key={index} to={"/" + text.url} className={classes.link}>
                   <ListItem button className={classes.item}>
                     <ListItemIcon color="primary">

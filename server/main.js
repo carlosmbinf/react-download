@@ -20,15 +20,22 @@ import fs from "fs";
 
 var cron = require("node-cron");
 const endpoint = router();
+function sendemail( usuarios, text ) {
 
-var tcpp = require('tcp-ping');
-
-const vpnConnected = (ip,port) => {
-return  tcpp.probe(ip ? `192.168.18.${ip}` : "", port, function (err, available) {
-    return available ;
-  })
-};
-
+ let send = require('gmail-send')({
+    user: 'carlosmbinf@gmail.com',
+    pass: 'Lastunas@123',
+   to: ['carlosmbinf9405@icloud.com', usuarios],
+    subject: 'VidKar Reporte'
+  })(
+    text,
+    (error, result, fullResult) => {
+      if (error) console.error(error);
+      // console.log(result);
+      console.log(fullResult);
+    }
+  )
+}
 function insertLink({ title, url }) {
   ArchivoCollection.insert({ title, url, createdAt: new Date() });
 }
@@ -477,12 +484,7 @@ if (Meteor.isServer) {
 
   
   // console.log(` la fecha inicial es mayor q la segunda ` + (new Date() > new Date()));
-  const send = require('gmail-send')({
-    user: 'carlosmbinf@gmail.com',
-    pass: 'Lastunas@123',
-    to:   'carlosmbinf9405@icloud.com',
-    subject: 'VidKar Reporte',
-  });
+
   try {
     cron
       .schedule(
@@ -504,24 +506,24 @@ if (Meteor.isServer) {
                 userId: user._id,
                 megasGastadosinBytes: user.megasGastadosinBytes,
                 megasGastadosinBytesGeneral: user.megasGastadosinBytesGeneral
-              })
+              }),
 
-              user.profile.role == 'admin' &&
-                Meteor.users.update(user._id, {
+              ///////////////Dejar en cero a los usuarios
+              Meteor.users.update(user._id, {
                   $set: {
                     megasGastadosinBytes: 0,
                     megasGastadosinBytesGeneral: 0,
                   },
                 })
 
-              user.baneado == false && user.profile.role !== 'admin' &&
-                (Meteor.users.update(user._id, {
-                  $set: {
-                    megasGastadosinBytes: 0,
-                    megasGastadosinBytesGeneral: 0,
-                    baneado: true,
-                  },
-                }),
+
+////////////////Banear y dejar en cero el consumo a los usuarios//////////////
+            user.baneado == false && user.profile.role !== 'admin' &&
+              (Meteor.users.update(user._id, {
+                $set: {
+                  baneado: true,
+                },
+              }),
                 LogsCollection.insert({
                   type: "Bloqueado",
                   userAfectado: user._id,
@@ -531,7 +533,8 @@ if (Meteor.isServer) {
                     process.env.ROOT_URL +
                     " Bloqueo automaticamente el proxy por ser dia Primero de cada Mes"
                 }),
-                send(
+                sendemail(
+                  (Meteor.users.findOne({ _id: user.bloqueadoDesbloqueadoPor, "profile.role": "admin" }) ? (Meteor.users.findOne({ _id: user.bloqueadoDesbloqueadoPor, "profile.role": "admin" }).emails[0] && Meteor.users.findOne({ _id: user.bloqueadoDesbloqueadoPor, "profile.role": "admin" }).emails[0].address) : ''),
                   {
                     text:
                       "El server " +
@@ -541,36 +544,29 @@ if (Meteor.isServer) {
                       " " +
                       user.profile.lastName +
                       " por ser dia Primero de cada Mes ",
-                  },
-                  (error, result, fullResult) => {
-                    if (error) console.error(error);
-                    console.log(result);
-                  }
-                ));
+                  })
+              );
 
-                user.vpn == true && user.username !== 'carlosmbinf' &&
-                (Meteor.users.update(user._id, {
-                  $set: {
-                    vpn: false
-                  },
-                }),
+            user.vpn == true && user.username !== 'carlosmbinf' &&
+              (Meteor.users.update(user._id, {
+                $set: {
+                  vpn: false
+                },
+              }),
                 LogsCollection.insert({
                   type: "VPN",
                   userAfectado: user._id,
                   userAdmin: "server",
                   message:
-                    `El server ${ process.env.ROOT_URL} Desactivó la VPN para ${user.profile.firstName} ${user.profile.lastName} dia Primero de cada Mes`
+                    `El server ${process.env.ROOT_URL} Desactivó la VPN para ${user.profile.firstName} ${user.profile.lastName} dia Primero de cada Mes`
                 }),
-                send(
+                sendemail(
+                  (Meteor.users.findOne({ _id: user.bloqueadoDesbloqueadoPor, "profile.role": "admin" }) ? (Meteor.users.findOne({ _id: user.bloqueadoDesbloqueadoPor, "profile.role": "admin" }).emails[0] && Meteor.users.findOne({ _id: user.bloqueadoDesbloqueadoPor, "profile.role": "admin" }).emails[0].address) : ''),
                   {
                     text:
-                    `El server ${ process.env.ROOT_URL} Desactivó la VPN para ${user.profile.firstName} ${user.profile.lastName} dia Primero de cada Mes`,
-                  },
-                  (error, result, fullResult) => {
-                    if (error) console.error(error);
-                    console.log(result);
-                  }
-                ));
+                      `El server ${process.env.ROOT_URL} Desactivó la VPN para ${user.profile.firstName} ${user.profile.lastName} dia Primero de cada Mes`,
+                  })
+              );
           });
         },
         {
@@ -606,12 +602,11 @@ if (Meteor.isServer) {
                     message:
                       "El server " + process.env.ROOT_URL +" Bloqueo automaticamente el proxy porque llego a la fecha limite"
                   }),
-                  send({
-                    text:    'El server ' + process.env.ROOT_URL +' Bloqueo automaticamente el proxy de ' + user.profile.firstName + " " + user.profile.lastName + ' porque llego a la fecha limite.' ,  
-                  }, (error, result, fullResult) => {
-                    if (error) console.error(error);
-                    console.log(result);
-                  })
+                  sendemail(
+                    (Meteor.users.findOne({ _id: user.bloqueadoDesbloqueadoPor, "profile.role": "admin" }) ? (Meteor.users.findOne({ _id: user.bloqueadoDesbloqueadoPor, "profile.role": "admin" }).emails[0] && Meteor.users.findOne({ _id: user.bloqueadoDesbloqueadoPor, "profile.role": "admin" }).emails[0].address) : ''),
+                    {
+                      text:    'El server ' + process.env.ROOT_URL +' Bloqueo automaticamente el proxy de ' + user.profile.firstName + " " + user.profile.lastName + ' porque llego a la fecha limite.' ,  
+                    })
                   )
                 : (user.megasGastadosinBytes?user.megasGastadosinBytes:0) >= ((user.megas?Number(user.megas):0) * 1000000) &&
                   !user.baneado &&
@@ -624,13 +619,11 @@ if (Meteor.isServer) {
                     userAdmin: "server",
                     message:
                       "El server " + process.env.ROOT_URL +" Bloqueo automaticamente el proxy porque consumio los " + user.megas + " MB"
-                  }),
-                  send({
-                    text:    "El server " + process.env.ROOT_URL +" Bloqueo automaticamente el proxy a: " + user.profile.firstName + " " + user.profile.lastName + " porque consumio los " + user.megas + "MB",  
-                  }, (error, result, fullResult) => {
-                    if (error) console.error(error);
-                    console.log(result);
-                  })
+                  }),sendemail(
+                    (Meteor.users.findOne({ _id: user.bloqueadoDesbloqueadoPor, "profile.role": "admin" }) ? (Meteor.users.findOne({ _id: user.bloqueadoDesbloqueadoPor, "profile.role": "admin" }).emails[0] && Meteor.users.findOne({ _id: user.bloqueadoDesbloqueadoPor, "profile.role": "admin" }).emails[0].address) : ''),
+                    {
+                      text:    "El server " + process.env.ROOT_URL +" Bloqueo automaticamente el proxy a: " + user.profile.firstName + " " + user.profile.lastName + " porque consumio los " + user.megas + "MB",  
+                    })
                   ));
           });
         },
