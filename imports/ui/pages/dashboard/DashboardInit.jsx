@@ -271,7 +271,7 @@ export default function DashboardInit() {
     let recogido = 0
     let deuda = 0
     Meteor.subscribe("user");
-    Meteor.users.find({ "profile.role": "admin" }).map(
+    Meteor.users.find().map(
       (usersGeneral, index) => {
 
 
