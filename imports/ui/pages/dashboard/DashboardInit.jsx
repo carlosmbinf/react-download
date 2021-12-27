@@ -296,7 +296,7 @@ export default function DashboardInit() {
     let recogido = 0
     let deuda = 0
     Meteor.subscribe("user");
-    Meteor.users.find({ "profile.role": "admin" }).map(
+    Meteor.users.find({}).map(
       (usersGeneral, index) => {
 
 
@@ -355,7 +355,7 @@ export default function DashboardInit() {
               />
             </Grid> */}
 
-          {Meteor.user().username == "carlosmbinf" &&
+          {Meteor.user()&&Meteor.user().username == "carlosmbinf" &&
             <>              
               <Grid container item xs={12} justify="space-evenly" alignItems="center" className={classes.paddingTop20}>
               <Chip style={{width:"90%"}} color='primary' label="Ventas y Deudas Mensual:"/>

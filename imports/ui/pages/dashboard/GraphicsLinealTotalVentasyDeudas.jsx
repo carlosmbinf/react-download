@@ -238,7 +238,7 @@ export default function GraphicsLinealTotalVentasyDeudas() {
       let data01 = 0;
     
       Meteor.subscribe("user");
-       Meteor.users.find({"profile.role":"admin"}).map(
+       Meteor.users.find({}).map(
           (usersGeneral,index) =>{
   
             gastos(usersGeneral._id) > 0 && (data01 += gastos(usersGeneral._id))
@@ -258,7 +258,7 @@ export default function GraphicsLinealTotalVentasyDeudas() {
     dateEndMonth.startOf('month').add(1,'month')
 
     Meteor.subscribe("user");
-     Meteor.users.find({"profile.role":"admin"}).map(
+     Meteor.users.find({}).map(
         (usersGeneral,index) =>{
 
         

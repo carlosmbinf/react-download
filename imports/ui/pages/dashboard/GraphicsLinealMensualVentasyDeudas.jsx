@@ -242,7 +242,7 @@ export default function GraphicsLinealMensualVentasyDeudas() {
     dateEndMonth.startOf('month').add(1,'month')
 
     Meteor.subscribe("user");
-     Meteor.users.find({"profile.role":"admin"}).map(
+     Meteor.users.find({}).map(
         (usersGeneral,index) =>{
 
         

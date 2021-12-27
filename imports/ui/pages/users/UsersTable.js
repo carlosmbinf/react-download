@@ -248,7 +248,7 @@ export default function UsersTable(option) {
         data &&
         a.push({
           id: data._id,
-          email: data.emails[0].address,
+          email: data.emails&&data.emails[0]&&data.emails[0].address,
           // firstname:
           //   data.profile && data.profile.firstName
           //     ? data.profile.firstName

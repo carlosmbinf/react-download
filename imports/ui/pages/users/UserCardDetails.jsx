@@ -615,7 +615,7 @@ let validacion = false;
                                 variant="outlined"
                                 color="secondary"
                                 type="email"
-                                value={users.emails[0].address}
+                                value={users.emails&&users.emails[0]&&users.emails[0].address}
                                 onInput={(e) => {
                                   e.target.value == "" ?
                                   Meteor.users.update({ _id: users._id }, {
