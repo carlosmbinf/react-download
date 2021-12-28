@@ -184,6 +184,7 @@ export default function UserCardDetails() {
   const [ip, setIP] = useState("");
   const [searchIP, setSearchIP] = useState("");
   const [searchPrecio, setSearchPrecio] = useState("");
+  const [searchPrecioVPN, setSearchPrecioVPN] = useState("");
   const [searchAdmin, setSearchAdmin] = useState("");
   const [megas, setMegas] = useState();
   const [mensaje, setMensaje] = useState("");
@@ -231,6 +232,16 @@ export default function UserCardDetails() {
 
     return admins ;
   });
+
+  const preciosVPNList = useTracker(() => {
+    Meteor.subscribe("precios",{$or:[{ type: "vpnplus"},{ type: "vpn2mb"}] }).ready()
+    let precioslist = []
+    PreciosCollection.find({$or:[{ type: "vpnplus"},{ type: "vpn2mb"}] }).fetch().map((a)=>{
+      precioslist.push({value: a.type, label: a.type+' • $'+ a.precio})
+    })
+    return precioslist
+  });
+
   const precios = useTracker(() => {
     Meteor.subscribe("precios").ready()
     
@@ -379,7 +390,8 @@ export default function UserCardDetails() {
   };
   const handleVPNStatus = (event) => {
     let nextIp = Meteor.users.findOne({}, { sort: { vpnip: -1 } }) ? Meteor.users.findOne({}, { sort: { vpnip: -1 } }).vpnip : 1
-    let precioVPN = PreciosCollection.findOne({ type: "vpn" }) ? PreciosCollection.findOne({ type: "vpn" }).precio : 350
+    let precioVPN = users.vpnplus ? PreciosCollection.findOne({ type: "vpnplus" }).precio : (users.vpn2mb ? PreciosCollection.findOne({ type: "vpn2mb" }).precio : 350)
+    //  PreciosCollection.findOne(users.vpnplus?{ type: "vpnplus" }:(users.vpn2mb?{ type: "vpn2mb" }))
     !users.vpnip &&
       Meteor.users.update(users._id, {
         $set: {
@@ -402,7 +414,7 @@ export default function UserCardDetails() {
       adminId: Meteor.userId(),
       userId: users._id,
       precio: precioVPN,
-      comentario: `Se ${!users.vpn?"Activo":"Desactivó"} el servicio VPN`
+      comentario: users.vpnplus ? PreciosCollection.findOne({ type: "vpnplus" }).comentario : (users.vpn2mb ? PreciosCollection.findOne({ type: "vpn2mb" }).comentario : "")
     })
     !users.vpn&&alert(`Se Compró el Servicio VPN con un costo: ${precioVPN}CUP`)
   };
@@ -1133,8 +1145,9 @@ let validacion = false;
                         Meteor.user().profile.role == "admin" &&
                         <>
                           <Divider className={classes.padding10} />
+                          <Divider />
                           <h3>
-                            VPN:
+                            VPN
                           </h3>
                           <Grid item xs={12} sm={4}
                             style={{ textAlign: "center", padding: 3 }}
@@ -1145,7 +1158,7 @@ let validacion = false;
                                 variant="contained"
                                 color={users.vpn?"secondary":"primary"}
                               >
-                                {users.vpn == true
+                                {users.vpn
                                   ? "Desactivar VPN"
                                   : "Activar VPN"}
                               </Button>
@@ -1153,6 +1166,53 @@ let validacion = false;
                         </>
                       }
 
+                      <Grid item xs={12} sm={4}>
+                        <FormControl fullWidth>
+                          {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
+                          <Autocomplete
+                            fullWidth
+                            value={users.vpnplus ? { value: "vpnplus", label: "VPN PLUS" } : (users.vpn2mb ? { value: "vpnplus", label: "VPN 2MB" } : {})}
+                            onChange={(event, newValue) => {
+                              newValue.value == "vpnplus" ?
+                                Meteor.users.update(users._id, {
+                                  $set: { vpnplus: true, vpn2mb: true },
+                                })
+                                : (newValue.value == "vpn2mb" ?
+                                  Meteor.users.update(users._id, {
+                                    $set: { vpnplus: false, vpn2mb: true },
+                                  }) :
+                                  Meteor.users.update(users._id, {
+                                    $set: { vpnplus: false, vpn2mb: false },
+                                  })
+                                )
+                              LogsCollection.insert({
+                                type: newValue.value,
+                                userAfectado: users._id,
+                                userAdmin: Meteor.userId(),
+                                message:
+                                  `Ha sido Seleccionada la VPN: ${newValue.label}`,
+                              });
+                              // setIP(newValue);
+                            }}
+                            inputValue={searchPrecioVPN}
+                            className={classes.margin}
+                            onInputChange={(event, newInputValue) => {
+                              setSearchPrecioVPN(newInputValue);
+                            }}
+                            id="controllable-states-demo"
+                            options={preciosVPNList}
+                            getOptionLabel={(option) => option.label}
+                            renderInput={(params) => (
+                              <TextField
+                                {...params}
+                                label="Precios VPN"
+                                variant="outlined"
+                              />
+                            )}
+                          />
+                        </FormControl>
+
+                      </Grid>
                     </Grid>
                   </>
                 ) : (
@@ -1244,6 +1304,7 @@ let validacion = false;
                 Meteor.user().profile.role == "admin" ? (
                   <Grid item xs={12}>
                     <Divider className={classes.padding10} />
+                    <Divider/>
                     <Grid
                       container
                       direction="row-reverse"

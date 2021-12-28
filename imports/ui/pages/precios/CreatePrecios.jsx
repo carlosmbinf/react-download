@@ -263,7 +263,8 @@ export default function CreatePrecios() {
                             </MenuItem> */}
                               <MenuItem value={"megas"}>Megas</MenuItem>
                               <MenuItem value={"fecha"}>Fecha</MenuItem>
-                              <MenuItem value={"vpn"}>VPN</MenuItem>
+                              <MenuItem value={"vpn2mb"}>VPN 2MB</MenuItem>
+                              <MenuItem value={"vpnplus"}>VPN Plus</MenuItem>
                             </Select>
                           </FormControl>
                         </Grid>
