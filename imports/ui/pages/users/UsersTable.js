@@ -136,6 +136,7 @@ export default function UsersTable(option) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const [selectedOnline, setSelectedOnline] = React.useState(null);
+  const [selectedVPN, setSelectedVPN] = React.useState(null);
   const [selectedRole, setSelectedRole] = React.useState(null);
   const [selectedLimites, setSelectedLimites] = React.useState(null);
   const [selectedConProxy, setSelectedConProxy] = React.useState(null);
@@ -157,12 +158,17 @@ export default function UsersTable(option) {
   //   return OnlineCollection.find({"userId" : Meteor.userId()}).fetch();
   // });
   const statuses = ["ONLINE", "DISCONECTED"];
+  const statusesVPN = ["PLUS", "2MB", "false"];
   const statusesRole = ["admin", "user"];
   const statusesLimites = ["Ilimitado", "Megas", "Fecha"];
   const statusesConProxy = ["true", "false"];
   const onStatusChange = (e) => {
     dt.current.filter(e.value, "online", "equals");
     setSelectedOnline(e.value);
+  };
+  const onVPNChange = (e) => {
+    dt.current.filter(e.value, "vpntype", "equals");
+    setSelectedVPN(e.value);
   };
   const onRoleChange = (e) => {
     dt.current.filter(e.value, "role", "equals");
@@ -180,6 +186,10 @@ export default function UsersTable(option) {
     return <span className={`customer-badge`}><Chip onClick={() => { }} color="primary" label={option} /></span>;
     // ;
   };
+  const vpnItemTemplate = (option) => {
+    return <span className={`customer-badge`}><Chip onClick={() => { }} color="primary" label={option} /></span>;
+    // ;
+  };
   const roleItemTemplate = (option) => {
     return <span className={`customer-badge`}><Chip onClick={() => { }} color="primary" label={option} /></span>;
     // ;
@@ -192,6 +202,17 @@ export default function UsersTable(option) {
     return <span className={`customer-badge`}><Chip onClick={() => { }} color="primary" label={option} /></span>;
     // ;
   };
+  const vpnTypeFilter = (
+    <Dropdown
+      value={selectedVPN}
+      options={statusesVPN}
+      onChange={onVPNChange}
+      itemTemplate={vpnItemTemplate}
+      placeholder="Select"
+      className="p-column-filter"
+      showClear
+    />
+  );
   const onlineFilter = (
     <Dropdown
       value={selectedOnline}
@@ -283,7 +304,8 @@ export default function UsersTable(option) {
             "yyyy-mm-dd",
             true,
             true
-          )) : 'N/A') : (data.megas ? `${data.megas} MB` : 'N/A'))
+          )) : 'N/A') : (data.megas ? `${data.megas} MB` : 'N/A')),
+          vpntype: data.vpnplus ? "PLUS" : (data.vpn2mb ? "2MB" : "false")
         })
     );
 
@@ -301,6 +323,14 @@ export default function UsersTable(option) {
       <React.Fragment>
         <span className="p-column-title">Conexiones</span>
         {rowData.connectionsCounts}
+      </React.Fragment>
+    );
+  };
+  const vpnTypeBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">VPN TYPE</span>
+        <Chip color={rowData.vpntype =="false" ? "secondary" : "primary"} label={rowData.vpntype == "false" ? <BlockIcon /> : rowData.vpntype} />
       </React.Fragment>
     );
   };
@@ -610,14 +640,14 @@ export default function UsersTable(option) {
                   filterPlaceholder="UserName"
                   filterMatchMode="contains"
                 />
-                <Column
+                {/* <Column
                   field="creadoPor"
                   header="Creado Por"
                   body={creadoPorTemplate}
                   filter
                   filterPlaceholder="Creado Por:"
                   filterMatchMode="contains"
-                />
+                /> */}
                 {Meteor.user().username == "carlosmbinf" && (
                 <Column
                   field="administradoPor"
@@ -641,6 +671,13 @@ export default function UsersTable(option) {
                   body={roleBodyTemplate}
                   filter
                   filterElement={roleFilter}
+                />
+                <Column
+                  field="vpntype"
+                  header="VPN Type"
+                  body={vpnTypeBodyTemplate}
+                  filter
+                  filterElement={vpnTypeFilter}
                 />
                 <Column
                   field="conProxy"

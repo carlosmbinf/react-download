@@ -1478,11 +1478,11 @@ console.log(update);
         loginAt: new Date(),
       },
     });
-    Meteor.users.update(userId, {
-      $set: {
-        online: true,
-      },
-    });
+    // Meteor.users.update(userId, {
+    //   $set: {
+    //     online: true,
+    //   },
+    // });
   });
 
   Accounts.onLogout(function (info) {
@@ -1492,11 +1492,11 @@ console.log(update);
         userId: "",
       },
     });
-    Meteor.users.update(info.user._id, {
-      $set: {
-        online: false,
-      },
-    });
+    // Meteor.users.update(info.user._id, {
+    //   $set: {
+    //     online: false,
+    //   },
+    // });
   });
 }
 

@@ -129,11 +129,14 @@ export default function UsersTableVPN(option) {
   const [selectedRole, setSelectedRole] = React.useState(null);
   const dt = React.useRef(null);
   const history = useHistory();
+  const [selectedVPN, setSelectedVPN] = React.useState(null);
+
 
   // var userOnline = useTracker(() => {
 
   //   return OnlineCollection.find({"userId" : Meteor.userId()}).fetch();
   // });
+  const statusesVPN = ["PLUS", "2MB", "false"];
   const statuses = ["ONLINE", "DISCONECTED"];
   const statusesRole = ["admin", "user"];
   const statusesLimites = ["Ilimitado", "Megas", "Fecha"];
@@ -141,6 +144,10 @@ export default function UsersTableVPN(option) {
   const onStatusChange = (e) => {
     dt.current.filter(e.value, "online", "equals");
     setSelectedOnline(e.value);
+  };
+  const onVPNChange = (e) => {
+    dt.current.filter(e.value, "vpntype", "equals");
+    setSelectedVPN(e.value);
   };
   const onRoleChange = (e) => {
     dt.current.filter(e.value, "role", "equals");
@@ -150,10 +157,25 @@ export default function UsersTableVPN(option) {
     return <span className={`customer-badge`}><Chip onClick={() => { }} color="primary" label={option} /></span>;
     // ;
   };
+  const vpnItemTemplate = (option) => {
+    return <span className={`customer-badge`}><Chip onClick={() => { }} color="primary" label={option} /></span>;
+    // ;
+  };
   const roleItemTemplate = (option) => {
     return <span className={`customer-badge`}><Chip onClick={() => { }} color="primary" label={option} /></span>;
     // ;
   };
+  const vpnTypeFilter = (
+    <Dropdown
+      value={selectedVPN}
+      options={statusesVPN}
+      onChange={onVPNChange}
+      itemTemplate={vpnItemTemplate}
+      placeholder="Select"
+      className="p-column-filter"
+      showClear
+    />
+  );
   const onlineFilter = (
     <Dropdown
       value={selectedOnline}
@@ -207,11 +229,13 @@ export default function UsersTableVPN(option) {
               data.services.facebook.picture.data.url
               ? data.services.facebook.picture.data.url
               : "/",
-          online: data.vpnConnected ? "ONLINE" : "DISCONECTED",
+          online: (data.vpnplusConnected || data.vpn2mbConnected) ? "ONLINE" : "DISCONECTED",
           username: data.username,
           creadoPor: data.creadoPor=='Server'?"Server":(data.creadoPor?(`${Meteor.users.findOne(data.creadoPor)&&Meteor.users.findOne(data.creadoPor).profile.firstName} ${Meteor.users.findOne(data.creadoPor)&&Meteor.users.findOne(data.creadoPor).profile.lastName}`):"Facebook"),
           administradoPor: data.bloqueadoDesbloqueadoPor?(Meteor.users.findOne(data.bloqueadoDesbloqueadoPor)?(`${Meteor.users.findOne(data.bloqueadoDesbloqueadoPor)&&Meteor.users.findOne(data.bloqueadoDesbloqueadoPor).profile.firstName} ${Meteor.users.findOne(data.bloqueadoDesbloqueadoPor)&&Meteor.users.findOne(data.bloqueadoDesbloqueadoPor).profile.lastName}`):"Carlos Medina"):"Carlos Medina",
           ip: data.vpnip?`192.168.18.${data.vpnip}`:"",
+          vpntype: data.vpnplus ? "PLUS" : (data.vpn2mb ? "2MB" : "false")
+
         })
     );
 
@@ -225,6 +249,14 @@ export default function UsersTableVPN(option) {
     <Button type="button" icon="pi pi-cloud" className="p-button-text" />
   );
 
+  const vpnTypeBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">VPN TYPE</span>
+        <Chip color={rowData.vpntype =="false" ? "secondary" : "primary"} label={rowData.vpntype == "false" ? <BlockIcon /> : rowData.vpntype} />
+      </React.Fragment>
+    );
+  };
   const iDBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
@@ -456,6 +488,13 @@ export default function UsersTableVPN(option) {
                   filterMatchMode="contains"
                 />
                 )}
+                <Column
+                  field="vpntype"
+                  header="VPN Type"
+                  body={vpnTypeBodyTemplate}
+                  filter
+                  filterElement={vpnTypeFilter}
+                />
                 <Column
                   field="online"
                   header="ONLINE"

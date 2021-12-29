@@ -389,34 +389,41 @@ export default function UserCardDetails() {
     alert('Se reinicio los datos de ' + users.profile.firstName)
   };
   const handleVPNStatus = (event) => {
-    let nextIp = Meteor.users.findOne({}, { sort: { vpnip: -1 } }) ? Meteor.users.findOne({}, { sort: { vpnip: -1 } }).vpnip : 1
-    let precioVPN = users.vpnplus ? PreciosCollection.findOne({ type: "vpnplus" }).precio : (users.vpn2mb ? PreciosCollection.findOne({ type: "vpn2mb" }).precio : 350)
-    //  PreciosCollection.findOne(users.vpnplus?{ type: "vpnplus" }:(users.vpn2mb?{ type: "vpn2mb" }))
-    !users.vpnip &&
+    if (users.vpn || users.vpnplus || users.vpn2mb) {
+
+      let nextIp = Meteor.users.findOne({}, { sort: { vpnip: -1 } }) ? Meteor.users.findOne({}, { sort: { vpnip: -1 } }).vpnip : 1
+      let precioVPN = users.vpnplus ? PreciosCollection.findOne({ type: "vpnplus" }).precio : (users.vpn2mb ? PreciosCollection.findOne({ type: "vpn2mb" }).precio : 350)
+      //  PreciosCollection.findOne(users.vpnplus?{ type: "vpnplus" }:(users.vpn2mb?{ type: "vpn2mb" }))
+      !users.vpnip &&
+        Meteor.users.update(users._id, {
+          $set: {
+            vpnip: nextIp + 1
+          },
+        })
       Meteor.users.update(users._id, {
         $set: {
-          vpnip: nextIp +1
+          vpn: users.vpn ? false : true
         },
+      });
+      LogsCollection.insert({
+        type: 'VPN',
+        userAfectado: users._id,
+        userAdmin: Meteor.userId(),
+        message:
+          `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN`
+      });
+      !users.vpn && VentasCollection.insert({
+        adminId: Meteor.userId(),
+        userId: users._id,
+        precio: precioVPN,
+        comentario: users.vpnplus ? PreciosCollection.findOne({ type: "vpnplus" }).comentario : (users.vpn2mb ? PreciosCollection.findOne({ type: "vpn2mb" }).comentario : "")
       })
-    Meteor.users.update(users._id, {
-      $set: {
-        vpn: users.vpn?false:true
-      },
-    });
-    LogsCollection.insert({
-      type: 'VPN',
-      userAfectado: users._id,
-      userAdmin: Meteor.userId(),
-      message:
-        `Se ${!users.vpn?"Activo":"Desactivó"} la VPN`
-    });
-    !users.vpn&&VentasCollection.insert({
-      adminId: Meteor.userId(),
-      userId: users._id,
-      precio: precioVPN,
-      comentario: users.vpnplus ? PreciosCollection.findOne({ type: "vpnplus" }).comentario : (users.vpn2mb ? PreciosCollection.findOne({ type: "vpn2mb" }).comentario : "")
-    })
-    !users.vpn&&alert(`Se Compró el Servicio VPN con un costo: ${precioVPN}CUP`)
+      !users.vpn && alert(`Se Compró el Servicio VPN con un costo: ${precioVPN}CUP`)
+
+    }
+    else {
+      alert("INFO!!!\nPrimeramente debe seleccionar una oferta de VPN!!!")
+    }
   };
   
   const addVenta = () => {
@@ -1163,37 +1170,44 @@ let validacion = false;
                                   : "Activar VPN"}
                               </Button>
                             </Grid>
-                        </>
-                      }
-
-                      <Grid item xs={12} sm={4}>
+                            <Grid item xs={12} sm={4}>
                         <FormControl fullWidth>
                           {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
                           <Autocomplete
                             fullWidth
                             value={users.vpnplus ? { value: "vpnplus", label: "VPN PLUS" } : (users.vpn2mb ? { value: "vpnplus", label: "VPN 2MB" } : {})}
-                            onChange={(event, newValue) => {
-                              newValue.value == "vpnplus" ?
-                                Meteor.users.update(users._id, {
-                                  $set: { vpnplus: true, vpn2mb: true },
-                                })
-                                : (newValue.value == "vpn2mb" ?
-                                  Meteor.users.update(users._id, {
-                                    $set: { vpnplus: false, vpn2mb: true },
-                                  }) :
-                                  Meteor.users.update(users._id, {
-                                    $set: { vpnplus: false, vpn2mb: false },
+                                onChange={(event, newValue) => {
+                                  newValue.value == "vpnplus" ?
+                                    Meteor.users.update(users._id, {
+                                      $set: { vpnplus: true, vpn2mb: true },
+                                    })
+                                    : (newValue.value == "vpn2mb" ?
+                                      Meteor.users.update(users._id, {
+                                        $set: { vpnplus: false, vpn2mb: true },
+                                      }) :
+                                      Meteor.users.update(users._id, {
+                                        $set: { vpnplus: false, vpn2mb: false },
+                                      })
+                                    )
+                                  LogsCollection.insert({
+                                    type: newValue.value,
+                                    userAfectado: users._id,
+                                    userAdmin: Meteor.userId(),
+                                    message:
+                                      `Ha sido Seleccionada la VPN: ${newValue.label}`,
+                                  });
+                                  users.vpn && Meteor.users.update(users._id, {
+                                    $set: { vpn: false },
                                   })
-                                )
-                              LogsCollection.insert({
-                                type: newValue.value,
-                                userAfectado: users._id,
-                                userAdmin: Meteor.userId(),
-                                message:
-                                  `Ha sido Seleccionada la VPN: ${newValue.label}`,
-                              });
-                              // setIP(newValue);
-                            }}
+                                  users.vpn && LogsCollection.insert({
+                                    type: 'VPN',
+                                    userAfectado: users._id,
+                                    userAdmin: Meteor.userId(),
+                                    message:
+                                      `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN porque estaba activa y cambio la oferta`
+                                  });
+                                  // setIP(newValue);
+                                }}
                             inputValue={searchPrecioVPN}
                             className={classes.margin}
                             onInputChange={(event, newInputValue) => {
@@ -1213,6 +1227,10 @@ let validacion = false;
                         </FormControl>
 
                       </Grid>
+                        </>
+                      }
+
+                     
                     </Grid>
                   </>
                 ) : (
