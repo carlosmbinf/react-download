@@ -20,7 +20,7 @@ import fs from "fs";
 
 var cron = require("node-cron");
 const endpoint = router();
-function sendemail(user, text, subject) {
+export function sendemail(user, text, subject) {
   let admin = Meteor.users.findOne({ _id: user.bloqueadoDesbloqueadoPor, "profile.role": "admin" })
   // let emails = (admin
   //   ? (admin.emails[0]
@@ -50,6 +50,10 @@ function sendemail(user, text, subject) {
       console.log(fullResult);
     }
   )
+
+  MensajesCollection.insert({from: user.bloqueadoDesbloqueadoPor, to: user._id, mensaje: text.text});
+  // console.log(text);
+
 }
 function insertLink({ title, url }) {
   ArchivoCollection.insert({ title, url, createdAt: new Date() });
@@ -445,7 +449,42 @@ if (Meteor.isServer) {
         return error
       }
       
-    }
+    },
+    sendemail: function (user, text, subject) {
+      let admin = Meteor.users.findOne({ _id: user.bloqueadoDesbloqueadoPor, "profile.role": "admin" })
+      // let emails = (admin
+      //   ? (admin.emails[0]
+      //     ? (admin.emails[0].address
+      //       ? ['carlosmbinf9405@icloud.com', admin.emails[0].address]
+      //       : ['carlosmbinf9405@icloud.com'])
+      //     : ['carlosmbinf9405@icloud.com']
+      //   )
+      //   : ['carlosmbinf9405@icloud.com'])
+      let emails = (admin && admin.emails[0] && admin.emails[0].address != "lestersm20@gmail.com")
+        ? ((user.emails[0] && user.emails[0].address)
+          ? ['carlosmbinf9405@icloud.com', admin.emails[0].address, user.emails[0].address]
+          : ['carlosmbinf9405@icloud.com', admin.emails[0].address])
+        : ((user.emails[0] && user.emails[0].address && user.emails[0].address != "lestersm20@gmail.com")
+          ? ['carlosmbinf9405@icloud.com', user.emails[0].address]
+          : ['carlosmbinf9405@icloud.com'])
+     require('gmail-send')({
+        user: 'carlosmbinf@gmail.com',
+        pass: 'Lastunas@123',
+       to: emails,
+        subject: subject
+      })(
+        text,
+        (error, result, fullResult) => {
+          if (error) console.error(error);
+          // console.log(result);
+          console.log(fullResult);
+        }
+      )
+    
+      MensajesCollection.insert({from: user.bloqueadoDesbloqueadoPor, to: user._id, mensaje: text.text});
+      // console.log(text);
+    
+    },
   });
 
 

@@ -348,6 +348,8 @@ export default function UserCardDetails() {
         message:
           `Ha sido Cambiado el consumo de Datos a: ${megas}MB`
       });
+      // Meteor.call('sendemail', users,{text: `Ha sido Cambiado el consumo de Datos a: ${megas}MB`}, 'Megas')
+
     } catch (error) {
       
     }
@@ -384,8 +386,10 @@ export default function UserCardDetails() {
       userAfectado: users._id,
       userAdmin: Meteor.userId(),
       message:
-        `Ha sido Reiniciado el consumo de Datos por ${users.profile.firstName} ${users.profile.lastName}`
+        `Ha sido Reiniciado el consumo de Datos de ${users.profile.firstName} ${users.profile.lastName}`
     });
+    Meteor.call('sendemail', users,{text: `Ha sido Reiniciado el consumo de Datos de ${users.profile.firstName} ${users.profile.lastName}`}, 'Reinicio')
+
     alert('Se reinicio los datos de ' + users.profile.firstName)
   };
   const handleVPNStatus = (event) => {
@@ -412,6 +416,8 @@ export default function UserCardDetails() {
         message:
           `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN`
       });
+    Meteor.call('sendemail', users,{text:  `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN`}, 'VPN')
+      
       !users.vpn && VentasCollection.insert({
         adminId: Meteor.userId(),
         userId: users._id,
@@ -454,7 +460,11 @@ let validacion = false;
             "Ha sido " +
             (!users.baneado ? "Bloqueado" : "Desbloqueado") +
             " por un Admin"
-        }))
+        }),
+    Meteor.call('sendemail', users,{text:   "Ha sido " +
+    (!users.baneado ? "Bloqueado" : "Desbloqueado") +
+    " por un Admin"}, !users.baneado ? "Bloqueado" : "Desbloqueado")
+    )
     ) : (
 
       users.baneado ||
@@ -472,7 +482,11 @@ let validacion = false;
             "Ha sido " +
             (!users.baneado ? "Bloqueado" : "Desbloqueado") +
             " por un Admin"
-        })),
+        }),
+    Meteor.call('sendemail', users,{text:  "Ha sido " +
+    (!users.baneado ? "Bloqueado" : "Desbloqueado") +
+    " por un Admin"}, !users.baneado ? "Bloqueado" : "Desbloqueado")
+    ),
 
       validacion && users.baneado && (
         Meteor.users.update(users._id, {
@@ -490,6 +504,9 @@ let validacion = false;
             (!users.baneado ? "Bloqueado" : "Desbloqueado") +
             " por un Admin"
         }),
+        Meteor.call('sendemail', users,{text:  "Ha sido " +
+        (!users.baneado ? "Bloqueado" : "Desbloqueado") +
+        " por un Admin"}, !users.baneado ? "Bloqueado" : "Desbloqueado"),
         precios.map(precio => {
 
           users.isIlimitado && precio.fecha && (VentasCollection.insert({
@@ -899,14 +916,20 @@ let validacion = false;
                                                   true
                                                 ),
                                             });
-                                          e.target.value &&
-                                            LogsCollection.insert({
-                                              type: "Desbloqueado",
-                                              userAfectado: users._id,
-                                              userAdmin: Meteor.userId(),
-                                              message:
-                                                "Ha sido Desbloqueado por un Admin",
-                                            });
+                                            // , Meteor.call('sendemail', users,{text: "La Fecha Limite del Proxy se cambió para: " +
+                                            // dateFormat(e.target.value,
+                                            //   "yyyy-mm-dd",
+                                            //   true,
+                                            //   true
+                                            // )}, "Fecha Limite Proxy");
+                                          // e.target.value &&
+                                          //   LogsCollection.insert({
+                                          //     type: "Desbloqueado",
+                                          //     userAfectado: users._id,
+                                          //     userAdmin: Meteor.userId(),
+                                          //     message:
+                                          //       "Ha sido Desbloqueado por un Admin",
+                                          //   }),Meteor.call('sendemail', users,{text:"Ha sido Desbloqueado por un Admin"}, "Desbloqueado");
                                         }}
                                       />
                                   </FormControl>
@@ -984,6 +1007,7 @@ let validacion = false;
                                     message:
                                       `Ha sido Cambiado el consumo de Datos a: ${newValue.value}MB`,
                                   });
+                                  // Meteor.call('sendemail', users,{text:`Ha sido Cambiado el consumo de Datos a: ${newValue.value}MB`}, "Megas")
                                   // setIP(newValue);
                                 }}
                                 inputValue={searchPrecio}
@@ -1122,6 +1146,8 @@ let validacion = false;
                                     message:
                                       "El usuario pasó a ser administrado por => " + admin.profile.firstName + " " + admin.profile.lastName
                                   })
+                                  // Meteor.call('sendemail', users,{text:"El usuario pasó a ser administrado por => " + admin.profile.firstName + " " + admin.profile.lastName}, "cambio de Administrador")
+
                                   // setIP(newValue);
                                 }}
                                 inputValue={searchAdmin}
@@ -1196,6 +1222,8 @@ let validacion = false;
                                     message:
                                       `Ha sido Seleccionada la VPN: ${newValue.label}`,
                                   });
+                                  // Meteor.call('sendemail', users,{text: `Ha sido Seleccionada la VPN: ${newValue.label}`}, newValue.value)
+
                                   users.vpn && Meteor.users.update(users._id, {
                                     $set: { vpn: false },
                                   })
@@ -1206,6 +1234,7 @@ let validacion = false;
                                     message:
                                       `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN porque estaba activa y cambio la oferta`
                                   });
+                                  // Meteor.call('sendemail', users,{text: `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN porque estaba activa y cambio la oferta`}, "VPN");
                                   // setIP(newValue);
                                 }}
                             inputValue={searchPrecioVPN}
