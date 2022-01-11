@@ -481,6 +481,10 @@ if (Meteor.isServer) {
         }
       )
     
+    
+    },
+    sendMensaje: function (user, text, subject) {
+         
       MensajesCollection.insert({from: user.bloqueadoDesbloqueadoPor, to: user._id, mensaje: text.text});
       // console.log(text);
     

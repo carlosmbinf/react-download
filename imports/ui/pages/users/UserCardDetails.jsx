@@ -389,7 +389,8 @@ export default function UserCardDetails() {
         `Ha sido Reiniciado el consumo de Datos de ${users.profile.firstName} ${users.profile.lastName}`
     });
     Meteor.call('sendemail', users,{text: `Ha sido Reiniciado el consumo de Datos de ${users.profile.firstName} ${users.profile.lastName}`}, 'Reinicio')
-
+    Meteor.call('sendMensaje', users,{text: `Ha sido Reiniciado el consumo de Datos de ${users.profile.firstName} ${users.profile.lastName}`}, 'Reinicio')
+    
     alert('Se reinicio los datos de ' + users.profile.firstName)
   };
   const handleVPNStatus = (event) => {
@@ -416,7 +417,8 @@ export default function UserCardDetails() {
         message:
           `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN`
       });
-    Meteor.call('sendemail', users,{text:  `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN`}, 'VPN')
+    Meteor.call('sendemail', users,{text:  `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN`}, `VPN ${Meteor.users.findOne(users.bloqueadoDesbloqueadoPor).username}`)
+    Meteor.call('sendMensaje', users,{text:  `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN para ${users.username}`}, `VPN ${Meteor.users.findOne(users.bloqueadoDesbloqueadoPor).username}`)
       
       !users.vpn && VentasCollection.insert({
         adminId: Meteor.userId(),
@@ -463,7 +465,10 @@ let validacion = false;
         }),
     Meteor.call('sendemail', users,{text:   "Ha sido " +
     (!users.baneado ? "Bloqueado" : "Desbloqueado") +
-    " por un Admin"}, !users.baneado ? "Bloqueado" : "Desbloqueado")
+    `del proxy del usuario ${users.username}`}, !users.baneado ? "Bloqueado" : "Desbloqueado"),
+    Meteor.call('sendMensaje', users,{text:   "Ha sido " +
+    (!users.baneado ? "Bloqueado" : "Desbloqueado") +
+    `del proxy del usuario ${users.username}`}, !users.baneado ? "Bloqueado" : "Desbloqueado")
     )
     ) : (
 
@@ -483,9 +488,12 @@ let validacion = false;
             (!users.baneado ? "Bloqueado" : "Desbloqueado") +
             " por un Admin"
         }),
-    Meteor.call('sendemail', users,{text:  "Ha sido " +
+    Meteor.call('sendemail', users,{text:   "Ha sido " +
     (!users.baneado ? "Bloqueado" : "Desbloqueado") +
-    " por un Admin"}, !users.baneado ? "Bloqueado" : "Desbloqueado")
+    `del proxy del usuario ${users.username}`}, !users.baneado ? "Bloqueado" : "Desbloqueado"),
+    Meteor.call('sendMensaje', users,{text:   "Ha sido " +
+    (!users.baneado ? "Bloqueado" : "Desbloqueado") +
+    `del proxy del usuario ${users.username}`}, !users.baneado ? "Bloqueado" : "Desbloqueado")
     ),
 
       validacion && users.baneado && (
@@ -504,9 +512,12 @@ let validacion = false;
             (!users.baneado ? "Bloqueado" : "Desbloqueado") +
             " por un Admin"
         }),
-        Meteor.call('sendemail', users,{text:  "Ha sido " +
-        (!users.baneado ? "Bloqueado" : "Desbloqueado") +
-        " por un Admin"}, !users.baneado ? "Bloqueado" : "Desbloqueado"),
+        Meteor.call('sendemail', users,{text:   "Ha sido " +
+    (!users.baneado ? "Bloqueado" : "Desbloqueado") +
+    `del proxy del usuario ${users.username}`}, !users.baneado ? "Bloqueado" : "Desbloqueado"),
+    Meteor.call('sendMensaje', users,{text:   "Ha sido " +
+    (!users.baneado ? "Bloqueado" : "Desbloqueado") +
+    `del proxy del usuario ${users.username}`}, !users.baneado ? "Bloqueado" : "Desbloqueado"),
         precios.map(precio => {
 
           users.isIlimitado && precio.fecha && (VentasCollection.insert({

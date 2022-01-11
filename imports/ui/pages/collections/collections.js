@@ -197,6 +197,21 @@ Meteor.methods({
     
   }
     
+  try {
+    await mi({
+      fields: FilesCollection.find().fetch(), // {array} data to import
+      db: "meteor", // {string} name of db
+      collection: 'files', // {string|function} name of collection, or use a function to
+      //  return a name, accept one param - [fields] the fields to import
+      host: urlMongoDB,
+      callback: (err, db) => {
+        err && console.error(err);
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    
+  }
 
   },
 });
