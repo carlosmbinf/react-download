@@ -21,6 +21,8 @@ import { MensajesCollection } from "../collections/collections";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import Input from "./Input";
 
+import { ChatFeed } from 'react-bell-chat'
+
 const useStyles = makeStyles((theme) => ({
     margin: {
         margin: 12
@@ -51,17 +53,30 @@ export default ChatDetails = () => {
         // let mensajes = MensajesCollection.find({ $or: [{ from: Meteor.userId() }, { from: from }, { to: Meteor.userId() }, { to: from }] }, { sort: { createdAt: -1 } }).fetch()
         let mensajes = MensajesCollection.find({ $or: [{ $and: [{ from: id, to: Meteor.userId() }] }, { $and: [{ from: Meteor.userId(), to: id }] }] }, { sort: { createdAt: -1 } }).fetch()
 
-
-        mensajes.forEach(element => {
+  // console.log(JSON.stringify(mensajes));
+        mensajes.map((element,index) => {
+            Meteor.subscribe("user", element.from, { fields: { "profile.firstName": 1, "profile.lastName": 1 } })
+            element.to == Meteor.userId() && !element.leido && MensajesCollection.update(element._id, { $set: { leido: true } })
             // let firstName = user(element.from) && user(element.from).profile && user(element.from).profile.firstName
             // let lastName = user(element.from) && user(element.from).profile && user(element.from).profile.lastName
             list.push(
                 {
-                    position: element.from == Meteor.userId() ? "right" : "left",
-                    type: element.type?element.type:"text",
-                    text: <p style={{ color: 'black', margin: 0 }}>{element.mensaje}</p>,
-                    date: new Date(element.createdAt),
-                    theme:'black',
+                    id: index,
+                    authorId: element._id == Meteor.userId() ? 1 : 2,
+                    // position: element.from == Meteor.userId() ? "right" : "left",
+                    // type: element.type ? element.type : "text",
+                    message: element.mensaje,
+                    createdOn: element.createdAt,
+                    isSend: true,
+                    // user: {
+                    //     _id: element.from,
+                    //     name: Meteor.users.findOne(element.from) && Meteor.users.findOne(element.from).profile.firstName + " " + Meteor.users.findOne(element.from).profile.lastName,
+                    //     avatar: element.services && element.services.facebook && element.services.facebook && element.services.facebook.picture.data.url
+                    // }
+                    // ,
+                    // sent: true,
+                    // received: element.leido
+                    // theme: 'black',
                     // data: {
                     //     videoURL: 'https://www.w3schools.com/html/mov_bbb.mp4',
                     //     audioURL: 'https://www.w3schools.com/html/horse.mp3',
@@ -113,13 +128,26 @@ export default ChatDetails = () => {
                 <Grid item xs={12}
                 // style={acti ? styles.inactive : styles.active}
                 >
-                    <MessageList
-                    style
-                        className='message-list'
-                        lockable={true}
-                        toBottomHeight={'100%'}
-                        dataSource={mensajesList} 
-                        />
+                    <ChatFeed
+      messages={mensajesList} // Array: list of message objects
+      authors={[
+        {
+          id: 1,
+          name: Meteor.user()&&(Meteor.user().profile.firstName + " " + Meteor.user().profile.lastName),
+        //   isTyping: true,
+          lastSeenMessageId: 1,
+          bgImageUrl: undefined
+        },
+        {
+          id: 2,
+          name: `${user && user.profile.firstName} ${user && user.profile.lastName}`,
+          isTyping: false,
+          lastSeenMessageId: 2,
+          bgImageUrl: undefined
+        }
+      ]} // Array: list of authors
+      yourAuthorId={2} // Number: Your author id (corresponds with id from list of authors)
+    />
                     
                 </Grid>
                 
