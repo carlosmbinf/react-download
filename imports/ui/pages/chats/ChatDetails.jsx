@@ -42,6 +42,7 @@ export default ChatDetails = () => {
     const history = useHistory();
     const [inputMessage, setInputMessage] = React.useState("")
     const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
+    const [loadMensajes, setLoadMensajes] = React.useState(15)
 
     let { id } = useParams()
     const user = useTracker(() => {
@@ -69,7 +70,7 @@ export default ChatDetails = () => {
 
         let list = []
         // let mensajes = MensajesCollection.find({ $or: [{ from: Meteor.userId() }, { from: from }, { to: Meteor.userId() }, { to: from }] }, { sort: { createdAt: -1 } }).fetch()
-        let mensajes = MensajesCollection.find({ $or: [{ $and: [{ from: id, to: Meteor.userId() }] }, { $and: [{ from: Meteor.userId(), to: id }] }] }, { sort: { createdAt: -1 } }).fetch()
+        let mensajes = MensajesCollection.find({ $or: [{ $and: [{ from: id, to: Meteor.userId() }] }, { $and: [{ from: Meteor.userId(), to: id }] }] }, { sort: { createdAt: -1 }, limit: loadMensajes }).fetch()
 
         // console.log(JSON.stringify(mensajes));
         mensajes.map((element, index) => {
@@ -117,7 +118,6 @@ export default ChatDetails = () => {
         list.sort(sortFunction);
         return list;
     });
-    const [loadMensajes, setLoadMensajes] = React.useState((mensajesList.length - 15) > 0 ?( mensajesList.length - 15 ): 0)
 
     
 
@@ -159,7 +159,7 @@ export default ChatDetails = () => {
             <Grid item xs={12}
             >
                 <ChatFeed
-                    messages={mensajesList.slice(loadMensajes,mensajesList.length)} // Array: list of message objects
+                    messages={mensajesList} // Array: list of message objects
                     authors={[
                         {
                             id: 1,
@@ -199,7 +199,7 @@ export default ChatDetails = () => {
                     showRecipientAvatar={true}
                     showIsTyping={true}
                     hasOldMessages={true}
-                    onLoadOldMessages={() => setLoadMensajes((loadMensajes - 15) > 0 ? loadMensajes - 15 : 0)}
+                    onLoadOldMessages={() => setLoadMensajes(loadMensajes + 15)}
                     style={{ maxHeight: windowDimensions.height - 200 }}
                     yourAuthorId={1} // Number: Your author id (corresponds with id from list of authors)
                     avatarStyles={{
