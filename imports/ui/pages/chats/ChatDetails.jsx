@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect  } from "react";
 import { useTracker } from "meteor/react-meteor-data";
 
 // RCE CSS
@@ -29,32 +29,50 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
+function getWindowDimensions() {
+    const { innerWidth: width, innerHeight: height } = window;
+    return {
+      width,
+      height
+    };
+  }
+
 export default ChatDetails = () => {
     const classes = useStyles();
     const history = useHistory();
     const [inputMessage, setInputMessage] = React.useState("")
+    const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
 
-    let {id} = useParams()
+    let { id } = useParams()
     const user = useTracker(() => {
-        Meteor.subscribe("user",id);
+        Meteor.subscribe("user", id);
         return Meteor.users.findOne(id);
     });
 
-    function sortFunction(a,b){  
+    useEffect(() => {
+        function handleResize() {
+          setWindowDimensions(getWindowDimensions());
+        }
+    
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+      }, []);
+
+    function sortFunction(a, b) {
         var dateA = new Date(a.date).getTime();
         var dateB = new Date(b.date).getTime();
-        return dateA < dateB ? 1 : -1;  
+        return dateA < dateB ? 1 : -1;
     };
-    
+
     const mensajesList = useTracker(() => {
-        Meteor.subscribe("mensajes");
+        Meteor.subscribe("mensajes",{ $or: [{ $and: [{ from: id, to: Meteor.userId() }] }, { $and: [{ from: Meteor.userId(), to: id }] }] }, { sort: { createdAt: -1 } });
 
         let list = []
         // let mensajes = MensajesCollection.find({ $or: [{ from: Meteor.userId() }, { from: from }, { to: Meteor.userId() }, { to: from }] }, { sort: { createdAt: -1 } }).fetch()
         let mensajes = MensajesCollection.find({ $or: [{ $and: [{ from: id, to: Meteor.userId() }] }, { $and: [{ from: Meteor.userId(), to: id }] }] }, { sort: { createdAt: -1 } }).fetch()
 
-  // console.log(JSON.stringify(mensajes));
-        mensajes.map((element,index) => {
+        // console.log(JSON.stringify(mensajes));
+        mensajes.map((element, index) => {
             Meteor.subscribe("user", element.from, { fields: { "profile.firstName": 1, "profile.lastName": 1 } })
             element.to == Meteor.userId() && !element.leido && MensajesCollection.update(element._id, { $set: { leido: true } })
             // let firstName = user(element.from) && user(element.from).profile && user(element.from).profile.firstName
@@ -62,12 +80,12 @@ export default ChatDetails = () => {
             list.push(
                 {
                     id: index,
-                    authorId: element._id == Meteor.userId() ? 1 : 2,
+                    authorId: element.from == Meteor.userId() ? 1 : 2,
                     // position: element.from == Meteor.userId() ? "right" : "left",
                     // type: element.type ? element.type : "text",
                     message: element.mensaje,
                     createdOn: element.createdAt,
-                    isSend: true,
+                    isSend: element.leido,
                     // user: {
                     //     _id: element.from,
                     //     name: Meteor.users.findOne(element.from) && Meteor.users.findOne(element.from).profile.firstName + " " + Meteor.users.findOne(element.from).profile.lastName,
@@ -99,13 +117,16 @@ export default ChatDetails = () => {
         list.sort(sortFunction);
         return list;
     });
+    const [loadMensajes, setLoadMensajes] = React.useState((mensajesList.length - 15) > 0 ?( mensajesList.length - 15 ): 0)
+
+    
 
     return <>
         <Grid
             container
             justify="flex-start"
             alignItems="center"
-            style={{ paddingBottom: '6em' }}
+            // style={{ paddingBottom: '6em' }}
         >
             {id &&
                 <Grid item >
@@ -116,41 +137,80 @@ export default ChatDetails = () => {
                             color="primary"
                             aria-label="delete"
                             className={classes.margin}
-                            onClick={() => {history.push('/chat')}}
+                            onClick={() => { history.push('/chat') }}
                         >
                             <ArrowBackIcon fontSize="large" color="secondary" />
                         </IconButton>
-                        <h2>{`${user && user.profile.firstName} ${user && user.profile.lastName}`}</h2>
+                        <h2>{`${user && user.profile.firstName}`}</h2>
                     </Grid>
                 </Grid>
-                }
-            
-                <Grid item xs={12}
-                // style={acti ? styles.inactive : styles.active}
-                >
-                    <ChatFeed
-      messages={mensajesList} // Array: list of message objects
-      authors={[
-        {
-          id: 1,
-          name: Meteor.user()&&(Meteor.user().profile.firstName + " " + Meteor.user().profile.lastName),
-        //   isTyping: true,
-          lastSeenMessageId: 1,
-          bgImageUrl: undefined
-        },
-        {
-          id: 2,
-          name: `${user && user.profile.firstName} ${user && user.profile.lastName}`,
-          isTyping: false,
-          lastSeenMessageId: 2,
-          bgImageUrl: undefined
-        }
-      ]} // Array: list of authors
-      yourAuthorId={2} // Number: Your author id (corresponds with id from list of authors)
-    />
-                    
-                </Grid>
-                
+            }
+        </Grid>
+
+        <Grid
+            container
+            justify="flex-start"
+            alignItems="center"
+            // style={{ paddingBottom: '6em'
+        //  }}
+        >
+
+
+            <Grid item xs={12}
+            >
+                <ChatFeed
+                    messages={mensajesList.slice(loadMensajes,mensajesList.length)} // Array: list of message objects
+                    authors={[
+                        {
+                            id: 1,
+                            name: Meteor.user() && (Meteor.user().profile.firstName + " " + Meteor.user().profile.lastName),
+                            //   isTyping: true,
+                            lastSeenMessageId: 1,
+                            bgImageUrl: Meteor.user().services && Meteor.user().services.facebook && Meteor.user().services.facebook.picture.data.url
+                        },
+                        {
+                            id: 2,
+                            name: `${user && user.profile.firstName} ${user && user.profile.lastName}`,
+                            isTyping: false,
+                            lastSeenMessageId: 2,
+                            bgImageUrl: user&& user.services && user.services.facebook ? user.services.facebook.picture.data.url : undefined
+                        }
+                    ]} // Array: list of authors
+                    chatBubbleStyles={{
+                        // text: {
+                        //   fontSize: 30
+                        // },
+                        chatBubble: {
+                            //   borderRadius: 70,
+                            //   padding: 40,
+                            background: "rgb(63 81 181 / 34%)"
+                        },
+                        recipientChatBubbleOrientationNormal: {
+                            background: '#3f51b5'
+                        }
+                    }}
+
+                    dateRowStyles={{
+                        container: {
+                            color: 'white', fontSize: 12
+                        }
+                    }}
+                    showDateRow={true}
+                    showRecipientAvatar={true}
+                    showIsTyping={true}
+                    hasOldMessages={true}
+                    onLoadOldMessages={() => setLoadMensajes((loadMensajes - 15) > 0 ? loadMensajes - 15 : 0)}
+                    style={{ maxHeight: windowDimensions.height - 200 }}
+                    yourAuthorId={1} // Number: Your author id (corresponds with id from list of authors)
+                    avatarStyles={{
+                        container: {
+                            background: "rgb(63, 81, 181)"
+                        }
+                    }}
+                />
+
+            </Grid>
+
 
         </Grid>
         {/* <Grid item xs={12} style={{ bottom: 0, position: 'absolute',width:'100%', height:"100%" }}>
@@ -182,6 +242,6 @@ export default ChatDetails = () => {
                     placeholder="Escriba el mensaje aqui!!!"
                 />
             </Grid> */}
-            <Input />
+        <Input />
     </>
 }
