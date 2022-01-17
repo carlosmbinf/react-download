@@ -47,7 +47,7 @@ export default Chat = () => {
                 { to: Meteor.userId()}
             ]
         }).fetch();
-        console.log(myTodoTasks);
+        
         let users = []
         let list = []
         myTodoTasks.map((message) => {
@@ -56,9 +56,6 @@ export default Chat = () => {
         myTodoTasks.map((message) => {
             users.filter(element => element == message.to).length == 0 && users.push(message.to)
           })
-
-
-        console.log(users);
 
         let mensajes = MensajesCollection.find({ $or: [
             { from: Meteor.userId() },
