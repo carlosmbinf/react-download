@@ -35,7 +35,12 @@ export default Chat = () => {
     const listFromMensajes = useTracker(() => {
 
         const handle1 = Meteor.subscribe('user', {}, { fields: { _id: 1 } });
-        const handle2 = Meteor.subscribe('mensajes', { to: Meteor.userId() });
+        const handle2 = Meteor.subscribe('mensajes', {
+            $or: [
+                { from: Meteor.userId()},
+                { to: Meteor.userId()}
+            ]
+        });
         const myTodoTasks = MensajesCollection.find({
             $or: [
                 { from: Meteor.userId()},
