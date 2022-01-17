@@ -388,8 +388,8 @@ export default function UserCardDetails() {
       message:
         `Ha sido Reiniciado el consumo de Datos de ${users.profile.firstName} ${users.profile.lastName}`
     });
-    Meteor.call('sendemail', users,{text: `Ha sido Reiniciado el consumo de Datos de ${users.profile.firstName} ${users.profile.lastName}`}, 'Reinicio')
-    Meteor.call('sendMensaje', users,{text: `Ha sido Reiniciado el consumo de Datos de ${users.profile.firstName} ${users.profile.lastName}`}, 'Reinicio')
+    Meteor.call('sendemail', users, { text: `Ha sido Reiniciado el consumo de Datos de ${users.profile.firstName} ${users.profile.lastName}` }, 'Reinicio ' + Meteor.user().username)
+    Meteor.call('sendMensaje', users,{text: `Ha sido Reiniciado el consumo de Datos de ${users.profile.firstName} ${users.profile.lastName}`}, 'Reinicio ' + Meteor.user().username)
     
     alert('Se reinicio los datos de ' + users.profile.firstName)
   };
@@ -417,8 +417,8 @@ export default function UserCardDetails() {
         message:
           `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN`
       });
-    Meteor.call('sendemail', users,{text:  `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN`}, `VPN ${Meteor.users.findOne(users.bloqueadoDesbloqueadoPor).username}`)
-    Meteor.call('sendMensaje', users,{text:  `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN para ${users.username}`}, `VPN ${Meteor.users.findOne(users.bloqueadoDesbloqueadoPor).username}`)
+    Meteor.call('sendemail', users,{text:  `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN`}, `VPN ${Meteor.user().username}`)
+    Meteor.call('sendMensaje', users,{text:  `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN para ${users.username}`}, `VPN ${Meteor.user().username}`)
       
       !users.vpn && VentasCollection.insert({
         adminId: Meteor.userId(),
@@ -465,10 +465,10 @@ let validacion = false;
         }),
     Meteor.call('sendemail', users,{text:   "Ha sido " +
     (!users.baneado ? "Bloqueado" : "Desbloqueado") +
-    `del proxy del usuario ${users.username}`}, !users.baneado ? "Bloqueado" : "Desbloqueado"),
+    ` el proxy del usuario ${users.username}`}, (!users.baneado ? "Bloqueado " + Meteor.user().username : "Desbloqueado " + Meteor.user().username)),
     Meteor.call('sendMensaje', users,{text:   "Ha sido " +
     (!users.baneado ? "Bloqueado" : "Desbloqueado") +
-    `del proxy del usuario ${users.username}`}, !users.baneado ? "Bloqueado" : "Desbloqueado")
+    ` el proxy del usuario ${users.username}`}, (!users.baneado ? "Bloqueado " + Meteor.user().username : "Desbloqueado " + Meteor.user().username))
     )
     ) : (
 
@@ -490,10 +490,10 @@ let validacion = false;
         }),
     Meteor.call('sendemail', users,{text:   "Ha sido " +
     (!users.baneado ? "Bloqueado" : "Desbloqueado") +
-    `del proxy del usuario ${users.username}`}, !users.baneado ? "Bloqueado" : "Desbloqueado"),
+    ` el proxy del usuario ${users.username}`}, (!users.baneado ? "Bloqueado " + Meteor.user().username : "Desbloqueado " + Meteor.user().username)),
     Meteor.call('sendMensaje', users,{text:   "Ha sido " +
     (!users.baneado ? "Bloqueado" : "Desbloqueado") +
-    `del proxy del usuario ${users.username}`}, !users.baneado ? "Bloqueado" : "Desbloqueado")
+    ` el proxy del usuario ${users.username}`}, (!users.baneado ? "Bloqueado " + Meteor.user().username : "Desbloqueado " + Meteor.user().username))
     ),
 
       validacion && users.baneado && (
@@ -514,10 +514,10 @@ let validacion = false;
         }),
         Meteor.call('sendemail', users,{text:   "Ha sido " +
     (!users.baneado ? "Bloqueado" : "Desbloqueado") +
-    `del proxy del usuario ${users.username}`}, !users.baneado ? "Bloqueado" : "Desbloqueado"),
+    ` el proxy del usuario ${users.username}`}, (!users.baneado ? "Bloqueado " + Meteor.user().username : "Desbloqueado " + Meteor.user().username)),
     Meteor.call('sendMensaje', users,{text:   "Ha sido " +
     (!users.baneado ? "Bloqueado" : "Desbloqueado") +
-    `del proxy del usuario ${users.username}`}, !users.baneado ? "Bloqueado" : "Desbloqueado"),
+    ` el proxy del usuario ${users.username}`}, (!users.baneado ? "Bloqueado " + Meteor.user().username : "Desbloqueado " + Meteor.user().username)),
         precios.map(precio => {
 
           users.isIlimitado && precio.fecha && (VentasCollection.insert({
