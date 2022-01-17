@@ -46,13 +46,16 @@ export default Chat = () => {
                 { from: Meteor.userId()},
                 { to: Meteor.userId()}
             ]
-        }, { sort: { _id: 1 } });
+        }).fetch();
+        console.log(myTodoTasks);
         let users = []
         let list = []
         myTodoTasks.map((message) => {
           users.filter(element => element == message.from).length == 0 && users.push(message.from)
         })
-
+        myTodoTasks.map((message) => {
+            users.filter(element => element == message.to).length == 0 && users.push(message.to)
+          })
 
 
         console.log(users);
