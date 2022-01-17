@@ -74,12 +74,9 @@ export default Chat = () => {
                 ]
             }, { sort: { createdAt: -1 } })
 
-            let mensajesSinLeer = MensajesCollection.find({
-                $or: [
-                    { from: Meteor.userId(), to: element, leido: false },
-                    { to: Meteor.userId(), from: element, leido: false }
-                ]
-            }, { sort: { createdAt: -1 }, limit: 1 }).count()
+            let mensajesSinLeer = MensajesCollection.find(
+                { to: Meteor.userId(), from: element, leido: false }
+                , { sort: { createdAt: -1 }}).count()
 
             list.push({
                 from: element,
