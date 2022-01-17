@@ -371,7 +371,9 @@ export default function PersistentDrawerLeft() {
                       // color="textSecondary"
                       noWrap
                     >
-                      <IconButton disabled={mensajes.length > 0 ? false : true} type='submit' aria-label="delete" onClick={() => 
+                      <IconButton 
+                      // disabled={mensajes.length > 0 ? false : true} 
+                      type='submit' aria-label="delete" onClick={() => 
                         history.push(`/chat`)
                         // showNotification()
                         }>

@@ -74,6 +74,9 @@ export default ChatDetails = () => {
 
         // console.log(JSON.stringify(mensajes));
         mensajes.map((element, index) => {
+            element.to == Meteor.userId() && element.leido == false && 
+                MensajesCollection.update(element._id, { $set: { leido: true } }, { multi: true })
+                
             Meteor.subscribe("user", element.from, { fields: { "profile.firstName": 1, "profile.lastName": 1 } })
             element.to == Meteor.userId() && !element.leido && MensajesCollection.update(element._id, { $set: { leido: true } })
             // let firstName = user(element.from) && user(element.from).profile && user(element.from).profile.firstName

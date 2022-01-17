@@ -90,7 +90,7 @@ export default function Input() {
     };
   
   return <form autoComplete="off" onSubmit={handleSubmit} className={classes.input}>
-    <Grid container style={{padding:"2px 40px 2px 40px"}} spacing={2}>
+    <Grid container style={{padding:"2px 10px"}} spacing={2}>
       <Grid item xs >
         <TextField
           id="outlined"
