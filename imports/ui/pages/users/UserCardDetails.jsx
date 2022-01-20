@@ -1319,14 +1319,16 @@ let validacion = false;
                     </Grid>
                     <Grid item xs={12}>
                       <Grid container direction="row">
+                       {users.megasGastadosinBytes&&
                         <Typography>
-                          Megas Gastados:{" "}
-                          {users.megasGastadosinBytes
-                            ? (Number.parseFloat(
-                              users.megasGastadosinBytes / 1024000
-                            ).toFixed(2) + " MB")
-                            : 0 + " MB"}
-                        </Typography>
+                            {`PROXY - Megas Gastados:
+                            ${`${Number.parseFloat(users.megasGastadosinBytes / 1024000).toFixed(2)} MB`}`}
+                        </Typography>}
+                        {users.vpnMbGastados&&
+                        <Typography>
+                            {`VPN - Megas Gastados:
+                            ${`${Number.parseFloat(users.vpnMbGastados / 1000000).toFixed(2)} MB`}`}
+                        </Typography>}
                       </Grid>
                     </Grid>
                     <Grid item xs={12}>

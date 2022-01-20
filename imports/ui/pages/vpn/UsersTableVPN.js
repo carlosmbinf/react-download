@@ -234,7 +234,8 @@ export default function UsersTableVPN(option) {
           creadoPor: data.creadoPor=='Server'?"Server":(data.creadoPor?(`${Meteor.users.findOne(data.creadoPor)&&Meteor.users.findOne(data.creadoPor).profile.firstName} ${Meteor.users.findOne(data.creadoPor)&&Meteor.users.findOne(data.creadoPor).profile.lastName}`):"Facebook"),
           administradoPor: data.bloqueadoDesbloqueadoPor?(Meteor.users.findOne(data.bloqueadoDesbloqueadoPor)?(`${Meteor.users.findOne(data.bloqueadoDesbloqueadoPor)&&Meteor.users.findOne(data.bloqueadoDesbloqueadoPor).profile.firstName} ${Meteor.users.findOne(data.bloqueadoDesbloqueadoPor)&&Meteor.users.findOne(data.bloqueadoDesbloqueadoPor).profile.lastName}`):"Carlos Medina"):"Carlos Medina",
           ip: data.vpnip?`192.168.18.${data.vpnip}`:"",
-          vpntype: data.vpnplus ? "PLUS" : (data.vpn2mb ? "2MB" : "false")
+          vpntype: data.vpnplus ? "PLUS" : (data.vpn2mb ? "2MB" : "false"),
+          vpnMegasGastados: data.vpnMegasGastados
 
         })
     );
@@ -329,6 +330,14 @@ export default function UsersTableVPN(option) {
       <React.Fragment>
         <span className="p-column-title">IP</span>
         {rowData.ip}
+      </React.Fragment>
+    );
+  };
+  const vpnMegasGastadosTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">Megas Gastados</span>
+        {rowData.vpnMbGastados?rowData.vpnMbGastados/1000000:0} MB
       </React.Fragment>
     );
   };
@@ -516,6 +525,11 @@ export default function UsersTableVPN(option) {
                   filter
                   filterPlaceholder="IP:"
                   filterMatchMode="contains"
+                />
+                <Column
+                  field="vpnMegasGastados"
+                  header="Megas Gastados"
+                  body={vpnMegasGastadosTemplate}
                 />
                 
                 <Column field="urlReal" header="" body={urlBodyTemplate} />
