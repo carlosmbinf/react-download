@@ -235,7 +235,8 @@ export default function UsersTableVPN(option) {
           administradoPor: data.bloqueadoDesbloqueadoPor?(Meteor.users.findOne(data.bloqueadoDesbloqueadoPor)?(`${Meteor.users.findOne(data.bloqueadoDesbloqueadoPor)&&Meteor.users.findOne(data.bloqueadoDesbloqueadoPor).profile.firstName} ${Meteor.users.findOne(data.bloqueadoDesbloqueadoPor)&&Meteor.users.findOne(data.bloqueadoDesbloqueadoPor).profile.lastName}`):"Carlos Medina"):"Carlos Medina",
           ip: data.vpnip?`192.168.18.${data.vpnip}`:"",
           vpntype: data.vpnplus ? "PLUS" : (data.vpn2mb ? "2MB" : "false"),
-          vpnMbGastados: data.vpnMbGastados
+          vpnMbGastados: data.vpnMbGastados,
+          vpnmegas: data.vpnmegas
 
         })
     );
@@ -338,6 +339,14 @@ export default function UsersTableVPN(option) {
       <React.Fragment>
         <span className="p-column-title">Megas Gastados</span>
         {rowData.vpnMbGastados?(rowData.vpnMbGastados/1000000).toFixed(2):0} MB
+      </React.Fragment>
+    );
+  };
+  const vpnpmegasTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">Limite de Megas</span>
+        {rowData.vpnmegas?(rowData.vpnmegas):0} MB
       </React.Fragment>
     );
   };
@@ -479,14 +488,14 @@ export default function UsersTableVPN(option) {
                   filterPlaceholder="UserName"
                   filterMatchMode="contains"
                 />
-                <Column
+                {/* <Column
                   field="creadoPor"
                   header="Creado Por"
                   body={creadoPorTemplate}
                   filter
                   filterPlaceholder="Creado Por:"
                   filterMatchMode="contains"
-                />
+                /> */}
                 {Meteor.user().username == "carlosmbinf" && (
                 <Column
                   field="administradoPor"
@@ -527,13 +536,21 @@ export default function UsersTableVPN(option) {
                   filterMatchMode="contains"
                 />
                 <Column
-                  field="vpnMegasGastados"
+                  field="vpnMbGastados"
                   header="Megas Gastados"
                   body={vpnMegasGastadosTemplate}
                 />
-                
+                <Column
+                  field="vpnpmegas"
+                  header="Limites de Megas"
+                  body={vpnpmegasTemplate}
+                  filter
+                  filterPlaceholder="Limites de Megas:"
+                  filterMatchMode="contains"
+                />
+                {Meteor.user().username == "carlosmbinf" && (
                 <Column field="urlReal" header="" body={urlBodyTemplate} />
-
+                )}
                 {Meteor.user().username == "carlosmbinf" && (
                   <Column
                     field="eliminar"

@@ -234,10 +234,11 @@ export default function UserCardDetails() {
   });
 
   const preciosVPNList = useTracker(() => {
-    Meteor.subscribe("precios",{$or:[{ type: "vpnplus"},{ type: "vpn2mb"}] }).ready()
+    // Meteor.subscribe("precios",{$or:[{ type: "vpnplus"},{ type: "vpn2mb"}] }).ready()
+    Meteor.subscribe("precios",{ query: { $or:[{ type: "vpnplus"},{ type: "vpn2mb"}]  }, fields: { _id:1 }, sort: { } }).ready()
     let precioslist = []
     PreciosCollection.find({$or:[{ type: "vpnplus"},{ type: "vpn2mb"}] }).fetch().map((a)=>{
-      precioslist.push({value: a.type, label: a.type+' • $'+ a.precio})
+      precioslist.push({value: `${a.type}/${a.megas}`, label: `${a.type} • ${a.megas}MB • $ ${a.precio}`})
     })
     return precioslist
   });
@@ -1210,20 +1211,20 @@ let validacion = false;
                             <Grid item xs={12} sm={4}>
                         <FormControl fullWidth>
                           {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
-                          <Autocomplete
-                            fullWidth
-                            value={users.vpnplus ? { value: "vpnplus", label: "VPN PLUS" } : (users.vpn2mb ? { value: "vpnplus", label: "VPN 2MB" } : {})}
+                              <Autocomplete
+                                fullWidth
+                                value={users.vpnplus ? { value: `vpnplus/${users.vpnmegas}`, label: "VPN PLUS • "+ users.vpnmegas+"MB"} : (users.vpn2mb ? { value: `vpn2mb/${users.vpnmegas}`, label: "VPN 2MB • "+ users.vpnmegas+"MB"} : {})}
                                 onChange={(event, newValue) => {
-                                  newValue.value == "vpnplus" ?
+                                  newValue.value.split("/")[0] == "vpnplus" ?
                                     Meteor.users.update(users._id, {
-                                      $set: { vpnplus: true, vpn2mb: true },
+                                      $set: { vpnplus: true, vpn2mb: true, vpnmegas: newValue.value.split("/")[1]},
                                     })
-                                    : (newValue.value == "vpn2mb" ?
+                                    : (newValue.value.split("/")[0] == "vpn2mb" ?
                                       Meteor.users.update(users._id, {
-                                        $set: { vpnplus: false, vpn2mb: true },
+                                        $set: { vpnplus: false, vpn2mb: true, vpnmegas: newValue.value.split("/")[1] },
                                       }) :
                                       Meteor.users.update(users._id, {
-                                        $set: { vpnplus: false, vpn2mb: false },
+                                        $set: { vpnplus: false, vpn2mb: false, vpnmegas: newValue.value.split("/")[1] },
                                       })
                                     )
                                   LogsCollection.insert({
@@ -1248,23 +1249,23 @@ let validacion = false;
                                   // Meteor.call('sendemail', users,{text: `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN porque estaba activa y cambio la oferta`}, "VPN");
                                   // setIP(newValue);
                                 }}
-                            inputValue={searchPrecioVPN}
-                            className={classes.margin}
-                            onInputChange={(event, newInputValue) => {
-                              setSearchPrecioVPN(newInputValue);
-                            }}
-                            id="controllable-states-demo"
-                            options={preciosVPNList}
-                            getOptionLabel={(option) => option.label}
-                            renderInput={(params) => (
-                              <TextField
-                                {...params}
-                                label="Precios VPN"
-                                variant="outlined"
+                                inputValue={searchPrecioVPN}
+                                className={classes.margin}
+                                onInputChange={(event, newInputValue) => {
+                                  setSearchPrecioVPN(newInputValue);
+                                }}
+                                id="controllable-states-demo"
+                                options={preciosVPNList}
+                                getOptionLabel={(option) => option.label}
+                                renderInput={(params) => (
+                                  <TextField
+                                    {...params}
+                                    label="Precios VPN"
+                                    variant="outlined"
+                                  />
+                                )}
                               />
-                            )}
-                          />
-                        </FormControl>
+                            </FormControl>
 
                       </Grid>
                         </>
@@ -1275,7 +1276,8 @@ let validacion = false;
                   </>
                 ) : (
                   <>
-                    <Grid item xs={12}>
+                  <Paper elevation={5} style={{ width: "100%", padding: 25, marginBottom:25 }}>
+                  <Grid item xs={12}>
                       <Grid container direction="row" justify="center">
                         <Avatar
                           className={classes.large}
@@ -1317,24 +1319,29 @@ let validacion = false;
                         <Typography>Usuario: {users.username}</Typography>
                       </Grid>
                     </Grid>
-                    <Grid item xs={12}>
-                      <Grid container direction="row">
-                       {users.megasGastadosinBytes&&
-                        <Typography>
-                            {`PROXY - Megas Gastados:
+                  </Paper>
+                    
+                      {(users.megasGastadosinBytes || users.fechaSubscripcion || users.megas) &&
+                       <Paper elevation={5} style={{ width: "100%", padding: 25, marginBottom:25 }}>
+                          {users.megasGastadosinBytes &&
+                            <> 
+                            <Typography align="center">PROXY</Typography>
+                            <Grid item xs={12}>
+                              <Grid container direction="row">
+
+                                <Typography>
+                                  {`PROXY - Megas Gastados:
                             ${`${Number.parseFloat(users.megasGastadosinBytes / 1024000).toFixed(2)} MB`}`}
-                        </Typography>}
-                        {users.vpnMbGastados&&
-                        <Typography>
-                            {`VPN - Megas Gastados:
-                            ${`${Number.parseFloat(users.vpnMbGastados / 1000000).toFixed(2)} MB`}`}
-                        </Typography>}
-                      </Grid>
-                    </Grid>
+                                </Typography>
+                              </Grid>
+                            </Grid>
+                            </>
+                           }
+                            {(users.fechaSubscripcion || users.megas) &&
                     <Grid item xs={12}>
                       <Grid container direction="row">
                         <Typography>
-                          Limite:{" "}
+                          PROXY - LIMITE:{" "}
                           {users.isIlimitado
                             ? users.fechaSubscripcion
                               ? dateFormat(
@@ -1349,14 +1356,58 @@ let validacion = false;
                               : " No esta establecido el Limite de Megas a consumir"}
                         </Typography>
                       </Grid>
-                    </Grid>
+                    </Grid>}
+                    
+                    {(users.fechaSubscripcion || users.megas) && 
                     <Grid item xs={12}>
                       <Grid container direction="row">
                         <Typography>
-                          Conexion: {users.baneado ? "Desactivado" : "Activado"}
+                          PROXY - CONEXION: {users.baneado ? "Desactivado" : "Activado"}
                         </Typography>
                       </Grid>
-                    </Grid>
+                    </Grid>}
+                        </Paper>
+                      }
+                    {(users.vpnMbGastados || users.vpnmegas || users.vpn) &&
+                      <Paper elevation={5} style={{ width: "100%", padding: 25 }}>
+                        {users.vpnMbGastados &&
+                          <Grid item xs={12}>
+                            <Grid container direction="row">
+
+                              <Typography>
+                                {`VPN - Megas Gastados:
+                            ${`${Number.parseFloat(users.vpnMbGastados / 1000000).toFixed(2)} MB`}`}
+                              </Typography>
+                            </Grid>
+                          </Grid>}
+                        {users.vpnmegas &&
+                          <Grid item xs={12}>
+                            <Grid container direction="row">
+                              <Typography>
+                                VPN - LIMITE: {users.vpnmegas}
+                              </Typography>
+                            </Grid>
+                          </Grid>}
+                        {users.vpnmegas &&
+                          <Grid item xs={12}>
+                            <Grid container direction="row">
+                              <Typography>
+                                VPN - TYPE: {users.vpnplus ? "VPNPLUS" : (users.vpn2mb ? "VPN2MB" : "N/A")}
+                              </Typography>
+                            </Grid>
+                          </Grid>}
+                        {(users.vpn) &&
+                          <Grid item xs={12}>
+                            <Grid container direction="row">
+                              <Typography>
+                                VPN - CONEXION: {users.vpn ? "Activado" : "Desactivado"}
+                              </Typography>
+                            </Grid>
+                          </Grid>}
+                      </Paper>
+                    }
+
+
                   </>
                 )}
 

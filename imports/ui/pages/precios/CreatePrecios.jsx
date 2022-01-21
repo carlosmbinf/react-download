@@ -268,7 +268,7 @@ export default function CreatePrecios() {
                             </Select>
                           </FormControl>
                         </Grid>
-                        {type == "megas" &&
+                        { (type == "megas" || type == "vpn2mb" || type == "vpnplus") &&
                           <Grid item xs={12} sm={4} lg={3}>
                             <FormControl required={type == "megas"?true:false} variant="outlined">
                               <TextField
