@@ -235,7 +235,7 @@ export default function UsersTableVPN(option) {
           administradoPor: data.bloqueadoDesbloqueadoPor?(Meteor.users.findOne(data.bloqueadoDesbloqueadoPor)?(`${Meteor.users.findOne(data.bloqueadoDesbloqueadoPor)&&Meteor.users.findOne(data.bloqueadoDesbloqueadoPor).profile.firstName} ${Meteor.users.findOne(data.bloqueadoDesbloqueadoPor)&&Meteor.users.findOne(data.bloqueadoDesbloqueadoPor).profile.lastName}`):"Carlos Medina"):"Carlos Medina",
           ip: data.vpnip?`192.168.18.${data.vpnip}`:"",
           vpntype: data.vpnplus ? "PLUS" : (data.vpn2mb ? "2MB" : "false"),
-          vpnMegasGastados: data.vpnMegasGastados
+          vpnMbGastados: data.vpnMbGastados
 
         })
     );
@@ -337,7 +337,7 @@ export default function UsersTableVPN(option) {
     return (
       <React.Fragment>
         <span className="p-column-title">Megas Gastados</span>
-        {rowData.vpnMbGastados?rowData.vpnMbGastados/1000000:0} MB
+        {rowData.vpnMbGastados?(rowData.vpnMbGastados/1000000).toFixed(2):0} MB
       </React.Fragment>
     );
   };
