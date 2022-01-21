@@ -201,7 +201,7 @@ export default function UsersTableVPN(option) {
 
 
   const usersRegister = useTracker(() => {
-    Meteor.subscribe("user");
+    Meteor.subscribe("user", { $or: [{ vpn2mb: true }, { vpnplus: true },{"profile.role":"admin"}] });
     Meteor.subscribe("conexiones");
     let a = [];
 
