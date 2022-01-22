@@ -628,7 +628,7 @@ export default function UsersTable(option) {
                 // resizableColumns={true}
               >
                 <Column field="img" header="IMG" body={thumbnailBodyTemplate} />
-                <Column
+                {/* <Column
                   field="id"
                   body={iDBodyTemplate}
                   wrap="nowrap"
@@ -636,7 +636,7 @@ export default function UsersTable(option) {
                   filter
                   filterPlaceholder="ID"
                   filterMatchMode="contains"
-                />
+                /> */}
                 <Column
                   field="name"
                   header="Nombre"
