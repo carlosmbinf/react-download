@@ -57,13 +57,7 @@ export default Chat = () => {
             users.filter(element => element == message.to).length == 0 && users.push(message.to)
           })
 
-        let mensajes = MensajesCollection.find({ $or: [
-            { from: Meteor.userId() },
-            { to: Meteor.userId() }
-        ] }, { sort: { createdAt: -1 } }).fetch()
-
         users.map(element=>{
-            let iam = element == Meteor.userId()
             let lastMensaje = MensajesCollection.findOne({
                 $or: [
                     { from: Meteor.userId(), to: element },
@@ -79,7 +73,7 @@ export default Chat = () => {
                 from: element,
                 avatar: user(element) && user(element).services && user(element).services.facebook && user(element).services.facebook.picture.data.url,
                 alt: "N/A",
-                title: <p style={{ color: 'black', margin: 0 }}>{user(element)&&(user(element).profile&&user(element).profile.firstName + " " + user(element).profile&&user(element).profile.lastName)}</p>,
+                title: <p style={{ color: 'black', margin: 0 }}>{user(element)&&(user(element).profile&&user(element).profile.firstName)}</p>,
                 subtitle: lastMensaje && lastMensaje.mensaje,
                 date: lastMensaje && lastMensaje.createdAt,
                 unread: mensajesSinLeer,
