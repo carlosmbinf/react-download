@@ -1247,18 +1247,18 @@ export default function UserCardDetails() {
                                   onChange={(event, newValue) => {
                                     newValue.value.split("/")[0] == "vpnplus" ?
                                       Meteor.users.update(users._id, {
-                                        $set: { vpnplus: true, vpn2mb: true, vpnmegas: newValue.value.split("/")[1] },
+                                        $set: { vpnplus: true, vpn2mb: true, vpnmegas: Number.parseInt(newValue.value.split("/")[1]) },
                                       })
                                       : (newValue.value.split("/")[0] == "vpn2mb" ?
                                         Meteor.users.update(users._id, {
-                                          $set: { vpnplus: false, vpn2mb: true, vpnmegas: newValue.value.split("/")[1] },
+                                          $set: { vpnplus: false, vpn2mb: true, vpnmegas: Number.parseInt(newValue.value.split("/")[1]) },
                                         }) :
                                         Meteor.users.update(users._id, {
-                                          $set: { vpnplus: false, vpn2mb: false, vpnmegas: newValue.value.split("/")[1] },
+                                          $set: { vpnplus: false, vpn2mb: false, vpnmegas: Number.parseInt(newValue.value.split("/")[1]) },
                                         })
                                       )
                                     LogsCollection.insert({
-                                      type: newValue.value,
+                                      type: newValue.value.split("/")[0],
                                       userAfectado: users._id,
                                       userAdmin: Meteor.userId(),
                                       message:
