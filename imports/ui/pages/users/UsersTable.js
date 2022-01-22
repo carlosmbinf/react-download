@@ -257,6 +257,11 @@ export default function UsersTable(option) {
       showClear
     />
   );
+
+  const conexiones = (userId) => {
+    Meteor.subscribe("conexiones", { userId: userId }, { fields: { userId: 1 } });
+    return OnlineCollection.find({ userId: userId },{ fields: { userId: 1 } })
+  }
   const usersRegister = useTracker(() => {
     Meteor.subscribe("user", option.selector?option.selector:{}, {
       fields: {
@@ -278,7 +283,6 @@ export default function UsersTable(option) {
         'vpn2mb': 1
       }
     });
-    Meteor.subscribe("conexiones", {}, { fields: { userId: 1 } });
     let a = [];
 
     Meteor.users.find(option.selector?option.selector:{}, {
@@ -305,7 +309,7 @@ export default function UsersTable(option) {
               ? data.services.facebook.picture.data.url
               : "/",
           online:
-            OnlineCollection.find({ userId: data._id }).count() > 0
+            conexiones(data._id).count() > 0
               ? "ONLINE"
               : "DISCONECTED",
           username: data.username,
@@ -314,7 +318,7 @@ export default function UsersTable(option) {
           conProxy: !data.baneado,
           megasGastadosinBytes: data.megasGastadosinBytes,
           // megasGastadosinBytesGeneral: data.megasGastadosinBytesGeneral,
-          connectionsCounts: OnlineCollection.find({ userId: data._id }).count(),
+          connectionsCounts: conexiones(data._id).count(),
           limites: data.profile && data.profile.role == 'admin' ? 'Ilimitado' : (data.isIlimitado ? "Fecha" : "Megas"),
           limiteData: data.profile && data.profile.role == 'admin' ? 'Ilimitado' : (data.isIlimitado ? (data.fechaSubscripcion ? (dateFormat(
             new Date(data.fechaSubscripcion),
@@ -624,7 +628,7 @@ export default function UsersTable(option) {
                 // resizableColumns={true}
               >
                 <Column field="img" header="IMG" body={thumbnailBodyTemplate} />
-                {/* <Column
+                <Column
                   field="id"
                   body={iDBodyTemplate}
                   wrap="nowrap"
@@ -632,7 +636,7 @@ export default function UsersTable(option) {
                   filter
                   filterPlaceholder="ID"
                   filterMatchMode="contains"
-                /> */}
+                />
                 <Column
                   field="name"
                   header="Nombre"
