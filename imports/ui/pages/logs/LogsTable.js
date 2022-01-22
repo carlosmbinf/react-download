@@ -136,8 +136,17 @@ export default function LogsTable() {
     return Meteor.users.findOne(id)
   }
   const logs = useTracker(() => {
-    Meteor.subscribe("logs", id ? { $or: [{ userAfectado: id }, { userAdmin: id }] } : {},
+    if (id) {
+      Meteor.subscribe("logs", { $or: [{ userAfectado: id }, { userAdmin: id }] },
       { sort: { createdAt: -1 }, limit: 500 });
+    } else if(Meteor.user().username == "carlosmbinf"){
+      Meteor.subscribe("logs", {},
+      { sort: { createdAt: -1 }, limit: 500 });
+    } else{
+      Meteor.subscribe("logs", { $or: [{ userAfectado: Meteor.userId() }, { userAdmin: Meteor.userId() }] },
+      { sort: { createdAt: -1 }, limit: 500 });
+    }
+    
 
     let a = [];
     try {

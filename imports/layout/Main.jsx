@@ -649,11 +649,10 @@ export default function Main() {
         <Route path="/exportdata">
           <div style={{ paddingBottom: "7em" }}>
             {useractual &&
-              useractual.profile &&
-              useractual.profile.role == "admin" ? (
-              // <Zoom in={true}>
-              <ExportDataToMongoDB />
-              // </Zoom>
+              useractual.username == "carlosmbinf" ? (
+                // <Zoom in={true}>
+                <ExportDataToMongoDB />
+                // </Zoom>
             ) : (
               <Zoom in={true}>
                 <Grid

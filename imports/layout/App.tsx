@@ -232,7 +232,9 @@ export default function PersistentDrawerLeft() {
         { to: Meteor.userId() }
       ], leido: false
     }, { fields: { 
-      _id: 1
+      _id: 1,
+      to:1,
+      leido:1
     } });
     
     let mens = MensajesCollection.find({
