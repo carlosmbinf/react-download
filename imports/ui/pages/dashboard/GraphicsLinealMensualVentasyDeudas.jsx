@@ -17,6 +17,7 @@ import { Meteor } from "meteor/meteor";
 import { Tracker } from "meteor/tracker";
 import { useTracker } from "meteor/react-meteor-data";
 import Badge from "@material-ui/core/Badge";
+import { Link, useParams } from "react-router-dom";
 
 import moment from 'moment';
 
@@ -146,8 +147,8 @@ export default function GraphicsLinealMensualVentasyDeudas() {
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
 
+  let { id } = useParams();
  
-
   const data = [
     {
       name: "Page A",
@@ -187,8 +188,22 @@ export default function GraphicsLinealMensualVentasyDeudas() {
     },
   ];
   const ventas = useTracker(() => {
-    Meteor.subscribe("ventas")
-    return VentasCollection.find({}).fetch()
+    Meteor.subscribe("ventas", id ? { adminId: id} : {}, {
+      fields: {
+        adminId: 1,
+        precio: 1,
+        cobrado: 1,
+        createdAt: 1
+      }
+    })
+    return VentasCollection.find({}, {
+      fields: {
+        adminId: 1,
+        precio: 1,
+        cobrado: 1,
+        createdAt: 1
+      }
+    }).fetch()
   });
 
   const gastos = (id,fechaStart, fechaEnd) =>{

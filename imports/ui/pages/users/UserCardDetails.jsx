@@ -21,7 +21,7 @@ import {
   Select,
   InputLabel,
   FormControlLabel,
-  FormHelperText ,
+  FormHelperText,
   Dialog,
   DialogActions,
   DialogContent,
@@ -37,7 +37,7 @@ import Avatar from "@material-ui/core/Avatar";
 import { Link, useParams } from "react-router-dom";
 import { useHistory } from "react-router-dom";
 import Tooltip from "@material-ui/core/Tooltip";
-import {ServersCollection, VentasCollection,PreciosCollection, MensajesCollection} from "../collections/collections"
+import { ServersCollection, VentasCollection, PreciosCollection, MensajesCollection } from "../collections/collections"
 //icons
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
@@ -51,6 +51,7 @@ var dateFormat = require('dateformat');
 
 import { OnlineCollection, LogsCollection, RegisterDataUsersCollection } from "../collections/collections";
 import { Autocomplete } from "@material-ui/lab";
+import DashboardInit from "../dashboard/DashboardInit";
 
 
 const StyledBadge = withStyles((theme) => ({
@@ -152,6 +153,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "flex-start",
   },
   drawerItem: {
+    flexDirection: "column",
     display: "flex",
     alignItems: "center",
     padding: theme.spacing(0, 5),
@@ -207,66 +209,66 @@ export default function UserCardDetails() {
   const servers = useTracker(() => {
     Meteor.subscribe("servers").ready()
     let serv = []
-    ServersCollection.find({ active: true }).fetch().map((a)=>{
+    ServersCollection.find({ active: true }).fetch().map((a) => {
       serv.push(a.ip)
     })
     return serv
   });
 
   const preciosList = useTracker(() => {
-    Meteor.subscribe("precios",({ type: "megas" })).ready()
+    Meteor.subscribe("precios", ({ type: "megas" })).ready()
     let precioslist = []
-    PreciosCollection.find({ type: "megas" }).fetch().map((a)=>{
-      precioslist.push({value: a.megas, label: a.megas+'MB • $'+ a.precio})
+    PreciosCollection.find({ type: "megas" }).fetch().map((a) => {
+      precioslist.push({ value: a.megas, label: a.megas + 'MB • $' + a.precio })
     })
     return precioslist
   });
 
-    const admins = useTracker(() => {
-      Meteor.subscribe("user",{"profile.role":"admin"}, {
-        fields: {
-          '_id': 1,
-          'emails': 1,
-          'profile': 1,
-          'services.facebook.picture.data.url': 1,
-          'username': 1,
-          'creadoPor': 1,
-          'bloqueadoDesbloqueadoPor': 1,
-          'baneado': 1,
-          'megasGastadosinBytes': 1,
-          'megasGastadosinBytesGeneral': 1,
-          'isIlimitado': 1,
-          'fechaSubscripcion': 1,
-          'megas': 1,
-          'vpnplus': 1,
-          'vpn2mb': 1
-        }
-      }).ready()
-      let admins = []
-      Meteor.users.find({"profile.role":"admin"}).fetch().map((a)=>{
-        // admins.push({ value: a._id , text: `${a.profile.firstName} ${a.profile.lastName}`})
-        admins.push(a.username)
-      })
+  const admins = useTracker(() => {
+    Meteor.subscribe("user", { "profile.role": "admin" }, {
+      fields: {
+        '_id': 1,
+        'emails': 1,
+        'profile': 1,
+        'services.facebook.picture.data.url': 1,
+        'username': 1,
+        'creadoPor': 1,
+        'bloqueadoDesbloqueadoPor': 1,
+        'baneado': 1,
+        'megasGastadosinBytes': 1,
+        'megasGastadosinBytesGeneral': 1,
+        'isIlimitado': 1,
+        'fechaSubscripcion': 1,
+        'megas': 1,
+        'vpnplus': 1,
+        'vpn2mb': 1
+      }
+    }).ready()
+    let admins = []
+    Meteor.users.find({ "profile.role": "admin" }).fetch().map((a) => {
+      // admins.push({ value: a._id , text: `${a.profile.firstName} ${a.profile.lastName}`})
+      admins.push(a.username)
+    })
 
-    return admins ;
+    return admins;
   });
 
   const preciosVPNList = useTracker(() => {
     // Meteor.subscribe("precios",{$or:[{ type: "vpnplus"},{ type: "vpn2mb"}] }).ready()
-    Meteor.subscribe("precios", ({ $or:[{ type: "vpnplus"},{ type: "vpn2mb"}]  })).ready()
+    Meteor.subscribe("precios", ({ $or: [{ type: "vpnplus" }, { type: "vpn2mb" }] })).ready()
     let precioslist = []
-    PreciosCollection.find({$or:[{ type: "vpnplus"},{ type: "vpn2mb"}] }).fetch().map((a)=>{
-      precioslist.push({value: `${a.type}/${a.megas}`, label: `${a.type} • ${a.megas}MB • $ ${a.precio}`})
+    PreciosCollection.find({ $or: [{ type: "vpnplus" }, { type: "vpn2mb" }] }).fetch().map((a) => {
+      precioslist.push({ value: `${a.type}/${a.megas}`, label: `${a.type} • ${a.megas}MB • $ ${a.precio}` })
     })
     return precioslist
   });
 
   const precios = useTracker(() => {
     Meteor.subscribe("precios").ready()
-    
-  return PreciosCollection.find().fetch() ;
-});
-  
+
+    return PreciosCollection.find().fetch();
+  });
+
   const eliminarUser = async (id) => {
     await LogsCollection.find({ $or: [{ userAdmin: id }, { userAfectado: id }] }).map(element =>
       LogsCollection.remove(element._id)
@@ -305,10 +307,10 @@ export default function UserCardDetails() {
       : ((user.emails[0] && user.emails[0].address && user.emails[0].address != "lestersm20@gmail.com")
         ? ['carlosmbinf9405@icloud.com', user.emails[0].address]
         : ['carlosmbinf9405@icloud.com'])
-   require('gmail-send')({
+    require('gmail-send')({
       user: 'carlosmbinf@gmail.com',
       pass: 'Lastunas@123',
-     to: emails,
+      to: emails,
       subject: subject
     })(
       text,
@@ -327,8 +329,8 @@ export default function UserCardDetails() {
     // ..code to submit form to backend here...
 
     async function changePassword() {
-      
-    
+
+
       oldPassword == password
         ? $.post("/userpass", { id: users._id, password: password })
           .done(function (data) {
@@ -355,8 +357,8 @@ export default function UserCardDetails() {
     // You should see email and password in console.
     // ..code to submit form to backend here...
     try {
-      megas>=0 ? 
-      Meteor.users.update(users._id, { $set: { megas: megas } }) : console.log('no se inserto nada');
+      megas >= 0 ?
+        Meteor.users.update(users._id, { $set: { megas: megas } }) : console.log('no se inserto nada');
       LogsCollection.insert({
         type: 'Megas',
         userAfectado: users._id,
@@ -367,10 +369,10 @@ export default function UserCardDetails() {
       // Meteor.call('sendemail', users,{text: `Ha sido Cambiado el consumo de Datos a: ${megas}MB`}, 'Megas')
 
     } catch (error) {
-      
+
     }
-    
-  } 
+
+  }
   const handleEdit = (event) => {
     setEdit(!edit);
   };
@@ -394,7 +396,7 @@ export default function UserCardDetails() {
     Meteor.users.update(users._id, {
       $set: {
         megasGastadosinBytes: 0,
-        megasGastadosinBytesGeneral : 0
+        megasGastadosinBytesGeneral: 0
       },
     });
     LogsCollection.insert({
@@ -405,8 +407,8 @@ export default function UserCardDetails() {
         `Ha sido Reiniciado el consumo de Datos de ${users.profile.firstName} ${users.profile.lastName}`
     });
     Meteor.call('sendemail', users, { text: `Ha sido Reiniciado el consumo de Datos de ${users.profile.firstName} ${users.profile.lastName}` }, 'Reinicio ' + Meteor.user().username)
-    Meteor.call('sendMensaje', users,{text: `Ha sido Reiniciado el consumo de Datos de ${users.profile.firstName} ${users.profile.lastName}`}, 'Reinicio ' + Meteor.user().username)
-    
+    Meteor.call('sendMensaje', users, { text: `Ha sido Reiniciado el consumo de Datos de ${users.profile.firstName} ${users.profile.lastName}` }, 'Reinicio ' + Meteor.user().username)
+
     alert('Se reinicio los datos de ' + users.profile.firstName)
   };
   const handleVPNStatus = (event) => {
@@ -433,9 +435,9 @@ export default function UserCardDetails() {
         message:
           `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN`
       });
-    Meteor.call('sendemail', users,{text:  `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN`}, `VPN ${Meteor.user().username}`)
-    Meteor.call('sendMensaje', users,{text:  `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN para ${users.username}`}, `VPN ${Meteor.user().username}`)
-      
+      Meteor.call('sendemail', users, { text: `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN` }, `VPN ${Meteor.user().username}`)
+      Meteor.call('sendMensaje', users, { text: `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN para ${users.username}` }, `VPN ${Meteor.user().username}`)
+
       !users.vpn && VentasCollection.insert({
         adminId: Meteor.userId(),
         userId: users._id,
@@ -449,18 +451,18 @@ export default function UserCardDetails() {
       alert("INFO!!!\nPrimeramente debe seleccionar una oferta de VPN!!!")
     }
   };
-  
+
   const addVenta = () => {
     // console.log(`Precio MEGAS ${precios}`);
-let validacion = false;
+    let validacion = false;
 
     users.isIlimitado && (new Date() < new Date(users.fechaSubscripcion)) && (validacion = true)
-    users.isIlimitado || ((users.megasGastadosinBytes?(users.megasGastadosinBytes/ 1024000):0 ) < (users.megas?users.megas:0)) && (validacion = true)
-    
+    users.isIlimitado || ((users.megasGastadosinBytes ? (users.megasGastadosinBytes / 1024000) : 0) < (users.megas ? users.megas : 0)) && (validacion = true)
+
     validacion || (
       setMensaje("Revise los Límites del Usuario"),
       handleClickOpen()
-)
+    )
     // validacion = ((users.profile.role == "admin") ? true  : false);
 
     users.profile.role == 'admin' ? (
@@ -479,13 +481,17 @@ let validacion = false;
             (!users.baneado ? "Bloqueado" : "Desbloqueado") +
             " por un Admin"
         }),
-    Meteor.call('sendemail', users,{text:   "Ha sido " +
-    (!users.baneado ? "Bloqueado" : "Desbloqueado") +
-    ` el proxy del usuario ${users.username}`}, (!users.baneado ? "Bloqueado " + Meteor.user().username : "Desbloqueado " + Meteor.user().username)),
-    Meteor.call('sendMensaje', users,{text:   "Ha sido " +
-    (!users.baneado ? "Bloqueado" : "Desbloqueado") +
-    ` el proxy del usuario ${users.username}`}, (!users.baneado ? "Bloqueado " + Meteor.user().username : "Desbloqueado " + Meteor.user().username))
-    )
+        Meteor.call('sendemail', users, {
+          text: "Ha sido " +
+            (!users.baneado ? "Bloqueado" : "Desbloqueado") +
+            ` el proxy del usuario ${users.username}`
+        }, (!users.baneado ? "Bloqueado " + Meteor.user().username : "Desbloqueado " + Meteor.user().username)),
+        Meteor.call('sendMensaje', users, {
+          text: "Ha sido " +
+            (!users.baneado ? "Bloqueado" : "Desbloqueado") +
+            ` el proxy del usuario ${users.username}`
+        }, (!users.baneado ? "Bloqueado " + Meteor.user().username : "Desbloqueado " + Meteor.user().username))
+      )
     ) : (
 
       users.baneado ||
@@ -504,13 +510,17 @@ let validacion = false;
             (!users.baneado ? "Bloqueado" : "Desbloqueado") +
             " por un Admin"
         }),
-    Meteor.call('sendemail', users,{text:   "Ha sido " +
-    (!users.baneado ? "Bloqueado" : "Desbloqueado") +
-    ` el proxy del usuario ${users.username}`}, (!users.baneado ? "Bloqueado " + Meteor.user().username : "Desbloqueado " + Meteor.user().username)),
-    Meteor.call('sendMensaje', users,{text:   "Ha sido " +
-    (!users.baneado ? "Bloqueado" : "Desbloqueado") +
-    ` el proxy del usuario ${users.username}`}, (!users.baneado ? "Bloqueado " + Meteor.user().username : "Desbloqueado " + Meteor.user().username))
-    ),
+        Meteor.call('sendemail', users, {
+          text: "Ha sido " +
+            (!users.baneado ? "Bloqueado" : "Desbloqueado") +
+            ` el proxy del usuario ${users.username}`
+        }, (!users.baneado ? "Bloqueado " + Meteor.user().username : "Desbloqueado " + Meteor.user().username)),
+        Meteor.call('sendMensaje', users, {
+          text: "Ha sido " +
+            (!users.baneado ? "Bloqueado" : "Desbloqueado") +
+            ` el proxy del usuario ${users.username}`
+        }, (!users.baneado ? "Bloqueado " + Meteor.user().username : "Desbloqueado " + Meteor.user().username))
+      ),
 
       validacion && users.baneado && (
         Meteor.users.update(users._id, {
@@ -528,12 +538,16 @@ let validacion = false;
             (!users.baneado ? "Bloqueado" : "Desbloqueado") +
             " por un Admin"
         }),
-        Meteor.call('sendemail', users,{text:   "Ha sido " +
-    (!users.baneado ? "Bloqueado" : "Desbloqueado") +
-    ` el proxy del usuario ${users.username}`}, (!users.baneado ? "Bloqueado " + Meteor.user().username : "Desbloqueado " + Meteor.user().username)),
-    Meteor.call('sendMensaje', users,{text:   "Ha sido " +
-    (!users.baneado ? "Bloqueado" : "Desbloqueado") +
-    ` el proxy del usuario ${users.username}`}, (!users.baneado ? "Bloqueado " + Meteor.user().username : "Desbloqueado " + Meteor.user().username)),
+        Meteor.call('sendemail', users, {
+          text: "Ha sido " +
+            (!users.baneado ? "Bloqueado" : "Desbloqueado") +
+            ` el proxy del usuario ${users.username}`
+        }, (!users.baneado ? "Bloqueado " + Meteor.user().username : "Desbloqueado " + Meteor.user().username)),
+        Meteor.call('sendMensaje', users, {
+          text: "Ha sido " +
+            (!users.baneado ? "Bloqueado" : "Desbloqueado") +
+            ` el proxy del usuario ${users.username}`
+        }, (!users.baneado ? "Bloqueado " + Meteor.user().username : "Desbloqueado " + Meteor.user().username)),
         precios.map(precio => {
 
           users.isIlimitado && precio.fecha && (VentasCollection.insert({
@@ -564,7 +578,7 @@ let validacion = false;
 
   }
   const handleChangebaneado = (event) => {
-  addVenta();
+    addVenta();
   };
   const handleClickOpen = () => {
     setOpen(true);
@@ -573,11 +587,11 @@ let validacion = false;
   const handleClose = () => {
     setOpen(false);
   };
- 
+
 
   return (
     <>
-      
+
       <div className={classes.drawerHeader}>
         <IconButton
           color="primary"
@@ -634,31 +648,32 @@ let validacion = false;
       <div className={classes.drawerItem}>
         {users && (
           <Zoom in={true}>
-            <Paper elevation={5} className={classes.primary}>
-              <Grid container spacing={3}>
-                {edit ? (
-                  <>
-                    <Grid item xs={12}>
-                      <Grid container direction="row" justify="center">
-                        <Avatar
-                          className={classes.large}
-                          alt={
-                            users.profile.firstName
-                              ? users.profile.firstName
-                              : users.profile.name
-                          }
-                          src={
-                            users.services &&
-                            users.services.facebook &&
-                            users.services.facebook.picture.data.url
-                              ? users.services.facebook.picture.data.url
-                              : "/"
-                          }
-                        />
+            <>
+              <Paper elevation={5} className={classes.primary}>
+                <Grid container spacing={3}>
+                  {edit ? (
+                    <>
+                      <Grid item xs={12}>
+                        <Grid container direction="row" justify="center">
+                          <Avatar
+                            className={classes.large}
+                            alt={
+                              users.profile.firstName
+                                ? users.profile.firstName
+                                : users.profile.name
+                            }
+                            src={
+                              users.services &&
+                                users.services.facebook &&
+                                users.services.facebook.picture.data.url
+                                ? users.services.facebook.picture.data.url
+                                : "/"
+                            }
+                          />
+                        </Grid>
                       </Grid>
-                    </Grid>
-                    <Grid item xs={12}>
-                      
+                      <Grid item xs={12}>
+
                         <Grid container className={classes.margin}>
                           Datos del Usuario
                         </Grid>
@@ -678,15 +693,15 @@ let validacion = false;
                                 variant="outlined"
                                 color="secondary"
                                 type="email"
-                                value={users.emails&&users.emails[0]&&users.emails[0].address}
+                                value={users.emails && users.emails[0] && users.emails[0].address}
                                 onInput={(e) => {
                                   e.target.value == "" ?
-                                  Meteor.users.update({ _id: users._id }, {
-                                    $set: { "emails": [{}] },
-                                  })
-                                  : Meteor.users.update({ _id: users._id }, {
-                                    $set: { "emails": [{ address: e.target.value }] },
-                                  })
+                                    Meteor.users.update({ _id: users._id }, {
+                                      $set: { "emails": [{}] },
+                                    })
+                                    : Meteor.users.update({ _id: users._id }, {
+                                      $set: { "emails": [{ address: e.target.value }] },
+                                    })
                                 }}
                                 InputProps={{
                                   readOnly: (Meteor.user().profile.role == "user"),
@@ -727,176 +742,176 @@ let validacion = false;
                             </FormControl>
                           </Grid>
                           <Grid item xs={12}>
-                        <Divider className={classes.padding10} />
-                        <Grid container className={classes.margin}>
-                          Contraseña
-                        </Grid>
-                          <Button
-                            color={editPassword ? "secondary" : "primary"}
-                            variant="contained"
-                            onClick={handleEditPassword}
-                          >
-                            {editPassword
-                              ? "Cancelar"
-                              : "Cambiar"}
-                          </Button>
-                          
-                        </Grid>
+                            <Divider className={classes.padding10} />
+                            <Grid container className={classes.margin}>
+                              Contraseña
+                            </Grid>
+                            <Button
+                              color={editPassword ? "secondary" : "primary"}
+                              variant="contained"
+                              onClick={handleEditPassword}
+                            >
+                              {editPassword
+                                ? "Cancelar"
+                                : "Cambiar"}
+                            </Button>
 
-                        {editPassword && (
-                          <form
-                          action="/hello"
-                          method="post"
-                          className={classes.root}
-                          onSubmit={handleSubmit}
-                          // noValidate
-                          autoComplete="true"
-                        >
-                            <Grid item xs={12} sm={10}>
-                              <FormControl
-                                fullWidth
-                                required
-                                variant="outlined"
-                              >
-                                <TextField
+                          </Grid>
+
+                          {editPassword && (
+                            <form
+                              action="/hello"
+                              method="post"
+                              className={classes.root}
+                              onSubmit={handleSubmit}
+                              // noValidate
+                              autoComplete="true"
+                            >
+                              <Grid item xs={12} sm={10}>
+                                <FormControl
                                   fullWidth
                                   required
+                                  variant="outlined"
+                                >
+                                  <TextField
+                                    fullWidth
+                                    required
+                                    className={classes.margin}
+                                    id="oldpassword"
+                                    name="oldpassword"
+                                    label="Nueva Contraseña"
+                                    variant="outlined"
+                                    color="secondary"
+                                    type="password"
+                                    value={oldPassword}
+                                    onInput={(e) =>
+                                      setOldPassword(e.target.value)
+                                    }
+                                    InputProps={{
+                                      startAdornment: (
+                                        <InputAdornment position="start">
+                                          <AccountCircleIcon />
+                                        </InputAdornment>
+                                      ),
+                                    }}
+                                  />
+                                </FormControl>
+                              </Grid>
+
+                              <Grid item xs={12} sm={10}>
+                                <FormControl
+                                  fullWidth
+                                  required
+                                  variant="outlined"
+                                >
+                                  <TextField
+                                    fullWidth
+                                    required
+                                    className={classes.margin}
+                                    id="password"
+                                    name="password"
+                                    label="Confirmar Contraseña"
+                                    variant="outlined"
+                                    color="secondary"
+                                    type="password"
+                                    value={password}
+                                    onInput={(e) => setPassword(e.target.value)}
+                                    InputProps={{
+                                      startAdornment: (
+                                        <InputAdornment position="start">
+                                          <AccountCircleIcon />
+                                        </InputAdornment>
+                                      ),
+                                    }}
+                                  />
+                                </FormControl>
+                              </Grid>
+                              <Grid item xs={12} className={classes.flex}>
+                                <Button
+                                  variant="contained"
+                                  type="submit"
+                                  color="secondary"
+                                >
+                                  <SendIcon />
+                                  Send
+                                </Button>
+                              </Grid>
+                            </form>
+                          )}
+                          <Grid container spacing={3}>
+                            <Grid item xs={12}> <Divider className={classes.padding10} /></Grid>
+
+                            <Grid container className={classes.margin}>
+
+
+                              Datos Personales
+                            </Grid>
+                            <Grid item xs={12} sm={4} lg={3}>
+                              <FormControl variant="outlined">
+                                <TextField
+                                  fullWidth
                                   className={classes.margin}
-                                  id="oldpassword"
-                                  name="oldpassword"
-                                  label="Nueva Contraseña"
+                                  id="firstName"
+                                  name="firstName"
+                                  label="Nombre"
                                   variant="outlined"
                                   color="secondary"
-                                  type="password"
-                                  value={oldPassword}
+                                  value={users.profile.firstName}
                                   onInput={(e) =>
-                                    setOldPassword(e.target.value)
+                                    Meteor.users.update(users._id, {
+                                      $set: {
+                                        "profile.firstName": e.target.value,
+                                      },
+                                    })
                                   }
                                   InputProps={{
-                                    startAdornment: (
-                                      <InputAdornment position="start">
-                                        <AccountCircleIcon />
-                                      </InputAdornment>
-                                    ),
+                                    readOnly: true,
+                                    // startAdornment: (
+                                    //   <InputAdornment position="start">
+                                    //     <AccountCircleIcon />
+                                    //   </InputAdornment>
+                                    // ),
                                   }}
                                 />
                               </FormControl>
                             </Grid>
-                            
-                            <Grid item xs={12} sm={10}>
-                              <FormControl
-                                fullWidth
-                                required
-                                variant="outlined"
-                              >
+                            <Grid item xs={12} sm={4} lg={3}>
+                              <FormControl variant="outlined">
                                 <TextField
                                   fullWidth
-                                  required
                                   className={classes.margin}
-                                  id="password"
-                                  name="password"
-                                  label="Confirmar Contraseña"
+                                  id="lastName"
+                                  name="lastName"
+                                  label="Apellidos"
                                   variant="outlined"
                                   color="secondary"
-                                  type="password"
-                                  value={password}
-                                  onInput={(e) => setPassword(e.target.value)}
+                                  value={users.profile.lastName}
+                                  onInput={(e) =>
+                                    Meteor.users.update(users._id, {
+                                      $set: {
+                                        "profile.lastName": e.target.value,
+                                      },
+                                    })
+                                  }
                                   InputProps={{
-                                    startAdornment: (
-                                      <InputAdornment position="start">
-                                        <AccountCircleIcon />
-                                      </InputAdornment>
-                                    ),
+                                    readOnly: true,
+                                    // startAdornment: (
+                                    //   <InputAdornment position="start">
+                                    //     <AccountCircleIcon />
+                                    //   </InputAdornment>
+                                    // ),
                                   }}
                                 />
                               </FormControl>
                             </Grid>
-                            <Grid item xs={12} className={classes.flex}>
-                              <Button
-                                variant="contained"
-                                type="submit"
-                                color="secondary"
-                              >
-                                <SendIcon />
-                                Send
-                              </Button>
-                            </Grid>
-                        </form>
-                        )}
-                        <Grid container spacing={3}>
-                          <Grid item xs={12}> <Divider className={classes.padding10} /></Grid>
-
-                          <Grid container className={classes.margin}>
-
-
-                            Datos Personales
                           </Grid>
-                          <Grid item xs={12} sm={4} lg={3}>
-                            <FormControl variant="outlined">
-                              <TextField
-                                fullWidth
-                                className={classes.margin}
-                                id="firstName"
-                                name="firstName"
-                                label="Nombre"
-                                variant="outlined"
-                                color="secondary"
-                                value={users.profile.firstName}
-                                onInput={(e) =>
-                                  Meteor.users.update(users._id, {
-                                    $set: {
-                                      "profile.firstName": e.target.value,
-                                    },
-                                  })
-                                }
-                                InputProps={{
-                                  readOnly: true,
-                                  // startAdornment: (
-                                  //   <InputAdornment position="start">
-                                  //     <AccountCircleIcon />
-                                  //   </InputAdornment>
-                                  // ),
-                                }}
-                              />
-                            </FormControl>
-                          </Grid>
-                          <Grid item xs={12} sm={4} lg={3}>
-                            <FormControl variant="outlined">
-                              <TextField
-                                fullWidth
-                                className={classes.margin}
-                                id="lastName"
-                                name="lastName"
-                                label="Apellidos"
-                                variant="outlined"
-                                color="secondary"
-                                value={users.profile.lastName}
-                                onInput={(e) =>
-                                  Meteor.users.update(users._id, {
-                                    $set: {
-                                      "profile.lastName": e.target.value,
-                                    },
-                                  })
-                                }
-                                InputProps={{
-                                  readOnly: true,
-                                  // startAdornment: (
-                                  //   <InputAdornment position="start">
-                                  //     <AccountCircleIcon />
-                                  //   </InputAdornment>
-                                  // ),
-                                }}
-                              />
-                            </FormControl>
-                          </Grid>
-                        </Grid>
-                        {Meteor.user().profile.role == "admin" &&
-                          !(users.profile.role == "admin") && (
-                            <>
-                            <Grid item xs={12} className={classes.margin}>
-                            <Divider className={classes.padding10} />
-                              Limites
-                            </Grid>
+                          {Meteor.user().profile.role == "admin" &&
+                            !(users.profile.role == "admin") && (
+                              <>
+                                <Grid item xs={12} className={classes.margin}>
+                                  <Divider className={classes.padding10} />
+                                  Limites
+                                </Grid>
                                 {users.isIlimitado && (
                                   <Grid item xs={12} >
                                     <FormControl variant="outlined">
@@ -943,12 +958,12 @@ let validacion = false;
                                                   true
                                                 ),
                                             });
-                                            // , Meteor.call('sendemail', users,{text: "La Fecha Limite del Proxy se cambió para: " +
-                                            // dateFormat(e.target.value,
-                                            //   "yyyy-mm-dd",
-                                            //   true,
-                                            //   true
-                                            // )}, "Fecha Limite Proxy");
+                                          // , Meteor.call('sendemail', users,{text: "La Fecha Limite del Proxy se cambió para: " +
+                                          // dateFormat(e.target.value,
+                                          //   "yyyy-mm-dd",
+                                          //   true,
+                                          //   true
+                                          // )}, "Fecha Limite Proxy");
                                           // e.target.value &&
                                           //   LogsCollection.insert({
                                           //     type: "Desbloqueado",
@@ -959,104 +974,104 @@ let validacion = false;
                                           //   }),Meteor.call('sendemail', users,{text:"Ha sido Desbloqueado por un Admin"}, "Desbloqueado");
                                         }}
                                       />
-                                  </FormControl>
-                                  
-                                </Grid>
+                                    </FormControl>
+
+                                  </Grid>
                                 )}
                                 {!users.isIlimitado && (
                                   <>
-                                  {Meteor.user().username == "carlosmbinf" &&
-                                  <Grid item xs={12}>
-                                  <form
-                                    action="/limite"
-                                    method="post"
-                                    // className={classes.root}
-                                    onSubmit={handleLimite}
-                                    // noValidate
-                                    autoComplete="true"
-                                  >
-                                    <Grid container>
-                                    <Grid item xs={8} sm={6} md={4} lg={3} className={classes.flex}>
-                                      <FormControl fullWidth variant="outlined">
-                                        <TextField
+                                    {Meteor.user().username == "carlosmbinf" &&
+                                      <Grid item xs={12}>
+                                        <form
+                                          action="/limite"
+                                          method="post"
+                                          // className={classes.root}
+                                          onSubmit={handleLimite}
+                                          // noValidate
+                                          autoComplete="true"
+                                        >
+                                          <Grid container>
+                                            <Grid item xs={8} sm={6} md={4} lg={3} className={classes.flex}>
+                                              <FormControl fullWidth variant="outlined">
+                                                <TextField
+                                                  fullWidth
+                                                  className={classes.margin}
+                                                  id="megas"
+                                                  name="megas"
+                                                  label="Megas"
+                                                  type="number"
+                                                  variant="outlined"
+                                                  color="secondary"
+                                                  // defaultValue={users.megas ? users.megas : 0}
+                                                  value={megas}
+                                                  onChange={(e) =>
+                                                    setMegas(e.target.value)
+                                                  }
+                                                  InputProps={{
+                                                    endAdornment: (
+                                                      <InputAdornment position="end">
+                                                        MB
+                                                      </InputAdornment>
+                                                    ),
+                                                  }}
+                                                />
+                                              </FormControl>
+                                            </Grid>
+
+                                            <Grid item xs={4} md={2} className={classes.flex} style={{ alignSelf: 'center', textAlign: 'center' }}>
+                                              <Button
+                                                variant="contained"
+                                                type="submit"
+                                                color="secondary"
+                                              >
+                                                <SendIcon />
+                                              </Button>
+                                            </Grid>
+                                          </Grid>
+                                        </form>
+                                      </Grid>
+                                    }
+
+                                    <Grid item xs={12} sm={4}>
+                                      <FormControl fullWidth>
+                                        {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
+                                        <Autocomplete
                                           fullWidth
-                                          className={classes.margin}
-                                          id="megas"
-                                          name="megas"
-                                          label="Megas"
-                                          type="number"
-                                          variant="outlined"
-                                          color="secondary"
-                                          // defaultValue={users.megas ? users.megas : 0}
-                                          value={megas}
-                                          onChange={(e) =>
-                                            setMegas(e.target.value)
-                                          }
-                                          InputProps={{
-                                            endAdornment: (
-                                              <InputAdornment position="end">
-                                                MB
-                                              </InputAdornment>
-                                            ),
+                                          value={users.megas && PreciosCollection.findOne({ type: "megas", megas: users.megas }) ? { value: users.megas, label: (users.megas + 'MB • $' + (PreciosCollection.findOne({ type: "megas", megas: users.megas }).precio && PreciosCollection.findOne({ type: "megas", megas: users.megas }).precio)) } : ""}
+                                          onChange={(event, newValue) => {
+                                            Meteor.users.update(users._id, {
+                                              $set: { megas: newValue.value },
+                                            });
+                                            LogsCollection.insert({
+                                              type: 'Megas',
+                                              userAfectado: users._id,
+                                              userAdmin: Meteor.userId(),
+                                              message:
+                                                `Ha sido Cambiado el consumo de Datos a: ${newValue.value}MB`,
+                                            });
+                                            // Meteor.call('sendemail', users,{text:`Ha sido Cambiado el consumo de Datos a: ${newValue.value}MB`}, "Megas")
+                                            // setIP(newValue);
                                           }}
+                                          inputValue={searchPrecio}
+                                          className={classes.margin}
+                                          onInputChange={(event, newInputValue) => {
+                                            setSearchPrecio(newInputValue);
+                                          }}
+                                          id="controllable-states-demo"
+                                          options={preciosList}
+                                          getOptionLabel={(option) => option.label}
+                                          renderInput={(params) => (
+                                            <TextField
+                                              {...params}
+                                              label="Precios"
+                                              variant="outlined"
+                                            />
+                                          )}
                                         />
                                       </FormControl>
+
                                     </Grid>
-  
-                                    <Grid item xs={4} md={2} className={classes.flex} style={{alignSelf: 'center', textAlign: 'center'}}>
-                                      <Button
-                                        variant="contained"
-                                        type="submit"
-                                        color="secondary"
-                                      >
-                                        <SendIcon />
-                                      </Button>
-                                    </Grid>
-                                    </Grid>
-                                  </form>
-                                </Grid>
-                                  }
-                              
-                              <Grid item xs={12} sm={4}>
-                            <FormControl fullWidth>
-                              {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
-                              <Autocomplete
-                                fullWidth
-                                value={users.megas&&PreciosCollection.findOne({ type: "megas", megas: users.megas })?{ value: users.megas, label: (users.megas + 'MB • $' + (PreciosCollection.findOne({ type: "megas", megas: users.megas }).precio&&PreciosCollection.findOne({ type: "megas", megas: users.megas }).precio)) }:""}
-                                onChange={(event, newValue) => {
-                                  Meteor.users.update(users._id, {
-                                    $set: { megas: newValue.value },
-                                  });
-                                  LogsCollection.insert({
-                                    type: 'Megas',
-                                    userAfectado: users._id,
-                                    userAdmin: Meteor.userId(),
-                                    message:
-                                      `Ha sido Cambiado el consumo de Datos a: ${newValue.value}MB`,
-                                  });
-                                  // Meteor.call('sendemail', users,{text:`Ha sido Cambiado el consumo de Datos a: ${newValue.value}MB`}, "Megas")
-                                  // setIP(newValue);
-                                }}
-                                inputValue={searchPrecio}
-                                className={classes.margin}
-                                onInputChange={(event, newInputValue) => {
-                                  setSearchPrecio(newInputValue);
-                                }}
-                                id="controllable-states-demo"
-                                options={preciosList}
-                                getOptionLabel= {(option) => option.label}
-                                renderInput={(params) => (
-                                  <TextField
-                                    {...params}
-                                    label="Precios"
-                                    variant="outlined"
-                                  />
-                                )}
-                              />
-                            </FormControl>
-                            
-                          </Grid>
-                              </>
+                                  </>
                                 )}
 
                                 <Grid
@@ -1107,116 +1122,116 @@ let validacion = false;
                                   
                                 </FormControlLabel> */}
                                 </Grid>
-                              
-                                
-                            </>
-                          )}
-                      </Grid>
-                      {
-                        Meteor.user().profile.role == "admin" &&
-                        <>
-                          <Divider className={classes.padding10} />
-                          <h3>
-                            Conectarse por el Server:
-                          </h3>
-                          <Grid item xs={12} sm={4}>
-                            <FormControl fullWidth>
-                              {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
-                              <Autocomplete
-                                fullWidth
-                                value={users.ip ? users.ip : ""}
-                                onChange={(event, newValue) => {
-                                  Meteor.users.update(users._id, {
-                                    $set: { ip: newValue },
-                                  });
-                                  // setIP(newValue);
-                                }}
-                                inputValue={searchIP}
-                                className={classes.margin}
-                                onInputChange={(event, newInputValue) => {
-                                  setSearchIP(newInputValue);
-                                }}
-                                id="controllable-states-demo"
-                                options={servers}
-                                renderInput={(params) => (
-                                  <TextField
-                                    {...params}
-                                    label="Server Activo"
-                                    variant="outlined"
-                                  />
-                                )}
-                              />
-                            </FormControl>
-                          </Grid>
-                          {Meteor.user().username == users.username || users.username == 'carlosmbinf' ||
+
+
+                              </>
+                            )}
+                        </Grid>
+                        {
+                          Meteor.user().profile.role == "admin" &&
                           <>
-                          <Divider className={classes.padding10} />
-                          <h3>
-                            Administrado por:
-                          </h3>
-                          <Grid item xs={12} sm={4}>
-                            <FormControl fullWidth>
-                              {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
-                              <Autocomplete
-                                fullWidth
-                                value={users.bloqueadoDesbloqueadoPor ? Meteor.users.findOne({_id:users.bloqueadoDesbloqueadoPor})&&Meteor.users.findOne({_id:users.bloqueadoDesbloqueadoPor}).username  : ""}
-                                onChange={(event, newValue) => {
-                                  let admin = newValue != "" && Meteor.users.findOne({ username: newValue })
-                                  let valueId = newValue && admin && admin._id
-                                  valueId && Meteor.users.update(users._id, {
-                                    $set: { bloqueadoDesbloqueadoPor: valueId },
-                                  });
-                                  LogsCollection.insert({
-                                    type: "cambio de Administrador",
-                                    userAfectado: users._id,
-                                    userAdmin: Meteor.userId(),
-                                    message:
-                                      "El usuario pasó a ser administrado por => " + admin.profile.firstName + " " + admin.profile.lastName
-                                  })
-                                  // Meteor.call('sendemail', users,{text:"El usuario pasó a ser administrado por => " + admin.profile.firstName + " " + admin.profile.lastName}, "cambio de Administrador")
+                            <Divider className={classes.padding10} />
+                            <h3>
+                              Conectarse por el Server:
+                            </h3>
+                            <Grid item xs={12} sm={4}>
+                              <FormControl fullWidth>
+                                {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
+                                <Autocomplete
+                                  fullWidth
+                                  value={users.ip ? users.ip : ""}
+                                  onChange={(event, newValue) => {
+                                    Meteor.users.update(users._id, {
+                                      $set: { ip: newValue },
+                                    });
+                                    // setIP(newValue);
+                                  }}
+                                  inputValue={searchIP}
+                                  className={classes.margin}
+                                  onInputChange={(event, newInputValue) => {
+                                    setSearchIP(newInputValue);
+                                  }}
+                                  id="controllable-states-demo"
+                                  options={servers}
+                                  renderInput={(params) => (
+                                    <TextField
+                                      {...params}
+                                      label="Server Activo"
+                                      variant="outlined"
+                                    />
+                                  )}
+                                />
+                              </FormControl>
+                            </Grid>
+                            {Meteor.user().username == users.username || users.username == 'carlosmbinf' ||
+                              <>
+                                <Divider className={classes.padding10} />
+                                <h3>
+                                  Administrado por:
+                                </h3>
+                                <Grid item xs={12} sm={4}>
+                                  <FormControl fullWidth>
+                                    {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
+                                    <Autocomplete
+                                      fullWidth
+                                      value={users.bloqueadoDesbloqueadoPor ? Meteor.users.findOne({ _id: users.bloqueadoDesbloqueadoPor }) && Meteor.users.findOne({ _id: users.bloqueadoDesbloqueadoPor }).username : ""}
+                                      onChange={(event, newValue) => {
+                                        let admin = newValue != "" && Meteor.users.findOne({ username: newValue })
+                                        let valueId = newValue && admin && admin._id
+                                        valueId && Meteor.users.update(users._id, {
+                                          $set: { bloqueadoDesbloqueadoPor: valueId },
+                                        });
+                                        LogsCollection.insert({
+                                          type: "cambio de Administrador",
+                                          userAfectado: users._id,
+                                          userAdmin: Meteor.userId(),
+                                          message:
+                                            "El usuario pasó a ser administrado por => " + admin.profile.firstName + " " + admin.profile.lastName
+                                        })
+                                        // Meteor.call('sendemail', users,{text:"El usuario pasó a ser administrado por => " + admin.profile.firstName + " " + admin.profile.lastName}, "cambio de Administrador")
 
-                                  // setIP(newValue);
-                                }}
-                                inputValue={searchAdmin}
-                                className={classes.margin}
-                                onInputChange={(event, newInputValue) => {
-                                  setSearchAdmin(newInputValue);
-                                }}
-                                id="controllable-states-demo"
-                                options={admins}
-                                renderInput={(params) => (
-                                  <TextField
-                                    {...params}
-                                    label="Administrado por:"
-                                    variant="outlined"
-                                  />
-                                )}
-                              />
-                            </FormControl>
-                          </Grid>
+                                        // setIP(newValue);
+                                      }}
+                                      inputValue={searchAdmin}
+                                      className={classes.margin}
+                                      onInputChange={(event, newInputValue) => {
+                                        setSearchAdmin(newInputValue);
+                                      }}
+                                      id="controllable-states-demo"
+                                      options={admins}
+                                      renderInput={(params) => (
+                                        <TextField
+                                          {...params}
+                                          label="Administrado por:"
+                                          variant="outlined"
+                                        />
+                                      )}
+                                    />
+                                  </FormControl>
+                                </Grid>
+                              </>
+                            }
+
                           </>
-                          }
-                          
-                        </>
-                      }
+                        }
 
 
-{
-                        Meteor.user().profile.role == "admin" &&
-                        <>
-                          <Divider className={classes.padding10} />
-                          <Divider />
-                          <h3>
-                            VPN
-                          </h3>
-                          <Grid item xs={12} sm={4}
-                            style={{ textAlign: "center", padding: 3 }}
-                          >
+                        {
+                          Meteor.user().profile.role == "admin" &&
+                          <>
+                            <Divider className={classes.padding10} />
+                            <Divider />
+                            <h3>
+                              VPN
+                            </h3>
+                            <Grid item xs={12} sm={4}
+                              style={{ textAlign: "center", padding: 3 }}
+                            >
                               <Button
                                 // disabled={Meteor.user().username != "carlosmbinf"}
                                 onClick={handleVPNStatus}
                                 variant="contained"
-                                color={users.vpn?"secondary":"primary"}
+                                color={users.vpn ? "secondary" : "primary"}
                               >
                                 {users.vpn
                                   ? "Desactivar VPN"
@@ -1224,219 +1239,218 @@ let validacion = false;
                               </Button>
                             </Grid>
                             <Grid item xs={12} sm={4}>
-                        <FormControl fullWidth>
-                          {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
-                              <Autocomplete
-                                fullWidth
-                                value={users.vpnplus ? { value: `vpnplus/${users.vpnmegas}`, label: "VPN PLUS • "+ users.vpnmegas+"MB"} : (users.vpn2mb ? { value: `vpn2mb/${users.vpnmegas}`, label: "VPN 2MB • "+ users.vpnmegas+"MB"} : {})}
-                                onChange={(event, newValue) => {
-                                  newValue.value.split("/")[0] == "vpnplus" ?
-                                    Meteor.users.update(users._id, {
-                                      $set: { vpnplus: true, vpn2mb: true, vpnmegas: newValue.value.split("/")[1]},
-                                    })
-                                    : (newValue.value.split("/")[0] == "vpn2mb" ?
+                              <FormControl fullWidth>
+                                {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
+                                <Autocomplete
+                                  fullWidth
+                                  value={users.vpnplus ? { value: `vpnplus/${users.vpnmegas}`, label: "VPN PLUS • " + users.vpnmegas + "MB" } : (users.vpn2mb ? { value: `vpn2mb/${users.vpnmegas}`, label: "VPN 2MB • " + users.vpnmegas + "MB" } : {})}
+                                  onChange={(event, newValue) => {
+                                    newValue.value.split("/")[0] == "vpnplus" ?
                                       Meteor.users.update(users._id, {
-                                        $set: { vpnplus: false, vpn2mb: true, vpnmegas: newValue.value.split("/")[1] },
-                                      }) :
-                                      Meteor.users.update(users._id, {
-                                        $set: { vpnplus: false, vpn2mb: false, vpnmegas: newValue.value.split("/")[1] },
+                                        $set: { vpnplus: true, vpn2mb: true, vpnmegas: newValue.value.split("/")[1] },
                                       })
-                                    )
-                                  LogsCollection.insert({
-                                    type: newValue.value,
-                                    userAfectado: users._id,
-                                    userAdmin: Meteor.userId(),
-                                    message:
-                                      `Ha sido Seleccionada la VPN: ${newValue.label}`,
-                                  });
-                                  // Meteor.call('sendemail', users,{text: `Ha sido Seleccionada la VPN: ${newValue.label}`}, newValue.value)
+                                      : (newValue.value.split("/")[0] == "vpn2mb" ?
+                                        Meteor.users.update(users._id, {
+                                          $set: { vpnplus: false, vpn2mb: true, vpnmegas: newValue.value.split("/")[1] },
+                                        }) :
+                                        Meteor.users.update(users._id, {
+                                          $set: { vpnplus: false, vpn2mb: false, vpnmegas: newValue.value.split("/")[1] },
+                                        })
+                                      )
+                                    LogsCollection.insert({
+                                      type: newValue.value,
+                                      userAfectado: users._id,
+                                      userAdmin: Meteor.userId(),
+                                      message:
+                                        `Ha sido Seleccionada la VPN: ${newValue.label}`,
+                                    });
+                                    // Meteor.call('sendemail', users,{text: `Ha sido Seleccionada la VPN: ${newValue.label}`}, newValue.value)
 
-                                  users.vpn && Meteor.users.update(users._id, {
-                                    $set: { vpn: false },
-                                  })
-                                  users.vpn && LogsCollection.insert({
-                                    type: 'VPN',
-                                    userAfectado: users._id,
-                                    userAdmin: Meteor.userId(),
-                                    message:
-                                      `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN porque estaba activa y cambio la oferta`
-                                  });
-                                  // Meteor.call('sendemail', users,{text: `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN porque estaba activa y cambio la oferta`}, "VPN");
-                                  // setIP(newValue);
-                                }}
-                                inputValue={searchPrecioVPN}
-                                className={classes.margin}
-                                onInputChange={(event, newInputValue) => {
-                                  setSearchPrecioVPN(newInputValue);
-                                }}
-                                id="controllable-states-demo"
-                                options={preciosVPNList}
-                                getOptionLabel={(option) => option.label}
-                                renderInput={(params) => (
-                                  <TextField
-                                    {...params}
-                                    label="Precios VPN"
-                                    variant="outlined"
-                                  />
-                                )}
-                              />
-                            </FormControl>
+                                    users.vpn && Meteor.users.update(users._id, {
+                                      $set: { vpn: false },
+                                    })
+                                    users.vpn && LogsCollection.insert({
+                                      type: 'VPN',
+                                      userAfectado: users._id,
+                                      userAdmin: Meteor.userId(),
+                                      message:
+                                        `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN porque estaba activa y cambio la oferta`
+                                    });
+                                    // Meteor.call('sendemail', users,{text: `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN porque estaba activa y cambio la oferta`}, "VPN");
+                                    // setIP(newValue);
+                                  }}
+                                  inputValue={searchPrecioVPN}
+                                  className={classes.margin}
+                                  onInputChange={(event, newInputValue) => {
+                                    setSearchPrecioVPN(newInputValue);
+                                  }}
+                                  id="controllable-states-demo"
+                                  options={preciosVPNList}
+                                  getOptionLabel={(option) => option.label}
+                                  renderInput={(params) => (
+                                    <TextField
+                                      {...params}
+                                      label="Precios VPN"
+                                      variant="outlined"
+                                    />
+                                  )}
+                                />
+                              </FormControl>
+
+                            </Grid>
+                          </>
+                        }
+
 
                       </Grid>
-                        </>
-                      }
+                    </>
+                  ) : (
+                    <>
+                      <Paper elevation={5} style={{ width: "100%", padding: 25, marginBottom: 25 }}>
+                        <Grid item xs={12}>
+                          <Grid container direction="row" justify="center">
+                            <Avatar
+                              className={classes.large}
+                              alt={
+                                users.profile.firstName
+                                  ? users.profile.firstName
+                                  : users.profile.name
+                              }
+                              src={
+                                users.services &&
+                                  users.services.facebook &&
+                                  users.services.facebook.picture.data.url
+                                  ? users.services.facebook.picture.data.url
+                                  : "/"
+                              }
+                            />
+                          </Grid>
+                          <Grid container direction="row">
+                            <Typography>
+                              Nombre: {users.profile.firstName}{" "}
+                              {users.profile.lastName}
+                            </Typography>
+                          </Grid>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Grid container direction="row">
+                            <Typography>Rol: {users.profile.role}</Typography>
+                          </Grid>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Grid container direction="row">
+                            <Typography>
+                              {users.emails && "Email: " + users.emails[0].address}
+                            </Typography>
+                          </Grid>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Grid container direction="row">
+                            <Typography>Usuario: {users.username}</Typography>
+                          </Grid>
+                        </Grid>
+                      </Paper>
 
-                     
-                    </Grid>
-                  </>
-                ) : (
-                  <>
-                  <Paper elevation={5} style={{ width: "100%", padding: 25, marginBottom:25 }}>
-                  <Grid item xs={12}>
-                      <Grid container direction="row" justify="center">
-                        <Avatar
-                          className={classes.large}
-                          alt={
-                            users.profile.firstName
-                              ? users.profile.firstName
-                              : users.profile.name
-                          }
-                          src={
-                            users.services &&
-                              users.services.facebook &&
-                              users.services.facebook.picture.data.url
-                              ? users.services.facebook.picture.data.url
-                              : "/"
-                          }
-                        />
-                      </Grid>
-                      <Grid container direction="row">
-                        <Typography>
-                          Nombre: {users.profile.firstName}{" "}
-                          {users.profile.lastName}
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Grid container direction="row">
-                        <Typography>Rol: {users.profile.role}</Typography>
-                      </Grid>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Grid container direction="row">
-                        <Typography>
-                          {users.emails && "Email: " + users.emails[0].address}
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Grid container direction="row">
-                        <Typography>Usuario: {users.username}</Typography>
-                      </Grid>
-                    </Grid>
-                  </Paper>
-                    
                       {(users.megasGastadosinBytes || users.fechaSubscripcion || users.megas) &&
-                       <Paper elevation={5} style={{ width: "100%", padding: 25, marginBottom:25 }}>
+                        <Paper elevation={5} style={{ width: "100%", padding: 25, marginBottom: 25 }}>
                           {users.megasGastadosinBytes &&
-                            <> 
-                            <Typography align="center">PROXY</Typography>
+                            <>
+                              <Typography align="center">PROXY</Typography>
+                              <Grid item xs={12}>
+                                <Grid container direction="row">
+
+                                  <Typography>
+                                    {`PROXY - MEGAS GASTADOS:
+                            ${`${Number.parseFloat(users.megasGastadosinBytes / 1024000).toFixed(2)} MB`}`}
+                                  </Typography>
+                                </Grid>
+                              </Grid>
+                            </>
+                          }
+                          {(users.fechaSubscripcion || users.megas) &&
+                            <Grid item xs={12}>
+                              <Grid container direction="row">
+                                <Typography>
+                                  PROXY - LIMITE:{" "}
+                                  {users.isIlimitado
+                                    ? users.fechaSubscripcion
+                                      ? dateFormat(
+                                        new Date(users.fechaSubscripcion),
+                                        "yyyy-mm-dd",
+                                        true,
+                                        true
+                                      )
+                                      : "No esta establecida la fecha limite"
+                                    : users.megas
+                                      ? users.megas + " MB"
+                                      : " No esta establecido el Limite de Megas a consumir"}
+                                </Typography>
+                              </Grid>
+                            </Grid>}
+
+                          {(users.fechaSubscripcion || users.megas) &&
+                            <Grid item xs={12}>
+                              <Grid container direction="row">
+                                <Typography>
+                                  PROXY - CONEXION: {users.baneado ? "Desactivado" : "Activado"}
+                                </Typography>
+                              </Grid>
+                            </Grid>}
+                        </Paper>
+                      }
+                      {(users.vpnMbGastados || users.vpnmegas || users.vpn) &&
+                        <Paper elevation={5} style={{ width: "100%", padding: 25 }}>
                             <Grid item xs={12}>
                               <Grid container direction="row">
 
                                 <Typography>
-                                  {`PROXY - Megas Gastados:
-                            ${`${Number.parseFloat(users.megasGastadosinBytes / 1024000).toFixed(2)} MB`}`}
+                                  {`VPN - MEGAS GASTADOS:
+                            ${`${Number.parseFloat(users.vpnMbGastados ? (users.vpnMbGastados / 1000000) : 0).toFixed(2)} MB`}`}
                                 </Typography>
                               </Grid>
                             </Grid>
-                            </>
-                           }
-                            {(users.fechaSubscripcion || users.megas) &&
-                    <Grid item xs={12}>
-                      <Grid container direction="row">
-                        <Typography>
-                          PROXY - LIMITE:{" "}
-                          {users.isIlimitado
-                            ? users.fechaSubscripcion
-                              ? dateFormat(
-                                new Date(users.fechaSubscripcion),
-                                "yyyy-mm-dd",
-                                true,
-                                true
-                              )
-                              : "No esta establecida la fecha limite"
-                            : users.megas
-                              ? users.megas + " MB"
-                              : " No esta establecido el Limite de Megas a consumir"}
-                        </Typography>
-                      </Grid>
-                    </Grid>}
-                    
-                    {(users.fechaSubscripcion || users.megas) && 
-                    <Grid item xs={12}>
-                      <Grid container direction="row">
-                        <Typography>
-                          PROXY - CONEXION: {users.baneado ? "Desactivado" : "Activado"}
-                        </Typography>
-                      </Grid>
-                    </Grid>}
+                         
+                            <Grid item xs={12}>
+                              <Grid container direction="row">
+                                <Typography>
+                                  VPN - LIMITE: {users.vpnmegas ? users.vpnmegas : 0} GB
+                                </Typography>
+                              </Grid>
+                            </Grid>
+                          
+                            <Grid item xs={12}>
+                              <Grid container direction="row">
+                                <Typography>
+                                  VPN - TYPE: {users.vpnplus ? "VPNPLUS" : (users.vpn2mb ? "VPN2MB" : "N/A")}
+                                </Typography>
+                              </Grid>
+                            </Grid>
+                         
+                            <Grid item xs={12}>
+                              <Grid container direction="row">
+                                <Typography>
+                                  VPN - CONEXION: {users.vpn ? "Activado" : "Desactivado"}
+                                </Typography>
+                              </Grid>
+                            </Grid>
                         </Paper>
                       }
-                    {(users.vpnMbGastados || users.vpnmegas || users.vpn) &&
-                      <Paper elevation={5} style={{ width: "100%", padding: 25 }}>
-                        {users.vpnMbGastados &&
-                          <Grid item xs={12}>
-                            <Grid container direction="row">
-
-                              <Typography>
-                                {`VPN - Megas Gastados:
-                            ${`${Number.parseFloat(users.vpnMbGastados / 1000000).toFixed(2)} MB`}`}
-                              </Typography>
-                            </Grid>
-                          </Grid>}
-                        {users.vpnmegas &&
-                          <Grid item xs={12}>
-                            <Grid container direction="row">
-                              <Typography>
-                                VPN - LIMITE: {users.vpnmegas}
-                              </Typography>
-                            </Grid>
-                          </Grid>}
-                        {users.vpnmegas &&
-                          <Grid item xs={12}>
-                            <Grid container direction="row">
-                              <Typography>
-                                VPN - TYPE: {users.vpnplus ? "VPNPLUS" : (users.vpn2mb ? "VPN2MB" : "N/A")}
-                              </Typography>
-                            </Grid>
-                          </Grid>}
-                        {(users.vpn) &&
-                          <Grid item xs={12}>
-                            <Grid container direction="row">
-                              <Typography>
-                                VPN - CONEXION: {users.vpn ? "Activado" : "Desactivado"}
-                              </Typography>
-                            </Grid>
-                          </Grid>}
-                      </Paper>
-                    }
 
 
-                  </>
-                )}
+                    </>
+                  )}
 
-                {Meteor.user()&&Meteor.user().profile&&Meteor.user().profile.role &&
-                Meteor.user().profile.role == "admin" ? (
-                  <Grid item xs={12}>
-                    <Divider className={classes.padding10} />
-                    <Divider/>
-                    <Grid
-                      container
-                      direction="row-reverse"
-                      justify="space-around"
-                      alignItems="center"
-                    >
+                  {Meteor.user() && Meteor.user().profile && Meteor.user().profile.role &&
+                    Meteor.user().profile.role == "admin" ? (
+                    <Grid item xs={12}>
+                      <Divider className={classes.padding10} />
+                      <Divider />
+                      <Grid
+                        container
+                        direction="row-reverse"
+                        justify="space-around"
+                        alignItems="center"
+                      >
                         {Meteor.user().username == "carlosmbinf" && (
                           <Grid
                             item
@@ -1453,120 +1467,127 @@ let validacion = false;
                             </IconButton>
                           </Grid>
                         )}
-                      <Grid item xs={12} sm={4} style={{ textAlign: "center" }}>
-                        <Button
-                          color={edit ? "secondary" : "primary"}
-                          variant="contained"
-                          onClick={handleEdit}
-                        >
-                          {edit ? "Cancelar Edición" : "Editar"}
-                        </Button>
-                      </Grid>
-                      {edit ? (
-                        <>
-                          <Grid
-                            item
-                            xs={12}
-                            sm={4}
-                            style={{ textAlign: "center", padding:3}}
+                        <Grid item xs={12} sm={4} style={{ textAlign: "center" }}>
+                          <Button
+                            color={edit ? "secondary" : "primary"}
+                            variant="contained"
+                            onClick={handleEdit}
                           >
-                            <Grid container>
-                              <Grid
-                                item
-                                xs={12}
-                                lg={5}
-                                style={{ textAlign: "center" , padding:3 }}
-                              >
-                                <Tooltip
-                                  title={
-                                    users.baneado
-                                      ? "Desbloquear al Usuario"
-                                      : "Bloquear al Usuario"
-                                  }
+                            {edit ? "Cancelar Edición" : "Editar"}
+                          </Button>
+                        </Grid>
+                        {edit ? (
+                          <>
+                            <Grid
+                              item
+                              xs={12}
+                              sm={4}
+                              style={{ textAlign: "center", padding: 3 }}
+                            >
+                              <Grid container>
+                                <Grid
+                                  item
+                                  xs={12}
+                                  lg={5}
+                                  style={{ textAlign: "center", padding: 3 }}
                                 >
-                                  <Button
-                                    onClick={handleChangebaneado}
-                                    variant="contained"
-                                    color={
-                                      users.baneado ? "secondary" : "primary"
+                                  <Tooltip
+                                    title={
+                                      users.baneado
+                                        ? "Desbloquear al Usuario"
+                                        : "Bloquear al Usuario"
                                     }
                                   >
-                                    {users.baneado ? "Desbloquear" : "Bloquear"}
-                                  </Button>
-                                </Tooltip>
-                              </Grid>
-                              <Grid
-                                item
-                                xs={12}
-                                lg={7}
-                                style={{ textAlign: "center", padding:3 }}
-                              >
-                                <Button
-                                  disabled={users.megasGastadosinBytes == 0}
-                                  onClick={handleReiniciarConsumo}
-                                  variant="contained"
-                                  color={"secondary"}
+                                    <Button
+                                      onClick={handleChangebaneado}
+                                      variant="contained"
+                                      color={
+                                        users.baneado ? "secondary" : "primary"
+                                      }
+                                    >
+                                      {users.baneado ? "Desbloquear" : "Bloquear"}
+                                    </Button>
+                                  </Tooltip>
+                                </Grid>
+                                <Grid
+                                  item
+                                  xs={12}
+                                  lg={7}
+                                  style={{ textAlign: "center", padding: 3 }}
                                 >
-                                  {users.megasGastadosinBytes == 0
-                                    ? "Sin Consumo/Datos"
-                                    : "Reiniciar Consumo/Datos"}
-                                </Button>
+                                  <Button
+                                    disabled={users.megasGastadosinBytes == 0}
+                                    onClick={handleReiniciarConsumo}
+                                    variant="contained"
+                                    color={"secondary"}
+                                  >
+                                    {users.megasGastadosinBytes == 0
+                                      ? "Sin Consumo/Datos"
+                                      : "Reiniciar Consumo/Datos"}
+                                  </Button>
+                                </Grid>
                               </Grid>
                             </Grid>
-                          </Grid>
-                        </>
-                      ) : (
-                        Meteor.user().username == "carlosmbinf" && (
-                          <Grid
-                            item
-                            xs={12}
-                            sm={4}
-                            style={{ textAlign: "center"}}
-                          >
-                            <Tooltip
-                              title={
-                                users.profile.role == "admin"
-                                  ? "Cambiar a user"
-                                  : "Cambiar a admin"
-                              }
+                          </>
+                        ) : (
+                          Meteor.user().username == "carlosmbinf" && (
+                            <Grid
+                              item
+                              xs={12}
+                              sm={4}
+                              style={{ textAlign: "center" }}
                             >
-                              <Switch
-                                checked={users.profile.role == "admin"}
-                                onChange={handleChange}
-                                name="Roles"
-                                color="primary"
-                              />
-                            </Tooltip>
-                          </Grid>
-                        )
-                      )}
-                    </Grid>
-                  </Grid>
-                ) : users._id == Meteor.userId() ? (
-                  <>
-                    <Grid item xs={12}>
-                      <Divider className={classes.padding10} />
-                      <Grid
-                        container
-                        direction="row"
-                        justify="center"
-                        alignItems="center"
-                      >
-                        <Button
-                          color={edit ? "secondary" : "primary"}
-                          variant="contained"
-                          onClick={handleEdit}
-                        >
-                          {edit ? "Cancelar Edición" : "Editar"}
-                        </Button>
+                              <Tooltip
+                                title={
+                                  users.profile.role == "admin"
+                                    ? "Cambiar a user"
+                                    : "Cambiar a admin"
+                                }
+                              >
+                                <Switch
+                                  checked={users.profile.role == "admin"}
+                                  onChange={handleChange}
+                                  name="Roles"
+                                  color="primary"
+                                />
+                              </Tooltip>
+                            </Grid>
+                          )
+                        )}
                       </Grid>
                     </Grid>
-                  </>
-                ) : (
-                  ""
-                )}
-              </Grid>
-            </Paper>
+                  ) : users._id == Meteor.userId() ? (
+                    <>
+                      <Grid item xs={12}>
+                        <Divider className={classes.padding10} />
+                        <Grid
+                          container
+                          direction="row"
+                          justify="center"
+                          alignItems="center"
+                        >
+                          <Button
+                            color={edit ? "secondary" : "primary"}
+                            variant="contained"
+                            onClick={handleEdit}
+                          >
+                            {edit ? "Cancelar Edición" : "Editar"}
+                          </Button>
+                        </Grid>
+                      </Grid>
+                    </>
+                  ) : (
+                    ""
+                  )}
+                </Grid>
+              </Paper>
+
+              {users.profile.role == "admin" &&
+                <DashboardInit />
+              }
+
+
+            </>
           </Zoom>
         )}
       </div>

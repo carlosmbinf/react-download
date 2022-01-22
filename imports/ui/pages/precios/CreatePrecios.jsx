@@ -112,7 +112,7 @@ export default function CreatePrecios() {
         userId: Meteor.userId(),
         precio,
         type,
-        megas: type == "megas" ? megas : null,
+        megas: (type == "megas" || type == "vpn2mb" || type == "vpnplus") ? megas : null,
         comentario,
       };
       try {
@@ -270,9 +270,9 @@ export default function CreatePrecios() {
                         </Grid>
                         { (type == "megas" || type == "vpn2mb" || type == "vpnplus") &&
                           <Grid item xs={12} sm={4} lg={3}>
-                            <FormControl required={type == "megas"?true:false} variant="outlined">
+                            <FormControl required={(type == "megas" || type == "vpn2mb" || type == "vpnplus")?true:false} variant="outlined">
                               <TextField
-                                required={type == "megas"?true:false}
+                                required={(type == "megas" || type == "vpn2mb" || type == "vpnplus")?true:false}
                                 className={classes.margin}
                                 id="megas"
                                 name="megas"

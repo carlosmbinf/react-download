@@ -83,6 +83,12 @@ export default function Main() {
   const useractual = useTracker(() => {
     return Meteor.user();
   });
+  const user = (id) => {
+    Meteor.subscribe("user", id,{fields:{
+      'profile.role': 1
+    }});
+    return Meteor.users.findOne(id)
+  }
   return (
     <>
       <div className={classes.toolbar} />
@@ -131,28 +137,23 @@ export default function Main() {
         <Route path="/users/:id">
           <div style={{ paddingBottom: "7em" }}>
             <UserCardDetails />
-            <Zoom in={true}>
-              <>
-                <Grid container style={{ textAlign: "center", marginTop: 100 }}>
-                  <Grid item>
-                    <RegisterDataUserTable />
-                  </Grid>
-                </Grid>
-                {useractual &&
-                  useractual.profile &&
-                  useractual.profile.role == "admin" && (
-                    <Grid
-                      container
-                      style={{ textAlign: "center", marginTop: 100 }}
-                    >
-                      <Grid item>
-                        <LogsTable />
-                        <RegisterConnectionsUser />
-                      </Grid>
+            {useractual &&
+              useractual.profile &&
+              useractual.profile.role == "admin" && (
+                <Zoom in={true}>
+                  <Grid
+                    container
+                    style={{ textAlign: "center", marginTop: 100 }}
+                  >
+                    <Grid item>
+                      <RegisterDataUserTable />
+                      <LogsTable />
+                      <RegisterConnectionsUser />
                     </Grid>
-                  )}
-              </>
-            </Zoom>
+                  </Grid>
+                </Zoom>
+              )}
+
           </div>
 
           <Footer />

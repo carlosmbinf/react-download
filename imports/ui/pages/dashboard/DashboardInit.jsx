@@ -164,6 +164,7 @@ export default function DashboardInit() {
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
 
+  let { id } = useParams();
 
 
   const data = [
@@ -216,8 +217,22 @@ export default function DashboardInit() {
   ];
 
   const ventas = useTracker(() => {
-    Meteor.subscribe("ventas")
-    return VentasCollection.find({}).fetch()
+    Meteor.subscribe("ventas", id ? { adminId: id} : {}, {
+      fields: {
+        adminId: 1,
+        precio: 1,
+        cobrado: 1,
+        createdAt: 1
+      }
+    })
+    return VentasCollection.find({}, {
+      fields: {
+        adminId: 1,
+        precio: 1,
+        cobrado: 1,
+        createdAt: 1
+      }
+    }).fetch()
   });
 
   const gastos = (id, mensual) =>{
@@ -389,14 +404,14 @@ export default function DashboardInit() {
               </Grid>
             </>}
 
-          <Divider variant="middle" />
+          {/* <Divider variant="middle" />
           <Grid container item xs={12} justify="space-evenly" alignItems="center" className={classes.paddingTop20}>
             <Chip color='primary' label="Cantidad de Usuarios:" />
             <Grid container item xs={12} justify="space-evenly" alignItems="center" >
               <GraphicsPieChart />
             </Grid>
 
-          </Grid>
+          </Grid> */}
         </>
       </Zoom>
     </>

@@ -149,11 +149,15 @@ export default function UserCard(withAdd) {
     return usuarios
   });
   const ventas = useTracker(() => {
-    Meteor.subscribe("ventas")
+    Meteor.subscribe("ventas",{ cobrado: false },{
+      fields:{
+        adminId: 1,
+        precio: 1
+      }
+    })
     return VentasCollection.find({ cobrado: false }, {
       fields:{
         adminId: 1,
-        userId: 1,
         precio: 1
       }
     }).fetch()
