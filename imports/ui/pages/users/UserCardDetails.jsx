@@ -214,7 +214,7 @@ export default function UserCardDetails() {
   });
 
   const preciosList = useTracker(() => {
-    Meteor.subscribe("precios",{ type: "megas" }).ready()
+    Meteor.subscribe("precios",({ type: "megas" })).ready()
     let precioslist = []
     PreciosCollection.find({ type: "megas" }).fetch().map((a)=>{
       precioslist.push({value: a.megas, label: a.megas+'MB • $'+ a.precio})
@@ -223,7 +223,7 @@ export default function UserCardDetails() {
   });
 
     const admins = useTracker(() => {
-      Meteor.subscribe("user",{"profile.role":"admin"}).ready()
+      Meteor.subscribe("user",({"profile.role":"admin"})).ready()
       let admins = []
       Meteor.users.find({"profile.role":"admin"}).fetch().map((a)=>{
         // admins.push({ value: a._id , text: `${a.profile.firstName} ${a.profile.lastName}`})
@@ -235,7 +235,7 @@ export default function UserCardDetails() {
 
   const preciosVPNList = useTracker(() => {
     // Meteor.subscribe("precios",{$or:[{ type: "vpnplus"},{ type: "vpn2mb"}] }).ready()
-    Meteor.subscribe("precios",{ query: { $or:[{ type: "vpnplus"},{ type: "vpn2mb"}]  }, fields: { _id:1 }, sort: { } }).ready()
+    Meteor.subscribe("precios", ({ $or:[{ type: "vpnplus"},{ type: "vpn2mb"}]  })).ready()
     let precioslist = []
     PreciosCollection.find({$or:[{ type: "vpnplus"},{ type: "vpn2mb"}] }).fetch().map((a)=>{
       precioslist.push({value: `${a.type}/${a.megas}`, label: `${a.type} • ${a.megas}MB • $ ${a.precio}`})
@@ -248,10 +248,7 @@ export default function UserCardDetails() {
     
   return PreciosCollection.find().fetch() ;
 });
-  const usersOnline = useTracker(() => {
-    Meteor.subscribe("conexionesUser", useParams().id);
-    return Meteor.users.find({ userId: useParams().id }).count() > 0 ? true : false;
-  });
+  
   const eliminarUser = async (id) => {
     await LogsCollection.find({ $or: [{ userAdmin: id }, { userAfectado: id }] }).map(element =>
       LogsCollection.remove(element._id)

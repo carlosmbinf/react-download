@@ -1435,38 +1435,38 @@ console.log(update);
   //   clientId: "????????????????.apps.googleusercontent.com",
   //   secret: "????????????????"
   // });
-  Meteor.publish("logs", function (selector) {
-    return LogsCollection.find(selector?selector:{});
+  Meteor.publish("logs", function (selector,option) {
+    return LogsCollection.find(selector?selector:{},option?option:{});
   });
   Meteor.publish("logsId", function (id) {
     return LogsCollection.find({ userAfectado: id });
   });
-  Meteor.publish("registerDataUser", function (selector) {
-    return RegisterDataUsersCollection.find(selector?selector:{});
+  Meteor.publish("registerDataUser", function (selector,option) {
+    return RegisterDataUsersCollection.find(selector?selector:{},option?option:{});
   });
   Meteor.publish("registerDataUserId", function (id) {
     return RegisterDataUsersCollection.find({ userAfectado: id });
   });
-  Meteor.publish("pelis", function () {
-    return PelisCollection.find({});
+  Meteor.publish("pelis", function (selector,option) {
+    return PelisCollection.find(selector?selector:{},option?option:{});
   });
   Meteor.publish("peli", function (id) {
     return PelisCollection.find({ _id: id });
   });
-  Meteor.publish("tvs", function () {
-    return TVCollection.find({});
+  Meteor.publish("tvs", function (selector,option) {
+    return TVCollection.find(selector?selector:{},option?option:{});
   });
   Meteor.publish("tv", function (id) {
     return TVCollection.find({ _id: id });
   });
-  Meteor.publish("descargas", function () {
-    return DescargasCollection.find({});
+  Meteor.publish("descargas", function (selector,option) {
+    return DescargasCollection.find(selector?selector:{},option?option:{});
   });
   Meteor.publish("descarga", function (id) {
     return DescargasCollection.find({ _id: id });
   });
-  Meteor.publish("user", function (selector) {
-    return Meteor.users.find(selector?selector:{});
+  Meteor.publish("user", function (selector,option) {
+    return Meteor.users.find(selector?selector:{},option?option:{});
   });
   Meteor.publish("userID", function (id) {
     return Meteor.users.find({ _id: id });
@@ -1477,26 +1477,26 @@ console.log(update);
   Meteor.publish("conexionesUser", function (id) {
     return OnlineCollection.find({ userId: id });
   });
-  Meteor.publish("conexiones", function (selector) {
-    return OnlineCollection.find(selector?selector:{});
+  Meteor.publish("conexiones", function (selector,option) {
+    return OnlineCollection.find(selector?selector:{},option?option:{});
   });
-  Meteor.publish("mensajes", function (selector) {
-    return MensajesCollection.find(selector?selector:{});
+  Meteor.publish("mensajes", function (selector,option) {
+    return MensajesCollection.find(selector?selector:{},option?option:{});
   });
   Meteor.publish("server", function (id) {
     return ServersCollection.find(id);
   });
-  Meteor.publish("servers", function () {
-    return ServersCollection.find({});
+  Meteor.publish("servers", function (selector,option) {
+    return ServersCollection.find(selector?selector:{},option?option:{});
   });
-  Meteor.publish("precios", function (selector) {
-    return PreciosCollection.find(selector?selector:{});
+  Meteor.publish("precios", function (selector,option) {
+    return PreciosCollection.find(selector?selector:{},option?option:{});
   });
-  Meteor.publish("ventas", function (selector) {
-    return VentasCollection.find(selector?selector:{});
+  Meteor.publish("ventas", function (selector,option) {
+    return VentasCollection.find(selector?selector:{},option?option:{});
   });
-  Meteor.publish("files", function (selector) {
-    return FilesCollection.find(selector?selector:{});
+  Meteor.publish("files", function (selector,option) {
+    return FilesCollection.find(selector?selector:{},option?option:{});
   });
 
   Meteor.onConnection(function (connection) {

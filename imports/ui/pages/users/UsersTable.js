@@ -258,12 +258,31 @@ export default function UsersTable(option) {
     />
   );
   const usersRegister = useTracker(() => {
-    Meteor.subscribe("user");
-    Meteor.subscribe("conexiones");
+    Meteor.subscribe("user", {}, {
+      fields: {
+        '_id': 1,
+        'emails': 1,
+        'profile': 1,
+        'edad': 1,
+        'services.facebook.picture.data.url': 1,
+        'username': 1,
+        'creadoPor': 1,
+        'bloqueadoDesbloqueadoPor': 1,
+        'baneado': 1,
+        'megasGastadosinBytes': 1,
+        'megasGastadosinBytesGeneral': 1,
+        'isIlimitado': 1,
+        'fechaSubscripcion': 1,
+        'megas': 1,
+        'vpnplus': 1,
+        'vpn2mb': 1
+      }
+    });
+    Meteor.subscribe("conexiones", {}, { fields: { userId: 1 } });
     let a = [];
 
     Meteor.users.find(option.selector?option.selector:{}, {
-      sort: { megasGastadosinBytes: -1, 'profile.firstName': 1, 'profile.lastName': 1 }
+      sort: {megasGastadosinBytes: -1, 'profile.firstName': 1, 'profile.lastName': 1 }
     }).map(
       (data) =>
         data &&

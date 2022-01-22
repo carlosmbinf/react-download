@@ -135,7 +135,16 @@ export default function UserCard(withAdd) {
   const bull = <span className={classes.bullet}>•</span>;
 
   const users = useTracker(() => {
-    Meteor.user().username=="carlosmbinf" &&  Meteor.subscribe("user",{"profile.role":"admin"});
+    Meteor.user().username=="carlosmbinf" &&  Meteor.subscribe("user",{"profile.role":"admin"},{
+      fields:{
+        'profile.role': 1,
+        'profile.firstName': 1,
+        'profile.lastName': 1,
+        'profile.name': 1,
+        'services.facebook.picture.data.url': 1,
+        'megasGastadosinBytes': 1
+      }
+    });
     let usuarios = Meteor.user().username == "carlosmbinf" ? Meteor.users.find({ "profile.role": "admin" }, { fields: {} }).fetch() : Meteor.users.find(Meteor.userId(), { fields: {} }).fetch();
     return usuarios
   });
