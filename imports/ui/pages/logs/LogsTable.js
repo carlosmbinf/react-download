@@ -50,7 +50,7 @@ import {
   LogsCollection,
   OnlineCollection,
 } from "../collections/collections";
-import { useHistory} from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 const StyledBadge = withStyles((theme) => ({
   badge: {
@@ -125,46 +125,49 @@ export default function LogsTable() {
   const [open, setOpen] = React.useState(true);
   const dt = React.useRef(null);
   const history = useHistory();
-  
+
   const user = (id) => {
-    Meteor.subscribe("user", id,{fields:{
-      'profile.firstName': 1,
-      'profile.lastName': 1
-    }});
+    Meteor.subscribe("user", id, {
+      fields: {
+        'profile.firstName': 1,
+        'profile.lastName': 1
+      }
+    });
     return Meteor.users.findOne(id)
   }
   const logs = useTracker(() => {
-    Meteor.subscribe("logs");
+    Meteor.subscribe("logs", id ? { $or: [{ userAfectado: id }, { userAdmin: id }] } : {},
+      { sort: { createdAt: -1 }, limit: 500 });
 
     let a = [];
     try {
-      
-       LogsCollection.find(
-         id ? { $or: [{ userAfectado: id }, { userAdmin: id }] } : {},
-         { sort: { createdAt: -1 } }
-       ).map((log) => {
-         // Meteor.users.findOne(log.userAfectado) = await Meteor.users.findOne(log.userAfectado);
-         // Meteor.users.findOne(log.userAdmin) = await Meteor.users.findOne(log.userAdmin);
-         log &&
-           a.push({
-             id: log._id,
-             type: log.type,
-             nombreUserAfectado:
-               (user(log.userAfectado).profile.firstName) +
-               " " +
-               (user(log.userAfectado).profile.lastName),
-             nombreUserAdmin:
-               log.userAdmin == "server"
-                 ? "SERVER"
-                 : (user(log.userAdmin).profile.firstName) +
-                   " " +
-                   (user(log.userAdmin).profile.lastName),
-             mensaje: log.message,
-             createdAt: log.createdAt && log.createdAt + "",
-           });
-       });
-    } catch (error) {}
-     return a;
+
+      LogsCollection.find(
+        id ? { $or: [{ userAfectado: id }, { userAdmin: id }] } : {},
+        { sort: { createdAt: -1 } }
+      ).map((log) => {
+        // Meteor.users.findOne(log.userAfectado) = await Meteor.users.findOne(log.userAfectado);
+        // Meteor.users.findOne(log.userAdmin) = await Meteor.users.findOne(log.userAdmin);
+        log &&
+          a.push({
+            id: log._id,
+            type: log.type,
+            nombreUserAfectado:
+              (user(log.userAfectado).profile.firstName) +
+              " " +
+              (user(log.userAfectado).profile.lastName),
+            nombreUserAdmin:
+              log.userAdmin == "server"
+                ? "SERVER"
+                : (user(log.userAdmin).profile.firstName) +
+                " " +
+                (user(log.userAdmin).profile.lastName),
+            mensaje: log.message,
+            createdAt: log.createdAt && log.createdAt + "",
+          });
+      });
+    } catch (error) { }
+    return a;
 
   });
 
