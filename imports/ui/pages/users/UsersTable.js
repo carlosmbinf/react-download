@@ -261,16 +261,16 @@ export default function UsersTable(option) {
     Meteor.subscribe("user", {}, {
       fields: {
         '_id': 1,
-        'emails': 1,
+        // 'emails': 1,
         'profile': 1,
-        'edad': 1,
+        // 'edad': 1,
         'services.facebook.picture.data.url': 1,
         'username': 1,
         'creadoPor': 1,
         'bloqueadoDesbloqueadoPor': 1,
         'baneado': 1,
         'megasGastadosinBytes': 1,
-        'megasGastadosinBytesGeneral': 1,
+        // 'megasGastadosinBytesGeneral': 1,
         'isIlimitado': 1,
         'fechaSubscripcion': 1,
         'megas': 1,
@@ -288,18 +288,16 @@ export default function UsersTable(option) {
         data &&
         a.push({
           id: data._id,
-          email: data.emails&&data.emails[0]&&data.emails[0].address,
+          // email: data.emails&&data.emails[0]&&data.emails[0].address,
           // firstname:
           //   data.profile && data.profile.firstName
           //     ? data.profile.firstName
           //     : data.profile.name,
           // lastName: data.profile.lastName,
           name:
-            data.profile && data.profile.firstName
-              ? data.profile.firstName + " " + data.profile.lastName
-              : data.profile.name,
-          role: data.profile.role,
-          edad: data.edad,
+            `${data.profile && data.profile.firstName} ${data.profile && data.profile.lastName}`,
+          role: data.profile&&data.profile.role,
+          // edad: data.edad,
           foto:
             data.services &&
               data.services.facebook &&
@@ -315,10 +313,10 @@ export default function UsersTable(option) {
           administradoPor: data.bloqueadoDesbloqueadoPor?(Meteor.users.findOne(data.bloqueadoDesbloqueadoPor)?(`${Meteor.users.findOne(data.bloqueadoDesbloqueadoPor)&&Meteor.users.findOne(data.bloqueadoDesbloqueadoPor).profile.firstName} ${Meteor.users.findOne(data.bloqueadoDesbloqueadoPor)&&Meteor.users.findOne(data.bloqueadoDesbloqueadoPor).profile.lastName}`):"Carlos Medina"):"Carlos Medina",
           conProxy: !data.baneado,
           megasGastadosinBytes: data.megasGastadosinBytes,
-          megasGastadosinBytesGeneral: data.megasGastadosinBytesGeneral,
+          // megasGastadosinBytesGeneral: data.megasGastadosinBytesGeneral,
           connectionsCounts: OnlineCollection.find({ userId: data._id }).count(),
-          limites: data.profile.role == 'admin' ? 'Ilimitado' : (data.isIlimitado ? "Fecha" : "Megas"),
-          limiteData: data.profile.role == 'admin' ? 'Ilimitado' : (data.isIlimitado ? (data.fechaSubscripcion ? (dateFormat(
+          limites: data.profile && data.profile.role == 'admin' ? 'Ilimitado' : (data.isIlimitado ? "Fecha" : "Megas"),
+          limiteData: data.profile && data.profile.role == 'admin' ? 'Ilimitado' : (data.isIlimitado ? (data.fechaSubscripcion ? (dateFormat(
             new Date(data.fechaSubscripcion),
             "yyyy-mm-dd",
             true,

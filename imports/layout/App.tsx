@@ -230,8 +230,10 @@ export default function PersistentDrawerLeft() {
       $or: [
         // { from: Meteor.userId() },
         { to: Meteor.userId() }
-      ]
-    });
+      ], leido: false
+    }, { fields: { 
+      _id: 1
+    } });
     
     let mens = MensajesCollection.find({
       $or: [

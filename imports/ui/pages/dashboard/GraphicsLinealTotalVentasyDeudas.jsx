@@ -236,7 +236,9 @@ export default function GraphicsLinealTotalVentasyDeudas() {
     const TotalGanados = useTracker(() => {
       let data01 = 0;
     
-      Meteor.subscribe("user");
+      Meteor.subscribe("user",{},{fields:{
+        _id: 1
+      }});
        Meteor.users.find({"profile.role":"admin"}).map(
           (usersGeneral,index) =>{
   
@@ -251,7 +253,9 @@ export default function GraphicsLinealTotalVentasyDeudas() {
     const TotalDeudas = useTracker(() => {
       let data01 = 0;
     
-      Meteor.subscribe("user");
+      Meteor.subscribe("user",{},{fields:{
+        _id: 1
+      }});
        Meteor.users.find({}).map(
           (usersGeneral,index) =>{
   
@@ -271,7 +275,12 @@ export default function GraphicsLinealTotalVentasyDeudas() {
     dateStartMonth.startOf('month')
     dateEndMonth.startOf('month').add(1,'month')
 
-    Meteor.subscribe("user");
+    Meteor.subscribe("user",{},{fields:{
+      _id: 1,
+      'profile.firstName': 1,
+      'profile.lastName': 1
+    }
+    });
      Meteor.users.find({}).map(
         (usersGeneral,index) =>{
 

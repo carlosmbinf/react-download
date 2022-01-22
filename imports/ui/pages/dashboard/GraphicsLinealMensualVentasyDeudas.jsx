@@ -256,7 +256,11 @@ export default function GraphicsLinealMensualVentasyDeudas() {
     dateStartMonth.startOf('month')
     dateEndMonth.startOf('month').add(1,'month')
 
-    Meteor.subscribe("user");
+    Meteor.subscribe("user",{},{fields:{
+      _id: 1,
+      'profile.firstName': 1,
+      'profile.lastName': 1
+    }});
      Meteor.users.find({}).map(
         (usersGeneral,index) =>{
 

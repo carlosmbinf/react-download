@@ -285,7 +285,9 @@ export default function DashboardInit() {
   const datausersMoneyGeneral = useTracker(() => {
     let recogido = 0
     let deuda = 0
-    Meteor.subscribe("user");
+    Meteor.subscribe("user",{},{fields:{
+      _id:1
+    }});
     Meteor.users.find().map(
       (usersGeneral, index) => {
 
@@ -310,7 +312,9 @@ export default function DashboardInit() {
   const datausersMoneyMensual = useTracker(() => {
     let recogido = 0
     let deuda = 0
-    Meteor.subscribe("user");
+    Meteor.subscribe("user",{},{fields:{
+      _id:1
+    }});
     Meteor.users.find({}).map(
       (usersGeneral, index) => {
 

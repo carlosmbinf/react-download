@@ -138,8 +138,14 @@ export default function VentasTable(option) {
   //   return OnlineCollection.find({"userId" : Meteor.userId()}).fetch();
   // });
 
+  const user = (id) =>{
+    Meteor.subscribe("user",id,{fields:{
+      username: 1
+    }});
+    return Meteor.users.findOne(id)
+  }
   const ventas = useTracker(() => {
-    Meteor.subscribe("user");
+    
     let a = [];
     Meteor.subscribe("ventas",option.selector?option.selector:{}).ready()&&   
 
@@ -150,8 +156,8 @@ export default function VentasTable(option) {
         data &&
         a.push({
           id: data._id,
-          adminId: Meteor.users.findOne(data.adminId)?Meteor.users.findOne(data.adminId).username:"N/A",
-          userId: Meteor.users.findOne(data.userId)?Meteor.users.findOne(data.userId).username:"N/A",
+          adminId: user(data.adminId)?user(data.adminId).username:"N/A",
+          userId: user(data.userId)?user(data.userId).username:"N/A",
           createdAt: data.createdAt&&data.createdAt.toString(),
           precio: data.precio&&data.precio,
           comentario: data.comentario&&data.comentario,
