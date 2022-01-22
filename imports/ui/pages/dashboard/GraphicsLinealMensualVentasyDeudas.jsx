@@ -149,44 +149,6 @@ export default function GraphicsLinealMensualVentasyDeudas() {
 
   let { id } = useParams();
  
-  const data = [
-    {
-      name: "Page A",
-      uv: 590,
-      pv: 800,
-      amt: 1400,
-    },
-    {
-      name: "Page B",
-      uv: 868,
-      pv: 967,
-      amt: 1506,
-    },
-    {
-      name: "Page C",
-      uv: 1397,
-      pv: 1098,
-      amt: 989,
-    },
-    {
-      name: "Page D",
-      uv: 1480,
-      pv: 1200,
-      amt: 1228,
-    },
-    {
-      name: "Page E",
-      uv: 1520,
-      pv: 1108,
-      amt: 1100,
-    },
-    {
-      name: "Page F",
-      uv: 1400,
-      pv: 680,
-      amt: 1700,
-    },
-  ];
   const ventas = useTracker(() => {
     Meteor.subscribe("ventas", id ? { adminId: id} : {}, {
       fields: {
@@ -196,7 +158,7 @@ export default function GraphicsLinealMensualVentasyDeudas() {
         createdAt: 1
       }
     })
-    return VentasCollection.find({}, {
+    return VentasCollection.find(id ? { adminId: id} : {}, {
       fields: {
         adminId: 1,
         precio: 1,
@@ -256,7 +218,7 @@ export default function GraphicsLinealMensualVentasyDeudas() {
     dateStartMonth.startOf('month')
     dateEndMonth.startOf('month').add(1,'month')
 
-    Meteor.subscribe("user",{},{fields:{
+    Meteor.subscribe("user",id ? id : {},{fields:{
       _id: 1,
       'profile.firstName': 1,
       'profile.lastName': 1
@@ -271,9 +233,9 @@ export default function GraphicsLinealMensualVentasyDeudas() {
 
         aporte(usersGeneral._id,dateStartMonth.toISOString(),dateEndMonth.toISOString()) > 0 && data01.push({
             name:
-              usersGeneral.profile.firstName +
+            usersGeneral.profile&&usersGeneral.profile.firstName +
               " " +
-              usersGeneral.profile.lastName,
+              usersGeneral.profile&&usersGeneral.profile.lastName,
               TotalVendido: aporte(usersGeneral._id,dateStartMonth.toISOString(),dateEndMonth.toISOString()),
               Debe: gastos(usersGeneral._id,dateStartMonth.toISOString(),dateEndMonth.toISOString()),
               amt: aporte(usersGeneral._id,dateStartMonth.toISOString(),dateEndMonth.toISOString())

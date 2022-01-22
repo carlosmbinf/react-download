@@ -200,10 +200,19 @@ export default function UserCardDetails() {
     setOpenAlert(false);
   };
 
+  const {id} = useParams()
   const bull = <span className={classes.bullet}>•</span>;
+
+  const tieneVentas = useTracker(() => {
+    Meteor.subscribe("ventas", { adminId: id })
+    // console.log(VentasCollection.find({ adminId: id}).fetch());
+    console.log(VentasCollection.find({ adminId: id}).count()>0);
+    return VentasCollection.find({ adminId: id}).count()>0
+  });
+
   const users = useTracker(() => {
-    Meteor.subscribe("userID", useParams().id);
-    return Meteor.users.findOne({ _id: useParams().id });
+    Meteor.subscribe("userID", id);
+    return Meteor.users.findOne({ _id: id });
   });
 
   const servers = useTracker(() => {
@@ -1581,8 +1590,8 @@ export default function UserCardDetails() {
                 </Grid>
               </Paper>
 
-              {users.profile.role == "admin" &&
-                <DashboardInit />
+              {users.profile.role == "admin" && tieneVentas &&
+                <DashboardInit id={id}/>
               }
 
 

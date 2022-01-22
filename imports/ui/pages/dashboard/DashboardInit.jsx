@@ -160,64 +160,15 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function DashboardInit() {
+export default function DashboardInit(option) {
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
 
-  let { id } = useParams();
-
-
-  const data = [
-    {
-      name: "Page A",
-      uv: 590,
-      pv: 800,
-      amt: 1400,
-    },
-    {
-      name: "Page B",
-      uv: 868,
-      pv: 967,
-      amt: 1506,
-    },
-    {
-      name: "Page C",
-      uv: 1397,
-      pv: 1098,
-      amt: 989,
-    },
-    {
-      name: "Page D",
-      uv: 1480,
-      pv: 1200,
-      amt: 1228,
-    },
-    {
-      name: "Page E",
-      uv: 1520,
-      pv: 1108,
-      amt: 1100,
-    },
-    {
-      name: "Page F",
-      uv: 1400,
-      pv: 680,
-      amt: 1700,
-    },
-  ];
-
-
-  const data02 = [
-    { name: "Group A", value: 2400 },
-    { name: "Group B", value: 4567 },
-    { name: "Group C", value: 1398 },
-    { name: "Group D", value: 9800 },
-    { name: "Group E", value: 3908 },
-    { name: "Group F", value: 4800 },
-  ];
+  let { id } = option;
 
   const ventas = useTracker(() => {
-    Meteor.subscribe("ventas", id ? { adminId: id} : {}, {
+    try {
+      Meteor.subscribe("ventas", id ? { adminId: id} : {}, {
       fields: {
         adminId: 1,
         precio: 1,
@@ -225,7 +176,7 @@ export default function DashboardInit() {
         createdAt: 1
       }
     })
-    return VentasCollection.find({}, {
+    return VentasCollection.find(id ? { adminId: id} : {}, {
       fields: {
         adminId: 1,
         precio: 1,
@@ -233,6 +184,11 @@ export default function DashboardInit() {
         createdAt: 1
       }
     }).fetch()
+    } catch (error) {
+      console.log(error);
+      return null
+    }
+    
   });
 
   const gastos = (id, mensual) =>{
@@ -285,7 +241,7 @@ export default function DashboardInit() {
   const datausersMoneyGeneral = useTracker(() => {
     let recogido = 0
     let deuda = 0
-    Meteor.subscribe("user",{},{fields:{
+    Meteor.subscribe("user",id ? id : {},{fields:{
       _id:1
     }});
     Meteor.users.find().map(
@@ -312,7 +268,7 @@ export default function DashboardInit() {
   const datausersMoneyMensual = useTracker(() => {
     let recogido = 0
     let deuda = 0
-    Meteor.subscribe("user",{},{fields:{
+    Meteor.subscribe("user",id ? id : {},{fields:{
       _id:1
     }});
     Meteor.users.find({}).map(
@@ -374,7 +330,7 @@ export default function DashboardInit() {
               />
             </Grid> */}
 
-          {Meteor.user()&&Meteor.user().username == "carlosmbinf" &&
+          
             <>              
               <Grid container item xs={12} justify="space-evenly" alignItems="center" className={classes.paddingTop20}>
               <Chip style={{width:"90%"}} color='primary' label="Ventas y Deudas Mensual:"/>
@@ -406,7 +362,7 @@ export default function DashboardInit() {
                   <GraphicsLinealTotalVentasyDeudas />
                 </div>
               </Grid>
-            </>}
+            </>
 
           {/* <Divider variant="middle" />
           <Grid container item xs={12} justify="space-evenly" alignItems="center" className={classes.paddingTop20}>
