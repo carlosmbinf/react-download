@@ -1360,8 +1360,7 @@ export default function UserCardDetails() {
                                 <Grid container direction="row">
 
                                   <Typography>
-                                    {`PROXY - MEGAS GASTADOS:
-                            ${`${Number.parseFloat(users.megasGastadosinBytes / 1024000).toFixed(2)} MB`}`}
+                                    {`MEGAS GASTADOS • ${`${Number.parseFloat(users.megasGastadosinBytes / 1024000).toFixed(2)} MB`}`}
                                   </Typography>
                                 </Grid>
                               </Grid>
@@ -1371,7 +1370,7 @@ export default function UserCardDetails() {
                             <Grid item xs={12}>
                               <Grid container direction="row">
                                 <Typography>
-                                  PROXY - LIMITE:{" "}
+                                  LIMITE {"• "}
                                   {users.isIlimitado
                                     ? users.fechaSubscripcion
                                       ? dateFormat(
@@ -1392,7 +1391,7 @@ export default function UserCardDetails() {
                             <Grid item xs={12}>
                               <Grid container direction="row">
                                 <Typography>
-                                  PROXY - CONEXION: {users.baneado ? "Desactivado" : "Activado"}
+                                  CONEXION {users.baneado ? "• Desactivado" : "• Activado"}
                                 </Typography>
                               </Grid>
                             </Grid>}
@@ -1400,12 +1399,12 @@ export default function UserCardDetails() {
                       }
                       {(users.vpnMbGastados || users.vpnmegas || users.vpn) &&
                         <Paper elevation={5} style={{ width: "100%", padding: 25 }}>
+                           <Typography align="center">VPN</Typography>
                             <Grid item xs={12}>
                               <Grid container direction="row">
 
                                 <Typography>
-                                  {`VPN - MEGAS GASTADOS:
-                            ${`${Number.parseFloat(users.vpnMbGastados ? (users.vpnMbGastados / 1000000) : 0).toFixed(2)} MB`}`}
+                                  {`MEGAS GASTADOS • ${`${Number.parseFloat(users.vpnMbGastados ? (users.vpnMbGastados / 1000000) : 0).toFixed(2)} MB`}`}
                                 </Typography>
                               </Grid>
                             </Grid>
@@ -1413,7 +1412,7 @@ export default function UserCardDetails() {
                             <Grid item xs={12}>
                               <Grid container direction="row">
                                 <Typography>
-                                  VPN - LIMITE: {users.vpnmegas ? users.vpnmegas : 0} GB
+                                  LIMITE {"•"} {users.vpnmegas ? users.vpnmegas : 0} GB
                                 </Typography>
                               </Grid>
                             </Grid>
@@ -1421,7 +1420,7 @@ export default function UserCardDetails() {
                             <Grid item xs={12}>
                               <Grid container direction="row">
                                 <Typography>
-                                  VPN - TYPE: {users.vpnplus ? "VPNPLUS" : (users.vpn2mb ? "VPN2MB" : "N/A")}
+                                  TYPE {"•"} {users.vpnplus ? "VPNPLUS" : (users.vpn2mb ? "VPN2MB" : "N/A")}
                                 </Typography>
                               </Grid>
                             </Grid>
@@ -1429,7 +1428,7 @@ export default function UserCardDetails() {
                             <Grid item xs={12}>
                               <Grid container direction="row">
                                 <Typography>
-                                  VPN - CONEXION: {users.vpn ? "Activado" : "Desactivado"}
+                                  CONEXION {"•"} {users.vpn ? "Activado" : "Desactivado"}
                                 </Typography>
                               </Grid>
                             </Grid>
