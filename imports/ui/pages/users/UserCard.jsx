@@ -150,13 +150,19 @@ export default function UserCard(withAdd) {
   });
   const ventas = useTracker(() => {
     Meteor.subscribe("ventas")
-    return VentasCollection.find({}).fetch()
+    return VentasCollection.find({ cobrado: false }, {
+      fields:{
+        adminId: 1,
+        userId: 1,
+        precio: 1
+      }
+    }).fetch()
   });
 
   const gastos = (id) => {
     let totalAPagar = 0;
     ventas.map(element => {
-      element.adminId == id && !element.cobrado && (totalAPagar += element.precio)
+      element.adminId == id && (totalAPagar += element.precio)
     })
     return totalAPagar
   };
