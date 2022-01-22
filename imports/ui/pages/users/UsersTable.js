@@ -258,7 +258,7 @@ export default function UsersTable(option) {
     />
   );
   const usersRegister = useTracker(() => {
-    Meteor.subscribe("user", {}, {
+    Meteor.subscribe("user", option.selector?option.selector:{}, {
       fields: {
         '_id': 1,
         // 'emails': 1,

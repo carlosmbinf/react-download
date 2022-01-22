@@ -149,7 +149,7 @@ export default function UserCard(withAdd) {
     return usuarios
   });
   const ventas = useTracker(() => {
-    Meteor.subscribe("ventas",{ cobrado: false },{
+    Meteor.subscribe("ventas", Meteor.user().username == "carlosmbinf" ? { cobrado: false } : { adminId: Meteor.userId(), cobrado: false }, {
       fields:{
         adminId: 1,
         precio: 1
