@@ -135,7 +135,18 @@ Meteor.subscribe("user",id,{fields:{
 return Meteor.users.findOne(id)
 }
   const registroDeDatos = useTracker(() => {
-    Meteor.subscribe("registerDataUser");
+
+    if (id) {
+      Meteor.subscribe("registerDataUser", { userId: id })
+    } else if (Meteor.user().username == "carlosmbinf") {
+      Meteor.subscribe("registerDataUser");
+    } else {
+      Meteor.subscribe("user", { 'bloqueadoDesbloqueadoPor': Meteor.userId() }, { fields: { 'bloqueadoDesbloqueadoPor': 1 } });
+
+      let usuariosMios = Meteor.users.find({ 'bloqueadoDesbloqueadoPor': Meteor.userId() }, { fields: { 'bloqueadoDesbloqueadoPor': 1 } })
+      usuariosMios.map(element => Meteor.subscribe("registerDataUser", { userId: element._id }))
+    }
+    
     
     let a = [];
     try {

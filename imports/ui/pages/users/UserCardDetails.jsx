@@ -237,29 +237,17 @@ export default function UserCardDetails() {
     Meteor.subscribe("user", { "profile.role": "admin" }, {
       fields: {
         '_id': 1,
-        'emails': 1,
-        'profile': 1,
-        'services.facebook.picture.data.url': 1,
         'username': 1,
-        'creadoPor': 1,
-        'bloqueadoDesbloqueadoPor': 1,
-        'baneado': 1,
-        'megasGastadosinBytes': 1,
-        'megasGastadosinBytesGeneral': 1,
-        'isIlimitado': 1,
-        'fechaSubscripcion': 1,
-        'megas': 1,
-        'vpnplus': 1,
-        'vpn2mb': 1
+        'profile.role':1
       }
     }).ready()
-    let admins = []
+    let administradores = []
     Meteor.users.find({ "profile.role": "admin" }).fetch().map((a) => {
       // admins.push({ value: a._id , text: `${a.profile.firstName} ${a.profile.lastName}`})
-      admins.push(a.username)
+      administradores.push(a.username)
     })
 
-    return admins;
+    return administradores;
   });
 
   const preciosVPNList = useTracker(() => {
@@ -1362,20 +1350,17 @@ export default function UserCardDetails() {
 
                       {(users.megasGastadosinBytes || users.fechaSubscripcion || users.megas) &&
                         <Paper elevation={5} style={{ width: "100%", padding: 25, marginBottom: 25 }}>
-                          {users.megasGastadosinBytes &&
-                            <>
                               <Typography align="center">PROXY</Typography>
+
                               <Grid item xs={12}>
                                 <Grid container direction="row">
 
                                   <Typography>
-                                    {`MEGAS GASTADOS • ${`${Number.parseFloat(users.megasGastadosinBytes / 1024000).toFixed(2)} MB`}`}
+                                  {`MEGAS GASTADOS • ${`${Number.parseFloat(users.megasGastadosinBytes ? (users.megasGastadosinBytes / 1024000) : 0).toFixed(2)} MB`}`}
                                   </Typography>
                                 </Grid>
                               </Grid>
-                            </>
-                          }
-                          {(users.fechaSubscripcion || users.megas) &&
+                          
                             <Grid item xs={12}>
                               <Grid container direction="row">
                                 <Typography>
@@ -1394,16 +1379,15 @@ export default function UserCardDetails() {
                                       : " No esta establecido el Limite de Megas a consumir"}
                                 </Typography>
                               </Grid>
-                            </Grid>}
+                            </Grid>
 
-                          {(users.fechaSubscripcion || users.megas) &&
                             <Grid item xs={12}>
                               <Grid container direction="row">
                                 <Typography>
                                   CONEXION {users.baneado ? "• Desactivado" : "• Activado"}
                                 </Typography>
                               </Grid>
-                            </Grid>}
+                            </Grid>
                         </Paper>
                       }
                       {(users.vpnMbGastados || users.vpnmegas || users.vpn) &&
