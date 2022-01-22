@@ -126,10 +126,16 @@ export default function LogsTable() {
   const dt = React.useRef(null);
   const history = useHistory();
   
-
+  const user = (id) => {
+    Meteor.subscribe("user", id,{fields:{
+      'profile.firstName': 1,
+      'profile.lastName': 1
+    }});
+    return Meteor.users.findOne(id)
+  }
   const logs = useTracker(() => {
     Meteor.subscribe("logs");
-    Meteor.subscribe("user");
+
     let a = [];
     try {
       
@@ -144,21 +150,15 @@ export default function LogsTable() {
              id: log._id,
              type: log.type,
              nombreUserAfectado:
-               (Meteor.users.findOne(log.userAfectado) &&
-                 Meteor.users.findOne(log.userAfectado).profile &&
-                 Meteor.users.findOne(log.userAfectado).profile.firstName) +
+               (user(log.userAfectado).profile.firstName) +
                " " +
-               (Meteor.users.findOne(log.userAfectado) &&
-                 Meteor.users.findOne(log.userAfectado).profile &&
-                 Meteor.users.findOne(log.userAfectado).profile.lastName),
+               (user(log.userAfectado).profile.lastName),
              nombreUserAdmin:
                log.userAdmin == "server"
                  ? "SERVER"
-                 : (Meteor.users.findOne(log.userAdmin) &&
-                     Meteor.users.findOne(log.userAdmin).profile.firstName) +
+                 : (user(log.userAdmin).profile.firstName) +
                    " " +
-                   (Meteor.users.findOne(log.userAdmin) &&
-                     Meteor.users.findOne(log.userAdmin).profile.lastName),
+                   (user(log.userAdmin).profile.lastName),
              mensaje: log.message,
              createdAt: log.createdAt && log.createdAt + "",
            });

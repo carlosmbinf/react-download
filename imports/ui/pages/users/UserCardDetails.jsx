@@ -223,7 +223,25 @@ export default function UserCardDetails() {
   });
 
     const admins = useTracker(() => {
-      Meteor.subscribe("user",({"profile.role":"admin"})).ready()
+      Meteor.subscribe("user",{"profile.role":"admin"}, {
+        fields: {
+          '_id': 1,
+          'emails': 1,
+          'profile': 1,
+          'services.facebook.picture.data.url': 1,
+          'username': 1,
+          'creadoPor': 1,
+          'bloqueadoDesbloqueadoPor': 1,
+          'baneado': 1,
+          'megasGastadosinBytes': 1,
+          'megasGastadosinBytesGeneral': 1,
+          'isIlimitado': 1,
+          'fechaSubscripcion': 1,
+          'megas': 1,
+          'vpnplus': 1,
+          'vpn2mb': 1
+        }
+      }).ready()
       let admins = []
       Meteor.users.find({"profile.role":"admin"}).fetch().map((a)=>{
         // admins.push({ value: a._id , text: `${a.profile.firstName} ${a.profile.lastName}`})

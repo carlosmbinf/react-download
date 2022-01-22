@@ -128,11 +128,17 @@ export default function RegisterConnectionsUser() {
   const dt = React.useRef(null);
   const history = useHistory();
   
+  const user = (id) => {
+    Meteor.subscribe("user", id,{fields:{
+      'profile.firstName': 1,
+      'profile.lastName': 1
+    }});
+    return Meteor.users.findOne(id)
+  }
 
   const registroDeDatos = useTracker(() => {
     id ? Meteor.subscribe("conexiones", id) : Meteor.subscribe("conexiones");
     
-    Meteor.subscribe("user");
     let a = [];
     try {
       OnlineCollection.find((id ? { userId: id } : {}),{sort: { userId: 1, loginAt: -1 }}).map(
@@ -140,7 +146,7 @@ export default function RegisterConnectionsUser() {
            // Meteor.users.findOne(register.userAfectado) = await Meteor.users.findOne(register.userAfectado);
            // Meteor.users.findOne(register.userAdmin) = await Meteor.users.findOne(register.userAdmin);
            // register&&
-           let b = Meteor.users.findOne(register.userId);
+           let b = user(register.userId);
            a.push({
              id: register._id,
              user: b.profile.firstName + " " + b.profile.lastName,

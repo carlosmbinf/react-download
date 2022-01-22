@@ -127,10 +127,16 @@ export default function RegisterDataUserTable() {
   const dt = React.useRef(null);
   const history = useHistory();
   
-
+const user = (id) =>{
+Meteor.subscribe("user",id,{fields:{
+  'profile.firstName': 1,
+  'profile.lastName': 1
+}});
+return Meteor.users.findOne(id)
+}
   const registroDeDatos = useTracker(() => {
     Meteor.subscribe("registerDataUser");
-    Meteor.subscribe("user");
+    
     let a = [];
     try {
        RegisterDataUsersCollection.find((id ? { userId: id } : {}),{sort: { fecha : -1}}).map(
@@ -138,7 +144,7 @@ export default function RegisterDataUserTable() {
            // Meteor.users.findOne(register.userAfectado) = await Meteor.users.findOne(register.userAfectado);
            // Meteor.users.findOne(register.userAdmin) = await Meteor.users.findOne(register.userAdmin);
            // register&&
-           let b = Meteor.users.findOne(register.userId);
+           let b = user(register.userId);
            a.push({
              id: register._id,
              user: b.profile.firstName + " " + b.profile.lastName,
