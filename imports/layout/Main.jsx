@@ -376,9 +376,22 @@ export default function Main() {
         <Route path="/vpn">
           <div style={{ paddingBottom: "7em" }}>
             {useractual &&
-              useractual.username == "carlosmbinf" ? (
+              useractual.profile&&
+              useractual.profile.role == "admin" ? (
               <>
-                  <UsersTableVPN selector={{ vpn: true }} />
+                  <UsersTableVPN selector={
+                    Meteor.user().username == "carlosmbinf" ? 
+                    { vpn: true } 
+                    : { 
+                        $or: [
+                          {
+                            bloqueadoDesbloqueadoPor: Meteor.userId()
+                          },
+                          {
+                            _id: Meteor.userId()
+                          }
+                        ], vpn: true
+                      }} />
               </>
             ) : (
               <Zoom in={true}>
