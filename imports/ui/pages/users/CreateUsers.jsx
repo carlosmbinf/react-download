@@ -82,6 +82,7 @@ export default function CreateUsers() {
   const [firstName, setfirstName] = useState("");
   const [lastName, setlastName] = useState("");
   const [CI, setCI] = useState("");
+  const [username, setUsername] = useState("");
   const [role, setRole] = React.useState("");
   const [open, setOpen] = React.useState(false);
   const [message, setMessage] = React.useState("");
@@ -115,7 +116,7 @@ export default function CreateUsers() {
         lastName: lastName,
         role: role,
         creadoPor: Meteor.userId(),
-        edad: CI,
+        username: username,
       };
 
       $.post("/createuser", user)
@@ -345,14 +346,14 @@ export default function CreateUsers() {
                             <TextField
                               required
                               className={classes.margin}
-                              id="ci"
-                              name="ci"
-                              label="Edad"
-                              type="number"
+                              id="username"
+                              name="username"
+                              label="Usuario"
+                              // type="number"
                               variant="outlined"
                               color="secondary"
-                              value={CI}
-                              onInput={(e) => setCI(e.target.value)}
+                              value={username}
+                              onInput={(e) => setUsername(e.target.value)}
                               InputProps={{
                                 startAdornment: (
                                   <InputAdornment position="start">
