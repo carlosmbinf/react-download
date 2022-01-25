@@ -233,6 +233,11 @@ export const SchemaRegisterDataUsersCollection = new SimpleSchema({
     },
     optional: true,
   },
+  vpnMbGastados: {
+    type: Number,
+    defaultValue: 0,
+    optional: true,
+  },
   megasGastadosinBytes: {
     type: Number,
     defaultValue: 0,
@@ -242,6 +247,11 @@ export const SchemaRegisterDataUsersCollection = new SimpleSchema({
     type: Number,
     defaultValue: 0,
     optional: true,
+  },
+  type: {
+    type: String,
+    defaultValue: "proxy",
+    optional: false,
   },
 });
 

@@ -120,7 +120,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function RegisterDataUserTable() {
+export default function RegisterDataUserTable(options) {
   let { id } = useParams();
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
@@ -150,7 +150,19 @@ return Meteor.users.findOne(id)
     
     let a = [];
     try {
-       RegisterDataUsersCollection.find((id ? { userId: id } : {}),{sort: { fecha : -1}}).map(
+      RegisterDataUsersCollection.find(
+        (id ?
+          {
+            userId: id,
+            type: options.type
+          } :
+          {
+            type: options.type
+          }), {
+        sort: {
+          fecha: -1
+        }
+      }).map(
          (register) => {
            // Meteor.users.findOne(register.userAfectado) = await Meteor.users.findOne(register.userAfectado);
            // Meteor.users.findOne(register.userAdmin) = await Meteor.users.findOne(register.userAdmin);
@@ -159,12 +171,15 @@ return Meteor.users.findOne(id)
            a.push({
              id: register._id,
              user: b.profile.firstName + " " + b.profile.lastName,
-             megasGastadosinBytes: Number.parseFloat(
-               register.megasGastadosinBytes / 1000000
-             ).toFixed(2),
-             megasGastadosinBytesGeneral: Number.parseFloat(
-               register.megasGastadosinBytesGeneral / 1000000
-             ).toFixed(2),
+             vpnMbGastados: (register.vpnMbGastados?Number.parseFloat(
+              register.vpnMbGastados / 1000000):0)
+            .toFixed(2),
+             megasGastadosinBytes: (register.megasGastadosinBytes?Number.parseFloat(
+               register.megasGastadosinBytes / 1000000):0)
+             .toFixed(2),
+             megasGastadosinBytesGeneral:(register.megasGastadosinBytesGeneral?Number.parseFloat(
+              register.megasGastadosinBytesGeneral / 1000000):0)
+            .toFixed(2),
              createdAt: register.fecha && register.fecha.toString(),
            });
          }
@@ -204,10 +219,18 @@ return Meteor.users.findOne(id)
       </React.Fragment>
     );
   };
+  const vpnMbGastadosBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">Megas Consumidos en la VPN</span>
+        {rowData.vpnMbGastados}
+      </React.Fragment>
+    );
+  };
   const megasGastadosinBytesBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-        <span className="p-column-title">Megas Consumidos por el Usuario</span>
+        <span className="p-column-title">Megas Consumidos en el proxy</span>
         {rowData.megasGastadosinBytes}
       </React.Fragment>
     );
@@ -215,7 +238,7 @@ return Meteor.users.findOne(id)
   const megasGastadosinBytesGeneralBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-        <span className="p-column-title">Megas Consumidos por el Server</span>
+        <span className="p-column-title">Megas Consumidos en el Server</span>
         {rowData.megasGastadosinBytesGeneral}
       </React.Fragment>
     );
@@ -224,7 +247,7 @@ return Meteor.users.findOne(id)
   return (
     <>
       <Grid item style={{ textAlign: "center" }}>
-        <h1>Registro de Datos Mensuales</h1>
+        <h1>{options.type == 'vpn' ? "Registro de Datos en la VPN" : 'Registro de Datos en el Proxy'}</h1>
       </Grid>
       <Zoom in={true}>
         <div style={{ width: "100%", padding: 20 }}>
@@ -258,22 +281,36 @@ return Meteor.users.findOne(id)
                   filterPlaceholder="Search"
                   filterMatchMode="contains"
                 />
-                <Column
-                  field="megasGastadosinBytes"
-                  header="Megas Gastados por el Usuario"
-                  body={megasGastadosinBytesBodyTemplate}
-                  filter
-                  filterPlaceholder="Search"
-                  filterMatchMode="contains"
-                />
-                <Column
-                  field="megasGastadosinBytesGeneral"
-                  header="Megas Gastados en el Servidor"
-                  body={megasGastadosinBytesGeneralBodyTemplate}
-                  filter
-                  filterPlaceholder="Search"
-                  filterMatchMode="contains"
-                />
+                {options.type == 'vpn' &&
+                  <Column
+                    field="vpnMbGastados"
+                    header="Megas Consumidos en la VPN"
+                    body={vpnMbGastadosBodyTemplate}
+                    filter
+                    filterPlaceholder="Search"
+                    filterMatchMode="contains"
+                  />}
+                  {options.type != 'vpn' &&
+                    <Column
+                      field="megasGastadosinBytes"
+                      header="Megas Consumidos en el Proxy"
+                      body={megasGastadosinBytesBodyTemplate}
+                      filter
+                      filterPlaceholder="Search"
+                      filterMatchMode="contains"
+                    />}
+                    {options.type != 'vpn' &&
+                    <Column
+                      field="megasGastadosinBytesGeneral"
+                      header="Megas Consumidos en el Servidor"
+                      body={megasGastadosinBytesGeneralBodyTemplate}
+                      filter
+                      filterPlaceholder="Search"
+                      filterMatchMode="contains"
+                    />
+                }
+                
+                
                 <Column
                   field="createdAt"
                   header="Fecha del Registro"

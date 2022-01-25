@@ -200,14 +200,14 @@ export default function UserCardDetails() {
     setOpenAlert(false);
   };
 
-  const {id} = useParams()
+  const { id } = useParams()
   const bull = <span className={classes.bullet}>•</span>;
 
   const tieneVentas = useTracker(() => {
     Meteor.subscribe("ventas", { adminId: id })
     // console.log(VentasCollection.find({ adminId: id}).fetch());
-    console.log(VentasCollection.find({ adminId: id}).count()>0);
-    return VentasCollection.find({ adminId: id}).count()>0
+    console.log(VentasCollection.find({ adminId: id }).count() > 0);
+    return VentasCollection.find({ adminId: id }).count() > 0
   });
 
   const users = useTracker(() => {
@@ -238,7 +238,7 @@ export default function UserCardDetails() {
       fields: {
         '_id': 1,
         'username': 1,
-        'profile.role':1
+        'profile.role': 1
       }
     }).ready()
     let administradores = []
@@ -386,6 +386,7 @@ export default function UserCardDetails() {
   const handleReiniciarConsumo = (event) => {
     users.megasGastadosinBytes >= 0 &&
       RegisterDataUsersCollection.insert({
+        type: "proxy",
         userId: users._id,
         megasGastadosinBytes: users.megasGastadosinBytes,
         megasGastadosinBytesGeneral: users.megasGastadosinBytesGeneral,
@@ -397,17 +398,42 @@ export default function UserCardDetails() {
       },
     });
     LogsCollection.insert({
-      type: 'Reinicio',
+      type: 'Reinicio PROXY',
       userAfectado: users._id,
       userAdmin: Meteor.userId(),
       message:
-        `Ha sido Reiniciado el consumo de Datos de ${users.profile.firstName} ${users.profile.lastName}`
+        `Ha sido Reiniciado el consumo de Datos del PROXY de ${users.profile.firstName} ${users.profile.lastName}`
     });
-    Meteor.call('sendemail', users, { text: `Ha sido Reiniciado el consumo de Datos de ${users.profile.firstName} ${users.profile.lastName}` }, 'Reinicio ' + Meteor.user().username)
-    Meteor.call('sendMensaje', users, { text: `Ha sido Reiniciado el consumo de Datos de ${users.profile.firstName} ${users.profile.lastName}` }, 'Reinicio ' + Meteor.user().username)
+    Meteor.call('sendemail', users, { text: `Ha sido Reiniciado el consumo de Datos del PROXY de ${users.profile.firstName} ${users.profile.lastName}` }, 'Reinicio ' + Meteor.user().username)
+    Meteor.call('sendMensaje', users, { text: `Ha sido Reiniciado el consumo de Datos del PROXY de ${users.profile.firstName} ${users.profile.lastName}` }, 'Reinicio ' + Meteor.user().username)
 
-    alert('Se reinicio los datos de ' + users.profile.firstName)
+    alert('Se reinicio los datos del PROXY de ' + users.profile.firstName)
   };
+
+  const handleReiniciarConsumoVPN = (event) => {
+    RegisterDataUsersCollection.insert({
+      type: "vpn",
+      userId: users._id,
+      vpnMbGastados: users.vpnMbGastados
+    })
+    Meteor.users.update(users._id, {
+      $set: {
+        vpnMbGastados: 0
+      },
+    });
+    LogsCollection.insert({
+      type: 'Reinicio VPN',
+      userAfectado: users._id,
+      userAdmin: Meteor.userId(),
+      message:
+        `Ha sido Reiniciado el consumo de Datos de la VPN de ${users.profile.firstName} ${users.profile.lastName}`
+    });
+    Meteor.call('sendemail', users, { text: `Ha sido Reiniciado el consumo de Datos de la VPN de ${users.profile.firstName} ${users.profile.lastName}` }, 'Reinicio ' + Meteor.user().username)
+    Meteor.call('sendMensaje', users, { text: `Ha sido Reiniciado el consumo de Datos de la VPN de ${users.profile.firstName} ${users.profile.lastName}` }, 'Reinicio ' + Meteor.user().username)
+
+    alert('Se reinicio los datos de la VPN de ' + users.profile.firstName)
+  };
+
   const handleVPNStatus = (event) => {
     if (users.vpn || users.vpnplus || users.vpn2mb) {
 
@@ -907,7 +933,55 @@ export default function UserCardDetails() {
                               <>
                                 <Grid item xs={12} className={classes.margin}>
                                   <Divider className={classes.padding10} />
-                                  Limites
+                                  PROXY
+                                </Grid>
+                                <Grid
+                                  item
+                                  xs={12}
+                                  style={{
+                                    display: "flex",
+                                    justifyContent: "left",
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  <FormControlLabel
+                                    control={
+                                      <Tooltip
+                                        title={
+                                          users.isIlimitado
+                                            ? "Cambiar consumo por MB"
+                                            : "Cambiar consumo por Fecha"
+                                        }
+                                      >
+                                        <Switch
+                                          checked={users.isIlimitado}
+                                          onChange={() => {
+                                            Meteor.users.update(users._id, {
+                                              $set: {
+                                                isIlimitado: !users.isIlimitado,
+                                              },
+                                            });
+                                          }}
+                                          name="Ilimitado"
+                                          color={
+                                            users.isIlimitado
+                                              ? "secondary"
+                                              : "primary"
+                                          }
+                                        />
+                                      </Tooltip>
+                                    }
+                                    label={
+                                      users.isIlimitado
+                                        ? "Limitado por Fecha"
+                                        : "Puede Consumir " +
+                                        (users.megas ? users.megas : 0) +
+                                        " MB"
+                                    }
+                                  />
+                                  {/* <FormControlLabel variant="outlined" label="Primary">
+                                  
+                                </FormControlLabel> */}
                                 </Grid>
                                 {users.isIlimitado && (
                                   <Grid item xs={12} >
@@ -1068,57 +1142,25 @@ export default function UserCardDetails() {
                                       </FormControl>
 
                                     </Grid>
+                                    <Grid
+                                      item xs={12}
+                                    // style={{ textAlign: "center", padding: 3 }}
+                                    >
+                                      <Button
+                                        disabled={users.megasGastadosinBytes == 0}
+                                        onClick={handleReiniciarConsumo}
+                                        variant="contained"
+                                        color={"secondary"}
+                                      >
+                                        {users.megasGastadosinBytes == 0
+                                          ? "Sin Consumo"
+                                          : "Reiniciar Consumo"}
+                                      </Button>
+                                    </Grid>
                                   </>
                                 )}
 
-                                <Grid
-                                  item
-                                  xs={12}
-                                  style={{
-                                    display: "flex",
-                                    justifyContent: "left",
-                                    alignItems: "center",
-                                  }}
-                                >
-                                  <FormControlLabel
-                                    control={
-                                      <Tooltip
-                                        title={
-                                          users.isIlimitado
-                                            ? "Cambiar consumo por MB"
-                                            : "Cambiar consumo por Fecha"
-                                        }
-                                      >
-                                        <Switch
-                                          checked={users.isIlimitado}
-                                          onChange={() => {
-                                            Meteor.users.update(users._id, {
-                                              $set: {
-                                                isIlimitado: !users.isIlimitado,
-                                              },
-                                            });
-                                          }}
-                                          name="Ilimitado"
-                                          color={
-                                            users.isIlimitado
-                                              ? "secondary"
-                                              : "primary"
-                                          }
-                                        />
-                                      </Tooltip>
-                                    }
-                                    label={
-                                      users.isIlimitado
-                                        ? "Limitado por Fecha"
-                                        : "Puede Consumir " +
-                                        (users.megas ? users.megas : 0) +
-                                        " MB"
-                                    }
-                                  />
-                                  {/* <FormControlLabel variant="outlined" label="Primary">
-                                  
-                                </FormControlLabel> */}
-                                </Grid>
+                                
 
 
                               </>
@@ -1221,20 +1263,6 @@ export default function UserCardDetails() {
                             <h3>
                               VPN
                             </h3>
-                            <Grid item xs={12} sm={4}
-                              style={{ textAlign: "center", padding: 3 }}
-                            >
-                              <Button
-                                // disabled={Meteor.user().username != "carlosmbinf"}
-                                onClick={handleVPNStatus}
-                                variant="contained"
-                                color={users.vpn ? "secondary" : "primary"}
-                              >
-                                {users.vpn
-                                  ? "Desactivar VPN"
-                                  : "Activar VPN"}
-                              </Button>
-                            </Grid>
                             <Grid item xs={12} sm={4}>
                               <FormControl fullWidth>
                                 {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
@@ -1295,6 +1323,33 @@ export default function UserCardDetails() {
                               </FormControl>
 
                             </Grid>
+                            <Grid item xs={12} sm={4}
+                              style={{ textAlign: "center", padding: 3 }}
+                            >
+                              <Button
+                                // disabled={Meteor.user().username != "carlosmbinf"}
+                                onClick={handleVPNStatus}
+                                variant="contained"
+                                color={users.vpn ? "secondary" : "primary"}
+                              >
+                                {users.vpn
+                                  ? "Desactivar VPN"
+                                  : "Activar VPN"}
+                              </Button>
+                            </Grid>
+                            <Grid item xs={12} sm={4}
+                              style={{ textAlign: "center", padding: 3 }}
+                            >
+                              <Button
+                                disabled={users.vpnMbGastados ? false : true}
+                                onClick={handleReiniciarConsumoVPN}
+                                variant="contained"
+                                color={users.vpnMbGastados ? "secondary" : "primary"}
+                              >
+                                {users.vpnMbGastados ? "Reiniciar Consumo" : "Sin consumo de Datos"}
+                              </Button>
+                            </Grid>
+
                           </>
                         }
 
@@ -1350,81 +1405,81 @@ export default function UserCardDetails() {
 
                       {(users.megasGastadosinBytes || users.fechaSubscripcion || users.megas) &&
                         <Paper elevation={5} style={{ width: "100%", padding: 25, marginBottom: 25 }}>
-                              <Typography align="center">PROXY</Typography>
+                          <Typography align="center">PROXY</Typography>
 
-                              <Grid item xs={12}>
-                                <Grid container direction="row">
+                          <Grid item xs={12}>
+                            <Grid container direction="row">
 
-                                  <Typography>
-                                  {`MEGAS GASTADOS • ${`${Number.parseFloat(users.megasGastadosinBytes ? (users.megasGastadosinBytes / 1024000) : 0).toFixed(2)} MB`}`}
-                                  </Typography>
-                                </Grid>
-                              </Grid>
-                          
-                            <Grid item xs={12}>
-                              <Grid container direction="row">
-                                <Typography>
-                                  LIMITE {"• "}
-                                  {users.isIlimitado
-                                    ? users.fechaSubscripcion
-                                      ? dateFormat(
-                                        new Date(users.fechaSubscripcion),
-                                        "yyyy-mm-dd",
-                                        true,
-                                        true
-                                      )
-                                      : "No esta establecida la fecha limite"
-                                    : users.megas
-                                      ? users.megas + " MB"
-                                      : " No esta establecido el Limite de Megas a consumir"}
-                                </Typography>
-                              </Grid>
+                              <Typography>
+                                {`MEGAS GASTADOS • ${`${Number.parseFloat(users.megasGastadosinBytes ? (users.megasGastadosinBytes / 1024000) : 0).toFixed(2)} MB`}`}
+                              </Typography>
                             </Grid>
+                          </Grid>
 
-                            <Grid item xs={12}>
-                              <Grid container direction="row">
-                                <Typography>
-                                  CONEXION {users.baneado ? "• Desactivado" : "• Activado"}
-                                </Typography>
-                              </Grid>
+                          <Grid item xs={12}>
+                            <Grid container direction="row">
+                              <Typography>
+                                LIMITE {"• "}
+                                {users.isIlimitado
+                                  ? users.fechaSubscripcion
+                                    ? dateFormat(
+                                      new Date(users.fechaSubscripcion),
+                                      "yyyy-mm-dd",
+                                      true,
+                                      true
+                                    )
+                                    : "No esta establecida la fecha limite"
+                                  : users.megas
+                                    ? users.megas + " MB"
+                                    : " No esta establecido el Limite de Megas a consumir"}
+                              </Typography>
                             </Grid>
+                          </Grid>
+
+                          <Grid item xs={12}>
+                            <Grid container direction="row">
+                              <Typography>
+                                CONEXION {users.baneado ? "• Desactivado" : "• Activado"}
+                              </Typography>
+                            </Grid>
+                          </Grid>
                         </Paper>
                       }
                       {(users.vpnMbGastados || users.vpnmegas || users.vpn) &&
                         <Paper elevation={5} style={{ width: "100%", padding: 25 }}>
-                           <Typography align="center">VPN</Typography>
-                            <Grid item xs={12}>
-                              <Grid container direction="row">
+                          <Typography align="center">VPN</Typography>
+                          <Grid item xs={12}>
+                            <Grid container direction="row">
 
-                                <Typography>
-                                  {`MEGAS GASTADOS • ${`${Number.parseFloat(users.vpnMbGastados ? (users.vpnMbGastados / 1000000) : 0).toFixed(2)} MB`}`}
-                                </Typography>
-                              </Grid>
+                              <Typography>
+                                {`MEGAS GASTADOS • ${`${Number.parseFloat(users.vpnMbGastados ? (users.vpnMbGastados / 1000000) : 0).toFixed(2)} MB`}`}
+                              </Typography>
                             </Grid>
-                         
-                            <Grid item xs={12}>
-                              <Grid container direction="row">
-                                <Typography>
-                                  LIMITE {"•"} {users.vpnmegas ? users.vpnmegas : 0} GB
-                                </Typography>
-                              </Grid>
+                          </Grid>
+
+                          <Grid item xs={12}>
+                            <Grid container direction="row">
+                              <Typography>
+                                LIMITE {"•"} {users.vpnmegas ? users.vpnmegas : 0} MB
+                              </Typography>
                             </Grid>
-                          
-                            <Grid item xs={12}>
-                              <Grid container direction="row">
-                                <Typography>
-                                  TYPE {"•"} {users.vpnplus ? "VPNPLUS" : (users.vpn2mb ? "VPN2MB" : "N/A")}
-                                </Typography>
-                              </Grid>
+                          </Grid>
+
+                          <Grid item xs={12}>
+                            <Grid container direction="row">
+                              <Typography>
+                                TYPE {"•"} {users.vpnplus ? "VPNPLUS" : (users.vpn2mb ? "VPN2MB" : "N/A")}
+                              </Typography>
                             </Grid>
-                         
-                            <Grid item xs={12}>
-                              <Grid container direction="row">
-                                <Typography>
-                                  CONEXION {"•"} {users.vpn ? "Activado" : "Desactivado"}
-                                </Typography>
-                              </Grid>
+                          </Grid>
+
+                          <Grid item xs={12}>
+                            <Grid container direction="row">
+                              <Typography>
+                                CONEXION {"•"} {users.vpn ? "Activado" : "Desactivado"}
+                              </Typography>
                             </Grid>
+                          </Grid>
                         </Paper>
                       }
 
@@ -1501,23 +1556,7 @@ export default function UserCardDetails() {
                                     </Button>
                                   </Tooltip>
                                 </Grid>
-                                <Grid
-                                  item
-                                  xs={12}
-                                  lg={7}
-                                  style={{ textAlign: "center", padding: 3 }}
-                                >
-                                  <Button
-                                    disabled={users.megasGastadosinBytes == 0}
-                                    onClick={handleReiniciarConsumo}
-                                    variant="contained"
-                                    color={"secondary"}
-                                  >
-                                    {users.megasGastadosinBytes == 0
-                                      ? "Sin Consumo/Datos"
-                                      : "Reiniciar Consumo/Datos"}
-                                  </Button>
-                                </Grid>
+
                               </Grid>
                             </Grid>
                           </>
@@ -1575,7 +1614,7 @@ export default function UserCardDetails() {
               </Paper>
 
               {users.profile.role == "admin" && tieneVentas &&
-                <DashboardInit id={id}/>
+                <DashboardInit id={id} />
               }
 
 

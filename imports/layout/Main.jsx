@@ -146,7 +146,8 @@ export default function Main() {
                     style={{ textAlign: "center", marginTop: 100 }}
                   >
                     <Grid item>
-                      <RegisterDataUserTable />
+                      <RegisterDataUserTable type="proxy" />
+                      <RegisterDataUserTable type="vpn" />
                       <LogsTable />
                       <RegisterConnectionsUser />
                     </Grid>
@@ -616,9 +617,12 @@ export default function Main() {
             {useractual &&
               useractual.profile &&
               useractual.profile.role == "admin" ? (
-              <Zoom in={true}>
-                <RegisterDataUserTable />
-              </Zoom>
+                <Zoom in={true}>
+                  <>
+                    <RegisterDataUserTable type="proxy" />
+                    <RegisterDataUserTable type="vpn" />
+                  </>
+                </Zoom>
             ) : (
               <Zoom in={true}>
                 <Grid
