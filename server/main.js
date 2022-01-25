@@ -554,28 +554,34 @@ if (Meteor.isServer) {
           // await console.log("running every minute to 1 from 5");
 
           await users.fetch().map((user) => {
+
+            ////////////CONSUMOS/////////////
             user.megasGastadosinBytes > 0 &&
-              //   console.log({
-              //   userId: user._id,
-              //   megasGastadosinBytes: user.megasGastadosinBytes,
-              //   megasGastadosinBytesGeneral: user.megasGastadosinBytesGeneral,
-              // }),
               RegisterDataUsersCollection.insert({
                 userId: user._id,
+                type: "proxy",
                 megasGastadosinBytes: user.megasGastadosinBytes,
                 megasGastadosinBytesGeneral: user.megasGastadosinBytesGeneral
               }),
 
-              ///////////////Dejar en cero a los usuarios
+              user.vpnMbGastados > 0 &&
+              RegisterDataUsersCollection.insert({
+                userId: user._id,
+                type: "vpn",
+                vpnMbGastados: user.vpnMbGastados
+              }),
+
+              ///////////////Dejar en cero el consumo de los usuarios
               Meteor.users.update(user._id, {
-                  $set: {
-                    megasGastadosinBytes: 0,
-                    megasGastadosinBytesGeneral: 0,
-                  },
-                })
+                $set: {
+                  megasGastadosinBytes: 0,
+                  megasGastadosinBytesGeneral: 0,
+                  vpnMbGastados: 0
+                },
+              })
 
 
-////////////////Banear y dejar en cero el consumo a los usuarios//////////////
+            ////////////////Banear /////////////
             user.baneado == false && user.profile.role !== 'admin' &&
               (Meteor.users.update(user._id, {
                 $set: {
@@ -583,7 +589,7 @@ if (Meteor.isServer) {
                 },
               }),
                 LogsCollection.insert({
-                  type: "Bloqueado",
+                  type: "Bloqueo Proxy",
                   userAfectado: user._id,
                   userAdmin: "server",
                   message:
@@ -595,9 +601,7 @@ if (Meteor.isServer) {
                   user,
                   {
                     text:
-                      "El server " +
-                      process.env.ROOT_URL +
-                      " Bloqueo automaticamente el proxy a: " +
+                      "El server Bloqueo automaticamente el proxy a: " +
                       user.profile.firstName +
                       " " +
                       user.profile.lastName +
@@ -623,7 +627,7 @@ if (Meteor.isServer) {
                   user,
                   {
                     text:
-                      `El server ${process.env.ROOT_URL} Desactivó la VPN para ${user.profile.firstName} ${user.profile.lastName} dia Primero de cada Mes`,
+                      `El server Desactivó la VPN para ${user.profile.firstName} ${user.profile.lastName} dia Primero de cada Mes`,
                   },
                   'VidKar Bloqueo de VPN')
               );
@@ -636,11 +640,24 @@ if (Meteor.isServer) {
       )
       .start();
 
+      //////////////////Banear proxy ///////////////////
     cron
       .schedule(
         "0-59 * * * *",
         async () => {
-          let users = await Meteor.users.find({});
+          let users = await Meteor.users.find({ baneado: false }, {
+            fields: {
+              _id: 1,
+              profile: 1,
+              isIlimitado: 1,
+              fechaSubscripcion: 1,
+              megasGastadosinBytes: 1,
+              megas: 1,
+              baneado: 1,
+              bloqueadoDesbloqueadoPor: 1,
+              emails: 1,
+            }
+          });
           await users.forEach((user) => {
             // !(user.username == "carlosmbinf") &&
             user.profile.role != "admin" &&
@@ -656,7 +673,7 @@ if (Meteor.isServer) {
                     $set: { baneado: true},
                   }),
                   LogsCollection.insert({
-                    type: "Bloqueado",
+                    type: "Bloqueo Proxy",
                     userAfectado: user._id,
                     userAdmin: "server",
                     message:
@@ -675,7 +692,7 @@ if (Meteor.isServer) {
                     $set: { baneado: true},
                   }),
                   LogsCollection.insert({
-                    type: "Bloqueado",
+                    type: "Bloqueo Proxy",
                     userAfectado: user._id,
                     userAdmin: "server",
                     message:
@@ -695,6 +712,55 @@ if (Meteor.isServer) {
         }
       )
       .start();
+
+      //////////Banear VPN //////////////
+      cron
+      .schedule(
+        "0-59 * * * *",
+        async () => {
+          let users = await Meteor.users.find({ vpn: true }, {
+            fields: {
+              _id: 1,
+              vpnMbGastados: 1,
+              profile: 1,
+              vpnmegas: 1,
+              vpn: 1,
+              bloqueadoDesbloqueadoPor: 1,
+              emails: 1
+            }
+          });
+          await users.forEach((user) => {
+            // !(user.username == "carlosmbinf") &&
+            user.profile.role != "admin" &&
+              (user.vpnMbGastados?user.vpnMbGastados:0) >= ((user.vpnmegas?Number(user.vpnmegas):0) * 1000000) &&
+                  user.vpn &&
+                  (Meteor.users.update(user._id, {
+                    $set: { vpn: false},
+                  }),
+                  LogsCollection.insert({
+                    type: "Bloqueo VPN",
+                    userAfectado: user._id,
+                    userAdmin: "server",
+                    message:
+                      "El server " + process.env.ROOT_URL +" Bloqueo automaticamente la VPN porque consumio: " + user.vpnmegas + " MB"
+                  }),sendemail(
+                    user,
+                    {
+                      text: "El server Bloqueo automaticamente la VPN a: " + user.profile.firstName + " " + user.profile.lastName + " porque consumio sus: " + user.vpnmegas + "MB",  
+                    },
+                    'VidKar Bloqueo de VPN')
+                  );
+          });
+        },
+        {
+          scheduled: true,
+          timezone: "America/Havana",
+        }
+      )
+      .start();
+
+
+
   } catch (error) {
     console.log(error);
   }
