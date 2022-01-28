@@ -255,7 +255,7 @@ export default function UserCardDetails() {
     Meteor.subscribe("precios", ({ $or: [{ type: "vpnplus" }, { type: "vpn2mb" }] })).ready()
     let precioslist = []
     PreciosCollection.find({ $or: [{ type: "vpnplus" }, { type: "vpn2mb" }] }).fetch().map((a) => {
-      precioslist.push({ value: `${a.type}/${a.megas}`, label: `${a.type} • ${a.megas}MB • $ ${(a.precio - Meteor.user().descuentovpn >= 0) ? (a.precio - Meteor.user().descuentovpn >= 0) : 0}` })
+      precioslist.push({ value: `${a.type}/${a.megas}`, label: `${a.type} • ${a.megas}MB • $ ${(a.precio - Meteor.user().descuentovpn >= 0) ? (a.precio - Meteor.user().descuentovpn) : 0}` })
     })
     return precioslist
   });
