@@ -458,7 +458,7 @@ export default function UserCardDetails() {
         message:
           `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN`
       });
-      Meteor.call('sendemail', users, { text: `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN para el usuario: ${users.username}${users.descuentovpn && ` Con un descuento de: ${users.descuentovpn}CUP`}` }, `VPN ${Meteor.user().username}`)
+      Meteor.call('sendemail', users, { text: `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN para el usuario: ${users.username}${users.descuentovpn ? ` Con un descuento de: ${users.descuentovpn}CUP`:""}` }, `VPN ${Meteor.user().username}`)
       Meteor.call('sendMensaje', users, { text: `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN para ${users.username}` }, `VPN ${Meteor.user().username}`)
 
       !users.vpn && VentasCollection.insert({
