@@ -228,7 +228,7 @@ export default function UserCardDetails() {
     Meteor.subscribe("precios", ({ type: "megas" })).ready()
     let precioslist = []
     PreciosCollection.find({ type: "megas" }).fetch().map((a) => {
-      precioslist.push({ value: a.megas, label: a.megas + 'MB • $' + ((a.precio - Meteor.user().descuentovpn >= 0) ? (a.precio - Meteor.user().descuentovpn >= 0) : 0) })
+      precioslist.push({ value: a.megas, label: a.megas + 'MB • $' + ((a.precio - Meteor.user().descuentovpn >= 0) ? (a.precio - Meteor.user().descuentovpn) : 0) })
     })
     return precioslist
   });
