@@ -1752,7 +1752,8 @@ Accounts.onCreateUser(function (options, user) {
     user.edad = options.edad;
     user.online = false;
     user.baneado = true;
-
+    user.descuentoproxy = 0;
+    user.descuentovpn = 0;
     return user;
   }
 
@@ -1776,6 +1777,8 @@ Accounts.onCreateUser(function (options, user) {
       }),
       (user.online = false),
       (user.creadoPor = "Facebook"),
-      (user.baneado = true));
+      (user.baneado = true),
+      (user.descuentoproxy = 0),
+      (user.descuentovpn = 0));
   return user;
 });
