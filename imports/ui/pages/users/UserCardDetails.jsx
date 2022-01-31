@@ -225,7 +225,7 @@ export default function UserCardDetails() {
   });
 
   const preciosList = useTracker(() => {
-    Meteor.subscribe("precios", ({ type: "megas" })).ready()
+    Meteor.subscribe("precios", ({ type: "megas" }))
     let precioslist = []
     PreciosCollection.find({ type: "megas" }).fetch().map((a) => {
       precioslist.push({ value: a.megas, label: a.megas + 'MB • $' + ((a.precio - Meteor.user().descuentovpn >= 0) ? (a.precio - Meteor.user().descuentovpn) : 0) })
@@ -251,8 +251,14 @@ export default function UserCardDetails() {
   });
 
   const preciosVPNList = useTracker(() => {
+    Meteor.subscribe("user", { "vpnip": { $exists: true, $ne: null } }, {
+      fields: {
+        '_id': 1,
+        'vpnip':1
+      }
+    }).ready()
     // Meteor.subscribe("precios",{$or:[{ type: "vpnplus"},{ type: "vpn2mb"}] }).ready()
-    Meteor.subscribe("precios", ({ $or: [{ type: "vpnplus" }, { type: "vpn2mb" }] })).ready()
+    Meteor.subscribe("precios", ({ $or: [{ type: "vpnplus" }, { type: "vpn2mb" }] }))
     let precioslist = []
     PreciosCollection.find({ $or: [{ type: "vpnplus" }, { type: "vpn2mb" }] }).fetch().map((a) => {
       precioslist.push({ value: `${a.type}/${a.megas}`, label: `${a.type} • ${a.megas}MB • $ ${(a.precio - Meteor.user().descuentovpn >= 0) ? (a.precio - Meteor.user().descuentovpn) : 0}` })
@@ -261,7 +267,7 @@ export default function UserCardDetails() {
   });
 
   const precios = useTracker(() => {
-    Meteor.subscribe("precios").ready()
+    Meteor.subscribe("precios")
 
     return PreciosCollection.find().fetch();
   });
@@ -437,6 +443,7 @@ export default function UserCardDetails() {
   const handleVPNStatus = (event) => {
     if (users.vpn || users.vpnplus || users.vpn2mb) {
 
+      
       let nextIp = Meteor.users.findOne({}, { sort: { vpnip: -1 } }) ? Meteor.users.findOne({}, { sort: { vpnip: -1 } }).vpnip : 1
       let precioVPN = users.vpnplus ? PreciosCollection.findOne({ type: "vpnplus" }).precio : (users.vpn2mb ? PreciosCollection.findOne({ type: "vpn2mb" }).precio : 350)
       //  PreciosCollection.findOne(users.vpnplus?{ type: "vpnplus" }:(users.vpn2mb?{ type: "vpn2mb" }))
