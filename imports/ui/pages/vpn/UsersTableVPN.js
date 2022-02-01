@@ -206,7 +206,7 @@ export default function UsersTableVPN(option) {
     let a = [];
 
     Meteor.users.find(option.selector?option.selector:{}, {
-      sort: { megasGastadosinBytes: -1, 'profile.firstName': 1, 'profile.lastName': 1 }
+      sort: { vpnMbGastados: -1, vpnip: -1, 'profile.firstName': 1, 'profile.lastName': 1 }
     }).map(
       async (data) =>
         data &&
