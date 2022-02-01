@@ -152,7 +152,8 @@ export default function UserCard(withAdd) {
     Meteor.subscribe("ventas", Meteor.user().username == "carlosmbinf" ? { cobrado: false } : { adminId: Meteor.userId(), cobrado: false }, {
       fields:{
         adminId: 1,
-        precio: 1
+        precio: 1,
+        cobrado: 1
       }
     })
     return VentasCollection.find({ cobrado: false }, {
