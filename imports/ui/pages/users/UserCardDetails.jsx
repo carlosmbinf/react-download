@@ -592,7 +592,7 @@ export default function UserCardDetails() {
 
             // console.log("Precio MEGAS " + precio.megas);
             // console.log("User MEGAS " + users.megas);
-            !users.isIlimitado && (precio.megas == users.megas) && (
+            !users.isIlimitado && precio.type == "megas" && (precio.megas == users.megas) && (
               VentasCollection.insert({
                 adminId: Meteor.userId(),
                 userId: users._id,
@@ -643,7 +643,7 @@ export default function UserCardDetails() {
         <DialogTitle id="alert-dialog-title">{"Alerta!!!"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            {`Usted desea eliminar el usuario ${users && users.profile.firstName} ${users && users.profile.lastName} y sus datos correspondientes?`}?
+            {`Usted desea eliminar el usuario ${users && users.profile && users.profile.firstName} ${users && users.profile && users.profile.lastName} y sus datos correspondientes?`}?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -1431,12 +1431,12 @@ export default function UserCardDetails() {
                           <Grid container direction="row" justify="center">
                             <Avatar
                               className={classes.large}
-                              alt={
+                              alt={users&&users.profile&&
                                 users.profile.firstName
                                   ? users.profile.firstName
                                   : users.profile.name
                               }
-                              src={
+                              src={users&&
                                 users.services &&
                                   users.services.facebook &&
                                   users.services.facebook.picture.data.url
@@ -1447,14 +1447,14 @@ export default function UserCardDetails() {
                           </Grid>
                           <Grid container direction="row">
                             <Typography>
-                              Nombre: {users.profile.firstName}{" "}
-                              {users.profile.lastName}
+                                Nombre: {users && users.profile && users.profile.firstName}{" "}
+                                {users && users.profile && users.profile.lastName}
                             </Typography>
                           </Grid>
                         </Grid>
                         <Grid item xs={12}>
                           <Grid container direction="row">
-                            <Typography>Rol: {users.profile.role}</Typography>
+                              <Typography>Rol: {users && users.profile && users.profile.role}</Typography>
                           </Grid>
                         </Grid>
                         <Grid item xs={12}>
