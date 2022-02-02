@@ -15,6 +15,7 @@ import {
   Zoom,
   IconButton,
   Chip,
+  TextField,
 } from "@material-ui/core";
 import { Meteor } from "meteor/meteor";
 import { Tracker } from "meteor/tracker";
@@ -123,6 +124,8 @@ export default function LogsTable() {
   let { id } = useParams();
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
+  const [countLogs, setCountLogs] = React.useState(100);
+  
   const dt = React.useRef(null);
   const history = useHistory();
 
@@ -138,13 +141,13 @@ export default function LogsTable() {
   const logs = useTracker(() => {
     if (id) {
       Meteor.subscribe("logs", { $or: [{ userAfectado: id }, { userAdmin: id }] },
-      { sort: { createdAt: -1 }, limit: 500 });
+      { sort: { createdAt: -1 }, limit: countLogs });
     } else if(Meteor.user().username == "carlosmbinf"){
       Meteor.subscribe("logs", {},
-      { sort: { createdAt: -1 }, limit: 500 });
+      { sort: { createdAt: -1 }, limit: countLogs });
     } else{
       Meteor.subscribe("logs", { $or: [{ userAfectado: Meteor.userId() }, { userAdmin: Meteor.userId() }] },
-      { sort: { createdAt: -1 }, limit: 500 });
+      { sort: { createdAt: -1 }, limit: countLogs });
     }
     
 
@@ -153,7 +156,7 @@ export default function LogsTable() {
 
       LogsCollection.find(
         id ? { $or: [{ userAfectado: id }, { userAdmin: id }] } : {},
-        { sort: { createdAt: -1 } }
+        { sort: { createdAt: -1 }, limit: countLogs }
       ).map((log) => {
         // Meteor.users.findOne(log.userAfectado) = await Meteor.users.findOne(log.userAfectado);
         // Meteor.users.findOne(log.userAdmin) = await Meteor.users.findOne(log.userAdmin);
@@ -238,7 +241,39 @@ export default function LogsTable() {
   return (
     <>
       <Grid item style={{ textAlign: "center" }}>
-        <h1>Registro Eventos </h1>
+        <h1>Registro Eventos </h1>  
+        <TextField
+          // fullWidth
+          className={classes.margin}
+          id="countLogs"
+          name="countLogs"
+          label="Cantidad de Logs"
+          variant="outlined"
+          color="secondary"
+          value={countLogs}
+          type="number"
+          onInput={(e) => {
+            setCountLogs(Number(e.target.value))
+            if (id) {
+              Meteor.subscribe("logs", { $or: [{ userAfectado: id }, { userAdmin: id }] },
+              { sort: { createdAt: -1 }, limit: countLogs });
+            } else if(Meteor.user().username == "carlosmbinf"){
+              Meteor.subscribe("logs", {},
+              { sort: { createdAt: -1 }, limit: countLogs });
+            } else{
+              Meteor.subscribe("logs", { $or: [{ userAfectado: Meteor.userId() }, { userAdmin: Meteor.userId() }] },
+              { sort: { createdAt: -1 }, limit: countLogs });
+            }
+          }}
+          InputProps={{
+            // readOnly: true,
+            // startAdornment: (
+            //   <InputAdornment position="start">
+            //     <AccountCircleIcon />
+            //   </InputAdornment>
+            // ),
+          }}
+        />
       </Grid>
       <Zoom in={true}>
         <div style={{ width: "100%", padding: 20 }}>

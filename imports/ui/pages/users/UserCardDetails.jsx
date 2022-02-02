@@ -254,7 +254,7 @@ export default function UserCardDetails() {
     Meteor.subscribe("user", { "vpnip": { $exists: true, $ne: null } }, {
       fields: {
         '_id': 1,
-        'vpnip':1
+        'vpnip': 1
       }
     }).ready()
     // Meteor.subscribe("precios",{$or:[{ type: "vpnplus"},{ type: "vpn2mb"}] }).ready()
@@ -443,7 +443,7 @@ export default function UserCardDetails() {
   const handleVPNStatus = (event) => {
     if (users.vpn || users.vpnplus || users.vpn2mb) {
 
-      
+
       let nextIp = Meteor.users.findOne({}, { sort: { vpnip: -1 } }) ? Meteor.users.findOne({}, { sort: { vpnip: -1 } }).vpnip : 1
       let precioVPN = users.vpnplus ? PreciosCollection.findOne({ type: "vpnplus" }).precio : (users.vpn2mb ? PreciosCollection.findOne({ type: "vpn2mb" }).precio : 350)
       //  PreciosCollection.findOne(users.vpnplus?{ type: "vpnplus" }:(users.vpn2mb?{ type: "vpn2mb" }))
@@ -465,7 +465,7 @@ export default function UserCardDetails() {
         message:
           `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN`
       });
-      Meteor.call('sendemail', users, { text: `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN para el usuario: ${users.username}${users.descuentovpn ? ` Con un descuento de: ${users.descuentovpn}CUP`:""}` }, `VPN ${Meteor.user().username}`)
+      Meteor.call('sendemail', users, { text: `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN para el usuario: ${users.username}${users.descuentovpn ? ` Con un descuento de: ${users.descuentovpn}CUP` : ""}` }, `VPN ${Meteor.user().username}`)
       Meteor.call('sendMensaje', users, { text: `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN para ${users.username}` }, `VPN ${Meteor.user().username}`)
 
       !users.vpn && VentasCollection.insert({
@@ -474,7 +474,7 @@ export default function UserCardDetails() {
         precio: (precioVPN - Meteor.user().descuentovpn > 0) ? (precioVPN - Meteor.user().descuentovpn) : 0,
         comentario: users.vpnplus ? PreciosCollection.findOne({ type: "vpnplus" }).comentario : (users.vpn2mb ? PreciosCollection.findOne({ type: "vpn2mb" }).comentario : "")
       })
-      !users.vpn && alert(`Se Compró el Servicio VPN con un costo: ${(precioVPN - Meteor.user().descuentovpn>=0)?(precioVPN - Meteor.user().descuentovpn):0}CUP`)
+      !users.vpn && alert(`Se Compró el Servicio VPN con un costo: ${(precioVPN - Meteor.user().descuentovpn >= 0) ? (precioVPN - Meteor.user().descuentovpn) : 0}CUP`)
 
     }
     else {
@@ -703,73 +703,73 @@ export default function UserCardDetails() {
                         </Grid>
                       </Grid>
                       <Grid item xs={12}>
-                      <Grid container spacing={3}>
-                            <Grid item xs={12}> <Divider className={classes.padding10} /></Grid>
+                        <Grid container spacing={3}>
+                          <Grid item xs={12}> <Divider className={classes.padding10} /></Grid>
 
-                            <Grid container className={classes.margin}>
+                          <Grid container className={classes.margin}>
 
 
-                              Datos Personales
-                            </Grid>
-                            <Grid item xs={12} sm={4} lg={3}>
-                              <FormControl variant="outlined">
-                                <TextField
-                                  fullWidth
-                                  className={classes.margin}
-                                  id="firstName"
-                                  name="firstName"
-                                  label="Nombre"
-                                  variant="outlined"
-                                  color="secondary"
-                                  value={users.profile.firstName}
-                                  onInput={(e) =>
-                                    Meteor.users.update(users._id, {
-                                      $set: {
-                                        "profile.firstName": e.target.value,
-                                      },
-                                    })
-                                  }
-                                  InputProps={{
-                                    readOnly: true,
-                                    // startAdornment: (
-                                    //   <InputAdornment position="start">
-                                    //     <AccountCircleIcon />
-                                    //   </InputAdornment>
-                                    // ),
-                                  }}
-                                />
-                              </FormControl>
-                            </Grid>
-                            <Grid item xs={12} sm={4} lg={3}>
-                              <FormControl variant="outlined">
-                                <TextField
-                                  fullWidth
-                                  className={classes.margin}
-                                  id="lastName"
-                                  name="lastName"
-                                  label="Apellidos"
-                                  variant="outlined"
-                                  color="secondary"
-                                  value={users.profile.lastName}
-                                  onInput={(e) =>
-                                    Meteor.users.update(users._id, {
-                                      $set: {
-                                        "profile.lastName": e.target.value,
-                                      },
-                                    })
-                                  }
-                                  InputProps={{
-                                    readOnly: true,
-                                    // startAdornment: (
-                                    //   <InputAdornment position="start">
-                                    //     <AccountCircleIcon />
-                                    //   </InputAdornment>
-                                    // ),
-                                  }}
-                                />
-                              </FormControl>
-                            </Grid>
+                            Datos Personales
                           </Grid>
+                          <Grid item xs={12} sm={4} lg={3}>
+                            <FormControl variant="outlined">
+                              <TextField
+                                fullWidth
+                                className={classes.margin}
+                                id="firstName"
+                                name="firstName"
+                                label="Nombre"
+                                variant="outlined"
+                                color="secondary"
+                                value={users.profile.firstName}
+                                onInput={(e) =>
+                                  Meteor.users.update(users._id, {
+                                    $set: {
+                                      "profile.firstName": e.target.value,
+                                    },
+                                  })
+                                }
+                                InputProps={{
+                                  readOnly: true,
+                                  // startAdornment: (
+                                  //   <InputAdornment position="start">
+                                  //     <AccountCircleIcon />
+                                  //   </InputAdornment>
+                                  // ),
+                                }}
+                              />
+                            </FormControl>
+                          </Grid>
+                          <Grid item xs={12} sm={4} lg={3}>
+                            <FormControl variant="outlined">
+                              <TextField
+                                fullWidth
+                                className={classes.margin}
+                                id="lastName"
+                                name="lastName"
+                                label="Apellidos"
+                                variant="outlined"
+                                color="secondary"
+                                value={users.profile.lastName}
+                                onInput={(e) =>
+                                  Meteor.users.update(users._id, {
+                                    $set: {
+                                      "profile.lastName": e.target.value,
+                                    },
+                                  })
+                                }
+                                InputProps={{
+                                  readOnly: true,
+                                  // startAdornment: (
+                                  //   <InputAdornment position="start">
+                                  //     <AccountCircleIcon />
+                                  //   </InputAdornment>
+                                  // ),
+                                }}
+                              />
+                            </FormControl>
+                          </Grid>
+                        </Grid>
                         <Grid container className={classes.margin}>
                           Datos del Usuario
                         </Grid>
@@ -934,7 +934,7 @@ export default function UserCardDetails() {
                               </Grid>
                             </form>
                           )}
-                          
+
                           {Meteor.user().profile.role == "admin" &&
                             !(users.profile.role == "admin") && (
                               <>
@@ -1164,10 +1164,36 @@ export default function UserCardDetails() {
                                           : "Reiniciar Consumo"}
                                       </Button>
                                     </Grid>
+
+                                    <Grid
+                                      item
+                                      xs={12}
+                                      lg={5}
+                                      style={{ textAlign: "center", padding: 3 }}
+                                    >
+                                      <Tooltip
+                                        title={
+                                          users.baneado
+                                            ? "Desbloquear al Usuario"
+                                            : "Bloquear al Usuario"
+                                        }
+                                      >
+                                        <Button
+                                          onClick={handleChangebaneado}
+                                          variant="contained"
+                                          color={
+                                            users.baneado ? "secondary" : "primary"
+                                          }
+                                        >
+                                          {users.baneado ? "Desbloquear" : "Bloquear"}
+                                        </Button>
+                                      </Tooltip>
+                                    </Grid>
+
                                   </>
                                 )}
 
-                                
+
 
 
                               </>
@@ -1378,7 +1404,7 @@ export default function UserCardDetails() {
                                   label="Para el Proxy"
                                   variant="outlined"
                                   color="secondary"
-                                  value={users.descuentoproxy?users.descuentoproxy:0}
+                                  value={users.descuentoproxy ? users.descuentoproxy : 0}
                                   onInput={(e) =>
                                     Meteor.users.update(users._id, {
                                       $set: {
@@ -1395,7 +1421,7 @@ export default function UserCardDetails() {
                             </Grid>
                             <Grid item xs={12} sm={4} lg={3}>
                               <FormControl variant="outlined">
-                              <TextField
+                                <TextField
                                   fullWidth
                                   className={classes.margin}
                                   id="vpn"
@@ -1403,7 +1429,7 @@ export default function UserCardDetails() {
                                   label="Para la VPN"
                                   variant="outlined"
                                   color="secondary"
-                                  value={users.descuentovpn?users.descuentovpn:0}
+                                  value={users.descuentovpn ? users.descuentovpn : 0}
                                   onInput={(e) =>
                                     Meteor.users.update(users._id, {
                                       $set: {
@@ -1431,30 +1457,30 @@ export default function UserCardDetails() {
                           <Grid container direction="row" justify="center">
                             <Avatar
                               className={classes.large}
-                              alt={users&&users.profile&&
+                              alt={users && users.profile &&
                                 users.profile.firstName
-                                  ? users.profile.firstName
-                                  : users.profile.name
+                                ? users.profile.firstName
+                                : users.profile.name
                               }
-                              src={users&&
+                              src={users &&
                                 users.services &&
-                                  users.services.facebook &&
-                                  users.services.facebook.picture.data.url
-                                  ? users.services.facebook.picture.data.url
-                                  : "/"
+                                users.services.facebook &&
+                                users.services.facebook.picture.data.url
+                                ? users.services.facebook.picture.data.url
+                                : "/"
                               }
                             />
                           </Grid>
                           <Grid container direction="row">
                             <Typography>
-                                Nombre: {users && users.profile && users.profile.firstName}{" "}
-                                {users && users.profile && users.profile.lastName}
+                              Nombre: {users && users.profile && users.profile.firstName}{" "}
+                              {users && users.profile && users.profile.lastName}
                             </Typography>
                           </Grid>
                         </Grid>
                         <Grid item xs={12}>
                           <Grid container direction="row">
-                              <Typography>Rol: {users && users.profile && users.profile.role}</Typography>
+                            <Typography>Rol: {users && users.profile && users.profile.role}</Typography>
                           </Grid>
                         </Grid>
                         <Grid item xs={12}>
@@ -1591,68 +1617,30 @@ export default function UserCardDetails() {
                             {edit ? "Cancelar Edición" : "Editar"}
                           </Button>
                         </Grid>
-                        {edit ? (
-                          <>
-                            <Grid
-                              item
-                              xs={12}
-                              sm={4}
-                              style={{ textAlign: "center", padding: 3 }}
+                        {edit && Meteor.user().username == "carlosmbinf" && (
+                          <Grid
+                            item
+                            xs={12}
+                            // sm={4}
+                            // style={{ textAlign: "center" }}
+                          >
+                            <Tooltip
+                              title={
+                                users.profile.role == "admin"
+                                  ? "Cambiar a user"
+                                  : "Cambiar a admin"
+                              }
                             >
-                              <Grid container>
-                                <Grid
-                                  item
-                                  xs={12}
-                                  lg={5}
-                                  style={{ textAlign: "center", padding: 3 }}
-                                >
-                                  <Tooltip
-                                    title={
-                                      users.baneado
-                                        ? "Desbloquear al Usuario"
-                                        : "Bloquear al Usuario"
-                                    }
-                                  >
-                                    <Button
-                                      onClick={handleChangebaneado}
-                                      variant="contained"
-                                      color={
-                                        users.baneado ? "secondary" : "primary"
-                                      }
-                                    >
-                                      {users.baneado ? "Desbloquear" : "Bloquear"}
-                                    </Button>
-                                  </Tooltip>
-                                </Grid>
-
-                              </Grid>
-                            </Grid>
-                          </>
-                        ) : (
-                          Meteor.user().username == "carlosmbinf" && (
-                            <Grid
-                              item
-                              xs={12}
-                              sm={4}
-                              style={{ textAlign: "center" }}
-                            >
-                              <Tooltip
-                                title={
-                                  users.profile.role == "admin"
-                                    ? "Cambiar a user"
-                                    : "Cambiar a admin"
-                                }
-                              >
-                                <Switch
-                                  checked={users.profile.role == "admin"}
-                                  onChange={handleChange}
-                                  name="Roles"
-                                  color="primary"
-                                />
-                              </Tooltip>
-                            </Grid>
-                          )
-                        )}
+                              <Switch
+                                checked={users.profile.role == "admin"}
+                                onChange={handleChange}
+                                name="Roles"
+                                color="primary"
+                              />
+                            </Tooltip>
+                          </Grid>
+                        )
+                        }
                       </Grid>
                     </Grid>
                   ) : users._id == Meteor.userId() ? (
