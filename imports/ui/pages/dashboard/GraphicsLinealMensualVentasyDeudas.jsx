@@ -231,15 +231,12 @@ export default function GraphicsLinealMensualVentasyDeudas() {
         // console.log("INICIO DE MES MOMENT: " + dateStartMonth.toISOString()); 
         // console.log("Fin DE MES MOMENT: " + dateEndMonth.toISOString()); 
 
-        aporte(usersGeneral._id,dateStartMonth.toISOString(),dateEndMonth.toISOString()) > 0 && data01.push({
-            name:
-            usersGeneral.profile&&usersGeneral.profile.firstName +
-              " " +
-              usersGeneral.profile&&usersGeneral.profile.lastName,
-              TotalVendido: aporte(usersGeneral._id,dateStartMonth.toISOString(),dateEndMonth.toISOString()),
-              Debe: gastos(usersGeneral._id,dateStartMonth.toISOString(),dateEndMonth.toISOString()),
-              amt: aporte(usersGeneral._id,dateStartMonth.toISOString(),dateEndMonth.toISOString())
-          })
+         aporte(usersGeneral._id, dateStartMonth.toISOString(), dateEndMonth.toISOString()) > 0 && data01.push({
+           name: `${usersGeneral.profile && usersGeneral.profile.firstName} ${usersGeneral.profile && usersGeneral.profile.lastName}`,
+           TotalVendido: aporte(usersGeneral._id, dateStartMonth.toISOString(), dateEndMonth.toISOString()),
+           Debe: gastos(usersGeneral._id, dateStartMonth.toISOString(), dateEndMonth.toISOString()),
+           amt: aporte(usersGeneral._id, dateStartMonth.toISOString(), dateEndMonth.toISOString())
+         })
         
         }
       );

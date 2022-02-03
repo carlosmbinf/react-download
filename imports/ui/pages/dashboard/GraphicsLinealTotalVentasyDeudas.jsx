@@ -251,15 +251,12 @@ export default function GraphicsLinealTotalVentasyDeudas() {
         // console.log("INICIO DE MES MOMENT: " + dateStartMonth.toISOString()); 
         // console.log("Fin DE MES MOMENT: " + dateEndMonth.toISOString()); 
 
-        aporte(usersGeneral._id) > 0 && data01.push({
-            name:
-            usersGeneral.profile&&usersGeneral.profile.firstName +
-              " " +
-              usersGeneral.profile&&usersGeneral.profile.lastName,
-              TotalVendido: aporte(usersGeneral._id),
-              Debe: gastos(usersGeneral._id),
-              amt: aporte(usersGeneral._id)
-          })
+         aporte(usersGeneral._id) > 0 && data01.push({
+           name: `${usersGeneral.profile && usersGeneral.profile.firstName} ${usersGeneral.profile && usersGeneral.profile.lastName}`,
+           TotalVendido: aporte(usersGeneral._id),
+           Debe: gastos(usersGeneral._id),
+           amt: aporte(usersGeneral._id)
+         })
         
         }
       );
