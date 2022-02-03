@@ -445,7 +445,7 @@ export default function UserCardDetails() {
 
 
       let nextIp = Meteor.users.findOne({}, { sort: { vpnip: -1 } }) ? Meteor.users.findOne({}, { sort: { vpnip: -1 } }).vpnip : 1
-      let precioVPN = users.vpnplus ? PreciosCollection.findOne({ type: "vpnplus" }).precio : (users.vpn2mb ? PreciosCollection.findOne({ type: "vpn2mb" }).precio : 350)
+      let precioVPN = users.vpnplus ? PreciosCollection.findOne({ type: "vpnplus", megas: users.vpnmegas}).precio : (users.vpn2mb ? PreciosCollection.findOne({ type: "vpn2mb", megas: users.vpnmegas }).precio : 0)
       //  PreciosCollection.findOne(users.vpnplus?{ type: "vpnplus" }:(users.vpn2mb?{ type: "vpn2mb" }))
       !users.vpnip &&
         Meteor.users.update(users._id, {
@@ -472,7 +472,7 @@ export default function UserCardDetails() {
         adminId: Meteor.userId(),
         userId: users._id,
         precio: (precioVPN - Meteor.user().descuentovpn > 0) ? (precioVPN - Meteor.user().descuentovpn) : 0,
-        comentario: users.vpnplus ? PreciosCollection.findOne({ type: "vpnplus" }).comentario : (users.vpn2mb ? PreciosCollection.findOne({ type: "vpn2mb" }).comentario : "")
+        comentario: users.vpnplus ? PreciosCollection.findOne({ type: "vpnplus", megas: users.vpnmegas }).comentario : (users.vpn2mb ? PreciosCollection.findOne({ type: "vpn2mb", megas: users.vpnmegas }).comentario : "")
       })
       !users.vpn && alert(`Se Compró el Servicio VPN con un costo: ${(precioVPN - Meteor.user().descuentovpn >= 0) ? (precioVPN - Meteor.user().descuentovpn) : 0}CUP`)
 
