@@ -49,6 +49,7 @@ import GraphicsLinealTotalVentasyDeudas from "./GraphicsLinealTotalVentasyDeudas
 import { VentasCollection } from "../collections/collections";
 
 import moment from 'moment';
+import GraphicsLinealVentasXMeses from "./GraphicsLinealVentasXMeses";
 
 const StyledBadge = withStyles((theme) => ({
   badge: {
@@ -360,6 +361,14 @@ export default function DashboardInit(option) {
               </Grid>
                 <div style={{ width: "100%", height: 300 }}>
                   <GraphicsLinealTotalVentasyDeudas />
+                </div>
+              </Grid>
+
+              <Divider variant="middle" />
+              <Grid container item xs={12} justify="space-evenly" alignItems="center" className={classes.paddingTop20}>
+              <Chip style={{width:"90%"}} color='primary' label="Ventas X Meses:" />
+                <div style={{ width: "100%", height: 300 }}>
+                  <GraphicsLinealVentasXMeses />
                 </div>
               </Grid>
             </>
