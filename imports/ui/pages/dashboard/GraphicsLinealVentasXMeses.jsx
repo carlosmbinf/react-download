@@ -6,7 +6,6 @@ import CardContent from "@material-ui/core/CardContent";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import {
-  Paper,
   Box,
   Grid,
   Icon,
@@ -18,15 +17,7 @@ import { Meteor } from "meteor/meteor";
 import { Tracker } from "meteor/tracker";
 import { useTracker } from "meteor/react-meteor-data";
 import Badge from "@material-ui/core/Badge";
-import Avatar from "@material-ui/core/Avatar";
 import { Link, useParams } from "react-router-dom";
-//icons
-import AccountCircleIcon from "@material-ui/icons/AccountCircle";
-import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
-import PermContactCalendarRoundedIcon from "@material-ui/icons/PermContactCalendarRounded";
-import MailIcon from "@material-ui/icons/Mail";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
-import AnyChart from "anychart-react";
 
 import moment from 'moment';
 
@@ -177,123 +168,121 @@ export default function GraphicsLinealVentasXMeses() {
     }).fetch()
   });
 
-  const gastos = (id) =>{
+  const gastos = (id,fechaStart, fechaEnd) =>{
       let totalAPagar = 0;
+      let fechaInicial = new Date(fechaStart)
+      let fechaFinal = new Date(fechaEnd)
+
+      // console.log(`fechaInicial: ${fechaInicial}`);
+      // console.log(`fechaFinal: ${fechaFinal}`);
 
       ventas.map(element => {
-      element.adminId == id && !element.cobrado && (totalAPagar += element.precio)
+        let fechaElement = new Date(element.createdAt)
+
+      // console.log(`fechaElement: ${fechaElement}`);
+
+        // fechaElement >= fechaInicial && fechaElement < fechaFinal && console.log(element.userId)
+      element.adminId == id && fechaElement >= fechaInicial && fechaElement < fechaFinal && !element.cobrado && (totalAPagar += element.precio)
+
       })
       return totalAPagar
     }
 
-  const aporte = (id) =>{
+  const aporte = (fechaStart, fechaEnd) =>{
       let totalAPagar = 0;
+      let fechaInicial = new Date(fechaStart)
+      let fechaFinal = new Date(fechaEnd)
+      
+      // console.log(`fechaStart: ${fechaStart}`);
+      // console.log(`fechaEnd: ${fechaEnd}`);
+      // console.log(`fechaInicial: ${fechaInicial}`);
+      // console.log(`fechaFinal: ${fechaFinal}`);
 
       ventas.map(element => {
-        element.adminId == id && (totalAPagar += element.precio)
+      let fechaElement = new Date(element.createdAt)
+
+      // console.log(`fechaElement: ${fechaElement}`);
+      
+
+        // fechaElement >= fechaInicial && fechaElement < fechaFinal && console.log(element.userId)
+        fechaElement >= fechaInicial && fechaElement < fechaFinal && (totalAPagar += element.precio)
       })
       return totalAPagar
     }
-
-    const TotalGanados = useTracker(() => {
-      let data01 = 0;
-    
-      Meteor.subscribe("user",{},{fields:{
-        _id: 1
-      }});
-       Meteor.users.find({"profile.role":"admin"}).map(
-          (usersGeneral,index) =>{
-  
-           aporte(usersGeneral._id) > 0 && (data01 += aporte(usersGeneral._id))
-          
-          }
-        );
-      return data01;
-      
-    });
-
-    const TotalDeudas = useTracker(() => {
-      let data01 = 0;
-    
-      Meteor.subscribe("user",{},{fields:{
-        _id: 1
-      }});
-       Meteor.users.find({}).map(
-          (usersGeneral,index) =>{
-  
-            gastos(usersGeneral._id) > 0 && (data01 += gastos(usersGeneral._id))
-          
-          }
-        );
-      return data01;
-      
-    });
 
   const datausers = useTracker(() => {
     let data01 = [];
 
-    let dateStartMonth = moment(new Date())
-    let dateEndMonth = moment(new Date())
-    dateStartMonth.startOf('month')
-    dateEndMonth.startOf('month').add(1,'month')
 
-    Meteor.subscribe("user",id ? id : {},{fields:{
-      _id: 1,
-      'profile.firstName': 1,
-      'profile.lastName': 1
-    }
+
+
+    Meteor.subscribe("user", id ? id : {}, {
+      fields: {
+        _id: 1,
+        'profile.firstName': 1,
+        'profile.lastName': 1
+      }
     });
-     Meteor.users.find({}).map(
-        (usersGeneral,index) =>{
 
-        
-        // console.log("FECHA ACTUAL: " + new Date().getMilliseconds()); 
-        // console.log("INICIO DE MES MOMENT: " + dateStartMonth.toISOString()); 
-        // console.log("Fin DE MES MOMENT: " + dateEndMonth.toISOString()); 
+    for (let index = 0; index <= 3; index++) {
 
-         aporte(usersGeneral._id) > 0 && data01.push({
-           name: `${usersGeneral.profile && usersGeneral.profile.firstName} ${usersGeneral.profile && usersGeneral.profile.lastName}`,
-           TotalVendido: aporte(usersGeneral._id),
-           Debe: gastos(usersGeneral._id),
-           amt: aporte(usersGeneral._id)
-         })
-        
-        }
-      );
+      let dateStartMonth = moment(new Date())
+      let dateEndMonth = moment(new Date())
+
+      dateStartMonth.startOf('month').subtract(0 + index, 'month')
+
+      dateEndMonth.endOf('month').subtract(0 + index, 'month')
+
+
+
+      console.log("FECHA ACTUAL: " + new Date().getMilliseconds());
+      console.log("INICIO DE MES MOMENT: " + dateStartMonth.format("YYYY MM"));
+      console.log("Fin DE MES MOMENT: " + dateEndMonth.format("YYYY MM"));
+      data01.push({
+        name: `${dateStartMonth}`,
+        TotalVendido: aporte(dateStartMonth.toISOString(), dateEndMonth.toISOString()),
+        // Debe: gastos(usersGeneral._id, dateStartMonth.toISOString(), dateEndMonth.toISOString()),
+        // amt: aporte(usersGeneral._id, dateStartMonth.toISOString(), dateEndMonth.toISOString())
+      })
+
+
+
+    }
+    
     return data01;
     
   });
-  
+
   return (
-    <Zoom in={true}>
-      <ResponsiveContainer>
-        <ComposedChart
-          // width={500}
-          // height={400}
-          data={datausers}
-          margin={{
-            top: 20,
-            right: 20,
-            bottom: 20,
-            left: 20,
-          }}
-        >
-          {/* <CartesianGrid stroke="#f5f5f5" /> */}
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          {/* <Area
-            type="basis"
-            dataKey="TotalVendido"
+      <Zoom in={true}>
+        <ResponsiveContainer>
+          <ComposedChart
+            // width={500}
+            // height={400}
+            data={datausers}
+            margin={{
+              top: 20,
+              right: 20,
+              bottom: 20,
+              left: 20,
+            }}
+          >
+            {/* <CartesianGrid stroke="#f5f5f5" /> */}
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            {/* <Area
+            type="monotone"
+            dataKey="amt"
             fill="#8884d8"
             stroke="#8884d8"
           /> */}
-          <Bar dataKey="TotalVendido" barSize={20} fill="#2e7d32" radius={5}/>
-          <Bar dataKey="Debe" barSize={20} fill="#d32f2f" radius={5}/>
-          {/* <Line type="monotone" dataKey="uv" stroke="#ff7300" /> */}
-        </ComposedChart>
-      </ResponsiveContainer>
-    </Zoom>
-  );
+            <Bar dataKey="TotalVendido" barSize={20} fill="#2e7d32" radius={5} />
+            <Bar dataKey="Debe" barSize={20} fill="#d32f2f" radius={5} />
+            {/* <Line type="monotone" dataKey="uv" stroke="#ff7300" /> */}
+          </ComposedChart>
+        </ResponsiveContainer>
+      </Zoom>
+        );
 }
