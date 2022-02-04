@@ -210,7 +210,7 @@ export default function RegisterConnectionsUser() {
 
   return (
     <>
-      {Meteor.user().username == "carlosmbinf" &&
+      {Meteor.user().username == "carlosmbinf" && !id &&
         <StateServers />
       }
 
