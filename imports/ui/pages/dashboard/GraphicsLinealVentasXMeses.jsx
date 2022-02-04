@@ -20,7 +20,8 @@ import Badge from "@material-ui/core/Badge";
 import { Link, useParams } from "react-router-dom";
 
 import moment from 'moment';
-
+import 'moment/locale/es';
+  
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -148,7 +149,9 @@ export default function GraphicsLinealVentasXMeses() {
   const bull = <span className={classes.bullet}>•</span>;
 
   let { id } = useParams();
- 
+  
+  moment.locale('es')
+
   const ventas = useTracker(() => {
     Meteor.subscribe("ventas", id ? { adminId: id} : {}, {
       fields: {
@@ -205,7 +208,12 @@ export default function GraphicsLinealVentasXMeses() {
       
 
         // fechaElement >= fechaInicial && fechaElement < fechaFinal && console.log(element.userId)
-        fechaElement >= fechaInicial && fechaElement < fechaFinal && (totalAPagar += element.precio)
+        if (id) {
+          element.adminId == id && fechaElement >= fechaInicial && fechaElement < fechaFinal && (totalAPagar += element.precio)
+        } else {
+          fechaElement >= fechaInicial && fechaElement < fechaFinal && (totalAPagar += element.precio)
+        }
+
       })
       return totalAPagar
     }
@@ -224,8 +232,8 @@ export default function GraphicsLinealVentasXMeses() {
       }
     });
 
-    for (let index = 0; index <= 3; index++) {
-
+    for (let index = 5; index >= 0; index--) {
+      
       let dateStartMonth = moment(new Date())
       let dateEndMonth = moment(new Date())
 
@@ -233,13 +241,11 @@ export default function GraphicsLinealVentasXMeses() {
 
       dateEndMonth.endOf('month').subtract(0 + index, 'month')
 
-
-
-      console.log("FECHA ACTUAL: " + new Date().getMilliseconds());
-      console.log("INICIO DE MES MOMENT: " + dateStartMonth.format("YYYY MM"));
-      console.log("Fin DE MES MOMENT: " + dateEndMonth.format("YYYY MM"));
+      // console.log("FECHA ACTUAL: " + new Date().getMilliseconds());
+      // console.log("INICIO DE MES MOMENT: " + dateStartMonth.format("MMMM(YYYY)"));
+      // console.log("Fin DE MES MOMENT: " + dateEndMonth.format("MMMM(YYYY)"));
       data01.push({
-        name: `${dateStartMonth}`,
+        name: `${dateStartMonth.format("MMMM(YYYY)")}`,
         TotalVendido: aporte(dateStartMonth.toISOString(), dateEndMonth.toISOString()),
         // Debe: gastos(usersGeneral._id, dateStartMonth.toISOString(), dateEndMonth.toISOString()),
         // amt: aporte(usersGeneral._id, dateStartMonth.toISOString(), dateEndMonth.toISOString())
@@ -272,15 +278,15 @@ export default function GraphicsLinealVentasXMeses() {
             <YAxis />
             <Tooltip />
             <Legend />
-            {/* <Area
+            <Area
             type="monotone"
-            dataKey="amt"
-            fill="#8884d8"
-            stroke="#8884d8"
-          /> */}
-            <Bar dataKey="TotalVendido" barSize={20} fill="#2e7d32" radius={5} />
-            <Bar dataKey="Debe" barSize={20} fill="#d32f2f" radius={5} />
-            {/* <Line type="monotone" dataKey="uv" stroke="#ff7300" /> */}
+            dataKey="TotalVendido"
+            fill="#3f51b5"
+            stroke="#3f51b5"
+          />
+            {/* <Bar dataKey="TotalVendido" barSize={20} fill="#2e7d32" radius={5} />
+            <Bar dataKey="Debe" barSize={20} fill="#d32f2f" radius={5} /> */}
+            {/* <Line type="monotone" dataKey="TotalVendido" stroke="#ff7300" /> */}
           </ComposedChart>
         </ResponsiveContainer>
       </Zoom>
