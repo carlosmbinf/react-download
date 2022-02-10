@@ -64,7 +64,8 @@ export default function SetPassword() {
   });
  
   const usernameexist = userActual&&userActual.username ? true : false
-  const passwordexist = userActual && userActual.services && userActual.services.password && userActual.services.password.bcrypt ? true : false
+  const passwordexist = true
+  // userActual && userActual.services && userActual.services.password && userActual.services.password.bcrypt ? true : false
   
   useTracker(() => {
     setTimeout(() => {

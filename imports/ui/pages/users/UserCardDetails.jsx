@@ -206,7 +206,7 @@ export default function UserCardDetails() {
   const tieneVentas = useTracker(() => {
     Meteor.subscribe("ventas", { adminId: id })
     // console.log(VentasCollection.find({ adminId: id}).fetch());
-    console.log(VentasCollection.find({ adminId: id }).count() > 0);
+    // console.log(VentasCollection.find({ adminId: id }).count() > 0);
     return VentasCollection.find({ adminId: id }).count() > 0
   });
 
@@ -445,7 +445,7 @@ export default function UserCardDetails() {
 
 
       let nextIp = Meteor.users.findOne({}, { sort: { vpnip: -1 } }) ? Meteor.users.findOne({}, { sort: { vpnip: -1 } }).vpnip : 1
-      let precioVPN = users.vpnplus ? PreciosCollection.findOne({ type: "vpnplus", megas: users.vpnmegas}).precio : (users.vpn2mb ? PreciosCollection.findOne({ type: "vpn2mb", megas: users.vpnmegas }).precio : 0)
+      let precioVPN = users.vpnplus ? (PreciosCollection.findOne({ type: "vpnplus", megas: users.vpnmegas})&&PreciosCollection.findOne({ type: "vpnplus", megas: users.vpnmegas}).precio) : (users.vpn2mb ? (PreciosCollection.findOne({ type: "vpn2mb", megas: users.vpnmegas })&&PreciosCollection.findOne({ type: "vpn2mb", megas: users.vpnmegas }).precio) : 0)
       //  PreciosCollection.findOne(users.vpnplus?{ type: "vpnplus" }:(users.vpn2mb?{ type: "vpn2mb" }))
       !users.vpnip &&
         Meteor.users.update(users._id, {
@@ -1452,8 +1452,7 @@ export default function UserCardDetails() {
                     </>
                   ) : (
                     <>
-                      <Paper elevation={5} style={{ width: "100%", padding: 25, marginBottom: 25 }}>
-                        <Grid item xs={12}>
+                    <Grid item xs={12}>
                           <Grid container direction="row" justify="center">
                             <Avatar
                               className={classes.large}
@@ -1471,6 +1470,9 @@ export default function UserCardDetails() {
                               }
                             />
                           </Grid>
+                        </Grid>
+                      <Paper elevation={5} style={{ width: "100%", padding: 25, marginBottom: 25 }}>
+                        <Grid item xs={12}>
                           <Grid container direction="row">
                             <Typography>
                               Nombre: {users && users.profile && users.profile.firstName}{" "}
