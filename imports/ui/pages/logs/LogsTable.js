@@ -129,15 +129,11 @@ export default function LogsTable() {
   const dt = React.useRef(null);
   const history = useHistory();
 
-  const user = (id) => {
-    Meteor.subscribe("user", id, {
-      fields: {
-        'profile.firstName': 1,
-        'profile.lastName': 1
-      }
-    });
-    return Meteor.users.findOne(id)
-  }
+  const user = identificador =>  {
+      
+      // console.log(Meteor.users.findOne(identificador));
+      return Meteor.users.findOne(identificador)
+    }
   const logs = useTracker(() => {
     if (id) {
       Meteor.subscribe("logs", { $or: [{ userAfectado: id }, { userAdmin: id }] },
@@ -158,22 +154,30 @@ export default function LogsTable() {
         id ? { $or: [{ userAfectado: id }, { userAdmin: id }] } : {},
         { sort: { createdAt: -1 }, limit: countLogs }
       ).map((log) => {
+       let userReady = Meteor.subscribe("user", log.userAfectado, {
+          fields: {
+            'profile.firstName': 1,
+            'profile.lastName': 1
+          }
+        }).ready();
+        let adminReady = Meteor.subscribe("user", log.userAdmin, {
+          fields: {
+            'profile.firstName': 1,
+            'profile.lastName': 1
+          }
+        }).ready();
+
         // Meteor.users.findOne(log.userAfectado) = await Meteor.users.findOne(log.userAfectado);
         // Meteor.users.findOne(log.userAdmin) = await Meteor.users.findOne(log.userAdmin);
-        log &&
+        log && userReady && adminReady &&
           a.push({
             id: log._id,
             type: log.type,
-            nombreUserAfectado:
-              (user(log.userAfectado).profile.firstName) +
-              " " +
-              (user(log.userAfectado).profile.lastName),
-            nombreUserAdmin:
+            nombreUserAfectado: `${user(log.userAfectado).profile.firstName} ${user(log.userAfectado).profile.lastName}`,
+            nombreUserAdmin: 
               log.userAdmin == "server"
                 ? "SERVER"
-                : (user(log.userAdmin).profile.firstName) +
-                " " +
-                (user(log.userAdmin).profile.lastName),
+                : `${user(log.userAdmin).username}`,
             mensaje: log.message,
             createdAt: log.createdAt && log.createdAt + "",
           });

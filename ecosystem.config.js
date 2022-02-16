@@ -4,7 +4,7 @@ module.exports = {
     script: "npm start",
     env: {
       NODE_ENV: "development",
-      "ROOT_URL": "https://srv55118-206152.vps.etecsa.cu",
+      "ROOT_URL": "https://vidkar.hopto.org/",
       "PORT": 3000,
     },
     env_production: {

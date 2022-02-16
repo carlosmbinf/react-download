@@ -800,7 +800,7 @@ export default function UserCardDetails() {
                                     })
                                 }}
                                 InputProps={{
-                                  readOnly: (Meteor.user().profile.role == "user"),
+                                  readOnly: (Meteor.user() && Meteor.user().profile && Meteor.user().profile.role == "user"),
                                   startAdornment: (
                                     <InputAdornment position="start">
                                       <AccountCircleIcon />
@@ -1248,17 +1248,17 @@ export default function UserCardDetails() {
                                       fullWidth
                                       value={users.bloqueadoDesbloqueadoPor ? Meteor.users.findOne({ _id: users.bloqueadoDesbloqueadoPor }) && Meteor.users.findOne({ _id: users.bloqueadoDesbloqueadoPor }).username : ""}
                                       onChange={(event, newValue) => {
-                                        let admin = newValue != "" && Meteor.users.findOne({ username: newValue })
-                                        let valueId = newValue && admin && admin._id
+                                        let admin = (newValue != "" && Meteor.users.findOne({ username: newValue }))
+                                        let valueId = newValue != "" && admin && admin._id
                                         valueId && Meteor.users.update(users._id, {
                                           $set: { bloqueadoDesbloqueadoPor: valueId },
                                         });
-                                        LogsCollection.insert({
+                                        valueId && LogsCollection.insert({
                                           type: "cambio de Administrador",
                                           userAfectado: users._id,
                                           userAdmin: Meteor.userId(),
                                           message:
-                                            "El usuario pasó a ser administrado por => " + admin.profile.firstName + " " + admin.profile.lastName
+                                            "El usuario pasó a ser administrado por => " + admin.username
                                         })
                                         // Meteor.call('sendemail', users,{text:"El usuario pasó a ser administrado por => " + admin.profile.firstName + " " + admin.profile.lastName}, "cambio de Administrador")
 
