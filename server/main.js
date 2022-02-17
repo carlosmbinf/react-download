@@ -485,7 +485,13 @@ if (Meteor.isServer) {
     },
     sendMensaje: function (user, text, subject) {
          
-      MensajesCollection.insert({from: user.bloqueadoDesbloqueadoPor, to: user._id, mensaje: text.text});
+      MensajesCollection.insert({
+        from: user.bloqueadoDesbloqueadoPor
+          ? user.bloqueadoDesbloqueadoPor
+          : Meteor.users.findOne({ username: "carlosmbinf" })._id,
+        to: user._id,
+        mensaje: text.text
+      });
       // console.log(text);
     
     },
@@ -1779,7 +1785,7 @@ Accounts.onCreateUser(function (options, user) {
           firstName: user.services.facebook.first_name,
           lastName: user.services.facebook.last_name,
           name: user.services.facebook.name,
-          role: usuario.profile.role,
+          role: user.profile.role,
         },
         user.picture = user.services.facebook.picture.data.url
       )
@@ -1813,7 +1819,7 @@ Accounts.onCreateUser(function (options, user) {
           firstName: user.services.google.given_name,
           lastName: user.services.google.family_name,
           name: user.services.google.name,
-          role: "user",
+          role: user.profile.role,
         },
         user.picture = user.services.google.picture        
         )
