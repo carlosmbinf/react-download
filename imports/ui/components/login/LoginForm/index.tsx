@@ -11,6 +11,7 @@ import LockIcon from "@material-ui/icons/Lock";
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import FacebookIcon from "@material-ui/icons/Facebook";
 import Tooltip from "@material-ui/core/Tooltip";
+import GoogleIcon from '@mui/icons-material/Google';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -168,8 +169,6 @@ const LoginForm = ({ className }: Props) => {
         </Tooltip>          
         </Grid>
       </Grid>
-      <br/>
-      <Divider/>
       <Grid container direction="column" justify="center" alignContent="center">
         <Grid item xs={12}>
         <Tooltip
@@ -183,7 +182,7 @@ const LoginForm = ({ className }: Props) => {
             color="primary"
             type="submit"
             className={classes.button}
-            startIcon={<FacebookIcon />}
+            startIcon={<GoogleIcon />}
           >
             Registrarse con Google
           </Button>

@@ -1772,7 +1772,7 @@ Accounts.onCreateUser(function (options, user) {
     let usuario = user.services.facebook.email && Meteor.users.findOne({ "emails.address": user.services.facebook.email })
 
     usuario ?
-      (console.log(`Usuario de FACEBOOK ${user._id} Creado`),
+      (console.log(`Usuario de FACEBOOK ${usuario._id} Creado`),
         usuario.services.facebook = user.services.facebook,
         user = usuario,
         user.profile = {
@@ -1806,7 +1806,7 @@ Accounts.onCreateUser(function (options, user) {
 
     let usuario = user.services.google.email && Meteor.users.findOne({ "emails.address": user.services.google.email })
     usuario ?
-      (console.log(`Usuario de GOOGLE ${user._id} Creado`),
+      (console.log(`Usuario de GOOGLE ${usuario._id} Creado`),
         usuario.services.google = user.services.google,
         user = usuario,
         user.profile = {
