@@ -53,9 +53,11 @@ const DialogActions = withStyles((theme) => ({
 }))(MuiDialogActions);
 
 export default function SetPassword() {
-  const [valueusername, setvalueusername] = React.useState("");
-  const [valuepassword, setvaluepassword] = React.useState("");
-  const [repeatPassword, setrepeatPassword] = React.useState("");
+  const [valueusername, setvalueusername] = React.useState();
+  const [valuepassword, setvaluepassword] = React.useState();
+  const [valueemail, setvalueemail] = React.useState();
+  const [valuemovil, setvaluemovil] = React.useState();
+  const [repeatPassword, setrepeatPassword] = React.useState();
   const [todoOK, settodoOk] = React.useState(false);
   const [open, setOpen] = React.useState(false);
 
@@ -63,14 +65,16 @@ export default function SetPassword() {
     return Meteor.user();
   });
  
-  const usernameexist = userActual&&userActual.username ? true : false
+  const usernameexist = userActual&&userActual.username
   const passwordexist = 
   // true
-  userActual && userActual.services && userActual.services.password && userActual.services.password.bcrypt ? true : false
+  userActual && userActual.services && userActual.services.password && userActual.services.password.bcrypt
+  const emailexist = userActual && userActual.emails && userActual.emails[0] && userActual.emails[0].address
+  const movilexist = userActual&&userActual.movil
   
   useTracker(() => {
     setTimeout(() => {
-      setOpen(!usernameexist || !passwordexist)
+      setOpen(!usernameexist || !passwordexist || !emailexist || !movilexist)
     }, 3000);
     
    });
@@ -81,21 +85,27 @@ export default function SetPassword() {
       id: Meteor.userId(),
       username : valueusername,
       password : valuepassword,
+      email : valueemail,
+      movil : valuemovil,
     }
-    if (usernameexist || passwordexist) {
-      usernameexist
-        ? (data = {
-          id: Meteor.userId(),
-          password: valuepassword,
-        },
-          Meteor.users.update(Meteor.userId(), { $set: { "passvpn": valuepassword } }))
-        : data = {
-          id: Meteor.userId(),
-          username: valueusername,
-        }
-    }
-    setvaluepassword("")
-    setvalueusername("")
+    // if (usernameexist || passwordexist) {
+    //   usernameexist
+    //     ? (data = {
+    //       id: Meteor.userId(),
+    //       password: valuepassword,
+    //     },
+    //       Meteor.users.update(Meteor.userId(), { $set: { "passvpn": valuepassword } }))
+    //     : data = {
+    //       id: Meteor.userId(),
+    //       username: valueusername,
+    //     }
+    // }
+    !passwordexist && Meteor.users.update(Meteor.userId(), { $set: { "passvpn": valuepassword } })
+
+    setvaluepassword()
+    setvalueusername()
+    setvalueemail()
+    setvaluemovil()
     $.post("/userpass", data)
     .done(function (data) {
       
@@ -121,18 +131,35 @@ export default function SetPassword() {
     setrepeatPassword(event.target.value);
     
   };
+  const handleChangeemail = (event) => {
+    setvalueemail(event.target.value);
+    
+  };
+  const handleChangemovil = (event) => {
+    setvaluemovil(event.target.value);
+    
+  };
  
+  const validarSave = () => {
+    let username = usernameexist || valueusername && valueusername != ""
+    let password = passwordexist || valuepassword && valuepassword == repeatPassword
+    let email = emailexist || valueemail && valueemail != ""
+    let movil = movilexist || valuemovil && valuemovil > 51000000 && valuemovil < 60000000
+
+    return (username && password && email && movil)
+  }
+
   return (
     <Dialog
       aria-labelledby="customized-dialog-title"
       open={open}>
-      <DialogTitle id="customized-dialog-title">Actualizar usuario y contraseña.</DialogTitle>
+      <DialogTitle id="customized-dialog-title">Actualizar datos.</DialogTitle>
       <DialogContent dividers>
         <Typography gutterBottom>
-          Debe agregar un usuario y una contraseña para su cuenta de VIDKAR,
+          Debe llenar los datos para su cuenta de VIDKAR,
           <br/>
-          Su Cuenta se cerrara cuando inserte los Datos
-          y entonces podra iniciar session mediante su <strong>Usuario y Contraseña</strong> o mediante el <strong>Login de Facebook</strong>
+          Puede que su cuenta se cierre cuando inserte los Datos
+          y entonces podra iniciar session mediante su <strong>Usuario y Contraseña</strong> o mediante el <strong>Login de Facebook/Google</strong>
         </Typography>
         <Grid container direction="column" justify="center" alignItems="center">
           {!usernameexist &&
@@ -167,7 +194,26 @@ export default function SetPassword() {
                 fullWidth
               />
             </>}
-          
+            {!emailexist &&
+              <TextField
+                margin="dense"
+                id="email"
+                label="Email"
+                type="email"
+                value={valueemail}
+                onChange={handleChangeemail}
+                fullWidth
+              />}
+            {!movilexist &&
+              <TextField
+                margin="dense"
+                id="movil"
+                label="Movil"
+                type="number"
+                value={valuemovil}
+                onChange={handleChangemovil}
+                fullWidth
+              />}
           
         </Grid>
       </DialogContent>
@@ -175,17 +221,11 @@ export default function SetPassword() {
       <Button onClick={handleLogout} variant="contained" color="secondary">
             Logout
           </Button>
-        {valueusername && passwordexist||valueusername && repeatPassword && repeatPassword === valuepassword || usernameexist &&
-        repeatPassword &&
-        repeatPassword === valuepassword ? (
-          <Button onClick={saveData} variant="contained" color="primary">
+        
+        <Button onClick={saveData} variant="contained" color="primary" disabled={validarSave() ? false : true}>
             Guardar
           </Button>
-        ) : (
-          <Button onClick={saveData} variant="contained" color="primary" disabled>
-            Guardar
-          </Button>
-        )}
+
       </DialogActions>
     </Dialog>
   );
