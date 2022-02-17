@@ -412,11 +412,7 @@ export default function PersistentDrawerLeft() {
                                   ? userActual.profile.firstName
                                   : userActual.profile.name
                               }
-                              src={
-                                userActual.services &&
-                                userActual.services.facebook &&
-                                userActual.services.facebook.picture.data.url
-                              }
+                              src={userActual.picture}
                             />
                           </StyledBadge>
                         ) : (
@@ -429,9 +425,7 @@ export default function PersistentDrawerLeft() {
                                 : userActual.profile.name
                             }
                             src={
-                              userActual.services &&
-                              userActual.services.facebook &&
-                              userActual.services.facebook.picture.data.url
+                              userActual.picture
                             }
                           />
                         )}

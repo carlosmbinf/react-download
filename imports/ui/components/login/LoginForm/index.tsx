@@ -65,6 +65,18 @@ const LoginForm = ({ className }: Props) => {
     );
   };
   
+  const handleLoginGoogle = () => {
+    setError("");
+    Meteor.loginWithGoogle(
+      { requestPermissions: ["profile", "email",
+    //  "user_birthday", "user_age_range","user_gender"
+    ] },
+      function (err) {
+        err ? setError(err.message) : history.push("/pelis");
+      }
+    );
+  };
+
   const handleOauth = (event) => {
     event.preventDefault();
     setError("");
@@ -152,6 +164,28 @@ const LoginForm = ({ className }: Props) => {
             startIcon={<FacebookIcon />}
           >
             Registrarse con Facebook
+          </Button>
+        </Tooltip>          
+        </Grid>
+      </Grid>
+      <br/>
+      <Divider/>
+      <Grid container direction="column" justify="center" alignContent="center">
+        <Grid item xs={12}>
+        <Tooltip
+          title={
+            "Inicia Session con su cuenta de Google o Crea una cuenta nueva en caso de que no se haya Registrado anteriormente"
+          }
+        >
+          <Button
+            onClick={handleLoginGoogle}
+            variant="contained"
+            color="primary"
+            type="submit"
+            className={classes.button}
+            startIcon={<FacebookIcon />}
+          >
+            Registrarse con Google
           </Button>
         </Tooltip>          
         </Grid>

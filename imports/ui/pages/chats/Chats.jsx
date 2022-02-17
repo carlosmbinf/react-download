@@ -71,7 +71,7 @@ export default Chat = () => {
 
             list.push({
                 from: element,
-                avatar: user(element) && user(element).services && user(element).services.facebook && user(element).services.facebook.picture.data.url,
+                avatar: user(element) && user(element).picture ,
                 alt: "N/A",
                 title: <p style={{ color: 'black', margin: 0 }}>{user(element)&&(user(element).profile&&user(element).profile.firstName)}</p>,
                 subtitle: lastMensaje && lastMensaje.mensaje,

@@ -7,5 +7,17 @@
 	 },
 	 "private":{
 
-	 }
+	 },
+	 "google": {
+		"client_secret": "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",
+		"client_id": "467443357554-7k3uu2kjecbf7n7m4b5s6q353frprv45.apps.googleusercontent.com",
+		"validClientIds": [
+		  "467443357554-7k3uu2kjecbf7n7m4b5s6q353frprv45.apps.googleusercontent.com"
+		]
+	  },
+	  "facebook": {
+		"appId": "581482823014129",
+        "secret": "aeeca3e355143de86008e194c31fb691"
+	  }
+
 }

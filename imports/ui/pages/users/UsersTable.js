@@ -270,6 +270,7 @@ export default function UsersTable(option) {
         'profile': 1,
         // 'edad': 1,
         'services.facebook.picture.data.url': 1,
+        'services.google.picture': 1,
         'username': 1,
         'creadoPor': 1,
         'bloqueadoDesbloqueadoPor': 1,
@@ -303,18 +304,23 @@ export default function UsersTable(option) {
           role: data.profile&&data.profile.role,
           // edad: data.edad,
           foto:
-            data.services &&
-              data.services.facebook &&
-              data.services.facebook.picture.data.url
-              ? data.services.facebook.picture.data.url
+              data.picture
+              ? data.picture
               : "/",
           online:
             conexiones(data._id).count() > 0
               ? "ONLINE"
               : "DISCONECTED",
           username: data.username,
-          creadoPor: data.creadoPor=='Server'?"Server":(data.creadoPor?(`${Meteor.users.findOne(data.creadoPor)&&Meteor.users.findOne(data.creadoPor).profile.firstName} ${Meteor.users.findOne(data.creadoPor)&&Meteor.users.findOne(data.creadoPor).profile.lastName}`):"Facebook"),
-          administradoPor: data.bloqueadoDesbloqueadoPor?(Meteor.users.findOne(data.bloqueadoDesbloqueadoPor)?(`${Meteor.users.findOne(data.bloqueadoDesbloqueadoPor)&&Meteor.users.findOne(data.bloqueadoDesbloqueadoPor).profile.firstName} ${Meteor.users.findOne(data.bloqueadoDesbloqueadoPor)&&Meteor.users.findOne(data.bloqueadoDesbloqueadoPor).profile.lastName}`):"Carlos Medina"):"Carlos Medina",
+          creadoPor: 
+            data.creadoPor == 'Facebook'
+              ? "Facebook"
+              : (data.creadoPor == 'Google'
+                ? 'Google'
+                : (data.creadoPor
+                  ? (`${Meteor.users.findOne(data.creadoPor) && Meteor.users.findOne(data.creadoPor).profile.firstName} ${Meteor.users.findOne(data.creadoPor) && Meteor.users.findOne(data.creadoPor).profile.lastName}`)
+                  : "Server")),
+          administradoPor: data.bloqueadoDesbloqueadoPor ? (Meteor.users.findOne(data.bloqueadoDesbloqueadoPor) ? (`${Meteor.users.findOne(data.bloqueadoDesbloqueadoPor) && Meteor.users.findOne(data.bloqueadoDesbloqueadoPor).profile.firstName} ${Meteor.users.findOne(data.bloqueadoDesbloqueadoPor) && Meteor.users.findOne(data.bloqueadoDesbloqueadoPor).profile.lastName}`) : "Carlos Medina") : "Carlos Medina",
           conProxy: !data.baneado,
           megasGastadosinBytes: data.megasGastadosinBytes,
           // megasGastadosinBytesGeneral: data.megasGastadosinBytesGeneral,

@@ -493,7 +493,16 @@ if (Meteor.isServer) {
 
 
   Meteor.startup(() => {
-    
+    /////// mover todas las imagenes para user.picture
+    Meteor.users.find({}).map(us => {
+      us.services && us.services.facebook && us.services.facebook.picture.data.url &&
+        Meteor.users.update(us._id, { $set: { picture: us.services.facebook.picture.data.url } })
+
+        us.services && us.services.google && us.services.google.picture &&
+        Meteor.users.update(us._id, { $set: { picture: us.services.google.picture } })
+    })
+
+
     process.env.ROOT_URL = Meteor.settings.public.ROOT_URL;
     // process.env.MONGO_URL = Meteor.settings.public.MONGO_URL;
 
@@ -503,15 +512,34 @@ if (Meteor.isServer) {
     OnlineCollection.remove({});
    // OnlineCollection.remove({address: `127.0.0.1`});
 
-    ServiceConfiguration.configurations.remove({
-      service: "facebook",
-    });
+   const settings = Meteor.settings;
 
-    ServiceConfiguration.configurations.insert({
-      service: "facebook",
-      appId: "581482823014129",
-      secret: "aeeca3e355143de86008e194c31fb691",
+   if (settings) {
+   
+    ServiceConfiguration.configurations.remove({
+      service: 'google'
     });
+  
+    ServiceConfiguration.configurations.insert({
+      service: 'google',
+      clientId: settings.google.client_id,
+      secret: settings.google.client_secret,
+      validClientIds: settings.google.validClientIds
+    });
+  
+      ServiceConfiguration.configurations.remove({
+        service: "facebook",
+      });
+  
+      ServiceConfiguration.configurations.insert({
+        service: "facebook",
+        appId: settings.facebook.appId,
+        secret: settings.facebook.secret,
+      });
+
+
+
+  }
     if (Meteor.users.find({ "profile.role": "admin" }).count() == 0) {
       console.log("CREANDO USER ADMIN");
       const user = {
@@ -1737,8 +1765,76 @@ console.log("httpProxy running with target at " + options.target);
 Accounts.onCreateUser(function (options, user) {
   // console.log("options > " + JSON.stringify(options))
   // console.log("user > " + JSON.stringify(user))
+  if (user.services.facebook) {
 
-  if (!user.services.facebook) {
+    //  user.username = user.services.facebook.name;
+    // let usuario =  Meteor.users.findOne({ "services.facebook.name": user.services.facebook.name })
+    let usuario = user.services.facebook.email && Meteor.users.findOne({ "emails.address": user.services.facebook.email })
+
+    usuario ?
+      (console.log(`Usuario de FACEBOOK ${user._id} Creado`),
+        usuario.services.facebook = user.services.facebook,
+        user = usuario,
+        user.profile = {
+          firstName: user.services.facebook.first_name,
+          lastName: user.services.facebook.last_name,
+          name: user.services.facebook.name,
+          role: usuario.profile.role,
+        },
+        user.picture = user.services.facebook.picture.data.url
+      )
+      : (console.log(`Usuario de FACEBOOK ${user._id} Creado`),
+        (user.emails = [{ address: user.services.facebook.email }]),
+        (user.profile = {
+          firstName: user.services.facebook.first_name,
+          lastName: user.services.facebook.last_name,
+          name: user.services.facebook.name,
+          role: "user",
+        }),
+        (user.online = false),
+        (user.creadoPor = "Facebook"),
+        (user.baneado = true),
+        (user.picture = user.services.facebook.picture),
+        (user.descuentoproxy = 0),
+        (user.descuentovpn = 0));
+    Meteor.users.remove(usuario._id)
+
+    return user;
+
+  } else if (user.services.google) {
+    //  user.username = user.services.facebook.name;
+
+    let usuario = user.services.google.email && Meteor.users.findOne({ "emails.address": user.services.google.email })
+    usuario ?
+      (console.log(`Usuario de GOOGLE ${user._id} Creado`),
+        usuario.services.google = user.services.google,
+        user = usuario,
+        user.profile = {
+          firstName: user.services.google.given_name,
+          lastName: user.services.google.family_name,
+          name: user.services.google.name,
+          role: "user",
+        },
+        user.picture = user.services.google.picture        
+        )
+      : (console.log(`Usuario de GOOGLE ${user._id} Creado`),
+        (user.emails = [{ address: user.services.google.email }]),
+        (user.profile = {
+          firstName: user.services.google.given_name,
+          lastName: user.services.google.family_name,
+          name: user.services.google.name,
+          role: "user",
+        }),
+        (user.online = false),
+        (user.creadoPor = "Google"),
+        (user.baneado = true),
+        (user.picture = user.services.google.picture),
+        (user.descuentoproxy = 0),
+        (user.descuentovpn = 0));
+    Meteor.users.remove(usuario._id)
+    return user;
+
+  } else {
     const profile = {
       firstName: options.firstName,
       lastName: options.lastName,
@@ -1748,7 +1844,7 @@ Accounts.onCreateUser(function (options, user) {
     // user.username = options.firstName + options.lastName
     user.profile = profile;
     user.creadoPor = options.creadoPor;
-    options.creadoPor == 'Server' || (user.bloqueadoDesbloqueadoPor = options.creadoPor);
+    user.bloqueadoDesbloqueadoPor = options.creadoPor;
     user.edad = options.edad;
     user.online = false;
     user.baneado = true;
@@ -1757,28 +1853,4 @@ Accounts.onCreateUser(function (options, user) {
     return user;
   }
 
-  //  user.username = user.services.facebook.name;
-
-  Meteor.users
-    .find({ "services.facebook.name": user.services.facebook.name })
-    .count() > 0
-    ? (console.log(user),
-      Meteor.users.update(
-        { "services.facebook.name": user.services.facebook.name },
-        { $set: { "services.facebook.name": user.services.facebook.name } }
-      ))
-    : (console.log(user),
-      (user.emails = [{ address: user.services.facebook.email }]),
-      (user.profile = {
-        firstName: user.services.facebook.first_name,
-        lastName: user.services.facebook.last_name,
-        name: user.services.facebook.name,
-        role: "user",
-      }),
-      (user.online = false),
-      (user.creadoPor = "Facebook"),
-      (user.baneado = true),
-      (user.descuentoproxy = 0),
-      (user.descuentovpn = 0));
-  return user;
 });

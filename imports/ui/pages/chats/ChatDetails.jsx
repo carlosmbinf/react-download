@@ -169,14 +169,14 @@ export default ChatDetails = () => {
                             name: Meteor.user() && (Meteor.user().profile.firstName + " " + Meteor.user().profile.lastName),
                             //   isTyping: true,
                             lastSeenMessageId: 1,
-                            bgImageUrl: Meteor.user().services && Meteor.user().services.facebook && Meteor.user().services.facebook.picture.data.url
+                            bgImageUrl: Meteor.user() && Meteor.user().picture ? Meteor.user().picture : undefined
                         },
                         {
                             id: 2,
                             name: `${user && user.profile.firstName} ${user && user.profile.lastName}`,
                             isTyping: false,
                             lastSeenMessageId: 2,
-                            bgImageUrl: user&& user.services && user.services.facebook ? user.services.facebook.picture.data.url : undefined
+                            bgImageUrl: user && user.picture ? user.picture : undefined
                         }
                     ]} // Array: list of authors
                     chatBubbleStyles={{

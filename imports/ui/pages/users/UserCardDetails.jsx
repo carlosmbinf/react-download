@@ -693,10 +693,8 @@ export default function UserCardDetails() {
                                 : users.profile.name
                             }
                             src={
-                              users.services &&
-                                users.services.facebook &&
-                                users.services.facebook.picture.data.url
-                                ? users.services.facebook.picture.data.url
+                              users.picture
+                                ? users.picture
                                 : "/"
                             }
                           />
@@ -1462,10 +1460,8 @@ export default function UserCardDetails() {
                                 : users.profile.name
                               }
                               src={users &&
-                                users.services &&
-                                users.services.facebook &&
-                                users.services.facebook.picture.data.url
-                                ? users.services.facebook.picture.data.url
+                                users.picture
+                                ? users.picture
                                 : "/"
                               }
                             />

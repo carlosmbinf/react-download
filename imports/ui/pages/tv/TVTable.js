@@ -136,10 +136,8 @@ export default function TVTable() {
           lastName: data.profile.lastName,
           role: data.profile.role,
           edad: data.edad,
-          foto: data.services &&
-            data.services.facebook &&
-            data.services.facebook.picture.data.url
-            ? data.services.facebook.picture.data.url
+          foto: data.picture
+            ? data.picture
             : "/"
         })
     );

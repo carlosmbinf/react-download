@@ -224,10 +224,8 @@ export default function UsersTableVPN(option) {
               : data.profile.name,
           role: data.profile.role,
           foto:
-            data.services &&
-              data.services.facebook &&
-              data.services.facebook.picture.data.url
-              ? data.services.facebook.picture.data.url
+              data.picture
+              ? data.picture
               : "/",
           online: (data.vpnplusConnected || data.vpn2mbConnected) ? "ONLINE" : "DISCONECTED",
           username: data.username,

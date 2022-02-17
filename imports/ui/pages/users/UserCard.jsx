@@ -142,6 +142,7 @@ export default function UserCard(withAdd) {
         'profile.lastName': 1,
         'profile.name': 1,
         'services.facebook.picture.data.url': 1,
+        'services.google.picture':1,
         'megasGastadosinBytes': 1
       }
     });
@@ -149,7 +150,7 @@ export default function UserCard(withAdd) {
     return usuarios
   });
   const ventas = useTracker(() => {
-    Meteor.subscribe("ventas", Meteor.user().username == "carlosmbinf" ? { cobrado: false } : { adminId: Meteor.userId(), cobrado: false }, {
+    Meteor.subscribe("ventas",  Meteor.user() && Meteor.user().username == "carlosmbinf" ? { cobrado: false } : { adminId: Meteor.userId(), cobrado: false }, {
       fields:{
         adminId: 1,
         precio: 1,
@@ -203,10 +204,8 @@ export default function UserCard(withAdd) {
                               : usersGeneral.profile.name
                           }
                           src={
-                            usersGeneral.services &&
-                            usersGeneral.services.facebook &&
-                            usersGeneral.services.facebook.picture.data.url
-                              ? usersGeneral.services.facebook.picture.data.url
+                            usersGeneral.picture
+                              ? usersGeneral.picture
                               : "/"
                           }
                         />
