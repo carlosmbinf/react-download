@@ -124,7 +124,7 @@ export default function CreateArchivo() {
     // var http = require("http");
     // http.post = require("http-post");
     
-   let idPeli = PelisCollection.insert({
+   let idPeli = await PelisCollection.insert({
       nombrePeli: nombrePeli,
       urlPeli: urlPeli,
       urlBackground: urlBackground,
@@ -134,7 +134,7 @@ export default function CreateArchivo() {
       mostrar: mostrar,
       year:year,
     });
-    subtitulo ?
+    idPeli && subtitulo ?
     $.post("convertsrttovtt", { idPeli: idPeli })
     .done(function (data) {
       setMessage("Película Agregada => " + idPeli);

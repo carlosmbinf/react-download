@@ -800,38 +800,58 @@ if (Meteor.isServer) {
   }
 
   var conteoPost = 0;
+  function streamToString (stream) {
+    const chunks = [];
+    return new Promise((resolve, reject) => {
+      stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
+      stream.on('error', (err) => reject(err));
+      stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
+    })
+  }
 
-  endpoint.post("/convertsrttovtt", (req, res) => {
+  endpoint.post("/convertsrttovtt", async (req, res) => {
     // console.log(req)
     // console.log(req.body)
     let id = req.body.idPeli;
-    let peli = PelisCollection.findOne({ _id: id });
+    let peli = await PelisCollection.findOne({ _id: id });
     console.log(peli);
     try {
-      var srt2vtt = require("srt-to-vtt");
-      var fs = require("fs");
-      var appRoot = require("app-root-path");
+      var srt2vtt = await require("srt-to-vtt");
+      var fs = await require("fs");
+      var appRoot = await require("app-root-path");
       var subtituloFile =
         appRoot.path + "/public/videos/subtitulo/" + id + ".vtt";
-      const https = require("https");
+      const https = await require("https");
       !fs.existsSync(appRoot.path + "/public/videos/subtitulo")
         ? fs.mkdirSync(appRoot.path + "/public/videos/subtitulo/")
         : "";
 
-      const file = fs.createWriteStream(subtituloFile);
+
+      // const file = fs.createWriteStream(subtituloFile);
       // /////////////////////////////////////////////
-      https.get(peli.subtitulo, (response) => {
-        var stream = response.pipe(srt2vtt()).pipe(file);
-        stream.on("finish", function () {});
-      });
-      PelisCollection.update(
-        { _id: req.body.idPeli },
-        {
-          $set: {
-            subtitulo: "/videos/subtitulo/" + id + ".vtt",
-          },
+      peli.subtitulo && await https.get(peli.subtitulo, async (response) => {
+        // response.on('data', (d) => {
+
+        //   // process.stdout.write(d)
+
+        // });
+        var stream = response.pipe(srt2vtt());
+        // stream.on("finish", function () {});
+        streamToString(stream).then(e => {
+          e && PelisCollection.update(
+            { _id: id },
+            {
+              $set: {
+                text: e.toString("utf8"),
+              },
+            },
+            { multi: true }
+          );
         }
-      );
+        )
+
+      });
+      
       // ///////////////////////////////////////
       // fs.createReadStream(peli.subtitulo)
       // .pipe(srt2vtt())
