@@ -148,7 +148,16 @@ export default function PeliCard(options) {
   const bull = <span className={classes.bullet}>•</span>;
 
   const peli = useTracker(() => {
-    Meteor.subscribe("pelis");
+    Meteor.subscribe("pelis", {}, {
+      fields: {
+        _id:1,
+        clasificacion: 1,
+        vistas: 1,
+        mostrar: 1,
+        urlBackground:1,
+        nombrePeli:1
+      }
+    });
     if (options.clasificacion == "All") {
       return PelisCollection.find({}, { fields: {} }).fetch();
     } else {

@@ -531,7 +531,12 @@ export const SchemaPelisCollection = new SimpleSchema({
   year: {
     type: Number,
     defaultValue: 1900,
-    min: 1900,
+    // min: 1900,
+  },
+  textSubtitle: {
+    type: String,
+    defaultValue: "",
+    optional: true,
   },
   clasificacion: {
     type: Array,

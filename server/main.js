@@ -809,6 +809,38 @@ if (Meteor.isServer) {
     })
   }
 
+  endpoint.post("/getsubtitle", async (req, res) => {
+    // console.log(req)
+    // console.log(req.body)
+    
+    try{
+      let id = req.body.idPeli;
+    let pelisubtitle = await PelisCollection.findOne({ _id: id }, { fields: { textSubtitle: 1 } });
+      res.writeHead(200, {
+        message: "OK",
+      });
+      res.end(pelisubtitle);
+    } catch (error) {
+      console.log("--------------------------------------");
+      // console.log("error.error :> " + error.error);
+      // console.log("error.reason :> " + error.reason);
+      console.log("error.message :> " + error.message);
+      // console.log("error.errorType :> " + error.errorType);
+      console.log("--------------------------------------");
+
+      res.writeHead(error.error, {
+        error: error.error,
+        reason: error.reason,
+        message: error.message,
+        errorType: error.errorType,
+      });
+      res.end(error.message);
+
+    }
+
+    
+  });
+
   endpoint.post("/convertsrttovtt", async (req, res) => {
     // console.log(req)
     // console.log(req.body)
@@ -837,12 +869,12 @@ if (Meteor.isServer) {
         // });
         var stream = response.pipe(srt2vtt());
         // stream.on("finish", function () {});
-        streamToString(stream).then(e => {
-          e && PelisCollection.update(
+        streamToString(stream).then(data => {
+          data && PelisCollection.update(
             { _id: id },
             {
               $set: {
-                text: e.toString("utf8"),
+                textSubtitle: data.toString("utf8"),
               },
             },
             { multi: true }

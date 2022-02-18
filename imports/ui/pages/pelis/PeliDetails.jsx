@@ -176,10 +176,23 @@ export default function PeliDetails() {
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
 
+  const id = useParams().id
+  
+ // De forma similar a componentDidMount y componentDidUpdate
+ useEffect(() => {
+  // Actualiza el título del documento usando la API del navegador
+  $.post("getsubtitle", { idPeli: id })
+  .done(function (data) {
+    console.log(data)
+  })
+  .fail(function (data) {
+    console.log(data)
+  })
+});
 
   const peliDetails = useTracker(() => {
-    Meteor.subscribe("peli", useParams().id);
-    return PelisCollection.findOne({ _id: useParams().id });
+    Meteor.subscribe("peli", id);
+    return PelisCollection.findOne({ _id: id });
   });
 
   const handleChange = (event) => {
