@@ -178,18 +178,6 @@ export default function PeliDetails() {
 
   const id = useParams().id
   
- // De forma similar a componentDidMount y componentDidUpdate
- useEffect(() => {
-  // Actualiza el título del documento usando la API del navegador
-  $.post("getsubtitle", { idPeli: id })
-  .done(function (data) {
-    console.log(data)
-  })
-  .fail(function (data) {
-    console.log(data)
-  })
-});
-
   const peliDetails = useTracker(() => {
     Meteor.subscribe("peli", id);
     return PelisCollection.findOne({ _id: id });
@@ -493,7 +481,7 @@ export default function PeliDetails() {
                 {/* INSERTAR VIDEO */}
                 <video onLoadedMetadata={addVistas} controls width="100%" style={{ width: "100%", maxHeight: "60vh" }} poster={peliDetails.urlBackground} preload="metadata">
                   <source src={peliDetails.urlPeli} type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
-                  <track default kind="subtitles" label="Español" src={peliDetails.subtitulo} srcLang="es" />
+                  <track default kind="subtitles" label="Español" src={`/getsubtitle?idPeli=${peliDetails._id}`} srcLang="es" />
                   {/* <track default kind="descriptions" label="Español" src="https://visuales.uclv.cu/Peliculas/Extranjeras/2020/2020_Ava/sinopsis.txt" srcLang="es"/> */}
                 </video>
               </Grid>

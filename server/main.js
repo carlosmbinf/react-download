@@ -809,44 +809,27 @@ if (Meteor.isServer) {
     })
   }
 
-  endpoint.post("/getsubtitle", async (req, res) => {
+  endpoint.get("/getsubtitle", (req, res) => {
     // console.log(req)
-    // console.log(req.body)
-    
-    try{
-      let id = req.body.idPeli;
-    let pelisubtitle = await PelisCollection.findOne({ _id: id }, { fields: { textSubtitle: 1 } });
-      res.writeHead(200, {
-        message: "OK",
-      });
-      res.end(pelisubtitle);
-    } catch (error) {
-      console.log("--------------------------------------");
-      // console.log("error.error :> " + error.error);
-      // console.log("error.reason :> " + error.reason);
-      console.log("error.message :> " + error.message);
-      // console.log("error.errorType :> " + error.errorType);
-      console.log("--------------------------------------");
+    // console.log(req.query.idPeli)
+    // res.setHeader('Content-Type', 'text/plain; charset=utf-8')
 
-      res.writeHead(error.error, {
-        error: error.error,
-        reason: error.reason,
-        message: error.message,
-        errorType: error.errorType,
-      });
-      res.end(error.message);
+    //   res.end(req.query.idPeli);
 
-    }
+    let id = req.query.idPeli;
+    let pelisubtitle = PelisCollection.findOne(req.query.idPeli);
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8')
+    res.end(pelisubtitle ? pelisubtitle.textSubtitle : "");
 
-    
   });
+
 
   endpoint.post("/convertsrttovtt", async (req, res) => {
     // console.log(req)
     // console.log(req.body)
     let id = req.body.idPeli;
     let peli = await PelisCollection.findOne({ _id: id });
-    console.log(peli);
+    
     try {
       var srt2vtt = await require("srt-to-vtt");
       var fs = await require("fs");
@@ -879,6 +862,7 @@ if (Meteor.isServer) {
             },
             { multi: true }
           );
+          console.log(`Actualizado subtitulo de la Peli: ${peli.nombrePeli}`);
         }
         )
 
