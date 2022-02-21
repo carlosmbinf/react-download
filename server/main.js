@@ -17,6 +17,9 @@ import bodyParser from "body-parser";
 import router from "router";
 import youtubeDownload from "./downloader";
 import fs from "fs";
+// import { Meteor } from "meteor/meteor";
+import { Mongo } from "meteor/mongo";
+
 
 var cron = require("node-cron");
 const endpoint = router();
@@ -1856,7 +1859,7 @@ Accounts.onCreateUser(function (options, user) {
 
     let usuario = user.services.google.email && Meteor.users.findOne({ "emails.address": user.services.google.email })
     usuario ?
-      (console.log(`Usuario de GOOGLE ${usuario._id} Creado`),
+      (console.log(`Usuario de GOOGLE ${usuario._id} actualizado`),
         usuario.services.google = user.services.google,
         user = usuario,
         user.profile = {
@@ -1865,9 +1868,13 @@ Accounts.onCreateUser(function (options, user) {
           name: user.services.google.name,
           role: user.profile.role,
         },
-        user.picture = user.services.google.picture        
+        user.picture = user.services.google.picture,
+        Meteor.users.remove(usuario._id)       
         )
       : (console.log(`Usuario de GOOGLE ${user._id} Creado`),
+    console.log(`user: \n${JSON.stringify(user)}\n-----------------------\n`),
+    console.log(`options: \n${JSON.stringify(options)}\n-----------------------\n`),
+
         (user.emails = [{ address: user.services.google.email }]),
         (user.profile = {
           firstName: user.services.google.given_name,
@@ -1881,7 +1888,6 @@ Accounts.onCreateUser(function (options, user) {
         (user.picture = user.services.google.picture),
         (user.descuentoproxy = 0),
         (user.descuentovpn = 0));
-    Meteor.users.remove(usuario._id)
     return user;
 
   } else {
@@ -1900,6 +1906,9 @@ Accounts.onCreateUser(function (options, user) {
     user.baneado = true;
     user.descuentoproxy = 0;
     user.descuentovpn = 0;
+    console.log(`user: \n${user}\n-----------------------\n`)
+    console.log(`options: \n${options}\n-----------------------\n`)
+
     return user;
   }
 
