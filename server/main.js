@@ -1834,7 +1834,9 @@ Accounts.onCreateUser(function (options, user) {
           name: user.services.facebook.name,
           role: user.profile.role,
         },
-        user.picture = user.services.facebook.picture.data.url
+        user.picture = user.services.facebook.picture.data.url,
+    Meteor.users.remove(usuario._id)
+
       )
       : (console.log(`Usuario de FACEBOOK ${user._id} Creado`),
         (user.emails = [{ address: user.services.facebook.email }]),
@@ -1850,7 +1852,6 @@ Accounts.onCreateUser(function (options, user) {
         (user.picture = user.services.facebook.picture),
         (user.descuentoproxy = 0),
         (user.descuentovpn = 0));
-    Meteor.users.remove(usuario._id)
 
     return user;
 
