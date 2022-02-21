@@ -1825,7 +1825,7 @@ Accounts.onCreateUser(function (options, user) {
     let usuario = user.services.facebook.email && Meteor.users.findOne({ "emails.address": user.services.facebook.email })
 
     usuario ?
-      (console.log(`Usuario de FACEBOOK ${usuario._id} Creado`),
+      (console.log(`Usuario de FACEBOOK ${usuario._id} actualizado`),
         usuario.services.facebook = user.services.facebook,
         user = usuario,
         user.profile = {
@@ -1873,9 +1873,6 @@ Accounts.onCreateUser(function (options, user) {
         Meteor.users.remove(usuario._id)       
         )
       : (console.log(`Usuario de GOOGLE ${user._id} Creado`),
-    console.log(`user: \n${JSON.stringify(user)}\n-----------------------\n`),
-    console.log(`options: \n${JSON.stringify(options)}\n-----------------------\n`),
-
         (user.emails = [{ address: user.services.google.email }]),
         (user.profile = {
           firstName: user.services.google.given_name,
