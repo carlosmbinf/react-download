@@ -1822,7 +1822,7 @@ Accounts.onCreateUser(function (options, user) {
 
     //  user.username = user.services.facebook.name;
     // let usuario =  Meteor.users.findOne({ "services.facebook.name": user.services.facebook.name })
-    let usuario = user.services.facebook.email && Meteor.users.findOne({ "emails.address": user.services.facebook.email })
+    let usuario = user.services.facebook.email ? Meteor.users.findOne({ "emails.address": user.services.facebook.email }) : Meteor.users.findOne({ "services.facebook.first_name": user.services.facebook.first_name, "services.facebook.last_name": user.services.facebook.last_name })
 
     usuario ?
       (console.log(`Usuario de FACEBOOK ${usuario._id} actualizado`),
