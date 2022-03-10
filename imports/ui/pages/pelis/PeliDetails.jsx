@@ -479,11 +479,14 @@ export default function PeliDetails() {
               alignItems="center" spacing={3}>
               <Grid style={{ width: "100%" }}>
                 {/* INSERTAR VIDEO */}
-                <video onLoadedMetadata={addVistas} controls width="100%" style={{ width: "100%", maxHeight: "60vh" }} poster={peliDetails.urlBackground} preload="metadata">
-                  <source src={peliDetails.urlPeli} type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
-                  <track default kind="subtitles" label="Español" src={`/getsubtitle?idPeli=${peliDetails._id}`} srcLang="es" />
-                  {/* <track default kind="descriptions" label="Español" src="https://visuales.uclv.cu/Peliculas/Extranjeras/2020/2020_Ava/sinopsis.txt" srcLang="es"/> */}
-                </video>
+                {peliDetails.urlPeli &&
+                  <video onLoadedMetadata={addVistas} controls width="100%" style={{ width: "100%", maxHeight: "60vh" }} poster={peliDetails.urlBackground} preload="metadata">
+                    <source src={peliDetails.urlPeli} type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
+                    <track default kind="subtitles" label="Español" src={`/getsubtitle?idPeli=${peliDetails._id}`} srcLang="es" />
+                    {/* <track default kind="descriptions" label="Español" src="https://visuales.uclv.cu/Peliculas/Extranjeras/2020/2020_Ava/sinopsis.txt" srcLang="es"/> */}
+                  </video>
+                }
+                
               </Grid>
               <Grid item xs={12}>
                 <Divider className={classes.padding10} />
