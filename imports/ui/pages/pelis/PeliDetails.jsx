@@ -226,7 +226,7 @@ export default function PeliDetails() {
     PelisCollection.update(peliDetails._id, { $set: peli })
 
     peliDetails._id && subtitulo != "" &&
-    $.post("convertsrttovtt", { idPeli: peliDetails._id })
+    $.post("/convertsrttovtt", { idPeli: peliDetails._id })
     .done(function (data) {
       alert(`Actualizado el subtitulo de la Película -> ${nombrePeli}`)
       console.log(data)
