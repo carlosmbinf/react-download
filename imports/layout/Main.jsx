@@ -538,13 +538,14 @@ export default function Main() {
                 )}
               </Grid>
               <Grid item xs={12}>
-                {useractual &&
+                {/* {useractual &&
                   useractual.profile &&
                   useractual.profile.role == "admin" ? (
                   <PelisCard clasificacion="All" />
                 ) : (
                   ""
-                )}
+                )} */}
+                <PelisCard clasificacion="All" />
                 <PelisCard clasificacion="AVENTURA" />
                 <PelisCard clasificacion="ACCION" />
                 <PelisCard clasificacion="CIENCIA Y FICCION" />
@@ -689,6 +690,7 @@ export default function Main() {
 
         <Route path="/">
           <div style={{ paddingBottom: "7em" }}>
+            <PelisCard clasificacion="All" />
             <PelisCard clasificacion="AVENTURA" />
             <PelisCard clasificacion="ACCION" />
             <PelisCard clasificacion="CIENCIA Y FICCION" />
