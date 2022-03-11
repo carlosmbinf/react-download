@@ -840,19 +840,15 @@ if (Meteor.isServer) {
       var subtituloFile =
         appRoot.path + "/public/videos/subtitulo/" + id + ".vtt";
       const https = await require("https");
-      !fs.existsSync(appRoot.path + "/public/videos/subtitulo")
-        ? fs.mkdirSync(appRoot.path + "/public/videos/subtitulo/")
-        : "";
+      // !fs.existsSync(appRoot.path + "/public/videos/subtitulo")
+      //   ? fs.mkdirSync(appRoot.path + "/public/videos/subtitulo/")
+      //   : "";
 
 
       // const file = fs.createWriteStream(subtituloFile);
       // /////////////////////////////////////////////
-      peli.subtitulo && await https.get(peli.subtitulo, async (response) => {
-        // response.on('data', (d) => {
-
-        //   // process.stdout.write(d)
-
-        // });
+      peli && peli.subtitulo && await https.get(peli.subtitulo, async (response) => {
+       
         var stream = response.pipe(srt2vtt());
         // stream.on("finish", function () {});
         streamToString(stream).then(data => {
@@ -871,13 +867,6 @@ if (Meteor.isServer) {
 
       });
       
-      // ///////////////////////////////////////
-      // fs.createReadStream(peli.subtitulo)
-      // .pipe(srt2vtt())
-      // .pipe(fs.createWriteStream(subtituloFile))
-
-      // PelisCollection.remove({ idFile: id });
-      //file removed
       res.writeHead(200, {
         message: "todo OK",
       });
@@ -901,10 +890,10 @@ if (Meteor.isServer) {
   });
 
 
-  endpoint.post("/insertPelis", (req, res) => {
+  endpoint.post("/insertPelis",async (req, res) => {
     // console.log(req)
     console.log(req.body)
-    let id = PelisCollection.insert({
+    let id = await PelisCollection.insert({
       nombrePeli:req.body.nombre,
       urlPeli:req.body.peli,
       urlBackground:req.body.poster,
@@ -914,40 +903,44 @@ if (Meteor.isServer) {
       subtitulo:req.body.subtitle,
       year:req.body.year
     });
-    let peli = PelisCollection.findOne({ _id: id });
+    let peli = await PelisCollection.findOne({ _id: id });
     console.log(peli);
     try {
-      var srt2vtt = require("srt-to-vtt");
-      var fs = require("fs");
-      var appRoot = require("app-root-path");
+      var srt2vtt = await require("srt-to-vtt");
+      var fs = await require("fs");
+      var appRoot = await require("app-root-path");
       var subtituloFile =
         appRoot.path + "/public/videos/subtitulo/" + id + ".vtt";
-      const https = require("https");
-      !fs.existsSync(appRoot.path + "/public/videos/subtitulo")
-        ? fs.mkdirSync(appRoot.path + "/public/videos/subtitulo/")
-        : "";
+      const https = await require("https");
+      
+      // !fs.existsSync(appRoot.path + "/public/videos/subtitulo")
+      //   ? fs.mkdirSync(appRoot.path + "/public/videos/subtitulo/")
+      //   : "";
 
-      const file = fs.createWriteStream(subtituloFile);
+
+      // const file = fs.createWriteStream(subtituloFile);
       // /////////////////////////////////////////////
-      https.get(peli.subtitulo, (response) => {
-        var stream = response.pipe(srt2vtt()).pipe(file);
-        stream.on("finish", function () {});
-      });
-      PelisCollection.update(
-        { _id: req.body.idPeli },
-        {
-          $set: {
-            subtitulo: "/videos/subtitulo/" + id + ".vtt",
-          },
+      peli && peli.subtitulo && await https.get(peli.subtitulo, async (response) => {
+       
+        var stream = response.pipe(srt2vtt());
+        // stream.on("finish", function () {});
+        streamToString(stream).then(data => {
+          data && PelisCollection.update(
+            { _id: id },
+            {
+              $set: {
+                textSubtitle: data.toString("utf8"),
+              },
+            },
+            { multi: true }
+          );
+          console.log(`Actualizado subtitulo de la Peli: ${peli.nombrePeli}`);
         }
-      );
-      // ///////////////////////////////////////
-      // fs.createReadStream(peli.subtitulo)
-      // .pipe(srt2vtt())
-      // .pipe(fs.createWriteStream(subtituloFile))
+        )
 
-      // PelisCollection.remove({ idFile: id });
-      //file removed
+      });
+      
+
       res.writeHead(200, {
         message: "todo OK",
       });
