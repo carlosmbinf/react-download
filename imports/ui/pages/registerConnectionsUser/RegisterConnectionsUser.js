@@ -130,8 +130,8 @@ export default function RegisterConnectionsUser() {
   
   const user = (id) => {
     Meteor.subscribe("user", id,{fields:{
-      'profile.firstName': 1,
-      'profile.lastName': 1
+      '_id': 1,
+      'profile': 1
     }});
     return Meteor.users.findOne(id)
   }
@@ -147,6 +147,7 @@ export default function RegisterConnectionsUser() {
            // Meteor.users.findOne(register.userAdmin) = await Meteor.users.findOne(register.userAdmin);
            // register&&
            let b = user(register.userId);
+          b &&
            a.push({
              id: register._id,
              user: b.profile.firstName + " " + b.profile.lastName,
@@ -156,7 +157,9 @@ export default function RegisterConnectionsUser() {
            });
          }
        );
-    } catch (error) {}
+    } catch (error) {
+      console.log(error)
+    }
      return a;
 
   });
