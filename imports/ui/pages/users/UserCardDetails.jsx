@@ -238,7 +238,7 @@ export default function UserCardDetails() {
       fields: {
         '_id': 1,
         'username': 1,
-        'profile.role': 1
+        "profile": 1
       }
     }).ready()
     let administradores = []
@@ -254,7 +254,8 @@ export default function UserCardDetails() {
     Meteor.subscribe("user", { "vpnip": { $exists: true, $ne: null } }, {
       fields: {
         '_id': 1,
-        'vpnip': 1
+        'vpnip': 1,
+        "profile": 1
       }
     }).ready()
     // Meteor.subscribe("precios",{$or:[{ type: "vpnplus"},{ type: "vpn2mb"}] }).ready()

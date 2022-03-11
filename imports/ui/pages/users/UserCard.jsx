@@ -137,10 +137,7 @@ export default function UserCard(withAdd) {
   const users = useTracker(() => {
     Meteor.user() &&Meteor.user().username=="carlosmbinf" &&  Meteor.subscribe("user",{"profile.role":"admin"},{
       fields:{
-        'profile.role': 1,
-        'profile.firstName': 1,
-        'profile.lastName': 1,
-        'profile.name': 1,
+        profile: 1,
         'services.facebook.picture.data.url': 1,
         'services.google.picture':1,
         'megasGastadosinBytes': 1
