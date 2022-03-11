@@ -130,7 +130,12 @@ export default function LogsTable() {
   const history = useHistory();
 
   const user = identificador =>  {
-      
+    Meteor.subscribe("user", identificador, {
+      fields: {
+        profile: 1,
+        username: 1
+      }
+    }).ready();
       // console.log(Meteor.users.findOne(identificador));
       return Meteor.users.findOne(identificador)
     }
@@ -150,34 +155,38 @@ export default function LogsTable() {
     let a = [];
     try {
 
+
       LogsCollection.find(
         id ? { $or: [{ userAfectado: id }, { userAdmin: id }] } : {},
         { sort: { createdAt: -1 }, limit: countLogs }
       ).map((log) => {
-       let userReady = Meteor.subscribe("user", log.userAfectado, {
-          fields: {
-            'profile.firstName': 1,
-            'profile.lastName': 1
-          }
-        }).ready();
-        let adminReady = Meteor.subscribe("user", log.userAdmin, {
-          fields: {
-            'profile.firstName': 1,
-            'profile.lastName': 1
-          }
-        }).ready();
+        let admin = user(log.userAdmin)
+        let usuario = user(log.userAfectado)
+      //  let userReady = Meteor.subscribe("user", log.userAfectado, {
+      //     fields: {
+      //       'profile.firstName': 1,
+      //       'profile.lastName': 1
+      //     }
+      //   }).ready();
+      //   let adminReady = Meteor.subscribe("user", log.userAdmin, {
+      //     fields: {
+      //       'profile.firstName': 1,
+      //       'profile.lastName': 1
+      //     }
+      //   }).ready();
 
         // Meteor.users.findOne(log.userAfectado) = await Meteor.users.findOne(log.userAfectado);
         // Meteor.users.findOne(log.userAdmin) = await Meteor.users.findOne(log.userAdmin);
-        log && userReady && adminReady &&
+        log && admin && usuario &&
+        // userReady && adminReady &&
           a.push({
             id: log._id,
             type: log.type,
-            nombreUserAfectado: `${user(log.userAfectado).profile.firstName} ${user(log.userAfectado).profile.lastName}`,
+            nombreUserAfectado: `${usuario.profile.firstName} ${usuario.profile.lastName}`,
             nombreUserAdmin: 
               log.userAdmin == "server"
                 ? "SERVER"
-                : `${user(log.userAdmin).username}`,
+                : `${admin.profile && admin.profile.firstName} ${admin.profile && admin.profile.lastName}`,
             mensaje: log.message,
             createdAt: log.createdAt && log.createdAt + "",
           });
