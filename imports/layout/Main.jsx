@@ -40,6 +40,7 @@ import TVonline from "../ui/pages/tv/TVCard";
 import TV from "../ui/pages/tv/TVDetails";
 import Video from "../ui/pages/videos/VideoDetails";
 import LogsTable from "../ui/pages/logs/LogsTable";
+import PelisTable from "../ui/pages/pelis/PelisTable";
 import RegisterDataUserTable from "../ui/pages/registerDataUser/RegisterDataUser";
 import RegisterConnectionsUser from "../ui/pages/registerConnectionsUser/RegisterConnectionsUser";
 import ExportDataToMongoDB from "../ui/pages/exportData/exportDataToMongoDB";
@@ -466,7 +467,7 @@ export default function Main() {
         <Route path="/tv">
           <div style={{ paddingBottom: "7em" }}>
             <Grid container direction="row" justify="center" alignItems="center">
-              <Grid item xs={12} className={classes.root}>
+              <Grid item xs={12} >
                 {useractual &&
                   useractual.profile &&
                   useractual.profile.role == "admin" ? (
@@ -490,7 +491,7 @@ export default function Main() {
           <Footer />
         </Route>
         <Route path="/create-tv">
-          <div style={{ paddingBottom: "7em" }}>
+          <div style={{ paddingBottom: "7em" }} justify="center" alignItems="center">
             {useractual &&
               useractual.profile &&
               useractual.profile.role == "admin" ? (
@@ -528,23 +529,19 @@ export default function Main() {
         <Route path="/pelis">
           <div style={{ paddingBottom: "7em" }}>
             <Grid container direction="row" justify="center" alignItems="center">
-              <Grid item xs={12} className={classes.root}>
+              <Grid item xs={12}>
                 {useractual &&
                   useractual.profile &&
                   useractual.profile.role == "admin" ? (
-                  <PelisCard withCreate="true" />
+                    <>
+                      <PelisCard withCreate="true" />
+                      <PelisTable />
+                    </>
                 ) : (
                   ""
                 )}
               </Grid>
               <Grid item xs={12}>
-                {/* {useractual &&
-                  useractual.profile &&
-                  useractual.profile.role == "admin" ? (
-                  <PelisCard clasificacion="All" />
-                ) : (
-                  ""
-                )} */}
                 <PelisCard clasificacion="All" />
                 <PelisCard clasificacion="AVENTURA" />
                 <PelisCard clasificacion="ACCION" />

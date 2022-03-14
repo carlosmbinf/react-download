@@ -159,9 +159,9 @@ export default function PeliCard(options) {
       }
     });
     if (options.clasificacion == "All") {
-      return PelisCollection.find({}, { fields: {} }).fetch();
+      return PelisCollection.find({ mostrar: "true" }, { fields: {} }).fetch();
     } else {
-      return PelisCollection.find({ clasificacion: options.clasificacion }, { fields: {} }).fetch();
+      return PelisCollection.find({ mostrar: "true", clasificacion: options.clasificacion }, { fields: {} }).fetch();
     }
   });
 
