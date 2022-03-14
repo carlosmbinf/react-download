@@ -541,7 +541,7 @@ export default function CreateArchivo() {
                                 color="secondary"
                                 type="number"
                                 value={anoInsertPeli}
-                                onInput={(e) => {setanoInsertPeli(e.target.value) console.log(e.target.value)}}
+                                onInput={(e) => setanoInsertPeli(e.target.value)}
                                 InputProps={
                                   {
                                     // startAdornment: (
