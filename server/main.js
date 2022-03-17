@@ -844,9 +844,9 @@ if (Meteor.isServer) {
 
 ////////////////////////INSERTAR PELICUALAS PASANDOLE EL AÑO////////////
   endpoint.post("/insertpelisbyyears", (req, res) => {
-    console.log(req.body)
+    //console.log(req.body)
 
-var year = req.body;
+var year = req.body.year;
 var pelis = [];
 (async () => {
   const url = `https://visuales.uclv.cu/Peliculas/Extranjeras/${year}/`
