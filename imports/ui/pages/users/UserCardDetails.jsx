@@ -525,33 +525,33 @@ export default function UserCardDetails() {
       )
     ) : (
 
-      users.baneado ||
-      (Meteor.users.update(users._id, {
-        $set: {
-          baneado: users.baneado ? false : true,
-          bloqueadoDesbloqueadoPor: Meteor.userId()
-        },
-      }),
-        LogsCollection.insert({
-          type: !users.baneado ? "Bloqueado" : "Desbloqueado",
-          userAfectado: users._id,
-          userAdmin: Meteor.userId(),
-          message:
-            "Ha sido " +
-            (!users.baneado ? "Bloqueado" : "Desbloqueado") +
-            " por un Admin"
-        }),
-        Meteor.call('sendemail', users, {
-          text: "Ha sido " +
-            (!users.baneado ? "Bloqueado" : "Desbloqueado") +
-            ` el proxy del usuario ${users.username}`
-        }, (!users.baneado ? "Bloqueado " + Meteor.user().username : "Desbloqueado " + Meteor.user().username)),
-        Meteor.call('sendMensaje', users, {
-          text: "Ha sido " +
-            (!users.baneado ? "Bloqueado" : "Desbloqueado") +
-            ` el proxy del usuario ${users.username}`
-        }, (!users.baneado ? "Bloqueado " + Meteor.user().username : "Desbloqueado " + Meteor.user().username))
-      ),
+        (users.baneado ||
+          (Meteor.users.update(users._id, {
+            $set: {
+              baneado: users.baneado ? false : true,
+              bloqueadoDesbloqueadoPor: Meteor.userId()
+            },
+          }),
+            LogsCollection.insert({
+              type: !users.baneado ? "Bloqueado" : "Desbloqueado",
+              userAfectado: users._id,
+              userAdmin: Meteor.userId(),
+              message:
+                "Ha sido " +
+                (!users.baneado ? "Bloqueado" : "Desbloqueado") +
+                " por un Admin"
+            }),
+            Meteor.call('sendemail', users, {
+              text: "Ha sido " +
+                (!users.baneado ? "Bloqueado" : "Desbloqueado") +
+                ` el proxy del usuario ${users.username}`
+            }, (!users.baneado ? "Bloqueado " + Meteor.user().username : "Desbloqueado " + Meteor.user().username)),
+            Meteor.call('sendMensaje', users, {
+              text: "Ha sido " +
+                (!users.baneado ? "Bloqueado" : "Desbloqueado") +
+                ` el proxy del usuario ${users.username}`
+            }, (!users.baneado ? "Bloqueado " + Meteor.user().username : "Desbloqueado " + Meteor.user().username))
+          )),
 
       validacion && users.baneado && (
         Meteor.users.update(users._id, {
@@ -581,7 +581,7 @@ export default function UserCardDetails() {
         }, (!users.baneado ? "Bloqueado " + Meteor.user().username : "Desbloqueado " + Meteor.user().username)),
         precios.map(precio => {
 
-          users.isIlimitado && precio.fecha && (VentasCollection.insert({
+          users.isIlimitado && precio.type == "fecha" && (VentasCollection.insert({
             adminId: Meteor.userId(),
             userId: users._id,
             precio: (precio.precio - Meteor.user().descuentoproxy > 0) ? (precio.precio - Meteor.user().descuentoproxy) : 0,
@@ -990,7 +990,7 @@ export default function UserCardDetails() {
                                 </FormControlLabel> */}
                                 </Grid>
                                 {users.isIlimitado && (
-                                  <Grid item xs={12} >
+                                  <Grid container item xs={12}  >
                                     <FormControl variant="outlined">
                                       <TextField
                                         fullWidth
@@ -1012,17 +1012,11 @@ export default function UserCardDetails() {
                                           true
                                         )}
                                         onInput={(e) => {
-                                          Meteor.users.update(users._id, {
+                                          e.target.value && Meteor.users.update(users._id, {
                                             $set: {
-                                              fechaSubscripcion: e.target.value
-                                                ? (new Date(e.target.value))
-                                                : "",
-                                              // baneado: e.target.value
-                                              //   ? false
-                                              //   : users.baneado,
+                                              fechaSubscripcion: new Date(e.target.value)
                                             },
-                                          });
-                                          e.target.value &&
+                                          }),
                                             LogsCollection.insert({
                                               type: "Fecha Limite Proxy",
                                               userAfectado: users._id,
@@ -1034,7 +1028,18 @@ export default function UserCardDetails() {
                                                   true,
                                                   true
                                                 ),
-                                            });
+                                            }),!users.baneado && LogsCollection.insert({
+                                              type: 'Bloqueado',
+                                              userAfectado: users._id,
+                                              userAdmin: Meteor.userId(),
+                                              message:
+                                                `Se Desactivó el PROXY porque estaba activa y cambio la fecha Limite`
+                                            }),
+                                              !users.baneado && Meteor.users.update(users._id, {
+                                                $set: {
+                                                  baneado: !users.baneado
+                                                },
+                                              })
                                           // , Meteor.call('sendemail', users,{text: "La Fecha Limite del Proxy se cambió para: " +
                                           // dateFormat(e.target.value,
                                           //   "yyyy-mm-dd",
@@ -1053,6 +1058,49 @@ export default function UserCardDetails() {
                                       />
                                     </FormControl>
 
+                                    <Grid
+                                      item xs={12}
+                                    // style={{ textAlign: "center", padding: 3 }}
+                                    >
+                                      <Button
+                                        disabled={users.megasGastadosinBytes == 0}
+                                        onClick={handleReiniciarConsumo}
+                                        variant="contained"
+                                        color={"secondary"}
+                                      >
+                                        {users.megasGastadosinBytes == 0
+                                          ? "Sin Consumo"
+                                          : "Reiniciar Consumo"}
+                                      </Button>
+                                    </Grid>
+
+                                    <Grid
+                                      item
+                                      xs={12}
+                                      lg={5}
+                                      style={{ 
+                                        // textAlign: "center",
+                                         paddingTop: 10 
+                                        }}
+                                    >
+                                      <Tooltip
+                                        title={
+                                          users.baneado
+                                            ? "Desbloquear al Usuario"
+                                            : "Bloquear al Usuario"
+                                        }
+                                      >
+                                        <Button
+                                          onClick={handleChangebaneado}
+                                          variant="contained"
+                                          color={
+                                            users.baneado ? "secondary" : "primary"
+                                          }
+                                        >
+                                          {users.baneado ? "Desbloquear" : "Bloquear"}
+                                        </Button>
+                                      </Tooltip>
+                                    </Grid>
                                   </Grid>
                                 )}
                                 {!users.isIlimitado && (
@@ -1126,6 +1174,18 @@ export default function UserCardDetails() {
                                               message:
                                                 `Ha sido Cambiado el consumo de Datos a: ${newValue.value}MB`,
                                             });
+                                            !users.baneado && LogsCollection.insert({
+                                              type: 'Bloqueado',
+                                              userAfectado: users._id,
+                                              userAdmin: Meteor.userId(),
+                                              message:
+                                                `Se ${!users.baneado ? "Desactivó" : "Activo"} el PROXY porque estaba activo y cambio el  paquete de megas seleccionado`
+                                            }), Meteor.users.update(users._id, {
+                                                $set: {
+                                                  baneado: !users.baneado
+                                                },
+                                              })
+                                            
                                             // Meteor.call('sendemail', users,{text:`Ha sido Cambiado el consumo de Datos a: ${newValue.value}MB`}, "Megas")
                                             // setIP(newValue);
                                           }}
@@ -1168,7 +1228,10 @@ export default function UserCardDetails() {
                                       item
                                       xs={12}
                                       lg={5}
-                                      style={{ textAlign: "center", padding: 3 }}
+                                      style={{ 
+                                        // textAlign: "center",
+                                         paddingTop: 10 
+                                        }}
                                     >
                                       <Tooltip
                                         title={
