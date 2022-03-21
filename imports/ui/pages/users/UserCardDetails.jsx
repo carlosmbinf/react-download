@@ -1028,18 +1028,19 @@ export default function UserCardDetails() {
                                                   true,
                                                   true
                                                 ),
-                                            }),!users.baneado && LogsCollection.insert({
-                                              type: 'Bloqueado',
+                                            })
+                                            e.target.value && !users.baneado && (LogsCollection.insert({
+                                              type: 'PROXY',
                                               userAfectado: users._id,
                                               userAdmin: Meteor.userId(),
                                               message:
                                                 `Se Desactivó el PROXY porque estaba activa y cambio la fecha Limite`
                                             }),
-                                              !users.baneado && Meteor.users.update(users._id, {
+                                              Meteor.users.update(users._id, {
                                                 $set: {
                                                   baneado: !users.baneado
                                                 },
-                                              })
+                                              }))
                                           // , Meteor.call('sendemail', users,{text: "La Fecha Limite del Proxy se cambió para: " +
                                           // dateFormat(e.target.value,
                                           //   "yyyy-mm-dd",
@@ -1085,19 +1086,19 @@ export default function UserCardDetails() {
                                     >
                                       <Tooltip
                                         title={
-                                          users.baneado
-                                            ? "Desbloquear al Usuario"
-                                            : "Bloquear al Usuario"
+                                          !users.baneado
+                                            ? "Desactivar al Usuario"
+                                            : "Activar al Usuario"
                                         }
                                       >
                                         <Button
                                           onClick={handleChangebaneado}
                                           variant="contained"
                                           color={
-                                            users.baneado ? "secondary" : "primary"
+                                            !users.baneado ? "secondary" : "primary"
                                           }
                                         >
-                                          {users.baneado ? "Desbloquear" : "Bloquear"}
+                                          {!users.baneado ? "Desactivar" : "Activar"}
                                         </Button>
                                       </Tooltip>
                                     </Grid>
@@ -1358,7 +1359,114 @@ export default function UserCardDetails() {
                             <h3>
                               VPN
                             </h3>
-                            <Grid item xs={12} sm={4}>
+                            <Grid
+                                  item
+                                  xs={12}
+                                  style={{
+                                    display: "flex",
+                                    justifyContent: "left",
+                                    alignItems: "center",
+                                  }}
+                                >
+                                  <FormControlLabel
+                                    control={
+                                      <Tooltip
+                                        title={
+                                          users.vpnisIlimitado
+                                            ? "Cambiar consumo por MB"
+                                            : "Cambiar consumo por Fecha"
+                                        }
+                                      >
+                                        <Switch
+                                          checked={users.vpnisIlimitado}
+                                          onChange={() => {
+                                            Meteor.users.update(users._id, {
+                                              $set: {
+                                                vpnisIlimitado: !users.vpnisIlimitado,
+                                              },
+                                            });
+                                          }}
+                                          name="Ilimitado"
+                                          color={
+                                            users.vpnisIlimitado
+                                              ? "secondary"
+                                              : "primary"
+                                          }
+                                        />
+                                      </Tooltip>
+                                    }
+                                    label={
+                                      users.vpnisIlimitado
+                                        ? "Limitado por Fecha"
+                                        : "Puede Consumir " +
+                                        (users.vpnmegas ? users.vpnmegas : 0) +
+                                        " MB"
+                                    }
+                                  />
+                                  {/* <FormControlLabel variant="outlined" label="Primary">
+                                  
+                                </FormControlLabel> */}
+                                </Grid>
+                            {users.vpnisIlimitado
+                              ? (
+                                <Grid container item xs={12}  >
+                                  <FormControl variant="outlined">
+                                    <TextField
+                                      fullWidth
+                                      className={classes.margin}
+                                      id="vpnfechaSubscripcion"
+                                      name="vpnfechaSubscripcion"
+                                      label="Fecha Limite VPN"
+                                      variant="outlined"
+                                      color="secondary"
+                                      type="date"
+                                      value={dateFormat(
+                                        new Date(
+                                          users.vpnfechaSubscripcion
+                                            ? users.vpnfechaSubscripcion
+                                            : new Date()
+                                        ),
+                                        "yyyy-mm-dd",
+                                        true,
+                                        true
+                                      )}
+                                      onInput={(e) => {
+                                        e.target.value && Meteor.users.update(users._id, {
+                                          $set: {
+                                            vpnfechaSubscripcion: new Date(e.target.value)
+                                          },
+                                        }),
+                                          LogsCollection.insert({
+                                            type: "Fecha Limite VPN",
+                                            userAfectado: users._id,
+                                            userAdmin: Meteor.userId(),
+                                            message:
+                                              "La Fecha Limite de la VPN se cambió para: " +
+                                              dateFormat(e.target.value,
+                                                "yyyy-mm-dd",
+                                                true,
+                                                true
+                                              ),
+                                          })
+                                          e.target.value && users.vpn && (LogsCollection.insert({
+                                            type: 'VPN Bloqueado',
+                                            userAfectado: users._id,
+                                            userAdmin: Meteor.userId(),
+                                            message:
+                                              `Se Desactivó la VPN porque estaba activa y cambio la fecha Limite`
+                                          }),
+                                          Meteor.users.update(users._id, {
+                                            $set: {
+                                              vpn: !users.vpn
+                                            },
+                                          }))
+                                        
+                                      }}
+                                    />
+                                  </FormControl>
+                                </Grid>
+                              )
+                              : <Grid item xs={12} sm={4}>
                               <FormControl fullWidth>
                                 {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
                                 <Autocomplete
@@ -1417,9 +1525,21 @@ export default function UserCardDetails() {
                                 />
                               </FormControl>
 
+                            </Grid>}
+                            <Grid item xs={12} sm={4}
+                              style={{ padding: 3 }}
+                            >
+                              <Button
+                                disabled={users.vpnMbGastados ? false : true}
+                                onClick={handleReiniciarConsumoVPN}
+                                variant="contained"
+                                color={users.vpnMbGastados ? "secondary" : "primary"}
+                              >
+                                {users.vpnMbGastados ? "Reiniciar Consumo" : "Sin consumo de Datos"}
+                              </Button>
                             </Grid>
                             <Grid item xs={12} sm={4}
-                              style={{ textAlign: "center", padding: 3 }}
+                              style={{ padding: 3 }}
                             >
                               <Button
                                 // disabled={Meteor.user().username != "carlosmbinf"}
@@ -1432,19 +1552,6 @@ export default function UserCardDetails() {
                                   : "Activar VPN"}
                               </Button>
                             </Grid>
-                            <Grid item xs={12} sm={4}
-                              style={{ textAlign: "center", padding: 3 }}
-                            >
-                              <Button
-                                disabled={users.vpnMbGastados ? false : true}
-                                onClick={handleReiniciarConsumoVPN}
-                                variant="contained"
-                                color={users.vpnMbGastados ? "secondary" : "primary"}
-                              >
-                                {users.vpnMbGastados ? "Reiniciar Consumo" : "Sin consumo de Datos"}
-                              </Button>
-                            </Grid>
-
                           </>
                         }
                         {Meteor.user() && Meteor.user().profile && Meteor.user().profile.role == "admin" &&
@@ -1615,8 +1722,20 @@ export default function UserCardDetails() {
 
                           <Grid item xs={12}>
                             <Grid container direction="row">
-                              <Typography>
-                                LIMITE {"•"} {users.vpnmegas ? users.vpnmegas : 0} MB
+                            <Typography>
+                                LIMITE {"• "}
+                                {users.vpnisIlimitado
+                                  ? users.vpnfechaSubscripcion
+                                    ? dateFormat(
+                                      new Date(users.vpnfechaSubscripcion),
+                                      "yyyy-mm-dd",
+                                      true,
+                                      true
+                                    )
+                                    : "No esta establecida la fecha limite"
+                                  : users.vpnmegas
+                                    ? users.vpnmegas + " MB"
+                                    : " No esta establecido el Limite de Megas a consumir"}
                               </Typography>
                             </Grid>
                           </Grid>

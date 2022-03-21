@@ -759,21 +759,47 @@ if (Meteor.isServer) {
       .schedule(
         "0-59 * * * *",
         async () => {
-          let users = await Meteor.users.find({ vpn: true }, {
-            fields: {
-              _id: 1,
-              vpnMbGastados: 1,
-              profile: 1,
-              vpnmegas: 1,
-              vpn: 1,
-              bloqueadoDesbloqueadoPor: 1,
-              emails: 1
-            }
-          });
+          let users = await Meteor.users.find({ vpn: true }
+          //   , {
+          //   fields: {
+          //     _id: 1,
+          //     vpnMbGastados: 1,
+          //     profile: 1,
+          //     vpnmegas: 1,
+          //     vpn: 1,
+          //     bloqueadoDesbloqueadoPor: 1,
+          //     emails: 1,
+          //     vpnisIlimitado: 1,
+          //     vpnfechaSubscripcion: 1
+          //   }
+          // }
+          );
           await users.forEach((user) => {
+            console.log(user)
+            console.log(new Date(new Date()));
+          console.log(user.fechaSubscripcion.toString());
+          console.log((new Date(new Date()) > user.fechaSubscripcion))
             // !(user.username == "carlosmbinf") &&
-            user.profile.role != "admin" &&
-              (user.vpnMbGastados?user.vpnMbGastados:0) >= ((user.vpnmegas?Number(user.vpnmegas):0) * 1000000) &&
+            user.profile.role != "admin" && user.isIlimitado &&
+              (new Date(new Date()) > new Date(user.fechaSubscripcion)) &&
+            (Meteor.users.update(user._id, {
+              $set: { vpn: false},
+            }),
+            LogsCollection.insert({
+              type: "Bloqueo VPN",
+              userAfectado: user._id,
+              userAdmin: "server",
+              message:
+                "El server " + process.env.ROOT_URL +" Bloqueo automaticamente la VPN porque consumio: " + user.vpnmegas + " MB"
+            }),sendemail(
+              user,
+              {
+                text: "El server Bloqueo automaticamente la VPN a: " + user.profile.firstName + " " + user.profile.lastName + " porque paso la fecha limite: " + user.fechaSubscripcion,  
+              },
+              'VidKar Bloqueo de VPN')
+            );
+
+            user.profile.role != "admin" && !user.isIlimitado && (user.vpnMbGastados?user.vpnMbGastados:0) >= ((user.vpnmegas?Number(user.vpnmegas):0) * 1000000) &&
                   user.vpn &&
                   (Meteor.users.update(user._id, {
                     $set: { vpn: false},
@@ -885,7 +911,7 @@ console.log(pelis.length)
 pelis&&
 pelis.forEach(element => {
   
-      http.post("http://vidkar.ddns.net:6000/insertPelis", element, (opciones, res, body) => {
+      http.post("http://localhost:6000/insertPelis", element, (opciones, res, body) => {
         if (!opciones.headers.error) {
           // console.log(`statusCode: ${res.statusCode}`);
           console.log("error " + JSON.stringify(opciones.headers));
