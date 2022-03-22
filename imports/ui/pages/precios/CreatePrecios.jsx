@@ -262,7 +262,8 @@ export default function CreatePrecios() {
                               <em>None</em>
                             </MenuItem> */}
                               <MenuItem value={"megas"}>Megas</MenuItem>
-                              <MenuItem value={"fecha"}>Fecha</MenuItem>
+                              <MenuItem value={"fecha-proxy"}>Fecha - Proxy</MenuItem>
+                              <MenuItem value={"fecha-vpn"}>Fecha - VPN</MenuItem>
                               <MenuItem value={"vpn2mb"}>VPN 2MB</MenuItem>
                               <MenuItem value={"vpnplus"}>VPN Plus</MenuItem>
                             </Select>

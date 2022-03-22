@@ -273,6 +273,7 @@ return Meteor.users.findOne(id)
                   filterPlaceholder="Search"
                   filterMatchMode="contains"
                 />
+                {!id &&
                 <Column
                   field="user"
                   header="Nombre del Usuario"
@@ -280,7 +281,7 @@ return Meteor.users.findOne(id)
                   filter
                   filterPlaceholder="Search"
                   filterMatchMode="contains"
-                />
+                />}
                 {options.type == 'vpn' &&
                   <Column
                     field="vpnMbGastados"

@@ -140,27 +140,27 @@ export default function LogsTable() {
       return Meteor.users.findOne(identificador)
     }
   const logs = useTracker(() => {
+    let query = {}
     if (id) {
-      Meteor.subscribe("logs", { $or: [{ userAfectado: id }, { userAdmin: id }] },
-      { sort: { createdAt: -1 }, limit: countLogs });
+      query = { $or: [{ userAfectado: id }, { userAdmin: id }] }
     } else if(Meteor.user().username == "carlosmbinf"){
-      Meteor.subscribe("logs", {},
-      { sort: { createdAt: -1 }, limit: countLogs });
+      query = {}
     } else{
-      Meteor.subscribe("logs", { $or: [{ userAfectado: Meteor.userId() }, { userAdmin: Meteor.userId() }] },
-      { sort: { createdAt: -1 }, limit: countLogs });
+      query = { $or: [{ userAfectado: Meteor.userId() }, { userAdmin: Meteor.userId() }] }
     }
-    
+
+    Meteor.subscribe("logs", query,
+      { sort: { createdAt: -1 }, limit: countLogs });
 
     let a = [];
     try {
 
 
       LogsCollection.find(
-        id ? { $or: [{ userAfectado: id }, { userAdmin: id }] } : {},
+        query,
         { sort: { createdAt: -1 }, limit: countLogs }
       ).map((log) => {
-        let admin = user(log.userAdmin)
+        let admin = log.userAdmin == "server" ? log.userAdmin : user(log.userAdmin)
         let usuario = user(log.userAfectado)
       //  let userReady = Meteor.subscribe("user", log.userAfectado, {
       //     fields: {
@@ -184,7 +184,7 @@ export default function LogsTable() {
             type: log.type,
             nombreUserAfectado: `${usuario.profile.firstName} ${usuario.profile.lastName}`,
             nombreUserAdmin: 
-              log.userAdmin == "server"
+              admin == "server"
                 ? "SERVER"
                 : `${admin.profile && admin.profile.firstName} ${admin.profile && admin.profile.lastName}`,
             mensaje: log.message,

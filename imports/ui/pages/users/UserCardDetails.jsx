@@ -446,7 +446,14 @@ export default function UserCardDetails() {
 
 
       let nextIp = Meteor.users.findOne({}, { sort: { vpnip: -1 } }) ? Meteor.users.findOne({}, { sort: { vpnip: -1 } }).vpnip : 1
-      let precioVPN = users.vpnplus ? (PreciosCollection.findOne({ type: "vpnplus", megas: users.vpnmegas})&&PreciosCollection.findOne({ type: "vpnplus", megas: users.vpnmegas}).precio) : (users.vpn2mb ? (PreciosCollection.findOne({ type: "vpn2mb", megas: users.vpnmegas })&&PreciosCollection.findOne({ type: "vpn2mb", megas: users.vpnmegas }).precio) : 0)
+      let precioVPN = users.vpnisIlimitado
+        ?
+        (PreciosCollection.findOne({ type: "fecha-vpn" }))
+        : (users.vpnplus
+          ? (PreciosCollection.findOne({ type: "vpnplus", megas: users.vpnmegas }))
+          : (users.vpn2mb
+            ? (PreciosCollection.findOne({ type: "vpn2mb", megas: users.vpnmegas }))
+            : 0))
       //  PreciosCollection.findOne(users.vpnplus?{ type: "vpnplus" }:(users.vpn2mb?{ type: "vpn2mb" }))
       !users.vpnip &&
         Meteor.users.update(users._id, {
@@ -472,10 +479,11 @@ export default function UserCardDetails() {
       !users.vpn && VentasCollection.insert({
         adminId: Meteor.userId(),
         userId: users._id,
-        precio: (precioVPN - Meteor.user().descuentovpn > 0) ? (precioVPN - Meteor.user().descuentovpn) : 0,
+        precio: (precioVPN.precio - Meteor.user().descuentovpn > 0) ? (precioVPN.precio - Meteor.user().descuentovpn) : 0,
         comentario: users.vpnplus ? PreciosCollection.findOne({ type: "vpnplus", megas: users.vpnmegas }).comentario : (users.vpn2mb ? PreciosCollection.findOne({ type: "vpn2mb", megas: users.vpnmegas }).comentario : "")
       })
-      !users.vpn && alert(`Se Compró el Servicio VPN con un costo: ${(precioVPN - Meteor.user().descuentovpn >= 0) ? (precioVPN - Meteor.user().descuentovpn) : 0}CUP`)
+      // !users.vpn && alert(`Se Compró el Servicio VPN con un costo: ${(precioVPN.precio - Meteor.user().descuentovpn >= 0) ? (precioVPN.precio - Meteor.user().descuentovpn) : 0}CUP`)
+      !users.vpn && alert(precioVPN.comentario)
 
     }
     else {
@@ -488,9 +496,9 @@ export default function UserCardDetails() {
     let validacion = false;
 
     users.isIlimitado && (new Date() < new Date(users.fechaSubscripcion)) && (validacion = true)
-    users.isIlimitado || ((users.megasGastadosinBytes ? (users.megasGastadosinBytes / 1024000) : 0) < (users.megas ? users.megas : 0)) && (validacion = true)
+    !users.isIlimitado && ((users.megasGastadosinBytes ? (users.megasGastadosinBytes / 1024000) : 0) < (users.megas ? users.megas : 0)) && (validacion = true)
 
-    validacion || (
+    !validacion && (
       setMensaje("Revise los Límites del Usuario"),
       handleClickOpen()
     )
@@ -525,33 +533,33 @@ export default function UserCardDetails() {
       )
     ) : (
 
-        (users.baneado ||
-          (Meteor.users.update(users._id, {
-            $set: {
-              baneado: users.baneado ? false : true,
-              bloqueadoDesbloqueadoPor: Meteor.userId()
-            },
+      (!users.baneado &&
+        (Meteor.users.update(users._id, {
+          $set: {
+            baneado: true,
+            bloqueadoDesbloqueadoPor: Meteor.userId()
+          },
+        }),
+          LogsCollection.insert({
+            type: !users.baneado ? "Desactivado" : "Activado",
+            userAfectado: users._id,
+            userAdmin: Meteor.userId(),
+            message:
+              "Ha sido " +
+              (!users.baneado ? "Desactivado" : "Activado") +
+              " por un Admin"
           }),
-            LogsCollection.insert({
-              type: !users.baneado ? "Bloqueado" : "Desbloqueado",
-              userAfectado: users._id,
-              userAdmin: Meteor.userId(),
-              message:
-                "Ha sido " +
-                (!users.baneado ? "Bloqueado" : "Desbloqueado") +
-                " por un Admin"
-            }),
-            Meteor.call('sendemail', users, {
-              text: "Ha sido " +
-                (!users.baneado ? "Bloqueado" : "Desbloqueado") +
-                ` el proxy del usuario ${users.username}`
-            }, (!users.baneado ? "Bloqueado " + Meteor.user().username : "Desbloqueado " + Meteor.user().username)),
-            Meteor.call('sendMensaje', users, {
-              text: "Ha sido " +
-                (!users.baneado ? "Bloqueado" : "Desbloqueado") +
-                ` el proxy del usuario ${users.username}`
-            }, (!users.baneado ? "Bloqueado " + Meteor.user().username : "Desbloqueado " + Meteor.user().username))
-          )),
+          Meteor.call('sendemail', users, {
+            text: "Ha sido " +
+              (!users.baneado ? "Desactivado" : "Activado") +
+              ` el proxy del usuario ${users.username}`
+          }, (!users.baneado ? "Desactivado " + Meteor.user().username : "Activado " + Meteor.user().username)),
+          Meteor.call('sendMensaje', users, {
+            text: "Ha sido " +
+              (!users.baneado ? "Desactivado" : "Activado") +
+              ` el proxy del usuario ${users.username}`
+          }, (!users.baneado ? "Desactivado " + Meteor.user().username : "Activado " + Meteor.user().username))
+        )),
 
       validacion && users.baneado && (
         Meteor.users.update(users._id, {
@@ -561,27 +569,28 @@ export default function UserCardDetails() {
           },
         }),
         LogsCollection.insert({
-          type: !users.baneado ? "Bloqueado" : "Desbloqueado",
+          type: !users.baneado ? "Desactivado" : "Activado",
           userAfectado: users._id,
           userAdmin: Meteor.userId(),
           message:
             "Ha sido " +
-            (!users.baneado ? "Bloqueado" : "Desbloqueado") +
+            (!users.baneado ? "Desactivado" : "Activado") +
             " por un Admin"
         }),
         Meteor.call('sendemail', users, {
           text: "Ha sido " +
-            (!users.baneado ? "Bloqueado" : "Desbloqueado") +
+            (!users.baneado ? "Desactivado" : "Activado") +
             ` el proxy del usuario ${users.username}`
-        }, (!users.baneado ? "Bloqueado " + Meteor.user().username : "Desbloqueado " + Meteor.user().username)),
+        }, (!users.baneado ? "Desactivado " + Meteor.user().username : "Activado " + Meteor.user().username)),
         Meteor.call('sendMensaje', users, {
           text: "Ha sido " +
-            (!users.baneado ? "Bloqueado" : "Desbloqueado") +
+            (!users.baneado ? "Desactivado" : "Activado") +
             ` el proxy del usuario ${users.username}`
-        }, (!users.baneado ? "Bloqueado " + Meteor.user().username : "Desbloqueado " + Meteor.user().username)),
+        }, (!users.baneado ? "Desactivado " + Meteor.user().username : "Activado " + Meteor.user().username)),
         precios.map(precio => {
 
-          users.isIlimitado && precio.type == "fecha" && (VentasCollection.insert({
+          users.isIlimitado && precio.type == "fecha-proxy" && 
+          (VentasCollection.insert({
             adminId: Meteor.userId(),
             userId: users._id,
             precio: (precio.precio - Meteor.user().descuentoproxy > 0) ? (precio.precio - Meteor.user().descuentoproxy) : 0,
@@ -589,12 +598,10 @@ export default function UserCardDetails() {
           }),
             setMensaje(precio.comentario),
             handleClickOpen()
-          ),
+          )
 
-            // console.log("Precio MEGAS " + precio.megas);
-            // console.log("User MEGAS " + users.megas);
-            !users.isIlimitado && precio.type == "megas" && (precio.megas == users.megas) && (
-              VentasCollection.insert({
+            !users.isIlimitado && precio.type == "megas" && (precio.megas == users.megas) && 
+            (VentasCollection.insert({
                 adminId: Meteor.userId(),
                 userId: users._id,
                 precio: (precio.precio - Meteor.user().descuentoproxy > 0) ? (precio.precio - Meteor.user().descuentoproxy) : 0,
@@ -603,7 +610,8 @@ export default function UserCardDetails() {
               setMensaje(precio.comentario),
               handleClickOpen()
             )
-        }))
+        })
+      )
     )
 
 

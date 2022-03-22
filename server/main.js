@@ -713,13 +713,13 @@ if (Meteor.isServer) {
                   (Meteor.users.update(user._id, {
                     $set: { baneado: true},
                   }),
-                  LogsCollection.insert({
+                  (LogsCollection.insert({
                     type: "Bloqueo Proxy",
                     userAfectado: user._id,
                     userAdmin: "server",
                     message:
                       "El server " + process.env.ROOT_URL +" Bloqueo automaticamente el proxy porque llego a la fecha limite"
-                  }),
+                  })),
                   sendemail(
                     user,
                     {
