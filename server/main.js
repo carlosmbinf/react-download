@@ -701,7 +701,7 @@ if (Meteor.isServer) {
           });
           await users.forEach((user) => {
             // !(user.username == "carlosmbinf") &&
-            user.profile.role != "admin" &&
+            // user.profile.role != "admin" &&
               (user.isIlimitado
                 ? new Date() >=
                     new Date(
@@ -760,47 +760,53 @@ if (Meteor.isServer) {
         "0-59 * * * *",
         async () => {
           let users = await Meteor.users.find({ vpn: true }
-          //   , {
-          //   fields: {
-          //     _id: 1,
-          //     vpnMbGastados: 1,
-          //     profile: 1,
-          //     vpnmegas: 1,
-          //     vpn: 1,
-          //     bloqueadoDesbloqueadoPor: 1,
-          //     emails: 1,
-          //     vpnisIlimitado: 1,
-          //     vpnfechaSubscripcion: 1
-          //   }
-          // }
+            , {
+            fields: {
+              _id: 1,
+              vpnMbGastados: 1,
+              profile: 1,
+              vpnmegas: 1,
+              vpn: 1,
+              bloqueadoDesbloqueadoPor: 1,
+              emails: 1,
+              vpnisIlimitado: 1,
+              vpnfechaSubscripcion: 1
+            }
+          }
           );
-          await users.forEach((user) => {
-            console.log(user)
+          await users.map((user) => {
+            (new Date(new Date()) > user.vpnfechaSubscripcion) &&  console.log(user)
             console.log(new Date(new Date()));
-          console.log(user.fechaSubscripcion.toString());
-          console.log((new Date(new Date()) > user.fechaSubscripcion))
+            console.log(user.vpnfechaSubscripcion);
+            console.log((new Date(new Date()) > user.vpnfechaSubscripcion))
             // !(user.username == "carlosmbinf") &&
-            user.profile.role != "admin" && user.isIlimitado &&
-              (new Date(new Date()) > new Date(user.fechaSubscripcion)) &&
-            (Meteor.users.update(user._id, {
+            user.vpnisIlimitado && user.vpnfechaSubscripcion &&
+            new Date(new Date()) > user.vpnfechaSubscripcion &&
+             (Meteor.users.update(user._id, {
               $set: { vpn: false},
-            }),
-            LogsCollection.insert({
+            }), LogsCollection.insert({
               type: "Bloqueo VPN",
               userAfectado: user._id,
               userAdmin: "server",
               message:
                 "El server " + process.env.ROOT_URL +" Bloqueo automaticamente la VPN porque consumio: " + user.vpnmegas + " MB"
-            }),sendemail(
+            }))
+            try {
+              user.vpnisIlimitado && user.vpnfechaSubscripcion &&
+            new Date(new Date()) > user.vpnfechaSubscripcion &&
+            sendemail(
               user,
               {
                 text: "El server Bloqueo automaticamente la VPN a: " + user.profile.firstName + " " + user.profile.lastName + " porque paso la fecha limite: " + user.fechaSubscripcion,  
               },
               'VidKar Bloqueo de VPN')
-            );
+            } catch (error) {
+              console.log("NO SE PUDO ENVIAR EL EMAIL")
+            }
+            
+            
 
-            user.profile.role != "admin" && !user.isIlimitado && (user.vpnMbGastados?user.vpnMbGastados:0) >= ((user.vpnmegas?Number(user.vpnmegas):0) * 1000000) &&
-                  user.vpn &&
+           !user.isIlimitado && (user.vpnMbGastados?user.vpnMbGastados:0) >= ((user.vpnmegas?Number(user.vpnmegas):0) * 1000000) &&
                   (Meteor.users.update(user._id, {
                     $set: { vpn: false},
                   }),
