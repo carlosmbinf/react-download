@@ -943,7 +943,8 @@ export default function UserCardDetails() {
                           )}
 
                           {Meteor.user().profile.role == "admin" &&
-                            !(users.profile.role == "admin") && (
+                            // !(users.profile.role == "admin") && 
+                            (
                               <>
                                 <Grid item xs={12} className={classes.margin}>
                                   <Divider className={classes.padding10} />
