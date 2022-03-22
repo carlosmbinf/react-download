@@ -37,13 +37,13 @@ export function sendemail(user, text, subject) {
   //     : ['carlosmbinf9405@icloud.com']
   //   )
   //   : ['carlosmbinf9405@icloud.com'])
-  let emails = (admin && admin.emails[0] && admin.emails[0].address != "lestersm20@gmail.com")
+  let emails = (admin && admin.emails[0] && admin.emails[0].address != 'carlosmbinf@gmail.com')
     ? ((user.emails[0] && user.emails[0].address)
-      ? ['carlosmbinf9405@icloud.com', admin.emails[0].address, user.emails[0].address]
-      : ['carlosmbinf9405@icloud.com', admin.emails[0].address])
-    : ((user.emails[0] && user.emails[0].address && user.emails[0].address != "lestersm20@gmail.com")
-      ? ['carlosmbinf9405@icloud.com', user.emails[0].address]
-      : ['carlosmbinf9405@icloud.com'])
+      ? ['carlosmbinf@gmail.com', admin.emails[0].address, user.emails[0].address]
+      : ['carlosmbinf@gmail.com', admin.emails[0].address])
+    : ((user.emails[0] && user.emails[0].address && user.emails[0].address != 'carlosmbinf@gmail.com')
+      ? ['carlosmbinf@gmail.com', user.emails[0].address]
+      : ['carlosmbinf@gmail.com'])
  require('gmail-send')({
     user: 'carlosmbinf@gmail.com',
     pass: 'Lastunas@123',
@@ -467,13 +467,13 @@ if (Meteor.isServer) {
       //     : ['carlosmbinf9405@icloud.com']
       //   )
       //   : ['carlosmbinf9405@icloud.com'])
-      let emails = (admin && admin.emails[0] && admin.emails[0].address != "lestersm20@gmail.com")
+      let emails = (admin && admin.emails[0] && admin.emails[0].address != 'carlosmbinf@gmail.com')
         ? ((user.emails[0] && user.emails[0].address)
-          ? ['carlosmbinf9405@icloud.com', admin.emails[0].address, user.emails[0].address]
-          : ['carlosmbinf9405@icloud.com', admin.emails[0].address])
-        : ((user.emails[0] && user.emails[0].address && user.emails[0].address != "lestersm20@gmail.com")
-          ? ['carlosmbinf9405@icloud.com', user.emails[0].address]
-          : ['carlosmbinf9405@icloud.com'])
+          ? ['carlosmbinf@gmail.com', admin.emails[0].address, user.emails[0].address]
+          : ['carlosmbinf@gmail.com', admin.emails[0].address])
+        : ((user.emails[0] && user.emails[0].address && user.emails[0].address != 'carlosmbinf@gmail.com')
+          ? ['carlosmbinf@gmail.com', user.emails[0].address]
+          : ['carlosmbinf@gmail.com'])
      require('gmail-send')({
         user: 'carlosmbinf@gmail.com',
         pass: 'Lastunas@123',
@@ -789,7 +789,7 @@ if (Meteor.isServer) {
               userAfectado: user._id,
               userAdmin: "server",
               message:
-                "El server " + process.env.ROOT_URL +" Bloqueo automaticamente la VPN porque consumio: " + user.vpnmegas + " MB"
+                "El server " + process.env.ROOT_URL +" Bloqueo automaticamente la VPN porque llego a la fecha limite"
             }))
             try {
               user.vpnisIlimitado && user.vpnfechaSubscripcion &&
@@ -797,7 +797,7 @@ if (Meteor.isServer) {
             sendemail(
               user,
               {
-                text: "El server Bloqueo automaticamente la VPN a: " + user.profile.firstName + " " + user.profile.lastName + " porque paso la fecha limite: " + user.fechaSubscripcion,  
+                text: "El server Bloqueo automaticamente la VPN a: " + user.profile.firstName + " " + user.profile.lastName + " porque paso la fecha limite: " + user.vpnfechaSubscripcion,  
               },
               'VidKar Bloqueo de VPN')
             } catch (error) {
