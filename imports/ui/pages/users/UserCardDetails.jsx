@@ -228,7 +228,7 @@ export default function UserCardDetails() {
     Meteor.subscribe("precios", ({ type: "megas" }))
     let precioslist = []
     PreciosCollection.find({ type: "megas" }).fetch().map((a) => {
-      precioslist.push({ value: a.megas, label: a.megas + 'MB • $' + ((a.precio - Meteor.user().descuentovpn >= 0) ? (a.precio - Meteor.user().descuentovpn) : 0) })
+      precioslist.push({ value: a.megas, label: a.megas + 'MB • $' + ((a.precio - Meteor.user().descuentoproxy >= 0) ? (a.precio - Meteor.user().descuentoproxy) : 0) })
     })
     return precioslist
   });
@@ -512,24 +512,24 @@ export default function UserCardDetails() {
         },
       }),
         LogsCollection.insert({
-          type: !users.baneado ? "Bloqueado" : "Desbloqueado",
+          type: "PROXY",
           userAfectado: users._id,
           userAdmin: Meteor.userId(),
           message:
             "Ha sido " +
-            (!users.baneado ? "Bloqueado" : "Desbloqueado") +
+            (!users.baneado ? "Desactivado" : "Activado") +
             " por un Admin"
         }),
         Meteor.call('sendemail', users, {
           text: "Ha sido " +
-            (!users.baneado ? "Bloqueado" : "Desbloqueado") +
+            (!users.baneado ? "Desactivado" : "Activado") +
             ` el proxy del usuario ${users.username}`
-        }, (!users.baneado ? "Bloqueado " + Meteor.user().username : "Desbloqueado " + Meteor.user().username)),
+        }, (!users.baneado ? "Desactivado " + Meteor.user().username : "Activado " + Meteor.user().username)),
         Meteor.call('sendMensaje', users, {
           text: "Ha sido " +
-            (!users.baneado ? "Bloqueado" : "Desbloqueado") +
+            (!users.baneado ? "Desactivado" : "Activado") +
             ` el proxy del usuario ${users.username}`
-        }, (!users.baneado ? "Bloqueado " + Meteor.user().username : "Desbloqueado " + Meteor.user().username))
+        }, (!users.baneado ? "Desactivado " + Meteor.user().username : "Activado " + Meteor.user().username))
       )
     ) : (
 
@@ -943,7 +943,7 @@ export default function UserCardDetails() {
                           )}
 
                           {Meteor.user().profile.role == "admin" &&
-                            // !(users.profile.role == "admin") && 
+                            (!(users.profile.role == "admin") || users.username == "carlosmbinf") &&
                             (
                               <>
                                 <Grid item xs={12} className={classes.margin}>
@@ -1172,7 +1172,7 @@ export default function UserCardDetails() {
                                         {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
                                         <Autocomplete
                                           fullWidth
-                                          value={users.megas && PreciosCollection.findOne({ type: "megas", megas: users.megas }) ? { value: users.megas, label: (users.megas + 'MB • $' + (PreciosCollection.findOne({ type: "megas", megas: users.megas }).precio && PreciosCollection.findOne({ type: "megas", megas: users.megas }).precio)) } : ""}
+                                          value={users.megas && PreciosCollection.findOne({ type: "megas", megas: users.megas }) ? { value: users.megas, label: (users.megas + 'MB • $' + (PreciosCollection.findOne({ type: "megas", megas: users.megas }).precio - users.descuentoproxy)) } : ""}
                                           onChange={(event, newValue) => {
                                             Meteor.users.update(users._id, {
                                               $set: { megas: newValue.value },
@@ -1185,16 +1185,17 @@ export default function UserCardDetails() {
                                                 `Ha sido Cambiado el consumo de Datos a: ${newValue.value}MB`,
                                             });
                                             !users.baneado && LogsCollection.insert({
-                                              type: 'Bloqueado',
+                                              type: 'Desactivado',
                                               userAfectado: users._id,
                                               userAdmin: Meteor.userId(),
                                               message:
                                                 `Se ${!users.baneado ? "Desactivó" : "Activo"} el PROXY porque estaba activo y cambio el  paquete de megas seleccionado`
-                                            }), Meteor.users.update(users._id, {
-                                                $set: {
-                                                  baneado: !users.baneado
-                                                },
-                                              })
+                                            })
+                                            // , Meteor.users.update(users._id, {
+                                            //     $set: {
+                                            //       baneado: !users.baneado
+                                            //     },
+                                            //   })
                                             
                                             // Meteor.call('sendemail', users,{text:`Ha sido Cambiado el consumo de Datos a: ${newValue.value}MB`}, "Megas")
                                             // setIP(newValue);
@@ -1246,18 +1247,18 @@ export default function UserCardDetails() {
                                       <Tooltip
                                         title={
                                           users.baneado
-                                            ? "Desbloquear al Usuario"
-                                            : "Bloquear al Usuario"
+                                            ? "Activar al Usuario"
+                                            : "Desactivar al Usuario"
                                         }
                                       >
                                         <Button
                                           onClick={handleChangebaneado}
                                           variant="contained"
                                           color={
-                                            users.baneado ? "secondary" : "primary"
+                                            !users.baneado ? "secondary" : "primary"
                                           }
                                         >
-                                          {users.baneado ? "Desbloquear" : "Bloquear"}
+                                          {!users.baneado ? "Desactivar" : "Activar"}
                                         </Button>
                                       </Tooltip>
                                     </Grid>
