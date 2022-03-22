@@ -1014,7 +1014,7 @@ export default function UserCardDetails() {
                                         onInput={(e) => {
                                           e.target.value && Meteor.users.update(users._id, {
                                             $set: {
-                                              fechaSubscripcion: new Date(e.target.value)
+                                              fechaSubscripcion: new Date((new Date(e.target.value).getTime())+(1000*60*60*4))
                                             },
                                           }),
                                             LogsCollection.insert({
@@ -1433,7 +1433,7 @@ export default function UserCardDetails() {
                                       onInput={(e) => {
                                         e.target.value && Meteor.users.update(users._id, {
                                           $set: {
-                                            vpnfechaSubscripcion: new Date(e.target.value)
+                                            vpnfechaSubscripcion: new Date((new Date(e.target.value).getTime())+(1000*60*60*4))
                                           },
                                         }),
                                           LogsCollection.insert({
