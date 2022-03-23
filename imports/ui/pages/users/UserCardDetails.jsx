@@ -225,9 +225,9 @@ export default function UserCardDetails() {
   });
 
   const preciosList = useTracker(() => {
-    Meteor.subscribe("precios", ({ type: "megas" }))
+    Meteor.subscribe("precios", { type: "megas" }, { sort: { precio: 1 } })
     let precioslist = []
-    PreciosCollection.find({ type: "megas" }).fetch().map((a) => {
+    PreciosCollection.find({ type: "megas" }, { sort: { precio: 1 } }).fetch().map((a) => {
       precioslist.push({ value: a.megas, label: a.megas + 'MB • $' + ((a.precio - Meteor.user().descuentoproxy >= 0) ? (a.precio - Meteor.user().descuentoproxy) : 0) })
     })
     return precioslist
@@ -256,10 +256,17 @@ export default function UserCardDetails() {
         '_id': 1,
         'vpnip': 1,
         "profile": 1
+      },
+      sort: {
+        precio: 1
       }
     }).ready()
     // Meteor.subscribe("precios",{$or:[{ type: "vpnplus"},{ type: "vpn2mb"}] }).ready()
-    Meteor.subscribe("precios", ({ $or: [{ type: "vpnplus" }, { type: "vpn2mb" }] }))
+    Meteor.subscribe("precios", { $or: [{ type: "vpnplus" }, { type: "vpn2mb" }] }, {
+      sort: {
+        precio: 1
+      }
+    })
     let precioslist = []
     PreciosCollection.find({ $or: [{ type: "vpnplus" }, { type: "vpn2mb" }] }).fetch().map((a) => {
       precioslist.push({ value: `${a.type}/${a.megas}`, label: `${a.type} • ${a.megas}MB • $ ${(a.precio - Meteor.user().descuentovpn >= 0) ? (a.precio - Meteor.user().descuentovpn) : 0}` })
