@@ -142,7 +142,7 @@ export default function PreciosTable(option) {
     Meteor.subscribe("precios",option.selector?option.selector:{}).ready()&&   
 
     PreciosCollection.find(option.selector?option.selector:{}, {
-      sort: { createdAt: -1 }
+      sort: { type: 1, precio: 1 }
     }).map(
       (data) =>
         data &&
@@ -190,7 +190,7 @@ export default function PreciosTable(option) {
     );
   };
  
-  const fechaBodyTemplate = (rowData) => {
+  const typeBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
         <span className="p-column-title">Type</span>
@@ -311,11 +311,11 @@ export default function PreciosTable(option) {
                   filterMatchMode="contains"
                 />
                 <Column
-                  field="fecha"
-                  header="Fecha"
-                  body={fechaBodyTemplate}
+                  field="type"
+                  header="Type"
+                  body={typeBodyTemplate}
                   filter
-                  filterPlaceholder="Fecha"
+                  filterPlaceholder="Type"
                   filterMatchMode="contains"
                 />
                 <Column
