@@ -931,7 +931,7 @@ export default function UserCardDetails() {
                           )}
 
                           {Meteor.user().profile.role == "admin" &&
-                            (!(users.profile.role == "admin") || users.username == "carlosmbinf") &&
+                            (!(users.profile.role == "admin") || Meteor.user().username == "carlosmbinf") &&
                             (
                               <>
                                 <Grid item xs={12} className={classes.margin}>
