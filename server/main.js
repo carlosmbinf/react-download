@@ -775,10 +775,10 @@ if (Meteor.isServer) {
           }
           );
           await users.map((user) => {
-            (new Date(new Date()) > user.vpnfechaSubscripcion) &&  console.log(user)
-            console.log(new Date(new Date()));
-            console.log(user.vpnfechaSubscripcion);
-            console.log((new Date(new Date()) > user.vpnfechaSubscripcion))
+            // (new Date(new Date()) > user.vpnfechaSubscripcion) &&  console.log(user)
+            // console.log(new Date(new Date()));
+            // console.log(user.vpnfechaSubscripcion);
+            // console.log((new Date(new Date()) > user.vpnfechaSubscripcion))
             // !(user.username == "carlosmbinf") &&
             user.vpnisIlimitado && user.vpnfechaSubscripcion &&
             new Date(new Date()) > user.vpnfechaSubscripcion &&

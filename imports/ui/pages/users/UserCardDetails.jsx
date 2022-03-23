@@ -294,37 +294,6 @@ export default function UserCardDetails() {
     history.push("/users");
   }
 
-  function sendemail(user, text, subject) {
-    let admin = Meteor.users.findOne({ _id: user.bloqueadoDesbloqueadoPor, "profile.role": "admin" })
-    // let emails = (admin
-    //   ? (admin.emails[0]
-    //     ? (admin.emails[0].address
-    //       ? ['carlosmbinf9405@icloud.com', admin.emails[0].address]
-    //       : ['carlosmbinf9405@icloud.com'])
-    //     : ['carlosmbinf9405@icloud.com']
-    //   )
-    //   : ['carlosmbinf9405@icloud.com'])
-    let emails = (admin && admin.emails[0] && admin.emails[0].address != "lestersm20@gmail.com")
-      ? ((user.emails[0] && user.emails[0].address)
-        ? ['carlosmbinf9405@icloud.com', admin.emails[0].address, user.emails[0].address]
-        : ['carlosmbinf9405@icloud.com', admin.emails[0].address])
-      : ((user.emails[0] && user.emails[0].address && user.emails[0].address != "lestersm20@gmail.com")
-        ? ['carlosmbinf9405@icloud.com', user.emails[0].address]
-        : ['carlosmbinf9405@icloud.com'])
-    require('gmail-send')({
-      user: 'carlosmbinf@gmail.com',
-      pass: 'Lastunas@123',
-      to: emails,
-      subject: subject
-    })(
-      text,
-      (error, result, fullResult) => {
-        if (error) console.error(error);
-        // console.log(result);
-        console.log(fullResult);
-      }
-    )
-  }
   function handleSubmit(event) {
     event.preventDefault();
     // console.log( 'Email:', email, 'Password: ', password, 'firstName: ', firstName);
@@ -442,6 +411,19 @@ export default function UserCardDetails() {
   };
 
   const handleVPNStatus = (event) => {
+    let validacion = false;
+
+    users.vpnisIlimitado && (new Date() < new Date(users.vpnfechaSubscripcion)) && (validacion = true)
+    // !users.vpnisIlimitado && ((users.megasGastadosinBytes ? (users.megasGastadosinBytes / 1024000) : 0) < (users.megas ? users.megas : 0)) && (validacion = true)
+
+    !validacion && (
+      setMensaje("Revise los Límites del Usuario"),
+      handleClickOpen()
+    )
+    // validacion = ((users.profile.role == "admin") ? true  : false);
+      if (!validacion) return null
+
+
     if (users.vpn || users.vpnplus || users.vpn2mb) {
 
 
@@ -473,21 +455,26 @@ export default function UserCardDetails() {
         message:
           `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN`
       });
-      Meteor.call('sendemail', users, { text: `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN para el usuario: ${users.username}${users.descuentovpn ? ` Con un descuento de: ${users.descuentovpn}CUP` : ""}` }, `VPN ${Meteor.user().username}`)
-      Meteor.call('sendMensaje', users, { text: `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN para ${users.username}` }, `VPN ${Meteor.user().username}`)
-
       !users.vpn && VentasCollection.insert({
         adminId: Meteor.userId(),
         userId: users._id,
         precio: (precioVPN.precio - Meteor.user().descuentovpn > 0) ? (precioVPN.precio - Meteor.user().descuentovpn) : 0,
-        comentario: users.vpnplus ? PreciosCollection.findOne({ type: "vpnplus", megas: users.vpnmegas }).comentario : (users.vpn2mb ? PreciosCollection.findOne({ type: "vpn2mb", megas: users.vpnmegas }).comentario : "")
+        comentario: precioVPN.comentario
       })
       // !users.vpn && alert(`Se Compró el Servicio VPN con un costo: ${(precioVPN.precio - Meteor.user().descuentovpn >= 0) ? (precioVPN.precio - Meteor.user().descuentovpn) : 0}CUP`)
-      !users.vpn && alert(precioVPN.comentario)
+      !users.vpn && (setMensaje(precioVPN.comentario),
+      handleClickOpen())
+      
+      Meteor.call('sendemail', users, { text: `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN para el usuario: ${users.username}${users.descuentovpn ? ` Con un descuento de: ${users.descuentovpn}CUP` : ""}` }, `VPN ${Meteor.user().username}`)
+      Meteor.call('sendMensaje', users, { text: `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN para ${users.username}` }, `VPN ${Meteor.user().username}`)
+
+     
 
     }
     else {
-      alert("INFO!!!\nPrimeramente debe seleccionar una oferta de VPN!!!")
+      setMensaje("INFO!!!\nPrimeramente debe seleccionar una oferta de VPN!!!"),
+      handleClickOpen()
+      // alert("INFO!!!\nPrimeramente debe seleccionar una oferta de VPN!!!")
     }
   };
 
@@ -503,38 +490,39 @@ export default function UserCardDetails() {
       handleClickOpen()
     )
     // validacion = ((users.profile.role == "admin") ? true  : false);
+      if (!validacion) return null
 
-    users.profile.role == 'admin' ? (
-      (Meteor.users.update(users._id, {
-        $set: {
-          baneado: users.baneado ? false : true,
-          bloqueadoDesbloqueadoPor: Meteor.userId()
-        },
-      }),
-        LogsCollection.insert({
-          type: "PROXY",
-          userAfectado: users._id,
-          userAdmin: Meteor.userId(),
-          message:
-            "Ha sido " +
-            (!users.baneado ? "Desactivado" : "Activado") +
-            " por un Admin"
-        }),
-        Meteor.call('sendemail', users, {
-          text: "Ha sido " +
-            (!users.baneado ? "Desactivado" : "Activado") +
-            ` el proxy del usuario ${users.username}`
-        }, (!users.baneado ? "Desactivado " + Meteor.user().username : "Activado " + Meteor.user().username)),
-        Meteor.call('sendMensaje', users, {
-          text: "Ha sido " +
-            (!users.baneado ? "Desactivado" : "Activado") +
-            ` el proxy del usuario ${users.username}`
-        }, (!users.baneado ? "Desactivado " + Meteor.user().username : "Activado " + Meteor.user().username))
-      )
-    ) : (
+    // users.profile.role == 'admin' ? (
+    //   (Meteor.users.update(users._id, {
+    //     $set: {
+    //       baneado: users.baneado ? false : true,
+    //       bloqueadoDesbloqueadoPor: Meteor.userId()
+    //     },
+    //   }),
+    //     LogsCollection.insert({
+    //       type: "PROXY",
+    //       userAfectado: users._id,
+    //       userAdmin: Meteor.userId(),
+    //       message:
+    //         "Ha sido " +
+    //         (!users.baneado ? "Desactivado" : "Activado") +
+    //         " por un Admin"
+    //     }),
+    //     Meteor.call('sendemail', users, {
+    //       text: "Ha sido " +
+    //         (!users.baneado ? "Desactivado" : "Activado") +
+    //         ` el proxy del usuario ${users.username}`
+    //     }, (!users.baneado ? "Desactivado " + Meteor.user().username : "Activado " + Meteor.user().username)),
+    //     Meteor.call('sendMensaje', users, {
+    //       text: "Ha sido " +
+    //         (!users.baneado ? "Desactivado" : "Activado") +
+    //         ` el proxy del usuario ${users.username}`
+    //     }, (!users.baneado ? "Desactivado " + Meteor.user().username : "Activado " + Meteor.user().username))
+    //   )
+    // ) : (
 
-      (!users.baneado &&
-        (Meteor.users.update(users._id, {
+      !users.baneado &&
+        Meteor.users.update(users._id, {
           $set: {
             baneado: true,
             bloqueadoDesbloqueadoPor: Meteor.userId()
@@ -559,7 +547,7 @@ export default function UserCardDetails() {
               (!users.baneado ? "Desactivado" : "Activado") +
               ` el proxy del usuario ${users.username}`
           }, (!users.baneado ? "Desactivado " + Meteor.user().username : "Activado " + Meteor.user().username))
-        )),
+        
 
       validacion && users.baneado && (
         Meteor.users.update(users._id, {
@@ -612,7 +600,7 @@ export default function UserCardDetails() {
             )
         })
       )
-    )
+    // )
 
 
   }
@@ -986,13 +974,15 @@ export default function UserCardDetails() {
                                         />
                                       </Tooltip>
                                     }
-                                    label={
-                                      users.isIlimitado
-                                        ? "Limitado por Fecha"
-                                        : "Puede Consumir " +
-                                        (users.megas ? users.megas : 0) +
-                                        " MB"
-                                    }
+                                  label={
+                                    users.isIlimitado
+                                      ? ` ${PreciosCollection.findOne({ type: "fecha-proxy" })
+                                        ? `Limitado por Fecha ($${PreciosCollection.findOne({ type: "fecha-proxy" }).precio - users.descuentoproxy})`
+                                        : `Limitado por Fecha`}`
+                                      : "Puede Consumir " +
+                                      (users.megas ? users.megas : 0) +
+                                      " MB"
+                                  }
                                   />
                                   {/* <FormControlLabel variant="outlined" label="Primary">
                                   
@@ -1407,7 +1397,9 @@ export default function UserCardDetails() {
                                     }
                                     label={
                                       users.vpnisIlimitado
-                                        ? "Limitado por Fecha"
+                                        ? ` ${PreciosCollection.findOne({ type: "fecha-vpn" })
+                                        ? `Limitado por Fecha ($${PreciosCollection.findOne({ type: "fecha-vpn" }).precio - users.descuentovpn})`
+                                        : `Limitado por Fecha`}`
                                         : "Puede Consumir " +
                                         (users.vpnmegas ? users.vpnmegas : 0) +
                                         " MB"
@@ -1443,7 +1435,9 @@ export default function UserCardDetails() {
                                       onInput={(e) => {
                                         e.target.value && Meteor.users.update(users._id, {
                                           $set: {
-                                            vpnfechaSubscripcion: new Date((new Date(e.target.value).getTime())+(1000*60*60*4))
+                                            vpnfechaSubscripcion: new Date((new Date(e.target.value).getTime()) + (1000 * 60 * 60 * 4)),
+                                            vpnplus: true,
+                                            vpn2mb: true
                                           },
                                         }),
                                           LogsCollection.insert({
