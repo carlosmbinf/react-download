@@ -1169,7 +1169,7 @@ export default function UserCardDetails() {
                                         {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
                                         <Autocomplete
                                           fullWidth
-                                          value={users.megas && PreciosCollection.findOne({ type: "megas", megas: users.megas }) ? { value: users.megas, label: (users.megas + 'MB • $' + (PreciosCollection.findOne({ type: "megas", megas: users.megas }).precio - users.descuentoproxy)) } : ""}
+                                        value={users.megas && PreciosCollection.findOne({ type: "megas", megas: users.megas }) ? { value: users.megas, label: (users.megas + 'MB • $' + ((PreciosCollection.findOne({ type: "megas", megas: users.megas }).precio - users.descuentoproxy) > 0 ? PreciosCollection.findOne({ type: "megas", megas: users.megas }).precio - users.descuentoproxy : 0)) } : ""}
                                           onChange={(event, newValue) => {
                                             Meteor.users.update(users._id, {
                                               $set: { megas: newValue.value },
