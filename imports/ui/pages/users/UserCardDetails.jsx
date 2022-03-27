@@ -421,7 +421,7 @@ export default function UserCardDetails() {
     let validacion = false;
 
     users.vpnisIlimitado && (new Date() < new Date(users.vpnfechaSubscripcion)) && (validacion = true)
-    // !users.vpnisIlimitado && ((users.megasGastadosinBytes ? (users.megasGastadosinBytes / 1024000) : 0) < (users.megas ? users.megas : 0)) && (validacion = true)
+    !users.vpnisIlimitado && ((users.vpnMbGastados ? (users.vpnMbGastados / 1024000) : 0) < (users.vpnmegas ? users.vpnmegas : 0)) && (validacion = true)
 
     !validacion && (
       setMensaje("Revise los Límites del Usuario"),
