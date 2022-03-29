@@ -1829,16 +1829,16 @@ var appRoot = require("app-root-path");
 //   }
 
 var PATH_TO_KEY =
-  appRoot.path + "/server/conf/28459803_srv5119-206152.vps.etecsa.cu.key";
+  appRoot.path + "/server/conf/vidkar.key";
 var PATH_TO_CERT =
-  appRoot.path + "/server/conf/28459803_srv5119-206152.vps.etecsa.cu.cert";
+  appRoot.path + "/server/conf/vidkar.crt";
 var httpProxy = require("http-proxy");
 var options = {
   ssl: {
     key: fs.readFileSync(PATH_TO_KEY, "utf8"),
     cert: fs.readFileSync(PATH_TO_CERT, "utf8"),
   },
-  target: "http://localhost:3000",
+  target: "http://localhost:6000",
   ws: true,
   xfwd: true,
 };
