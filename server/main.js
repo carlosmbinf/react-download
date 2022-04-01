@@ -7,7 +7,8 @@ import {
   ServersCollection,
   PreciosCollection,
   VentasCollection,
-  FilesCollection
+  FilesCollection,
+  VersionsCollection
 } from "../imports/ui/pages/collections/collections";
 import { TVCollection } from "../imports/ui/pages/collections/collections";
 import { DescargasCollection } from "../imports/ui/pages/collections/collections";
@@ -1766,6 +1767,9 @@ console.log(update);
   });
   Meteor.publish("files", function (selector,option) {
     return FilesCollection.find(selector?selector:{},option?option:{});
+  });
+  Meteor.publish("versions", function (selector,option) {
+    return VersionsCollection.find(selector?selector:{},option?option:{});
   });
 
   Meteor.onConnection(function (connection) {

@@ -75,6 +75,7 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundImage: "radial-gradient(circle, rgba(2,0,36,0) 0%, rgba(112,96,255,0.7727901158707865) 67%)",
       opacity: 1,
       padding: "25px",
+      paddingBottom:10
       // backdropFilter: "blur(5px)",
     },
     background:{
@@ -175,7 +176,10 @@ const LoginPage = () => {
                 <Typography
                   variant="body1"
                   component="h1"
-                  style={{ fontSize: "18px", textAlign: "center", paddingTop: 2 }}
+                  style={{ 
+                    // fontSize: "18px",
+                   textAlign: "center"
+                  }}
                 >
                   Por una vida mas saludable!!!
                   <br />

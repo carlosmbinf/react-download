@@ -16,6 +16,7 @@ export const ServersCollection = new Mongo.Collection('servers');
 export const PreciosCollection = new Mongo.Collection('precios');
 export const VentasCollection = new Mongo.Collection('ventas');
 export const FilesCollection = new Mongo.Collection('files');
+export const VersionsCollection = new Mongo.Collection('versions');
 
 
 
