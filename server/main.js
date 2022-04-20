@@ -1977,7 +1977,10 @@ Accounts.onCreateUser(function (options, user) {
         (user.baneado = true),
         (user.picture = user.services.facebook.picture.data.url),
         (user.descuentoproxy = 0),
-        (user.descuentovpn = 0));
+        (user.descuentovpn = 0),
+        (user.contandoProxy = true),
+        (user.contandoVPN = true)
+        );
 
     return user;
 
@@ -2011,7 +2014,9 @@ Accounts.onCreateUser(function (options, user) {
         (user.baneado = true),
         (user.picture = user.services.google.picture),
         (user.descuentoproxy = 0),
-        (user.descuentovpn = 0));
+        (user.descuentovpn = 0),
+        (user.contandoProxy = true),
+        (user.contandoVPN = true));
     return user;
 
   } else {
@@ -2030,6 +2035,8 @@ Accounts.onCreateUser(function (options, user) {
     user.baneado = true;
     user.descuentoproxy = 0;
     user.descuentovpn = 0;
+    user.contandoProxy = true;
+    user.contandoVPN = true;
     console.log(`user: \n${user}\n-----------------------\n`)
     console.log(`options: \n${options}\n-----------------------\n`)
 
