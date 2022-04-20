@@ -614,6 +614,17 @@ export default function UserCardDetails() {
   const handleChangebaneado = (event) => {
     addVenta();
   };
+  const handleChangecontandoProxy = (event) => {
+    Meteor.users.update(users._id,{$set:{
+      contandoProxy : !users.contandoProxy
+    }})
+  };
+  const handleChangecontandoVPN = (event) => {
+    Meteor.users.update(users._id,{$set:{
+      contandoVPN : !users.contandoVPN
+    }})
+  };
+  
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -945,6 +956,36 @@ export default function UserCardDetails() {
                                   <Divider className={classes.padding10} />
                                   PROXY
                                 </Grid>
+                                <Grid
+                                      item
+                                      xs={12}
+                                      lg={5}
+                                      style={{ 
+                                        // textAlign: "center",
+                                         paddingTop: 20 ,
+                                         paddingBottom: 30 
+                                        }}
+                                    >
+                                      <Tooltip
+                                        title={
+                                          !users.contandoProxy
+                                          ? "Si lo activa, Empezará a contar los datos consumidos por el PROXY"
+                                          : "Si lo desactiva, No contará los datos consumidos por el PROXY"
+                                        }
+                                      >
+                                        <Button
+                                          onClick={handleChangecontandoProxy}
+                                          variant="contained"
+                                          color={
+                                            users.contandoProxy ? "secondary" : "primary"
+                                          }
+                                        >
+                                          {!users.contandoProxy
+                                            ? "Activar el conteo del Proxy"
+                                            : "Desactivar el conteo del Proxy"}
+                                        </Button>
+                                      </Tooltip>
+                                    </Grid>
                                 <Grid
                                   item
                                   xs={12}
@@ -1366,6 +1407,36 @@ export default function UserCardDetails() {
                             <h3>
                               VPN
                             </h3>
+                            <Grid
+                                      item
+                                      xs={12}
+                                      lg={5}
+                                      style={{ 
+                                        // textAlign: "center",
+                                         paddingTop: 20 ,
+                                         paddingBottom: 30 
+                                        }}
+                                    >
+                                      <Tooltip
+                                        title={
+                                          !users.contandoVPN
+                                            ? "Si lo activa, Empezará a contar los datos consumidos por la VPN"
+                                            : "Si lo desactiva, No contará los datos consumidos por la VPN"
+                                        }
+                                      >
+                                        <Button
+                                          onClick={handleChangecontandoVPN}
+                                          variant="contained"
+                                          color={
+                                            users.contandoVPN ? "secondary" : "primary"
+                                          }
+                                        >
+                                          {!users.contandoVPN
+                                            ? "Activar el conteo de la VPN"
+                                            : "Desactivar el conteo de la VPN"}
+                                        </Button>
+                                      </Tooltip>
+                                    </Grid>
                             <Grid
                                   item
                                   xs={12}

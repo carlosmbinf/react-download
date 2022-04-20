@@ -143,11 +143,11 @@ async function disconect(server,connectionId, stats) {
       Number(stats.srcRxBytes) +
       Number(stats.trgTxBytes) +
       Number(stats.trgRxBytes);
-      user&&user._id &&
+      user&&user._id && user.contandoProxy &&
       (await Meteor.users.update(user._id, {
         $inc: { megasGastadosinBytes: bytesGastados },
       }));
-      user&&user._id &&
+      user&&user._id && user.contandoProxy &&
       (await Meteor.users.update(user._id, {
         $inc: { megasGastadosinBytesGeneral: bytesGastadosGeneral },
       }));
@@ -1975,7 +1975,7 @@ Accounts.onCreateUser(function (options, user) {
         (user.online = false),
         (user.creadoPor = "Facebook"),
         (user.baneado = true),
-        (user.picture = user.services.facebook.picture),
+        (user.picture = user.services.facebook.picture.data.url),
         (user.descuentoproxy = 0),
         (user.descuentovpn = 0));
 
