@@ -1788,6 +1788,14 @@ export default function UserCardDetails() {
                               </Typography>
                             </Grid>
                           </Grid>
+
+                          <Grid item xs={12}>
+                            <Grid container direction="row">
+                              <Typography>
+                                CONTANDO EL CONSUMO: {users.contandoProxy ? "• Activado" : "• Desactivado"}
+                              </Typography>
+                            </Grid>
+                          </Grid>
                         </Paper>
                       }
                       {(users.vpnMbGastados || users.vpnmegas || users.vpn) &&
@@ -1836,7 +1844,15 @@ export default function UserCardDetails() {
                                 CONEXION {"•"} {users.vpn ? "Activado" : "Desactivado"}
                               </Typography>
                             </Grid>
-                          </Grid>
+                            </Grid>
+
+                            <Grid item xs={12}>
+                              <Grid container direction="row">
+                                <Typography>
+                                  CONTANDO EL CONSUMO: {users.contandoVPN ? "• Activado" : "• Desactivado"}
+                                </Typography>
+                              </Grid>
+                            </Grid>
                         </Paper>
                       }
 

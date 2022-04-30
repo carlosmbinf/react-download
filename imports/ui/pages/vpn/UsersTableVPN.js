@@ -130,6 +130,9 @@ export default function UsersTableVPN(option) {
   const dt = React.useRef(null);
   const history = useHistory();
   const [selectedVPN, setSelectedVPN] = React.useState(null);
+  const [selectedContandoVPN, setSelectedContandoVPN] = React.useState(null);
+
+  const statusesContandoVPN = ["true", "false"];
 
 
   // var userOnline = useTracker(() => {
@@ -157,11 +160,20 @@ export default function UsersTableVPN(option) {
     return <span className={`customer-badge`}><Chip onClick={() => { }} color="primary" label={option} /></span>;
     // ;
   };
+  const onContandoVPNChange = (e) => {
+    dt.current.filter(e.value, "contandoVPN", "equals");
+    setSelectedContandoVPN(e.value);
+  };
+
   const vpnItemTemplate = (option) => {
     return <span className={`customer-badge`}><Chip onClick={() => { }} color="primary" label={option} /></span>;
     // ;
   };
   const roleItemTemplate = (option) => {
+    return <span className={`customer-badge`}><Chip onClick={() => { }} color="primary" label={option} /></span>;
+    // ;
+  };
+  const contandoVPNItemTemplate = (option) => {
     return <span className={`customer-badge`}><Chip onClick={() => { }} color="primary" label={option} /></span>;
     // ;
   };
@@ -199,10 +211,21 @@ export default function UsersTableVPN(option) {
     />
   );
 
+  const contandoVPNFilter = (
+    <Dropdown
+      value={selectedContandoVPN}
+      options={statusesContandoVPN}
+      onChange={onContandoVPNChange}
+      itemTemplate={contandoVPNItemTemplate}
+      placeholder="Select"
+      className="p-column-filter"
+      showClear
+    />
+  );
 
   const usersRegister = useTracker(() => {
     Meteor.subscribe("user", { $or: [{ vpn2mb: true }, { vpnplus: true },{"profile.role":"admin"}] });
-    Meteor.subscribe("conexiones");
+    // Meteor.subscribe("conexiones");
     let a = [];
 
     Meteor.users.find(option.selector?option.selector:{}, {
@@ -234,7 +257,8 @@ export default function UsersTableVPN(option) {
           ip: data.vpnip?`192.168.18.${data.vpnip}`:"",
           vpntype: data.vpnplus ? "PLUS" : (data.vpn2mb ? "2MB" : "false"),
           vpnMbGastados: data.vpnMbGastados,
-          vpnmegas: data.vpnmegas
+          vpnmegas: data.vpnmegas,
+          contandoVPN: data.contandoVPN
 
         })
     );
@@ -348,6 +372,15 @@ export default function UsersTableVPN(option) {
       </React.Fragment>
     );
   };
+  const contandoVPNBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">Contando VPN</span>
+        <Chip color={rowData.contandoVPN ? "primary" : "secondary"} label={rowData.contandoVPN ? <CheckIcon /> : <BlockIcon />} />
+      </React.Fragment>
+    );
+  };
+
   const eliminarUser = (id) => {
     Meteor.users.remove(id);
   };
@@ -510,6 +543,20 @@ export default function UsersTableVPN(option) {
                   body={vpnTypeBodyTemplate}
                   filter
                   filterElement={vpnTypeFilter}
+                />
+                <Column
+                  field="vpntype"
+                  header="VPN Type"
+                  body={vpnTypeBodyTemplate}
+                  filter
+                  filterElement={vpnTypeFilter}
+                />
+                <Column
+                  field="contandoVPN"
+                  header="Contando VPN"
+                  body={contandoVPNBodyTemplate}
+                  filter
+                  filterElement={contandoVPNFilter}
                 />
                 <Column
                   field="online"
