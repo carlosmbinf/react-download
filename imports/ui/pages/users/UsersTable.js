@@ -140,6 +140,7 @@ export default function UsersTable(option) {
   const [selectedRole, setSelectedRole] = React.useState(null);
   const [selectedLimites, setSelectedLimites] = React.useState(null);
   const [selectedConProxy, setSelectedConProxy] = React.useState(null);
+  const [selectedContandoProxy, setSelectedContandoProxy] = React.useState(null);
   const dt = React.useRef(null);
   const history = useHistory();
   const [openAlert, setOpenAlert] = React.useState(false);
@@ -162,6 +163,7 @@ export default function UsersTable(option) {
   const statusesRole = ["admin", "user"];
   const statusesLimites = ["Ilimitado", "Megas", "Fecha"];
   const statusesConProxy = ["true", "false"];
+  const statusesContandoProxy = ["true", "false"];
   const onStatusChange = (e) => {
     dt.current.filter(e.value, "online", "equals");
     setSelectedOnline(e.value);
@@ -182,6 +184,11 @@ export default function UsersTable(option) {
     dt.current.filter(e.value, "conProxy", "equals");
     setSelectedConProxy(e.value);
   };
+  const onContandoProxyChange = (e) => {
+    dt.current.filter(e.value, "contandoProxy", "equals");
+    setSelectedContandoProxy(e.value);
+  };
+  
   const onlineItemTemplate = (option) => {
     return <span className={`customer-badge`}><Chip onClick={() => { }} color="primary" label={option} /></span>;
     // ;
@@ -199,6 +206,10 @@ export default function UsersTable(option) {
     // ;
   };
   const conProxyItemTemplate = (option) => {
+    return <span className={`customer-badge`}><Chip onClick={() => { }} color="primary" label={option} /></span>;
+    // ;
+  };
+  const contandoProxyItemTemplate = (option) => {
     return <span className={`customer-badge`}><Chip onClick={() => { }} color="primary" label={option} /></span>;
     // ;
   };
@@ -256,6 +267,18 @@ export default function UsersTable(option) {
       className="p-column-filter"
       showClear
     />
+    
+  );
+  const contandoProxyFilter = (
+    <Dropdown
+      value={selectedContandoProxy}
+      options={statusesContandoProxy}
+      onChange={onContandoProxyChange}
+      itemTemplate={contandoProxyItemTemplate}
+      placeholder="Select"
+      className="p-column-filter"
+      showClear
+    />
   );
 
   const conexiones = (userId) => {
@@ -281,7 +304,9 @@ export default function UsersTable(option) {
         'fechaSubscripcion': 1,
         'megas': 1,
         'vpnplus': 1,
-        'vpn2mb': 1
+        'vpn2mb': 1,
+        'contandoProxy': 1,
+        'contandoVPN': 1
       }
     });
     let a = [];
@@ -332,7 +357,8 @@ export default function UsersTable(option) {
             true,
             true
           )) : 'N/A') : (data.megas ? `${data.megas} MB` : 'N/A')),
-          vpntype: data.vpnplus ? "PLUS" : (data.vpn2mb ? "2MB" : "false")
+          vpntype: data.vpnplus ? "PLUS" : (data.vpn2mb ? "2MB" : "false"),
+          contandoProxy: data.contandoProxy
         })
     );
 
@@ -465,6 +491,14 @@ export default function UsersTable(option) {
       <React.Fragment>
         <span className="p-column-title">Con Proxy</span>
         <Chip color={rowData.conProxy ? "primary" : "secondary"} label={rowData.conProxy ? <CheckIcon /> : <BlockIcon />} />
+      </React.Fragment>
+    );
+  };
+  const contandoProxyBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">Contando Proxy</span>
+        <Chip color={rowData.contandoProxy ? "primary" : "secondary"} label={rowData.contandoProxy ? <CheckIcon /> : <BlockIcon />} />
       </React.Fragment>
     );
   };
@@ -712,6 +746,13 @@ export default function UsersTable(option) {
                   body={conProxyBodyTemplate}
                   filter
                   filterElement={conProxyFilter}
+                />
+                <Column
+                  field="contandoProxy"
+                  header="Contando Proxy"
+                  body={contandoProxyBodyTemplate}
+                  filter
+                  filterElement={contandoProxyFilter}
                 />
                 <Column
                   field="limites"
