@@ -807,7 +807,7 @@ if (Meteor.isServer) {
             
             
 
-           !user.isIlimitado && (user.vpnMbGastados?user.vpnMbGastados:0) >= ((user.vpnmegas?Number(user.vpnmegas):0) * 1000000) &&
+           !user.vpnisIlimitado && (user.vpnMbGastados?user.vpnMbGastados:0) >= ((user.vpnmegas?Number(user.vpnmegas):0) * 1000000) &&
                   (Meteor.users.update(user._id, {
                     $set: { vpn: false},
                   }),
@@ -915,24 +915,27 @@ for (var i = 5; i <= links.length - 4; i++) {
 }
 console.log(pelis);
 console.log(pelis.length)
-pelis&&
-pelis.forEach(element => {
-  
-      http.post("http://localhost:6000/insertPelis", element, (opciones, res, body) => {
-        if (!opciones.headers.error) {
-          // console.log(`statusCode: ${res.statusCode}`);
-          console.log("error " + JSON.stringify(opciones.headers));
+  try {
+    pelis &&
+      pelis.forEach(element => {
+        PelisCollection.find({urlPeli:element.peli}).count() == 0 &&
+        http.post("http://localhost:6000/insertPelis", element, (opciones, res, body) => {
+          if (!opciones.headers.error) {
+            // console.log(`statusCode: ${res.statusCode}`);
+            console.log(element.nombre + " => " + opciones.headers.message);
 
-          
-          return;
-        } else {
-          console.log(opciones.headers);
-         
-          return;
-        }
+            return;
+          } else {
+            console.log(element.nombre + " => " + opciones.headers.message);
+
+            return;
+          }
+        });
+
       });
-});
-
+  } catch (error) {
+    console.log("Ocurrio un error => " + error.message);
+  }
 })()
 
 
@@ -1000,6 +1003,7 @@ pelis.forEach(element => {
       res.writeHead(200, {
         message: "todo OK",
       });
+      res.end();
     } catch (error) {
       console.log("--------------------------------------");
       // console.log("error.error :> " + error.error);
@@ -1008,89 +1012,98 @@ pelis.forEach(element => {
       // console.log("error.errorType :> " + error.errorType);
       console.log("--------------------------------------");
 
-      res.writeHead(error.error, {
-        error: error.error,
-        reason: error.reason,
-        message: error.message,
-        errorType: error.errorType,
+      // res.writeHead(error.error, {
+      //   error: error.error,
+      //   reason: error.reason,
+      //   message: error.message,
+      //   errorType: error.errorType,
+      // });
+      res.writeHead(200, {
+        message: "Error:\n"+error.message,
       });
+      res.end();
     }
 
-    res.end();
+    
   });
 
 
   endpoint.post("/insertPelis",async (req, res) => {
     // console.log(req)
     console.log(req.body)
-    let id = await PelisCollection.insert({
-      nombrePeli:req.body.nombre,
-      urlPeli:req.body.peli,
-      urlBackground:req.body.poster,
-      descripcion:req.body.nombre,
-      tamano:797,
-      mostrar:true,
-      subtitulo:req.body.subtitle,
-      year:req.body.year
-    });
-    let peli = await PelisCollection.findOne({ _id: id });
-    console.log(peli);
-    try {
-      var srt2vtt = await require("srt-to-vtt");
-      var fs = await require("fs");
-      var appRoot = await require("app-root-path");
-      var subtituloFile =
-        appRoot.path + "/public/videos/subtitulo/" + id + ".vtt";
-      const https = await require("https");
-      
-      // !fs.existsSync(appRoot.path + "/public/videos/subtitulo")
-      //   ? fs.mkdirSync(appRoot.path + "/public/videos/subtitulo/")
-      //   : "";
-
-
-      // const file = fs.createWriteStream(subtituloFile);
-      // /////////////////////////////////////////////
-      peli && peli.subtitulo && await https.get(peli.subtitulo, async (response) => {
-       
-        var stream = response.pipe(srt2vtt());
-        // stream.on("finish", function () {});
-        streamToString(stream).then(data => {
-          data && PelisCollection.update(
-            { _id: id },
-            {
-              $set: {
-                textSubtitle: data.toString("utf8"),
+   const insertPeli = async () => {
+      let id = await PelisCollection.insert({
+        nombrePeli:req.body.nombre,
+        urlPeli:req.body.peli,
+        urlBackground:req.body.poster,
+        descripcion:req.body.nombre,
+        tamano:797,
+        mostrar:true,
+        subtitulo:req.body.subtitle,
+        year:req.body.year
+      });
+      let peli = await PelisCollection.findOne({ _id: id });
+      console.log(peli);
+      try {
+        var srt2vtt = await require("srt-to-vtt");
+        var fs = await require("fs");
+        var appRoot = await require("app-root-path");
+        var subtituloFile =
+          appRoot.path + "/public/videos/subtitulo/" + id + ".vtt";
+        const https = await require("https");
+        
+        // !fs.existsSync(appRoot.path + "/public/videos/subtitulo")
+        //   ? fs.mkdirSync(appRoot.path + "/public/videos/subtitulo/")
+        //   : "";
+  
+  
+        // const file = fs.createWriteStream(subtituloFile);
+        // /////////////////////////////////////////////
+        peli && peli.subtitulo && await https.get(peli.subtitulo, async (response) => {
+         
+          var stream = response.pipe(srt2vtt());
+          // stream.on("finish", function () {});
+          streamToString(stream).then(data => {
+            data && PelisCollection.update(
+              { _id: id },
+              {
+                $set: {
+                  textSubtitle: data.toString("utf8"),
+                },
               },
-            },
-            { multi: true }
-          );
-          console.log(`Actualizado subtitulo de la Peli: ${peli.nombrePeli}`);
-        }
-        )
-
-      });
-      
-
-      res.writeHead(200, {
-        message: "todo OK",
-      });
-    } catch (error) {
-      console.log("--------------------------------------");
-      // console.log("error.error :> " + error.error);
-      // console.log("error.reason :> " + error.reason);
-      console.log("error.message :> " + error.message);
-      // console.log("error.errorType :> " + error.errorType);
-      console.log("--------------------------------------");
-
-      res.writeHead(error.error, {
-        error: error.error,
-        reason: error.reason,
-        message: error.message,
-        errorType: error.errorType,
-      });
+              { multi: true }
+            );
+            console.log(`Actualizado subtitulo de la Peli: ${peli.nombrePeli}`);
+          }
+          )
+  
+        });
+        
+  
+        res.writeHead(200, {
+          message: "todo OK",
+        });
+      } catch (error) {
+        console.log("--------------------------------------");
+        // console.log("error.error :> " + error.error);
+        // console.log("error.reason :> " + error.reason);
+        console.log("error.message :> " + error.message);
+        // console.log("error.errorType :> " + error.errorType);
+        console.log("--------------------------------------");
+  
+        res.writeHead(error.error, {
+          error: error.error,
+          reason: error.reason,
+          message: error.message,
+          errorType: error.errorType,
+        });
+      }
+  
+      res.end();
     }
-
-    res.end();
+    
+    PelisCollection.find({urlPeli:req.body.peli}).count() == 0 && await insertPeli()
+    
   });
 
   
@@ -2037,8 +2050,8 @@ Accounts.onCreateUser(function (options, user) {
     user.descuentovpn = 0;
     user.contandoProxy = true;
     user.contandoVPN = true;
-    console.log(`user: \n${user}\n-----------------------\n`)
-    console.log(`options: \n${options}\n-----------------------\n`)
+    console.log(`user: \n${JSON.stringify(user)}\n-----------------------\n`)
+    console.log(`options: \n${JSON.stringify(options)}\n-----------------------\n`)
 
     return user;
   }
