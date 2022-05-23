@@ -919,7 +919,7 @@ console.log(pelis.length)
     pelis &&
       pelis.forEach(element => {
         PelisCollection.find({urlPeli:element.peli}).count() == 0 &&
-        http.post("http://localhost:6000/insertPelis", element, (opciones, res, body) => {
+        http.post("http://localhost:3000/insertPelis", element, (opciones, res, body) => {
           if (!opciones.headers.error) {
             // console.log(`statusCode: ${res.statusCode}`);
             console.log(element.nombre + " => " + opciones.headers.message);
@@ -1079,7 +1079,26 @@ console.log(pelis.length)
   
         });
         
-  
+        const imdbId = require('imdb-id');
+        const IMDb = require('imdb-light');
+
+        let idimdb = await imdbId(peli.nombrePeli)
+        // console.log("ID de IMDB => " + idimdb)
+        
+        await IMDb.fetch( idimdb, (details) => {
+          // console.log(details)  // etc...
+          PelisCollection.update(
+            { _id: id },
+            {
+              $set: {
+                descripcion: details.Plot,
+                clasificacion: details.Genres.split(", ")
+              },
+            },
+            { multi: true }
+          );
+        })
+
         res.writeHead(200, {
           message: "todo OK",
         });
