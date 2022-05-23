@@ -543,10 +543,16 @@ export default function Main() {
               </Grid>
               <Grid item xs={12}>
                 <PelisCard clasificacion="All" />
-                <PelisCard clasificacion="AVENTURA" />
-                <PelisCard clasificacion="ACCION" />
-                <PelisCard clasificacion="CIENCIA Y FICCION" />
-                <PelisCard clasificacion="TERROR" />
+                <PelisCard clasificacion="Sci-Fi" />
+                <PelisCard clasificacion="Action" />
+                <PelisCard clasificacion="Adventure" />
+                <PelisCard clasificacion="Thriller" />
+                <PelisCard clasificacion="Crime" />
+                <PelisCard clasificacion="Mystery" />
+                <PelisCard clasificacion="Horror" />
+                <PelisCard clasificacion="Comedy" />
+                <PelisCard clasificacion="Drama" />
+                <PelisCard clasificacion="Romance" />
               </Grid>
             </Grid>
           </div>
