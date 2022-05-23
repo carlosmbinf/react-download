@@ -918,8 +918,7 @@ console.log(pelis.length)
   try {
     pelis &&
       pelis.forEach(element => {
-        PelisCollection.find({urlPeli:element.peli}).count() == 0 &&
-        http.post("http://localhost:3000/insertPelis", element, (opciones, res, body) => {
+        http.post("http://localhost:6000/insertPelis", element, (opciones, res, body) => {
           if (!opciones.headers.error) {
             // console.log(`statusCode: ${res.statusCode}`);
             console.log(element.nombre + " => " + opciones.headers.message);
@@ -1030,9 +1029,10 @@ console.log(pelis.length)
 
   endpoint.post("/insertPelis",async (req, res) => {
     // console.log(req)
-    console.log(req.body)
-   const insertPeli = async () => {
-      let id = await PelisCollection.insert({
+    // console.log(req.body)
+  //  const insertPeli = async () => {
+    let exist = await PelisCollection.findOne({urlPeli:req.body.peli})
+     let id = exist ? exist._id : await PelisCollection.insert({
         nombrePeli:req.body.nombre,
         urlPeli:req.body.peli,
         urlBackground:req.body.poster,
@@ -1119,9 +1119,9 @@ console.log(pelis.length)
       }
   
       res.end();
-    }
+    // }
     
-    PelisCollection.find({urlPeli:req.body.peli}).count() == 0 && await insertPeli()
+    // PelisCollection.find({urlPeli:req.body.peli}).count() == 0 && await insertPeli()
     
   });
 
