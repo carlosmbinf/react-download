@@ -467,18 +467,47 @@ export default function PeliDetails() {
                   onChange={handleFormat}
                   aria-label="text alignment"
                 >
-                  <ToggleButton value="ACCION" aria-label="bold">
-                    accion
+                  <ToggleButton value="Sci-Fi" aria-label="bold">
+                  Sci-Fi
                   </ToggleButton>
-                  <ToggleButton value="TERROR" aria-label="italic">
-                    terror
+                  <ToggleButton value="Action" aria-label="italic">
+                  Action
                   </ToggleButton>
-                  <ToggleButton value="CIENCIA Y FICCION" aria-label="underlined">
-                    Ciencia y Ficcion
+                  <ToggleButton value="Adventure" aria-label="underlined">
+                  Adventure
                   </ToggleButton>
-                  <ToggleButton value="AVENTURA" aria-label="color">
-                    Aventura
+                  <ToggleButton value="Thriller" aria-label="color">
+                  Thriller
                   </ToggleButton>
+                  <ToggleButton value="Crime" aria-label="bold">
+                  Crime
+                  </ToggleButton>
+                                  
+                </StyledToggleButtonGroup>
+                <br/>
+                <StyledToggleButtonGroup
+                  size="small"
+                  value={peliDetails.clasificacion}
+                  onChange={handleFormat}
+                  aria-label="text alignment"
+                >
+                 
+                  <ToggleButton value="Mystery" aria-label="italic">
+                  Mystery
+                  </ToggleButton>
+                  <ToggleButton value="Horror" aria-label="underlined">
+                  Horror
+                  </ToggleButton>
+                  <ToggleButton value="Comedy" aria-label="color">
+                  Comedy
+                  </ToggleButton>
+                  <ToggleButton value="Drama" aria-label="bold">
+                  Drama
+                  </ToggleButton>
+                  <ToggleButton value="Romance" aria-label="italic">
+                  Romance
+                  </ToggleButton>
+                 
                 </StyledToggleButtonGroup>
               </Grid>
 
