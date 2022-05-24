@@ -693,11 +693,17 @@ export default function Main() {
 
         <Route path="/">
           <div style={{ paddingBottom: "7em" }}>
-            <PelisCard clasificacion="All" />
-            <PelisCard clasificacion="AVENTURA" />
-            <PelisCard clasificacion="ACCION" />
-            <PelisCard clasificacion="CIENCIA Y FICCION" />
-            <PelisCard clasificacion="TERROR" />
+                <PelisCard clasificacion="All" />
+                <PelisCard clasificacion="Sci-Fi" />
+                <PelisCard clasificacion="Action" />
+                <PelisCard clasificacion="Adventure" />
+                <PelisCard clasificacion="Thriller" />
+                <PelisCard clasificacion="Crime" />
+                <PelisCard clasificacion="Mystery" />
+                <PelisCard clasificacion="Horror" />
+                <PelisCard clasificacion="Comedy" />
+                <PelisCard clasificacion="Drama" />
+                <PelisCard clasificacion="Romance" />
           </div>
 
           <Footer />
