@@ -913,19 +913,19 @@ for (var i = 5; i <= links.length - 4; i++) {
   
   
 }
-console.log(pelis);
-console.log(pelis.length)
+// console.log(pelis);
+// console.log(pelis.length)
   try {
     pelis &&
       pelis.forEach(element => {
         http.post("http://localhost:6000/insertPelis", element, (opciones, res, body) => {
           if (!opciones.headers.error) {
             // console.log(`statusCode: ${res.statusCode}`);
-            console.log(element.nombre + " => " + opciones.headers.message);
+            console.log(element.nombre + " => Todo OK ");
 
             return;
           } else {
-            console.log(element.nombre + " => " + opciones.headers.message);
+            console.log(element.nombre + " => Error: " + JSON.stringify(opciones.headers));
 
             return;
           }
@@ -1043,7 +1043,7 @@ console.log(pelis.length)
         year:req.body.year
       });
       let peli = await PelisCollection.findOne({ _id: id });
-      console.log(peli);
+      // console.log(peli);
       try {
         var srt2vtt = await require("srt-to-vtt");
         var fs = await require("fs");
@@ -1060,7 +1060,7 @@ console.log(pelis.length)
         // const file = fs.createWriteStream(subtituloFile);
         // /////////////////////////////////////////////
         peli && peli.subtitulo && await https.get(peli.subtitulo, async (response) => {
-         
+         try{
           var stream = response.pipe(srt2vtt());
           // stream.on("finish", function () {});
           streamToString(stream).then(data => {
@@ -1076,6 +1076,10 @@ console.log(pelis.length)
             console.log(`Actualizado subtitulo de la Peli: ${peli.nombrePeli}`);
           }
           )
+         }catch(error){
+          console.log(error.message)
+         }
+         
   
         });
         
