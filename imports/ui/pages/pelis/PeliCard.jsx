@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
@@ -69,9 +69,10 @@ const useStyles = makeStyles((theme) => ({
     padding: "2em",
   },
   primary: {
+    width:"100%",
     minWidth: 220,
-    maxWidth: 220,
-    maxHeight: 263,
+    // maxWidth: 220,
+    // maxHeight: 263,
     minHeight: 263,
     borderRadius: 20,
     // padding: "2em",
@@ -82,9 +83,10 @@ const useStyles = makeStyles((theme) => ({
     backgroundRepeat: "no-repeat",
   },
   secundary: {
+    width:"100%",
     minWidth: 220,
-    maxWidth: 220,
-    maxHeight: 263,
+    // maxWidth: 220,
+    // maxHeight: 263,
     minHeight: 263,
     borderRadius: 20,
     // padding: "2em",
@@ -95,9 +97,19 @@ const useStyles = makeStyles((theme) => ({
     backgroundRepeat: "no-repeat",
   },
   boton: {
+    width: "220px",
     margin:15,
     borderRadius: 20,
     padding: 0,
+    flex: "1 1 0px",
+    // transition: "transform 500ms",
+    transition: "width 1s",
+    "&:hover, &:focus": {
+      // transform: "scaleX(2)",
+      // transform: "translateX(25%)",
+      width: "400px",
+      zIndex: 1000,
+    },
   },
   rootADD: {
     minWidth: 220,
@@ -146,6 +158,7 @@ const useStyles = makeStyles((theme) => ({
 export default function PeliCard(options) {
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
+  const [mostrar, setMostrar] = useState(true);
 
   const peli = useTracker(() => {
     Meteor.subscribe("pelis", {}, {
@@ -155,19 +168,20 @@ export default function PeliCard(options) {
         vistas: 1,
         mostrar: 1,
         urlBackground:1,
-        nombrePeli:1
+        nombrePeli:1,
+        urlPeli:1
       }
     });
     if (options.clasificacion == "All") {
-      return PelisCollection.find({ mostrar: "true" }, { fields: {} }).fetch();
+      return PelisCollection.find({ mostrar: "true" }).fetch();
     } else {
-      return PelisCollection.find({ mostrar: "true", clasificacion: options.clasificacion }, { fields: {} }).fetch();
+      return PelisCollection.find({ mostrar: "true", clasificacion: options.clasificacion }).fetch();
     }
   });
 
   const items = peli.map((peliGeneral, i) => {
+
     return (
-      <>
         <Link key={i} to={"/pelis/" + peliGeneral._id} className={classes.link}>
           <Button color="inherit" className={classes.boton}>
             <Paper
@@ -182,6 +196,17 @@ export default function PeliCard(options) {
               }}
             >
               <Grid container spacing={3}>
+              <Grid item style={{ width: "100%", height:"100%", position: "absolute", bottom: 0  }}>
+                {/* INSERTAR VIDEO */}
+                {peliGeneral.urlPeli &&
+                  <video onLoadedMetadata={} controls width="100%" style={{ width: "100%", maxHeight: "60vh" }} poster={peliGeneral.urlBackground} preload="metadata">
+                    <source src={peliGeneral.urlPeli} type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
+                    <track default kind="subtitles" label="Español" src={`/getsubtitle?idPeli=${peliGeneral._id}`} srcLang="es" />
+                    {/* <track default kind="descriptions" label="Español" src="https://visuales.uclv.cu/Peliculas/Extranjeras/2020/2020_Ava/sinopsis.txt" srcLang="es"/> */}
+                  </video>
+                }
+                
+              </Grid>
                 <Grid item xs={12}>
                   {/* <Divider className={classes.padding10} /> */}
                   <Grid
@@ -229,7 +254,6 @@ export default function PeliCard(options) {
             </Paper>
           </Button>
         </Link>
-      </>
     );
   });
 
@@ -276,9 +300,7 @@ export default function PeliCard(options) {
       </>
     );
   }
-  return (
-    <>
-      {peli.length ?
+  return peli.length ?
         <Fade left>
           <Grid
             container
@@ -294,14 +316,9 @@ export default function PeliCard(options) {
 
             </Grid>
           </Grid>
-          <div style={{ width: "100%" }}>
+          {/* <div style={{ width: "100%" }}> */}
             <Carousel items={items} />
-          </div>
+          {/* </div> */}
         </Fade>
         : ""
-    }
-    
-      
-    </>
-  );
 }
