@@ -199,7 +199,7 @@ export default function PeliCard(options) {
               <Grid item style={{ width: "100%", height:"100%", position: "absolute", bottom: 0  }}>
                 {/* INSERTAR VIDEO */}
                 {peliGeneral.urlPeli &&
-                  <video onLoadedMetadata={} controls width="100%" style={{ width: "100%", maxHeight: "60vh" }} poster={peliGeneral.urlBackground} preload="metadata">
+                  <video controls width="100%" style={{ width: "100%", maxHeight: "60vh" }} poster={peliGeneral.urlBackground} preload="metadata">
                     <source src={peliGeneral.urlPeli} type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
                     <track default kind="subtitles" label="Español" src={`/getsubtitle?idPeli=${peliGeneral._id}`} srcLang="es" />
                     {/* <track default kind="descriptions" label="Español" src="https://visuales.uclv.cu/Peliculas/Extranjeras/2020/2020_Ava/sinopsis.txt" srcLang="es"/> */}
