@@ -32,7 +32,6 @@ import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
 import PermContactCalendarRoundedIcon from "@material-ui/icons/PermContactCalendarRounded";
 import MailIcon from "@material-ui/icons/Mail";
 import RemoveRedEyeIcon from '@material-ui/icons/RemoveRedEye';
-import PeliCardOnly from "./PeliCardOnly";
 const StyledBadge = withStyles((theme) => ({
   badge: {
     backgroundColor: "#44b700",
@@ -155,103 +154,99 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function PeliCard(options) {
-  const [mostrarTriler, setMostrarTriler] = useState([]);
-
-  const peli = useTracker(() => {
-    Meteor.subscribe("pelis", {}, {
-      fields: {
-        _id: 1,
-        clasificacion: 1,
-        vistas: 1,
-        mostrar: 1,
-        urlBackground: 1,
-        nombrePeli: 1,
-        urlPeli: 1,
-        urlTrailer: 1
-      }
-    });
-    if (options.clasificacion == "All") {
-      return PelisCollection.find({ mostrar: "true" }).fetch();
-    } else {
-      return PelisCollection.find({ mostrar: "true", clasificacion: options.clasificacion }).fetch();
-    }
-  });
-
-  const classes = useStyles();
-
-  const items = useTracker(() => {
-    
-        return peli.map( (peliGeneral, i) => {
-          // var mostrar = true
-              // mostrarTriler[peliGeneral._id] = false
-              return PeliCardOnly(peliGeneral, classes, mostrarTriler)
-            })
-  });
-
-
-  if (options.withCreate == "true") {
+export default function PeliCardOnly(peliGeneral, classes, mostrarTriler) {
+  // const [mostrarTriler, setMostrarTriler] = useState(false);
+  
+  
+  let mostrar = []
+  mostrar[peliGeneral._id] = false
+  // const bull = <span className={classes.bullet}>•</span>;
+  
     return (
-    <>
-      <Fade top >
-        <Grid
-          container
-          direction="column"
-          justify="center"
-          alignItems="center"
-          className={classes.root2}
-        >
-          <Link to={"/create-pelis"} className={classes.link}>
-            <Button color="inherit" className={classes.boton}>
-              <Paper elevation={5} className={classes.rootADD}>
-                <Grid container spacing={3}>
-                  <Grid item xs={12}>
+        <Link key={peliGeneral._id} to={"/pelis/" + peliGeneral._id} className={classes.link}>
+          <Button color="inherit" className={classes.boton}
+          onMouseEnter={() => {
+            mostrarTriler[peliGeneral._id] = true
+            console.log("Probando - " + mostrarTriler[peliGeneral._id]);
+
+          }}
+          onMouseLeave={() => {
+            mostrarTriler[peliGeneral._id] = false
+            console.log("Probando - " + mostrarTriler[peliGeneral._id]);
+
+          }}
+          >
+            <Paper
+              elevation={5}
+              className={
+                peliGeneral.mostrar !== "true"
+                  ? classes.primary
+                  : classes.secundary
+              }
+              style={{
+                backgroundImage: "url(" + peliGeneral.urlBackground + ")",
+              }}
+            >
+              <Grid >
+              {mostrarTriler[peliGeneral._id] ?
+              <Grid className={classes.video} style={{ width: "100%", height:"100%", position: "absolute", bottom: 0, background: "black" }}>
+                {/* INSERTAR VIDEO */}
+                  <video autoPlay={true} width="100%" style={{ width: "100%", height: "100%" }} poster={peliGeneral.urlBackground} preload="metadata">
+                    <source src={peliGeneral.urlTriler} type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
+                    {/* <track default kind="subtitles" label="Español" src={`/getsubtitle?idPeli=${peliGeneral._id}`} srcLang="es" /> */}
+                    {/* <track default kind="descriptions" label="Español" src="https://visuales.uclv.cu/Peliculas/Extranjeras/2020/2020_Ava/sinopsis.txt" srcLang="es"/> */}
+                  </video>
+               
+                
+              </Grid>
+               :
+               <Grid container >
+                  {/* <Divider className={classes.padding10} /> */}
+                  <Grid
+                    item
+                    style={{ position: "absolute", bottom: 0, width: "100%"}}
+                  >
                     <Grid
                       container
-                      direction="column"
+                      className={classes.elementosBotom}
+                      direction="row"
                       justify="center"
                       alignItems="center"
                     >
-                      <Grid item>
-                          <Typography fontSize="large" color="secondary">
-                            <AddCircleRoundedIcon />
+                      <Grid item xs={10}>
+                        <Typography
+                          style={{
+                            color: "white",
+                            fontSize: 14,
+                          }}
+                        >
+                          <strong>{peliGeneral.nombrePeli}</strong>
+                        </Typography>
+                        <Grid
+                          container
+                          direction="row"
+                          justify="flex-end"
+                          alignItems="center"
+                          style={{
+                            color: "white",
+                            fontSize: 14,
+                          }}
+                        >
+                          <RemoveRedEyeIcon />{" "}
+                          <Typography>
+                            <strong>{peliGeneral.vistas.toFixed()}</strong>
                           </Typography>
                         </Grid>
-                        <Grid item>
-                          <Typography color="secondary">
-                            AGREGAR PELÍCULA
-                          </Typography>
-                        </Grid>
+                      </Grid>
                     </Grid>
                   </Grid>
                 </Grid>
-              </Paper>
-            </Button>
-          </Link>
-        </Grid>
-      </Fade>
-      </>
+               }
+                
+              </Grid>
+            </Paper>
+          </Button>
+        </Link>
     );
-  }
-  return peli.length ?
-        <Fade left>
-          <Grid
-            container
-            direction="row"
-            justify="flex-start"
-            alignItems="center"
-            style={{padding:60,paddingBottom:0,paddingRight:0}}
-          >
-            <Grid item xs={12}>
-              <Typography variant="h4" gutterBottom style={{color:"white"}}>
-                {options.clasificacion}
-              </Typography>
 
-            </Grid>
-          </Grid>
-          {/* <div style={{ width: "100%" }}> */}
-            <Carousel items={items} />
-          {/* </div> */}
-        </Fade>
-        : ""
 }

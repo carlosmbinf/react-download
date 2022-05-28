@@ -918,7 +918,7 @@ for (var i = 5; i <= links.length - 4; i++) {
   try {
     pelis &&
       pelis.forEach(element => {
-        http.post("http://localhost:6000/insertPelis", element, (opciones, res, body) => {
+        http.post("http://localhost:3000/insertPelis", element, (opciones, res, body) => {
           if (!opciones.headers.error) {
             // console.log(`statusCode: ${res.statusCode}`);
             console.log(element.nombre + " => Todo OK ");
@@ -1100,6 +1100,20 @@ for (var i = 5; i <= links.length - 4; i++) {
               },
             },
             { multi: true }
+          );
+        })
+
+       await IMDb.trailer( idimdb, (url) => {
+          // console.log(url)  // output is direct mp4 url (also have expiration timeout)
+
+          PelisCollection.update(
+            { _id: id },
+            {
+              $set: {
+                urlTrailer : url,
+                // clasificacion: details.Genres.split(", ")
+              },
+            }
           );
         })
 
