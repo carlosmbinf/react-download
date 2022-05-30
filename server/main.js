@@ -838,12 +838,14 @@ if (Meteor.isServer) {
     cron
       .schedule(
         "*/10 * * * *",
-        () => {
+       async () => {
 
-         PelisCollection.find({}, { fields: { idimdb: 1 } }).map(async (peli) => {
+        const IMDb = require('imdb-light');
+
+      await   PelisCollection.find({}, { fields: {nombrePeli:1, idimdb: 1 } }).map(async (peli) => {
             try {
               peli.idimdb && await IMDb.trailer(peli.idimdb, (url) => {
-                // console.log(url)  // output is direct mp4 url (also have expiration timeout)
+                console.log(peli.nombrePeli + " => Actualizando URL Pelicula")  // output is direct mp4 url (also have expiration timeout)
 
                 url && PelisCollection.update(
                   { _id: peli._id },
