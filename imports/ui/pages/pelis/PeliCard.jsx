@@ -254,7 +254,7 @@ export default function PeliCard(options) {
       </>
     );
   }
-  return items && <Fade left>
+  return peli.length > 0 ? <Fade left>
           <Grid
             container
             direction="row"
@@ -273,4 +273,5 @@ export default function PeliCard(options) {
             <Carousel items={items} />
           {/* </div> */}
         </Fade>
+        : ""
 }
