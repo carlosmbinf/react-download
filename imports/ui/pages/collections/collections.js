@@ -501,6 +501,7 @@ export const SchemaPelisCollection = new SimpleSchema({
   urlTrailer: {
     type: String,
     defaultValue: "",
+    optional: true
   },
   tamano:{
     type: String,
@@ -544,6 +545,11 @@ export const SchemaPelisCollection = new SimpleSchema({
     defaultValue: [],
   },
   'clasificacion.$': { type: String },
+  idimdb:{
+      type: String,
+      defaultValue: "",
+      optional: true,
+  }
 });
 
 PelisCollection.attachSchema(SchemaPelisCollection);

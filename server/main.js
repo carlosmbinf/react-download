@@ -835,40 +835,41 @@ if (Meteor.isServer) {
 
 
        //////////ACTUALIZAR TRAILERS //////////////
-      //  cron
-      //  .schedule(
-      //    "*/2 * * * *",
-      //    async () => {
+    cron
+      .schedule(
+        "*/10 * * * *",
+        () => {
+
+         PelisCollection.find({}, { fields: { idimdb: 1 } }).map(async (peli) => {
+            try {
+              await IMDb.trailer(peli.idimdb, (url) => {
+                // console.log(url)  // output is direct mp4 url (also have expiration timeout)
+
+                url && PelisCollection.update(
+                  { _id: peli._id },
+                  {
+                    $set: {
+                      urlTrailer: url,
+                      // clasificacion: details.Genres.split(", ")
+                    },
+                  }
+                );
+              })
+            } catch (error) {
+              console.log(error)
+            }
 
 
-      //     const imdbId = require('imdb-id');
-      //     const IMDb = require('imdb-light');
-  
-      //     let idimdb = await imdbId(peli.nombrePeli)
-      //     // console.log("ID de IMDB => " + idimdb)
-          
-          
-      //    await IMDb.trailer( idimdb, (url) => {
-      //       console.log(peli.nombrePeli + " => " + url)  // output is direct mp4 url (also have expiration timeout)
-          
-      //       PelisCollection.update(
-      //         { _id: id },
-      //         {
-      //           $set: {
-      //             urlTrailer : url,
-      //             // clasificacion: details.Genres.split(", ")
-      //           },
-      //         }
-      //       );
-      //     })
 
-      //    },
-      //    {
-      //      scheduled: true,
-      //      timezone: "America/Havana",
-      //    }
-      //  )
-      //  .start();
+          })
+
+        },
+        {
+          scheduled: true,
+          timezone: "America/Havana",
+        }
+      )
+      .start();
 
 
   } catch (error) {
@@ -954,7 +955,7 @@ for (var i = 5; i <= links.length - 4; i++) {
   try {
     pelis &&
       pelis.forEach(element => {
-        http.post("http://localhost:6000/insertPelis", element, (opciones, res, body) => {
+        http.post("http://localhost:3000/insertPelis", element, (opciones, res, body) => {
           if (!opciones.headers.error) {
             // console.log(`statusCode: ${res.statusCode}`);
             console.log(element.nombre + " => Todo OK ");
@@ -1125,6 +1126,30 @@ for (var i = 5; i <= links.length - 4; i++) {
         let idimdb = await imdbId(peli.nombrePeli)
         // console.log("ID de IMDB => " + idimdb)
         
+        PelisCollection.update(
+          { _id: id },
+          {
+            $set: {
+              idimdb: idimdb
+            },
+          },
+          { multi: true }
+        );
+
+        await IMDb.trailer( idimdb, (url) => {
+          // console.log(url)  // output is direct mp4 url (also have expiration timeout)
+
+          PelisCollection.update(
+            { _id: id },
+            {
+              $set: {
+                urlTrailer : url,
+                // clasificacion: details.Genres.split(", ")
+              },
+            }
+          );
+        })
+
         await IMDb.fetch( idimdb, (details) => {
           // console.log(details)  // etc...
           PelisCollection.update(
@@ -1139,19 +1164,7 @@ for (var i = 5; i <= links.length - 4; i++) {
           );
         })
 
-       await IMDb.trailer( idimdb, (url) => {
-          // console.log(url)  // output is direct mp4 url (also have expiration timeout)
-
-          PelisCollection.update(
-            { _id: id },
-            {
-              $set: {
-                urlTrailer : url,
-                // clasificacion: details.Genres.split(", ")
-              },
-            }
-          );
-        })
+       
 
         res.writeHead(200, {
           message: "todo OK",
