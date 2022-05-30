@@ -838,13 +838,13 @@ if (Meteor.isServer) {
     cron
       .schedule(
         "*/10 * * * *",
-       async () => {
+        () => {
 
         const IMDb = require('imdb-light');
 
-      await   PelisCollection.find({}, { fields: {nombrePeli:1, idimdb: 1 } }).map(async (peli) => {
+         PelisCollection.find({}, { fields: {nombrePeli:1, idimdb: 1 } }).map((peli) => {
             try {
-              peli.idimdb && await IMDb.trailer(peli.idimdb, (url) => {
+              peli.idimdb && IMDb.trailer(peli.idimdb, (url) => {
                 console.log(peli.nombrePeli + " => Actualizando URL Pelicula")  // output is direct mp4 url (also have expiration timeout)
 
                 url && PelisCollection.update(
@@ -957,7 +957,7 @@ for (var i = 5; i <= links.length - 4; i++) {
   try {
     pelis &&
       pelis.forEach(element => {
-        http.post("http://localhost:6000/insertPelis", element, (opciones, res, body) => {
+        http.post("http://localhost:3000/insertPelis", element, (opciones, res, body) => {
           if (!opciones.headers.error) {
             // console.log(`statusCode: ${res.statusCode}`);
             console.log(element.nombre + " => Todo OK ");
