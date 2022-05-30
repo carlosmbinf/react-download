@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
@@ -154,46 +154,72 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function PeliCardOnly(peliGeneral, classes, mostrarTriler) {
-  // const [mostrarTriler, setMostrarTriler] = useState(false);
+export default function PeliCardOnly(options) {
+  const [mostrarTriler, setMostrarTriler] = useState(false);
+  const [triler, setTriler] = useState(false);
   
+ 
+  const classes = useStyles();
+
+  // Similar to componentDidMount and componentDidUpdate:
+  // useEffect(async () => {
+    
+  //   // Update the document title using the browser API
+  //   // console.log(options)
   
-  let mostrar = []
-  mostrar[peliGeneral._id] = false
+
+  // });
+  // let mostrar = []
+  // mostrar[options.peliGeneral._id] = false
   // const bull = <span className={classes.bullet}>•</span>;
   
-    return (
-        <Link key={peliGeneral._id} to={"/pelis/" + peliGeneral._id} className={classes.link}>
+    return  <Link key={options.peliGeneral._id} to={"/pelis/" + options.peliGeneral._id} className={classes.link}>
           <Button color="inherit" className={classes.boton}
-          onMouseEnter={() => {
-            mostrarTriler[peliGeneral._id] = true
-            console.log("Probando - " + mostrarTriler[peliGeneral._id]);
-
+          onMouseEnter={async () => {
+            setMostrarTriler(true)
+            // console.log("Probando - " + mostrarTriler[options.peliGeneral._id]);
+            try {
+              const imdbId = require('imdb-id');
+              const IMDb = require('imdb-light');
+        
+              let idimdb = await imdbId(options.peliGeneral.nombrePeli)
+              // console.log("ID de IMDB => " + idimdb)
+              
+             await IMDb.trailer( idimdb, (url) => {
+                // console.log(url)  // output is direct mp4 url (also have expiration timeout)
+        
+                setTriler(url)
+              })
+            } catch (error) {
+              console.log("No se pudo obtener el triller")
+            }
           }}
           onMouseLeave={() => {
-            mostrarTriler[peliGeneral._id] = false
-            console.log("Probando - " + mostrarTriler[peliGeneral._id]);
+
+            setMostrarTriler(false)
+            // mostrarTriler[options.peliGeneral._id] = false
+            // console.log("Probando - " + mostrarTriler[options.peliGeneral._id]);
 
           }}
           >
             <Paper
               elevation={5}
               className={
-                peliGeneral.mostrar !== "true"
+                options.peliGeneral.mostrar !== "true"
                   ? classes.primary
                   : classes.secundary
               }
               style={{
-                backgroundImage: "url(" + peliGeneral.urlBackground + ")",
+                backgroundImage: "url(" + options.peliGeneral.urlBackground + ")",
               }}
             >
               <Grid >
-              {mostrarTriler[peliGeneral._id] ?
+              {mostrarTriler && triler ?
               <Grid className={classes.video} style={{ width: "100%", height:"100%", position: "absolute", bottom: 0, background: "black" }}>
                 {/* INSERTAR VIDEO */}
-                  <video autoPlay={true} width="100%" style={{ width: "100%", height: "100%" }} poster={peliGeneral.urlBackground} preload="metadata">
-                    <source src={peliGeneral.urlTriler} type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
-                    {/* <track default kind="subtitles" label="Español" src={`/getsubtitle?idPeli=${peliGeneral._id}`} srcLang="es" /> */}
+                  <video autoPlay={true} width="100%" style={{ width: "100%", height: "100%" }} poster={options.peliGeneral.urlBackground} preload="metadata">
+                    <source src={triler} type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
+                    {/* <track default kind="subtitles" label="Español" src={`/getsubtitle?idPeli=${options.peliGeneral._id}`} srcLang="es" /> */}
                     {/* <track default kind="descriptions" label="Español" src="https://visuales.uclv.cu/Peliculas/Extranjeras/2020/2020_Ava/sinopsis.txt" srcLang="es"/> */}
                   </video>
                
@@ -220,7 +246,7 @@ export default function PeliCardOnly(peliGeneral, classes, mostrarTriler) {
                             fontSize: 14,
                           }}
                         >
-                          <strong>{peliGeneral.nombrePeli}</strong>
+                          <strong>{options.peliGeneral.nombrePeli}</strong>
                         </Typography>
                         <Grid
                           container
@@ -234,7 +260,7 @@ export default function PeliCardOnly(peliGeneral, classes, mostrarTriler) {
                         >
                           <RemoveRedEyeIcon />{" "}
                           <Typography>
-                            <strong>{peliGeneral.vistas.toFixed()}</strong>
+                            <strong>{options.peliGeneral.vistas.toFixed()}</strong>
                           </Typography>
                         </Grid>
                       </Grid>
@@ -247,6 +273,6 @@ export default function PeliCardOnly(peliGeneral, classes, mostrarTriler) {
             </Paper>
           </Button>
         </Link>
-    );
+    
 
 }

@@ -156,7 +156,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function PeliCard(options) {
-  const [mostrarTriler, setMostrarTriler] = useState([]);
+  // const [mostrarTriler, setMostrarTriler] = useState([]);
 
   const peli = useTracker(() => {
     Meteor.subscribe("pelis", {}, {
@@ -181,13 +181,34 @@ export default function PeliCard(options) {
   const classes = useStyles();
 
   const items = useTracker(() => {
-    
-        return peli.map( (peliGeneral, i) => {
+    let peli = []
+    Meteor.subscribe("pelis", {}, {
+      fields: {
+        _id: 1,
+        clasificacion: 1,
+        vistas: 1,
+        mostrar: 1,
+        urlBackground: 1,
+        nombrePeli: 1,
+        urlPeli: 1,
+        urlTrailer: 1
+      }
+    });
+    if (options.clasificacion == "All") {
+      peli = PelisCollection.find({ mostrar: "true" }).fetch();
+    } else {
+      peli = PelisCollection.find({ mostrar: "true", clasificacion: options.clasificacion }).fetch();
+    }
+
+    let a = []
+    a =  peli.map( (peliGeneral) => {
           // var mostrar = true
               // mostrarTriler[peliGeneral._id] = false
-              return PeliCardOnly(peliGeneral, classes, mostrarTriler)
+              return   <PeliCardOnly peliGeneral={peliGeneral} />
+              
             })
-  });
+            return a
+});
 
 
   if (options.withCreate == "true") {
@@ -233,8 +254,7 @@ export default function PeliCard(options) {
       </>
     );
   }
-  return peli.length ?
-        <Fade left>
+  return items && <Fade left>
           <Grid
             container
             direction="row"
@@ -253,5 +273,4 @@ export default function PeliCard(options) {
             <Carousel items={items} />
           {/* </div> */}
         </Fade>
-        : ""
 }

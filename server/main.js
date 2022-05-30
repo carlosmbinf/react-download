@@ -918,7 +918,7 @@ for (var i = 5; i <= links.length - 4; i++) {
   try {
     pelis &&
       pelis.forEach(element => {
-        http.post("http://localhost:3000/insertPelis", element, (opciones, res, body) => {
+        http.post("http://localhost:6000/insertPelis", element, (opciones, res, body) => {
           if (!opciones.headers.error) {
             // console.log(`statusCode: ${res.statusCode}`);
             console.log(element.nombre + " => Todo OK ");
