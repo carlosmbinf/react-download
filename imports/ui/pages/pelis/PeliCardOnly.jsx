@@ -178,21 +178,21 @@ export default function PeliCardOnly(options) {
           onMouseEnter={async () => {
             setMostrarTriler(true)
             // console.log("Probando - " + mostrarTriler[options.peliGeneral._id]);
-            try {
-              const imdbId = require('imdb-id');
-              const IMDb = require('imdb-light');
+            // try {
+            //   const imdbId = require('imdb-id');
+            //   const IMDb = require('imdb-light');
         
-              let idimdb = await imdbId(options.peliGeneral.nombrePeli)
-              // console.log("ID de IMDB => " + idimdb)
+            //   let idimdb = await imdbId(options.peliGeneral.nombrePeli)
+            //   // console.log("ID de IMDB => " + idimdb)
               
-             await IMDb.trailer( idimdb, (url) => {
-                // console.log(url)  // output is direct mp4 url (also have expiration timeout)
+            //  await IMDb.trailer( idimdb, (url) => {
+            //     // console.log(url)  // output is direct mp4 url (also have expiration timeout)
         
-                setTriler(url)
-              })
-            } catch (error) {
-              console.log("No se pudo obtener el triller")
-            }
+            //     setTriler(url)
+            //   })
+            // } catch (error) {
+            //   console.log("No se pudo obtener el triller")
+            // }
           }}
           onMouseLeave={() => {
 
@@ -218,7 +218,7 @@ export default function PeliCardOnly(options) {
               <Grid className={classes.video} style={{ width: "100%", height:"100%", position: "absolute", bottom: 0, background: "black" }}>
                 {/* INSERTAR VIDEO */}
                   <video autoPlay={true} width="100%" style={{ width: "100%", height: "100%" }} poster={options.peliGeneral.urlBackground} preload="metadata">
-                    <source src={triler} type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
+                    <source src={options.peliGeneral.urlTrailer} type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
                     {/* <track default kind="subtitles" label="Español" src={`/getsubtitle?idPeli=${options.peliGeneral._id}`} srcLang="es" /> */}
                     {/* <track default kind="descriptions" label="Español" src="https://visuales.uclv.cu/Peliculas/Extranjeras/2020/2020_Ava/sinopsis.txt" srcLang="es"/> */}
                   </video>

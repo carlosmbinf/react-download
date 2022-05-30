@@ -834,6 +834,42 @@ if (Meteor.isServer) {
       .start();
 
 
+       //////////ACTUALIZAR TRAILERS //////////////
+      //  cron
+      //  .schedule(
+      //    "*/2 * * * *",
+      //    async () => {
+
+
+      //     const imdbId = require('imdb-id');
+      //     const IMDb = require('imdb-light');
+  
+      //     let idimdb = await imdbId(peli.nombrePeli)
+      //     // console.log("ID de IMDB => " + idimdb)
+          
+          
+      //    await IMDb.trailer( idimdb, (url) => {
+      //       console.log(peli.nombrePeli + " => " + url)  // output is direct mp4 url (also have expiration timeout)
+          
+      //       PelisCollection.update(
+      //         { _id: id },
+      //         {
+      //           $set: {
+      //             urlTrailer : url,
+      //             // clasificacion: details.Genres.split(", ")
+      //           },
+      //         }
+      //       );
+      //     })
+
+      //    },
+      //    {
+      //      scheduled: true,
+      //      timezone: "America/Havana",
+      //    }
+      //  )
+      //  .start();
+
 
   } catch (error) {
     console.log(error);
