@@ -842,7 +842,7 @@ if (Meteor.isServer) {
 
          PelisCollection.find({}, { fields: { idimdb: 1 } }).map(async (peli) => {
             try {
-              await IMDb.trailer(peli.idimdb, (url) => {
+              peli.idimdb && await IMDb.trailer(peli.idimdb, (url) => {
                 // console.log(url)  // output is direct mp4 url (also have expiration timeout)
 
                 url && PelisCollection.update(
