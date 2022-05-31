@@ -126,20 +126,32 @@ export default function CreateArchivo() {
     // var http = require("http");
     // http.post = require("http-post");
 
-    let idPeli = await PelisCollection.insert({
-      nombrePeli: nombrePeli,
-      urlPeli: urlPeli,
-      urlBackground: urlBackground,
-      descripcion: descripcion,
+    let peliData = {
+      nombre: nombrePeli,
+      peli: urlPeli,
+      poster: urlBackground,
       tamano: tamano,
-      subtitulo: subtitulo,
-      mostrar: mostrar,
+      subtitle: subtitulo,
       year: year,
-    });
-    idPeli && subtitulo ?
-      $.post("convertsrttovtt", { idPeli: idPeli })
+    };
+    await $.post("insertPelis", peliData)
+    .done(function (data) {
+      setMessage("Película Agregada => " + peliData.nombre);
+      handleClick(TransitionUp);
+      setLoad(false);
+      setOpen(true);
+    })
+    .fail(function (data) {
+      setMessage("Ocurrió un Error");
+      handleClick(TransitionUp);
+      setLoad(false);
+      setOpen(true);
+    })
+
+     subtitulo &&
+    await  $.post("convertsrttovtt", { idPeli: idPeli })
         .done(function (data) {
-          setMessage("Película Agregada => " + idPeli);
+          setMessage("Subtitulo Actualizado => " + idPeli);
           handleClick(TransitionUp);
           setLoad(false);
           setOpen(true);
@@ -150,7 +162,8 @@ export default function CreateArchivo() {
           setLoad(false);
           setOpen(true);
         })
-      : "";
+
+      
 
 
     // subtitulo
