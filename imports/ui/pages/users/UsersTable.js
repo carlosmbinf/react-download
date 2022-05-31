@@ -507,7 +507,7 @@ export default function UsersTable(option) {
       <React.Fragment>
         <span className="p-column-title">Megas Gastados por el Cliente</span>
         {rowData.megasGastadosinBytes
-          ? Number.parseFloat(rowData.megasGastadosinBytes / 1000000).toFixed(2) + ' MB'
+          ? Number.parseFloat(rowData.megasGastadosinBytes / 1024000).toFixed(2) + ' MB'
           : "0"}
       </React.Fragment>
     );
@@ -517,7 +517,7 @@ export default function UsersTable(option) {
       <React.Fragment>
         <span className="p-column-title">Megas Gastados en el Servidor</span>
         {rowData.megasGastadosinBytesGeneral
-          ? Number.parseFloat(rowData.megasGastadosinBytesGeneral / 1000000).toFixed(2) + ' MB'
+          ? Number.parseFloat(rowData.megasGastadosinBytesGeneral / 1024000).toFixed(2) + ' MB'
           : "0"}
       </React.Fragment>
     );

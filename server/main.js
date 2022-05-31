@@ -728,7 +728,7 @@ if (Meteor.isServer) {
                     },
                     'VidKar Bloqueo de Proxy')
                   )
-                : (user.megasGastadosinBytes?user.megasGastadosinBytes:0) >= ((user.megas?Number(user.megas):0) * 1000000) &&
+                : (user.megasGastadosinBytes?user.megasGastadosinBytes:0) >= ((user.megas?Number(user.megas):0) * 1024000) &&
                   !user.baneado &&
                   (Meteor.users.update(user._id, {
                     $set: { baneado: true},
@@ -807,7 +807,7 @@ if (Meteor.isServer) {
             
             
 
-           !user.vpnisIlimitado && (user.vpnMbGastados?user.vpnMbGastados:0) >= ((user.vpnmegas?Number(user.vpnmegas):0) * 1000000) &&
+           !user.vpnisIlimitado && (user.vpnMbGastados?user.vpnMbGastados:0) >= ((user.vpnmegas?Number(user.vpnmegas):0) * 1024000) &&
                   (Meteor.users.update(user._id, {
                     $set: { vpn: false},
                   }),
@@ -837,7 +837,7 @@ if (Meteor.isServer) {
        //////////ACTUALIZAR TRAILERS //////////////
     cron
       .schedule(
-        "*/10 * * * *",
+        "*/20 * * * *",
         () => {
 
          PelisCollection.find({}, { fields: { idimdb: 1 } }).map(async (peli) => {
