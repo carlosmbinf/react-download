@@ -371,7 +371,7 @@ export default function UsersTableVPN(option) {
     return (
       <React.Fragment>
         <span className="p-column-title">Limite de Megas</span>
-        {users.vpnisIlimitado
+        {rowData.vpnisIlimitado
                                   ? rowData.vpnfechaSubscripcion
                                     ? dateFormat(
                                       new Date(rowData.vpnfechaSubscripcion),
