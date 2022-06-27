@@ -624,7 +624,7 @@ if (Meteor.isServer) {
 
 
             ////////////////Banear /////////////
-            user.baneado == false && user.profile.role !== 'admin' &&
+            user.isIlimitado == false && user.baneado == false && user.profile.role !== 'admin' &&
               (Meteor.users.update(user._id, {
                 $set: {
                   baneado: true,
@@ -652,7 +652,7 @@ if (Meteor.isServer) {
                   'VidKar Bloqueo de Proxy')
               );
 
-            user.vpn == true && user.username !== 'carlosmbinf' &&
+              vpnisIlimitado == false && user.vpn == true && user.username !== 'carlosmbinf' &&
               (Meteor.users.update(user._id, {
                 $set: {
                   vpn: false
@@ -837,12 +837,12 @@ if (Meteor.isServer) {
        //////////ACTUALIZAR TRAILERS //////////////
     cron
       .schedule(
-        "*/20 * * * *",
-        () => {
+        "0,30 * * * *",
+       async () => {
 
-        const IMDb = require('imdb-light');
+        const IMDb = await require('imdb-light');
 
-         PelisCollection.find({}, { fields: {nombrePeli:1, idimdb: 1 } }).map((peli) => {
+        await PelisCollection.find({}, { fields: {_id:1, nombrePeli:1, idimdb: 1 } }).map((peli) => {
             try {
               peli.idimdb && IMDb.trailer(peli.idimdb, (url) => {
                 console.log(peli.nombrePeli + " => Actualizando URL Pelicula")  // output is direct mp4 url (also have expiration timeout)
@@ -852,6 +852,7 @@ if (Meteor.isServer) {
                   {
                     $set: {
                       urlTrailer: url,
+                      fechaDeDescargaTriller: new Date()
                       // clasificacion: details.Genres.split(", ")
                     },
                   }
