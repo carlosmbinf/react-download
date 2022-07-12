@@ -134,34 +134,34 @@ export default function CreateArchivo() {
       subtitle: subtitulo,
       year: year,
     };
-    await $.post("insertPelis", peliData)
-    .done(function (data) {
-      setMessage("Película Agregada => " + peliData.nombre);
-      handleClick(TransitionUp);
-      setLoad(false);
-      setOpen(true);
-    })
-    .fail(function (data) {
-      setMessage("Ocurrió un Error");
-      handleClick(TransitionUp);
-      setLoad(false);
-      setOpen(true);
-    })
 
-     subtitulo &&
-    await  $.post("convertsrttovtt", { idPeli: idPeli })
-        .done(function (data) {
-          setMessage("Subtitulo Actualizado => " + idPeli);
-          handleClick(TransitionUp);
-          setLoad(false);
-          setOpen(true);
-        })
-        .fail(function (data) {
-          setMessage("Ocurrió un Error");
-          handleClick(TransitionUp);
-          setLoad(false);
-          setOpen(true);
-        })
+    await Meteor.call("insertPelis",peliData, (error, result) => { 
+      // !error ? console.log(result.message) : console.log(error); 
+      if(!error){
+      setMessage(result.message);
+      handleClick(TransitionUp);
+      setLoad(false);
+      setOpen(true);
+      }else{
+        setMessage(result.message);
+      handleClick(TransitionUp);
+      setLoad(false);
+      setOpen(true);
+        console.log(error)
+      }
+     })
+   
+
+    // await $.post("insertPelis", peliData)
+    // .done(function (data) {
+     
+    // })
+    // .fail(function (data) {
+    //   setMessage("Ocurrió un Error");
+    //   handleClick(TransitionUp);
+    //   setLoad(false);
+    //   setOpen(true);
+    // })
 
       
 
