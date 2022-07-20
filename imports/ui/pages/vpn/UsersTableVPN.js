@@ -559,13 +559,6 @@ export default function UsersTableVPN(option) {
                   filterElement={vpnTypeFilter}
                 />
                 <Column
-                  field="vpntype"
-                  header="VPN Type"
-                  body={vpnTypeBodyTemplate}
-                  filter
-                  filterElement={vpnTypeFilter}
-                />
-                <Column
                   field="contandoVPN"
                   header="Contando VPN"
                   body={contandoVPNBodyTemplate}
