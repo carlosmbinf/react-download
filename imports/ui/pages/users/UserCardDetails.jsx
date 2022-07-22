@@ -528,63 +528,61 @@ export default function UserCardDetails() {
     //   )
     // ) : (
 
-      !users.baneado &&
-        Meteor.users.update(users._id, {
-          $set: {
-            baneado: true,
-            bloqueadoDesbloqueadoPor: Meteor.userId()
-          },
-        }),
-          LogsCollection.insert({
-            type: !users.baneado ? "Desactivado" : "Activado",
-            userAfectado: users._id,
-            userAdmin: Meteor.userId(),
-            message:
-              "Ha sido " +
-              (!users.baneado ? "Desactivado" : "Activado") +
-              " por un Admin"
-          }),
-          Meteor.call('sendemail', users, {
-            text: "Ha sido " +
-              (!users.baneado ? "Desactivado" : "Activado") +
-              ` el proxy del usuario ${users.username}`
-          }, (!users.baneado ? "Desactivado " + Meteor.user().username : "Activado " + Meteor.user().username)),
-          Meteor.call('sendMensaje', users, {
-            text: "Ha sido " +
-              (!users.baneado ? "Desactivado" : "Activado") +
-              ` el proxy`
-          }, (!users.baneado ? "Desactivado " + Meteor.user().username : "Activado " + Meteor.user().username))
-        
+    !users.baneado ? (
+      Meteor.users.update(users._id, {
+        $set: {
+          baneado: true,
+          bloqueadoDesbloqueadoPor: Meteor.userId()
+        },
+      }),
+      LogsCollection.insert({
+        type: !users.baneado ? "Desactivado" : "Activado",
+        userAfectado: users._id,
+        userAdmin: Meteor.userId(),
+        message:
+          "Ha sido " +
+          (!users.baneado ? "Desactivado" : "Activado") +
+          " por un Admin"
+      }),
+      Meteor.call('sendemail', users, {
+        text: "Ha sido " +
+          (!users.baneado ? "Desactivado" : "Activado") +
+          ` el proxy del usuario ${users.username}`
+      }, (!users.baneado ? "Desactivado " + Meteor.user().username : "Activado " + Meteor.user().username)),
+      Meteor.call('sendMensaje', users, {
+        text: "Ha sido " +
+          (!users.baneado ? "Desactivado" : "Activado") +
+          ` el proxy`
+      }, (!users.baneado ? "Desactivado " + Meteor.user().username : "Activado " + Meteor.user().username))
+    ) : (
+      Meteor.users.update(users._id, {
+        $set: {
+          baneado: users.baneado ? false : true,
+          bloqueadoDesbloqueadoPor: Meteor.userId()
+        },
+      }),
+      LogsCollection.insert({
+        type: !users.baneado ? "Desactivado" : "Activado",
+        userAfectado: users._id,
+        userAdmin: Meteor.userId(),
+        message:
+          "Ha sido " +
+          (!users.baneado ? "Desactivado" : "Activado") +
+          " por un Admin"
+      }),
+      Meteor.call('sendemail', users, {
+        text: "Ha sido " +
+          (!users.baneado ? "Desactivado" : "Activado") +
+          ` el proxy del usuario ${users.username}`
+      }, (!users.baneado ? "Desactivado " + Meteor.user().username : "Activado " + Meteor.user().username)),
+      Meteor.call('sendMensaje', users, {
+        text: "Ha sido " +
+          (!users.baneado ? "Desactivado" : "Activado") +
+          ` el proxy`
+      }, (!users.baneado ? "Desactivado " + Meteor.user().username : "Activado " + Meteor.user().username)),
+      precios.map(precio => {
 
-      validacion && users.baneado && (
-        Meteor.users.update(users._id, {
-          $set: {
-            baneado: users.baneado ? false : true,
-            bloqueadoDesbloqueadoPor: Meteor.userId()
-          },
-        }),
-        LogsCollection.insert({
-          type: !users.baneado ? "Desactivado" : "Activado",
-          userAfectado: users._id,
-          userAdmin: Meteor.userId(),
-          message:
-            "Ha sido " +
-            (!users.baneado ? "Desactivado" : "Activado") +
-            " por un Admin"
-        }),
-        Meteor.call('sendemail', users, {
-          text: "Ha sido " +
-            (!users.baneado ? "Desactivado" : "Activado") +
-            ` el proxy del usuario ${users.username}`
-        }, (!users.baneado ? "Desactivado " + Meteor.user().username : "Activado " + Meteor.user().username)),
-        Meteor.call('sendMensaje', users, {
-          text: "Ha sido " +
-            (!users.baneado ? "Desactivado" : "Activado") +
-            ` el proxy`
-        }, (!users.baneado ? "Desactivado " + Meteor.user().username : "Activado " + Meteor.user().username)),
-        precios.map(precio => {
-
-          users.isIlimitado && precio.type == "fecha-proxy" && 
+        users.isIlimitado && precio.type == "fecha-proxy" &&
           (VentasCollection.insert({
             adminId: Meteor.userId(),
             userId: users._id,
@@ -595,18 +593,18 @@ export default function UserCardDetails() {
             handleClickOpen()
           )
 
-            !users.isIlimitado && precio.type == "megas" && (precio.megas == users.megas) && 
-            (VentasCollection.insert({
-                adminId: Meteor.userId(),
-                userId: users._id,
-                precio: (precio.precio - Meteor.user().descuentoproxy > 0) ? (precio.precio - Meteor.user().descuentoproxy) : 0,
-                comentario: precio.comentario
-              }),
-              setMensaje(precio.comentario),
-              handleClickOpen()
-            )
-        })
-      )
+        !users.isIlimitado && precio.type == "megas" && (precio.megas == users.megas) &&
+          (VentasCollection.insert({
+            adminId: Meteor.userId(),
+            userId: users._id,
+            precio: (precio.precio - Meteor.user().descuentoproxy > 0) ? (precio.precio - Meteor.user().descuentoproxy) : 0,
+            comentario: precio.comentario
+          }),
+            setMensaje(precio.comentario),
+            handleClickOpen()
+          )
+      })
+    )
     // )
 
 
