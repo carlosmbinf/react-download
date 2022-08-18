@@ -2,7 +2,7 @@
   "name": "VIDKAR",
   "private": true,
   "scripts": {
-    "start": "MONGO_URL='mongodb://root:lastunas123@152.206.177.186:27017/meteor' meteor run --port 6000 --settings=settings.json --allow-superuser",
+    "start": "MONGO_URL='mongodb://root:lastunas123@152.206.177.186:27017/meteor' meteor run --port 6000 --settings=settings.json --production --allow-superuser ",
     "test": "meteor test --once --driver-package meteortesting:mocha",
     "test-app": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",
     "visualize": "meteor --production --extra-packages bundle-visualizer"
