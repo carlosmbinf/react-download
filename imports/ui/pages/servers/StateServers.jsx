@@ -123,35 +123,24 @@ export default function StateServers() {
     //     setLoad(false),
     //     setOpen(true)
     // }
-    value ?
-      $.post("/listen")
-        .done(function (data) {
-          setMessage(data);
-          handleClick(TransitionUp);
-          setLoad(false);
-          setOpen(true);
-        })
-        .fail(function (data) {
-          setMessage(data);
-          handleClick(TransitionUp);
-          setLoad(false);
-          setOpen(true);
-        })
-      :
-      $.post("/close")
-        .done(function (data) {
-          setMessage(data);
-          handleClick(TransitionUp);
-          setLoad(false);
-          setOpen(true);
-        })
-        .fail(function (data) {
-          setMessage(data);
-          handleClick(TransitionUp);
-          setLoad(false);
-          setOpen(true);
-        })
 
+
+    value ?
+    Meteor.call("listenproxy",(error,result)=>{
+      console.log(result)
+      setMessage(result);
+      handleClick(TransitionUp);
+      setLoad(false);
+      setOpen(true);
+    })
+    :
+    Meteor.call("closeproxy",(error,result)=>{
+      console.log(result)
+      setMessage(result);
+      handleClick(TransitionUp);
+      setLoad(false);
+      setOpen(true);
+    })
 
   }
   function handleSubmit(event) {
@@ -188,10 +177,10 @@ export default function StateServers() {
           />
           {/* <Button onClick={handleClick(TransitionUp)}>Up</Button> */}
           <h3>Proxy:</h3>
-          <IconButton onClick={()=>makePostRequest(0)} aria-label="play">
+          <IconButton onClick={()=>makePostRequest(0)} aria-label="cancel">
             <CancelIcon />
           </IconButton >
-          <IconButton onClick={()=>makePostRequest(1)} aria-label="cancel">
+          <IconButton onClick={()=>makePostRequest(1)} aria-label="play">
             <PlayCircleFilledIcon />
           </IconButton>
         </Paper>
