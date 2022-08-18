@@ -211,7 +211,7 @@ if (Meteor.isServer) {
           await OnlineCollection.find({
             address: "proxy: " + Meteor.settings.public.IP,
           }).forEach((connection) => {
-            arrayIds.find((id) => connection.connectionId == id) == undefined && (
+            !arrayIds.find((id) => connection.connectionId == id) && (
               console.log( connection.connectionId + " NO ESTA CONECTADO"),
               OnlineCollection.remove(connection._id))
           });
