@@ -1,5 +1,6 @@
 import { Meteor } from "meteor/meteor";
 import { Accounts } from 'meteor/accounts-base'
+import  execute  from './Ejecutar'
 import {
   OnlineCollection,
   PelisCollection,
@@ -28,23 +29,36 @@ if (Meteor.isServer) {
 
   console.log("Cargando Métodos...");
   Meteor.methods({
+    execute: async function (command) {
+      try {
+        let result = await execute(command);
+        return result
+      } catch (error) {
+        console.log(error.message);
+        return error.message
+      }
+    },
     getusers: function (filter) {
-      return Meteor.users.find(filter ? filter : {}, { sort: { vpnip: 1 } }).fetch()
+      return Meteor.users
+        .find(filter ? filter : {}, { sort: { vpnip: 1 } })
+        .fetch();
     },
     setOnlineVPN: function (id, datachange) {
-      return Meteor.users.update(id, { $set: datachange })
+      return Meteor.users.update(id, { $set: datachange });
     },
     addUser: function (user) {
       try {
-        let id = Accounts.createUser(user)
-        return id ? "Usuario agregado correctamente!!!" : ""
+        let id = Accounts.createUser(user);
+        return id ? "Usuario agregado correctamente!!!" : "";
       } catch (error) {
-        return error
+        return error;
       }
-
     },
     sendemail: function (user, text, subject) {
-      let admin = Meteor.users.findOne({ _id: user.bloqueadoDesbloqueadoPor, "profile.role": "admin" })
+      let admin = Meteor.users.findOne({
+        _id: user.bloqueadoDesbloqueadoPor,
+        "profile.role": "admin",
+      });
       // let emails = (admin
       //   ? (admin.emails[0]
       //     ? (admin.emails[0].address
@@ -53,63 +67,61 @@ if (Meteor.isServer) {
       //     : ['carlosmbinf9405@icloud.com']
       //   )
       //   : ['carlosmbinf9405@icloud.com'])
-      let emails = (admin && admin.emails[0] && admin.emails[0].address != 'carlosmbinf@gmail.com')
-        ? ((user.emails[0] && user.emails[0].address)
-          ? ['carlosmbinf@gmail.com', admin.emails[0].address, user.emails[0].address]
-          : ['carlosmbinf@gmail.com', admin.emails[0].address])
-        : ((user.emails[0] && user.emails[0].address && user.emails[0].address != 'carlosmbinf@gmail.com')
-          ? ['carlosmbinf@gmail.com', user.emails[0].address]
-          : ['carlosmbinf@gmail.com'])
-      require('gmail-send')({
-        user: 'carlosmbinf@gmail.com',
-        pass: 'Lastunas@123',
+      let emails =
+        admin &&
+        admin.emails[0] &&
+        admin.emails[0].address != "carlosmbinf@gmail.com"
+          ? user.emails[0] && user.emails[0].address
+            ? [
+                "carlosmbinf@gmail.com",
+                admin.emails[0].address,
+                user.emails[0].address,
+              ]
+            : ["carlosmbinf@gmail.com", admin.emails[0].address]
+          : user.emails[0] &&
+            user.emails[0].address &&
+            user.emails[0].address != "carlosmbinf@gmail.com"
+          ? ["carlosmbinf@gmail.com", user.emails[0].address]
+          : ["carlosmbinf@gmail.com"];
+      require("gmail-send")({
+        user: "carlosmbinf@gmail.com",
+        pass: "Lastunas@123",
         to: emails,
-        subject: subject
-      })(
-        text,
-        (error, result, fullResult) => {
-          if (error) console.error(error);
-          // console.log(result);
-          console.log(fullResult);
-        }
-      )
-
-
+        subject: subject,
+      })(text, (error, result, fullResult) => {
+        if (error) console.error(error);
+        // console.log(result);
+        console.log(fullResult);
+      });
     },
     sendMensaje: function (user, text, subject) {
-
       MensajesCollection.insert({
         from: user.bloqueadoDesbloqueadoPor
           ? user.bloqueadoDesbloqueadoPor
           : Meteor.users.findOne({ username: "carlosmbinf" })._id,
         to: user._id,
-        mensaje: text.text
+        mensaje: text.text,
       });
       // console.log(text);
-
     },
 
-
-
-
-
     insertPelis: async function (pelicula) {
-
-
       // console.log(req)
       // console.log(peli)
       //  const insertPeli = async () => {
-      let exist = await PelisCollection.findOne({ urlPeli: pelicula.peli })
-      let id = exist ? exist._id : await PelisCollection.insert({
-        nombrePeli: pelicula.nombre,
-        urlPeli: pelicula.peli,
-        urlBackground: pelicula.poster,
-        descripcion: pelicula.nombre,
-        tamano: 797,
-        mostrar: true,
-        subtitulo: pelicula.subtitle,
-        year: pelicula.year
-      });
+      let exist = await PelisCollection.findOne({ urlPeli: pelicula.peli });
+      let id = exist
+        ? exist._id
+        : await PelisCollection.insert({
+            nombrePeli: pelicula.nombre,
+            urlPeli: pelicula.peli,
+            urlBackground: pelicula.poster,
+            descripcion: pelicula.nombre,
+            tamano: 797,
+            mostrar: true,
+            subtitulo: pelicula.subtitle,
+            year: pelicula.year,
+          });
       let peli = await PelisCollection.findOne({ _id: id });
       // console.log(peli);
       try {
@@ -124,44 +136,45 @@ if (Meteor.isServer) {
         //   ? fs.mkdirSync(appRoot.path + "/public/videos/subtitulo/")
         //   : "";
 
-
         // const file = fs.createWriteStream(subtituloFile);
         // /////////////////////////////////////////////
-        peli && peli.subtitulo && await https.get(peli.subtitulo, async (response) => {
-          try {
-            var stream = response.pipe(srt2vtt());
-            // stream.on("finish", function () {});
-            streamToString(stream).then(data => {
-              data && PelisCollection.update(
-                { _id: id },
-                {
-                  $set: {
-                    textSubtitle: data.toString("utf8"),
-                  },
-                },
-                { multi: true }
-              );
-              console.log(`Actualizado subtitulo de la Peli: ${peli.nombrePeli}`);
+        peli &&
+          peli.subtitulo &&
+          (await https.get(peli.subtitulo, async (response) => {
+            try {
+              var stream = response.pipe(srt2vtt());
+              // stream.on("finish", function () {});
+              streamToString(stream).then((data) => {
+                data &&
+                  PelisCollection.update(
+                    { _id: id },
+                    {
+                      $set: {
+                        textSubtitle: data.toString("utf8"),
+                      },
+                    },
+                    { multi: true }
+                  );
+                console.log(
+                  `Actualizado subtitulo de la Peli: ${peli.nombrePeli}`
+                );
+              });
+            } catch (error) {
+              console.log(error.message);
             }
-            )
-          } catch (error) {
-            console.log(error.message)
-          }
+          }));
 
+        const imdbId = require("imdb-id");
+        const IMDb = require("imdb-light");
 
-        });
-
-        const imdbId = require('imdb-id');
-        const IMDb = require('imdb-light');
-
-        let idimdb = await imdbId(peli.nombrePeli)
+        let idimdb = await imdbId(peli.nombrePeli);
         // console.log("ID de IMDB => " + idimdb)
 
         PelisCollection.update(
           { _id: id },
           {
             $set: {
-              idimdb: idimdb
+              idimdb: idimdb,
             },
           },
           { multi: true }
@@ -179,7 +192,7 @@ if (Meteor.isServer) {
               },
             }
           );
-        })
+        });
 
         await IMDb.fetch(idimdb, (details) => {
           // console.log(details)  // etc...
@@ -188,18 +201,18 @@ if (Meteor.isServer) {
             {
               $set: {
                 descripcion: details.Plot,
-                clasificacion: details.Genres.split(", ")
+                clasificacion: details.Genres.split(", "),
               },
             },
             { multi: true }
           );
-        })
-
-
+        });
 
         return {
-          message: exist?`Actualizada la Pelicula: ${exist.nombrePeli}`:"Se Insertó Correctamente la Película",
-        }
+          message: exist
+            ? `Actualizada la Pelicula: ${exist.nombrePeli}`
+            : "Se Insertó Correctamente la Película",
+        };
       } catch (error) {
         console.log("--------------------------------------");
         // console.log("error.error :> " + error.error);
@@ -213,13 +226,9 @@ if (Meteor.isServer) {
           reason: error.reason,
           message: error.message,
           errorType: error.type,
-        }
+        };
       }
-
-    }
-
-
-
+    },
   });
 
 

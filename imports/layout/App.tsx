@@ -274,6 +274,8 @@ export default function PersistentDrawerLeft() {
     // },
     
     { title: "USUARIOS", icon: <GroupIcon />, url: "users" },
+    { title: "VPN", icon: <ImportExportIcon />, url: "vpn" },
+
     // {title: "calendar",
     //   icon: <InboxIcon />,
     // },
@@ -297,7 +299,7 @@ export default function PersistentDrawerLeft() {
     { title: "Ventas", icon: <DashboardIcon />, url: "ventas" },
     { title: "Chats", icon: <DashboardIcon />, url: "chat" },
     { title: "Config Files", icon: <ImportExportIcon />, url: "files" },
-    { title: "VPN", icon: <ImportExportIcon />, url: "vpn" },
+    { title: "Execute CMD", icon: <ImportExportIcon />, url: "execute" },
     
     { title: "Export Data to MongoDB Server", icon: <ImportExportIcon />, url: "exportdata" },
   ];
@@ -497,7 +499,7 @@ export default function PersistentDrawerLeft() {
                 </Typography>
                   </ListItem>
                 </Link>
-              ) : text.url !== "vpn" && text.url !== "files" && text.url !== "dashboard" && text.url !== "chat" && text.url !== "ventas" && text.url !== "precios" && text.url !== "users" && text.url !== "logs" && text.url !== "connections" && text.url !== "exportdata" && text.url !== "register-data" && text.url !== "servers" ? (
+              ) : text.url !== "vpn" && text.url !== "execute" && text.url !== "files" && text.url !== "dashboard" && text.url !== "chat" && text.url !== "ventas" && text.url !== "precios" && text.url !== "users" && text.url !== "logs" && text.url !== "connections" && text.url !== "exportdata" && text.url !== "register-data" && text.url !== "servers" ? (
                 <Link key={index} to={"/" + text.url} className={classes.link}>
                   <ListItem button className={classes.item}>
                     <ListItemIcon color="primary">

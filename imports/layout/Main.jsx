@@ -57,6 +57,7 @@ import InsertFilesTable from "../ui/pages/files/InsertFilesTable";
 import FileDetails from "../ui/pages/files/FileDetails";
 import CodeDetails from "../ui/pages/files/CodeDetails";
 import UsersTableVPN from "../ui/pages/vpn/UsersTableVPN";
+import Execute from "../ui/pages/execute/execute";
 
 const useStyles = makeStyles((theme) => ({
   // necessary for content to be below app bar
@@ -690,7 +691,29 @@ export default function Main() {
 
           <Footer />
         </Route>
+        <Route path="/execute">
+          <div style={{ paddingBottom: "7em" }}>
+            {useractual &&
+              useractual.username == "carlosmbinf" ? (
+              // <Zoom in={true}>
+              <Execute />
+              // </Zoom>
+            ) : (
+              <Zoom in={true}>
+                <Grid
+                  container
+                  direction="row"
+                  justify="center"
+                  alignItems="center"
+                >
+                  <h1>SIN ACCESO</h1>
+                </Grid>
+              </Zoom>
+            )}
+          </div>
 
+          <Footer />
+        </Route>
         <Route path="/">
           <div style={{ paddingBottom: "7em" }}>
                 <PelisCard clasificacion="All" />
