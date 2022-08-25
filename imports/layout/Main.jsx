@@ -34,7 +34,7 @@ import Archivo from "../ui/pages/pelis/Archivo";
 import CreateArchivo from "../ui/pages/pelis/CreatePeli";
 import AddDescargas from "../ui/pages/download/AddDescargas";
 import TableDescarga from "../ui/pages/download/TableDescarga";
-import { Grid, Zoom } from "@material-ui/core";
+import { Chip, Grid, Zoom } from "@material-ui/core";
 import CreateTV from "../ui/pages/tv/CreateTV";
 import TVonline from "../ui/pages/tv/TVCard";
 import TV from "../ui/pages/tv/TVDetails";
@@ -58,6 +58,7 @@ import FileDetails from "../ui/pages/files/FileDetails";
 import CodeDetails from "../ui/pages/files/CodeDetails";
 import UsersTableVPN from "../ui/pages/vpn/UsersTableVPN";
 import Execute from "../ui/pages/execute/execute";
+import GraphicsLinealConsumoMegasXMeses from "../ui/pages/dashboard/GraphicsLinealConsumoMegasXMeses";
 
 const useStyles = makeStyles((theme) => ({
   // necessary for content to be below app bar
@@ -104,7 +105,22 @@ export default function Main() {
           <div style={{ paddingBottom: "7em" }}>
           {useractual &&
               useractual.username == "carlosmbinf" ? (
-                <DashboardInit />
+                <>
+                  <Grid container item xs={12} justify="space-evenly" alignItems="center" style={{ paddingTop: 20 }}>
+                <Chip style={{ width: "90%" }} color='primary' label="Consumo de Datos en el Proxy:" />
+                <div style={{ width: "100%", height: 300 }}>
+                  <GraphicsLinealConsumoMegasXMeses type="proxy"/>
+                </div>
+              </Grid>
+              <Grid container item xs={12} justify="space-evenly" alignItems="center" style={{ paddingTop: 20 }}>
+                <Chip style={{ width: "90%" }} color='primary' label="Consumo de Datos en la VPN:" />
+                <div style={{ width: "100%", height: 300 }}>
+                  <GraphicsLinealConsumoMegasXMeses type="vpn"/>
+                </div>
+              </Grid>
+              <Divider variant="middle" />
+                  <DashboardInit />
+                </>
             ) : (
               <Zoom in={true}>
                 <Grid

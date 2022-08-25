@@ -26,7 +26,8 @@ import {
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle
+  DialogTitle,
+  Chip
 } from "@material-ui/core";
 
 import { Meteor } from "meteor/meteor";
@@ -52,6 +53,7 @@ var dateFormat = require('dateformat');
 import { OnlineCollection, LogsCollection, RegisterDataUsersCollection } from "../collections/collections";
 import { Autocomplete } from "@material-ui/lab";
 import DashboardInit from "../dashboard/DashboardInit";
+import GraphicsLinealConsumoMegasXMeses from "../dashboard/GraphicsLinealConsumoMegasXMeses";
 
 
 const StyledBadge = withStyles((theme) => ({
@@ -1946,7 +1948,19 @@ export default function UserCardDetails() {
                   )}
                 </Grid>
               </Paper>
-
+              <Grid container item xs={12} justify="space-evenly" alignItems="center" style={{ paddingTop: 20 }}>
+                <Chip style={{ width: "90%" }} color='primary' label="Consumo de Datos en el Proxy:" />
+                <div style={{ width: "100%", height: 300 }}>
+                  <GraphicsLinealConsumoMegasXMeses type="proxy"/>
+                </div>
+              </Grid>
+              <Grid container item xs={12} justify="space-evenly" alignItems="center" style={{ paddingTop: 20 }}>
+                <Chip style={{ width: "90%" }} color='primary' label="Consumo de Datos en la VPN:" />
+                <div style={{ width: "100%", height: 300 }}>
+                  <GraphicsLinealConsumoMegasXMeses type="vpn"/>
+                </div>
+              </Grid>
+              <Divider variant="middle" />
               {users.profile.role == "admin" && tieneVentas &&
                 <DashboardInit id={id} />
               }

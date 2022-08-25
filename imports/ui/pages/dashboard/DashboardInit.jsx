@@ -50,6 +50,7 @@ import { VentasCollection } from "../collections/collections";
 
 import moment from 'moment';
 import GraphicsLinealVentasXMeses from "./GraphicsLinealVentasXMeses";
+import GraphicsLinealConsumoMegasXMeses from "./GraphicsLinealConsumoMegasXMeses";
 
 const StyledBadge = withStyles((theme) => ({
   badge: {
@@ -156,7 +157,7 @@ const useStyles = makeStyles((theme) => ({
   margin: {
     margin: theme.spacing(2),
   },
-  paddingTop20:{
+  paddingTop20: {
     paddingTop: 20
   }
 }));
@@ -169,37 +170,37 @@ export default function DashboardInit(option) {
 
   const ventas = useTracker(() => {
     try {
-      Meteor.subscribe("ventas", id ? { adminId: id} : {}, {
-      fields: {
-        adminId: 1,
-        precio: 1,
-        cobrado: 1,
-        createdAt: 1
-      }
-    })
-    return VentasCollection.find(id ? { adminId: id} : {}, {
-      fields: {
-        adminId: 1,
-        precio: 1,
-        cobrado: 1,
-        createdAt: 1
-      }
-    }).fetch()
+      Meteor.subscribe("ventas", id ? { adminId: id } : {}, {
+        fields: {
+          adminId: 1,
+          precio: 1,
+          cobrado: 1,
+          createdAt: 1
+        }
+      })
+      return VentasCollection.find(id ? { adminId: id } : {}, {
+        fields: {
+          adminId: 1,
+          precio: 1,
+          cobrado: 1,
+          createdAt: 1
+        }
+      }).fetch()
     } catch (error) {
       console.log(error);
       return null
     }
-    
+
   });
 
-  const gastos = (id, mensual) =>{
+  const gastos = (id, mensual) => {
     let dateStartMonth = moment(new Date())
-      let dateEndMonth = moment(new Date())
-      dateStartMonth.startOf('month')
-      dateEndMonth.startOf('month').add(1,'month')
-      let totalAPagar = 0
-      let fechaInicial = new Date(dateStartMonth.toISOString())
-      let fechaFinal = new Date(dateEndMonth.toISOString())
+    let dateEndMonth = moment(new Date())
+    dateStartMonth.startOf('month')
+    dateEndMonth.startOf('month').add(1, 'month')
+    let totalAPagar = 0
+    let fechaInicial = new Date(dateStartMonth.toISOString())
+    let fechaFinal = new Date(dateEndMonth.toISOString())
     mensual ? (
       ventas.map(element => {
         let fechaElement = new Date(element.createdAt)
@@ -242,9 +243,11 @@ export default function DashboardInit(option) {
   const datausersMoneyGeneral = useTracker(() => {
     let recogido = 0
     let deuda = 0
-    Meteor.subscribe("user",id ? id : {},{fields:{
-      _id:1
-    }});
+    Meteor.subscribe("user", id ? id : {}, {
+      fields: {
+        _id: 1
+      }
+    });
     Meteor.users.find().map(
       (usersGeneral, index) => {
 
@@ -269,9 +272,11 @@ export default function DashboardInit(option) {
   const datausersMoneyMensual = useTracker(() => {
     let recogido = 0
     let deuda = 0
-    Meteor.subscribe("user",id ? id : {},{fields:{
-      _id:1
-    }});
+    Meteor.subscribe("user", id ? id : {}, {
+      fields: {
+        _id: 1
+      }
+    });
     Meteor.users.find({}).map(
       (usersGeneral, index) => {
 
@@ -280,8 +285,8 @@ export default function DashboardInit(option) {
         // console.log("INICIO DE MES MOMENT: " + dateStartMonth.toISOString()); 
         // console.log("Fin DE MES MOMENT: " + dateEndMonth.toISOString()); 
 
-        aporte(usersGeneral._id,true) > 0 && (recogido += aporte(usersGeneral._id,true))
-        gastos(usersGeneral._id,true) > 0 && (deuda += gastos(usersGeneral._id,true))
+        aporte(usersGeneral._id, true) > 0 && (recogido += aporte(usersGeneral._id, true))
+        gastos(usersGeneral._id, true) > 0 && (deuda += gastos(usersGeneral._id, true))
 
       }
     );
@@ -331,49 +336,49 @@ export default function DashboardInit(option) {
               />
             </Grid> */}
 
-          
-            <>              
-              <Grid container item xs={12} justify="space-evenly" alignItems="center" className={classes.paddingTop20}>
-              <Chip style={{width:"90%"}} color='primary' label="Ventas y Deudas Mensual:"/>
+
+          <>
+            <Grid container item xs={12} justify="space-evenly" alignItems="center" className={classes.paddingTop20}>
+              <Chip style={{ width: "90%" }} color='primary' label="Ventas y Deudas Mensual:" />
               <Grid container direction="row" justify="center" alignItems="center" item xs={12} spacing={1} style={{ padding: 20 }}>
                 <Grid item>
                   <Chip variant="outlined" color='success' label={`Recaudado: $${datausersMoneyMensual.recogido}`} />
                 </Grid>
                 <Grid item>
-                  <Chip variant="outlined" color='error' label={`Deben: $${datausersMoneyMensual.deuda}`}/>
+                  <Chip variant="outlined" color='error' label={`Deben: $${datausersMoneyMensual.deuda}`} />
                 </Grid>
               </Grid>
-                <div style={{ width: "100%", height: 300 }}>
-                  <GraphicsLinealMensualVentasyDeudas />
-                </div>
-              </Grid>
+              <div style={{ width: "100%", height: 300 }}>
+                <GraphicsLinealMensualVentasyDeudas />
+              </div>
+            </Grid>
 
-              <Divider variant="middle" />
-              <Grid container item xs={12} justify="space-evenly" alignItems="center" className={classes.paddingTop20}>
-              <Chip style={{width:"90%"}} color='primary' label="Ventas X Meses:" />
-                <div style={{ width: "100%", height: 300 }}>
-                  <GraphicsLinealVentasXMeses />
-                </div>
-              </Grid>
+            <Divider variant="middle" />
+            <Grid container item xs={12} justify="space-evenly" alignItems="center" className={classes.paddingTop20}>
+              <Chip style={{ width: "90%" }} color='primary' label="Ventas X Meses:" />
+              <div style={{ width: "100%", height: 300 }}>
+                <GraphicsLinealVentasXMeses />
+              </div>
+            </Grid>
 
-              <Divider variant="middle" />
-              <Grid container item xs={12} justify="space-evenly" alignItems="center" className={classes.paddingTop20}>
-              <Chip style={{width:"90%"}} color='primary' label="Ventas y Deudas General:" />
+            <Divider variant="middle" />
+            <Grid container item xs={12} justify="space-evenly" alignItems="center" className={classes.paddingTop20}>
+              <Chip style={{ width: "90%" }} color='primary' label="Ventas y Deudas General:" />
               <Grid container direction="row" justify="center" alignItems="center" item xs={12} spacing={1} style={{ padding: 20 }}>
                 <Grid item>
                   <Chip variant="outlined" color='success' label={`Recaudado: $${datausersMoneyGeneral.recogido}`} />
                 </Grid>
                 <Grid item>
-                  <Chip variant="outlined" color='error' label={`Deben: $${datausersMoneyGeneral.deuda}`}/>
+                  <Chip variant="outlined" color='error' label={`Deben: $${datausersMoneyGeneral.deuda}`} />
                 </Grid>
               </Grid>
-                <div style={{ width: "100%", height: 300 }}>
-                  <GraphicsLinealTotalVentasyDeudas />
-                </div>
-              </Grid>
+              <div style={{ width: "100%", height: 300 }}>
+                <GraphicsLinealTotalVentasyDeudas />
+              </div>
+            </Grid>
 
-              
-            </>
+
+          </>
 
           {/* <Divider variant="middle" />
           <Grid container item xs={12} justify="space-evenly" alignItems="center" className={classes.paddingTop20}>
