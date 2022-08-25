@@ -387,7 +387,7 @@ export default function UserCardDetails() {
       message:
         `Ha sido Reiniciado el consumo de Datos del PROXY de ${users.profile.firstName} ${users.profile.lastName}`
     });
-    Meteor.call('sendemail', users, { text: `Ha sido Reiniciado el consumo de Datos del PROXY de ${users.profile.firstName} ${users.profile.lastName}` }, 'Reinicio ' + Meteor.user().username)
+    // Meteor.call('sendemail', users, { text: `Ha sido Reiniciado el consumo de Datos del PROXY de ${users.profile.firstName} ${users.profile.lastName}` }, 'Reinicio ' + Meteor.user().username)
     Meteor.call('sendMensaje', users, { text: `Ha sido Reiniciado el consumo de Datos del PROXY` }, 'Reinicio ' + Meteor.user().username)
 
     alert('Se reinicio los datos del PROXY de ' + users.profile.firstName)
@@ -411,7 +411,7 @@ export default function UserCardDetails() {
       message:
         `Ha sido Reiniciado el consumo de Datos de la VPN de ${users.profile.firstName} ${users.profile.lastName}`
     });
-    Meteor.call('sendemail', users, { text: `Ha sido Reiniciado el consumo de Datos de la VPN de ${users.profile.firstName} ${users.profile.lastName}` }, 'Reinicio ' + Meteor.user().username)
+    // Meteor.call('sendemail', users, { text: `Ha sido Reiniciado el consumo de Datos de la VPN de ${users.profile.firstName} ${users.profile.lastName}` }, 'Reinicio ' + Meteor.user().username)
     Meteor.call('sendMensaje', users, { text: `Ha sido Reiniciado el consumo de Datos de la VPN` }, 'Reinicio ' + Meteor.user().username)
 
     alert('Se reinicio los datos de la VPN de ' + users.profile.firstName)
@@ -472,7 +472,7 @@ export default function UserCardDetails() {
       !users.vpn && (setMensaje(precioVPN.comentario),
       handleClickOpen())
       
-      Meteor.call('sendemail', users, { text: `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN para el usuario: ${users.username}${users.descuentovpn ? ` Con un descuento de: ${users.descuentovpn}CUP` : ""}` }, `VPN ${Meteor.user().username}`)
+      // Meteor.call('sendemail', users, { text: `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN para el usuario: ${users.username}${users.descuentovpn ? ` Con un descuento de: ${users.descuentovpn}CUP` : ""}` }, `VPN ${Meteor.user().username}`)
       Meteor.call('sendMensaje', users, { text: `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN` }, `VPN ${Meteor.user().username}`)
 
      
@@ -544,11 +544,12 @@ export default function UserCardDetails() {
           (!users.baneado ? "Desactivado" : "Activado") +
           " por un Admin"
       }),
-      Meteor.call('sendemail', users, {
-        text: "Ha sido " +
-          (!users.baneado ? "Desactivado" : "Activado") +
-          ` el proxy del usuario ${users.username}`
-      }, (!users.baneado ? "Desactivado " + Meteor.user().username : "Activado " + Meteor.user().username)),
+      // Meteor.call('sendemail', users, {
+      //   text: "Ha sido " +
+      //     (!users.baneado ? "Desactivado" : "Activado") +
+      //     ` el proxy del usuario ${users.username}`
+      // },
+      //  (!users.baneado ? "Desactivado " + Meteor.user().username : "Activado " + Meteor.user().username)),
       Meteor.call('sendMensaje', users, {
         text: "Ha sido " +
           (!users.baneado ? "Desactivado" : "Activado") +
@@ -570,11 +571,11 @@ export default function UserCardDetails() {
           (!users.baneado ? "Desactivado" : "Activado") +
           " por un Admin"
       }),
-      Meteor.call('sendemail', users, {
-        text: "Ha sido " +
-          (!users.baneado ? "Desactivado" : "Activado") +
-          ` el proxy del usuario ${users.username}`
-      }, (!users.baneado ? "Desactivado " + Meteor.user().username : "Activado " + Meteor.user().username)),
+      // Meteor.call('sendemail', users, {
+      //   text: "Ha sido " +
+      //     (!users.baneado ? "Desactivado" : "Activado") +
+      //     ` el proxy del usuario ${users.username}`
+      // }, (!users.baneado ? "Desactivado " + Meteor.user().username : "Activado " + Meteor.user().username)),
       Meteor.call('sendMensaje', users, {
         text: "Ha sido " +
           (!users.baneado ? "Desactivado" : "Activado") +

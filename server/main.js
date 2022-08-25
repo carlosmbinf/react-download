@@ -1,23 +1,8 @@
 import { Meteor } from "meteor/meteor";
 import { Accounts } from 'meteor/accounts-base'
 import {
-  OnlineCollection,
-  PelisCollection,
-  MensajesCollection,
-  ServersCollection,
-  PreciosCollection,
-  VentasCollection,
-  FilesCollection,
-  VersionsCollection
+  OnlineCollection
 } from "../imports/ui/pages/collections/collections";
-import { TVCollection } from "../imports/ui/pages/collections/collections";
-import { DescargasCollection } from "../imports/ui/pages/collections/collections";
-import { RegisterDataUsersCollection, LogsCollection } from "../imports/ui/pages/collections/collections";
-
-import youtubeDownload from "./downloader";
-import fs from "fs";
-// import { Meteor } from "meteor/meteor";
-// import { Mongo } from "meteor/mongo";
 
 import "./startup";
 import "./metodos";
@@ -29,47 +14,6 @@ import "./rutas";
 
 var http = require("http");
 http.post = require("http-post");
-
-var cron = require("node-cron");
-
-export function sendemail(user, text, subject) {
-  let admin = Meteor.users.findOne({ _id: user.bloqueadoDesbloqueadoPor, "profile.role": "admin" })
-  // let emails = (admin
-  //   ? (admin.emails[0]
-  //     ? (admin.emails[0].address
-  //       ? ['carlosmbinf9405@icloud.com', admin.emails[0].address]
-  //       : ['carlosmbinf9405@icloud.com'])
-  //     : ['carlosmbinf9405@icloud.com']
-  //   )
-  //   : ['carlosmbinf9405@icloud.com'])
-  let emails = (admin && admin.emails[0] && admin.emails[0].address != 'carlosmbinf@gmail.com')
-    ? ((user.emails[0] && user.emails[0].address)
-      ? ['carlosmbinf@gmail.com', admin.emails[0].address, user.emails[0].address]
-      : ['carlosmbinf@gmail.com', admin.emails[0].address])
-    : ((user.emails[0] && user.emails[0].address && user.emails[0].address != 'carlosmbinf@gmail.com')
-      ? ['carlosmbinf@gmail.com', user.emails[0].address]
-      : ['carlosmbinf@gmail.com'])
- require('gmail-send')({
-    user: 'carlosmbinf@gmail.com',
-    pass: 'Lastunas@123',
-   to: emails,
-    subject: subject
-  })(
-    text,
-    (error, result, fullResult) => {
-      if (error) console.error(error);
-      // console.log(result);
-      console.log(fullResult);
-    }
-  )
-
-  MensajesCollection.insert({from: user.bloqueadoDesbloqueadoPor, to: user._id, mensaje: text.text});
-  // console.log(text);
-
-}
-
-
-
 
 if (Meteor.isClient) {
   // Group.subscription = Meteor.subscribe("links");
@@ -203,21 +147,6 @@ var appRoot = require("app-root-path");
 //   instert() { return true; }
 // });
 if (Meteor.isServer) {
-
-  
-  // console.log(` la fecha inicial es mayor q la segunda ` + (new Date() > new Date()));
-
-
-
-  // ServiceConfiguration.configurations.remove({
-  //   service: "google"
-  // });
-  // ServiceConfiguration.configurations.insert({
-  //   service: "google",
-  //   clientId: "????????????????.apps.googleusercontent.com",
-  //   secret: "????????????????"
-  // });
-  
 
   Meteor.onConnection(function (connection) {
     OnlineCollection.insert({

@@ -1,4 +1,5 @@
 import { Meteor } from "meteor/meteor";
+import { LogsCollection, RegisterDataUsersCollection } from "../imports/ui/pages/collections/collections";
 
     var cron = require("node-cron");
 
@@ -6,96 +7,102 @@ import { Meteor } from "meteor/meteor";
 
 
         try {
-    
-          
-            
               cron
                 .schedule(
-                  "1 0 1 1-12 *",
+                  // "1-59 * * * *",
+                  "0 0 1 1-12 *",
                   async () => {
-                    console.log(new Date())
-                    let users = await Meteor.users.find({});
-                    // await console.log("Count " + users.count());
+                    console.log(new Date());
+                    let users = await Meteor.users.find({
+                      $or: [
+                        {baneado: false},
+                        {megasGastadosinBytes: { $gte: 1 }},
+                        {megasGastadosinBytesGeneral: { $gte: 1 }},
+                        {vpn: true},
+                        {vpnMbGastados: { $gte: 1 }},
+                    ],
+                    });
+                    await console.log("Count " + users.count());
                     // await console.log("running every minute to 1 from 5");
-          
-                    await users.fetch().map((user) => {
-          
-                      ////////////CONSUMOS/////////////
+
+                    await users.forEach(async (user) => {
+                      ////////////CONSUMOS PROXY/////////////
+                      console.log(`REVISANDO A => ${user.username}`);
+
                       user.megasGastadosinBytes > 0 &&
-                        RegisterDataUsersCollection.insert({
+                        (await RegisterDataUsersCollection.insert({
                           userId: user._id,
                           type: "proxy",
                           megasGastadosinBytes: user.megasGastadosinBytes,
-                          megasGastadosinBytesGeneral: user.megasGastadosinBytesGeneral
-                        }),
-          
-                        user.vpnMbGastados > 0 &&
-                        RegisterDataUsersCollection.insert({
+                          megasGastadosinBytesGeneral:
+                            user.megasGastadosinBytesGeneral,
+                        }));
+
+                      user.vpnMbGastados > 0 &&
+                        (await RegisterDataUsersCollection.insert({
                           userId: user._id,
                           type: "vpn",
-                          vpnMbGastados: user.vpnMbGastados
-                        }),
-          
-                        ///////////////Dejar en cero el consumo de los usuarios
-                        Meteor.users.update(user._id, {
-                          $set: {
-                            megasGastadosinBytes: 0,
-                            megasGastadosinBytesGeneral: 0,
-                            vpnMbGastados: 0
-                          },
-                        })
-          
-          
-                      ////////////////Banear /////////////
-                      user.isIlimitado == false && user.baneado == false && user.profile.role !== 'admin' &&
-                        (Meteor.users.update(user._id, {
+                          vpnMbGastados: user.vpnMbGastados,
+                        }));
+
+                      ///////////////Dejar en cero el consumo de los usuarios
+                      await Meteor.users.update(user._id, {
+                        $set: {
+                          megasGastadosinBytes: 0,
+                          megasGastadosinBytesGeneral: 0,
+                          vpnMbGastados: 0,
+                        },
+                      });
+
+                      ////////////////Banear PROXY/////////////
+                      !user.isIlimitado &&
+                        user.baneado == false &&
+                        user.profile.role !== "admin" &&
+                        (await (Meteor.users.update(user._id, {
                           $set: {
                             baneado: true,
                           },
                         }),
-                          LogsCollection.insert({
-                            type: "Bloqueo Proxy",
-                            userAfectado: user._id,
-                            userAdmin: "server",
-                            message:
-                              "El server " +
-                              process.env.ROOT_URL +
-                              " Bloqueo automaticamente el proxy por ser dia Primero de cada Mes"
-                          }),
-                          sendemail(
-                            user,
-                            {
-                              text:
-                                "El server Bloqueo automaticamente el proxy a: " +
-                                user.profile.firstName +
-                                " " +
-                                user.profile.lastName +
-                                " por ser dia Primero de cada Mes ",
-                            },
-                            'VidKar Bloqueo de Proxy')
-                        );
-          
-                        vpnisIlimitado == false && user.vpn == true && user.username !== 'carlosmbinf' &&
-                        (Meteor.users.update(user._id, {
+                        LogsCollection.insert({
+                          type: "Bloqueo Proxy",
+                          userAfectado: user._id,
+                          userAdmin: "server",
+                          message:
+                            "El server " +
+                            process.env.ROOT_URL +
+                            " Bloqueo automaticamente el proxy por ser dia Primero de cada Mes",
+                        }),
+                        Meteor.call(
+                          "sendMensaje",
+                          user,
+                          {
+                            text: `El server Bloqueo automaticamente el proxy a: ${user.profile.firstName} ${user.profile.lastName} por ser dia Primero de cada Mes`,
+                          },
+                          "VidKar Bloqueo de Proxy"
+                        )));
+                      ////////////////Banear VPN/////////////
+                      !user.vpnisIlimitado &&
+                        user.vpn == true &&
+                        user.profile.role !== "admin" &&
+                        (await (Meteor.users.update(user._id, {
                           $set: {
-                            vpn: false
+                            vpn: false,
                           },
                         }),
-                          LogsCollection.insert({
-                            type: "VPN",
-                            userAfectado: user._id,
-                            userAdmin: "server",
-                            message:
-                              `El server ${process.env.ROOT_URL} Desactivó la VPN para ${user.profile.firstName} ${user.profile.lastName} dia Primero de cada Mes`
-                          }),
-                          sendemail(
-                            user,
-                            {
-                              text:
-                                `El server Desactivó la VPN para ${user.profile.firstName} ${user.profile.lastName} dia Primero de cada Mes`,
-                            },
-                            'VidKar Bloqueo de VPN')
-                        );
+                        LogsCollection.insert({
+                          type: "VPN",
+                          userAfectado: user._id,
+                          userAdmin: "server",
+                          message: `El server ${process.env.ROOT_URL} Desactivó la VPN para ${user.profile.firstName} ${user.profile.lastName} dia Primero de cada Mes`,
+                        }),
+                        Meteor.call(
+                          "sendMensaje",
+                          user,
+                          {
+                            text: `El server Desactivó la VPN para ${user.profile.firstName} ${user.profile.lastName} por ser dia Primero de cada Mes`,
+                          },
+                          "VidKar Bloqueo de VPN"
+                        )));
                     });
                   },
                   {
@@ -144,10 +151,10 @@ import { Meteor } from "meteor/meteor";
                               message:
                                 "El server " + process.env.ROOT_URL +" Bloqueo automaticamente el proxy porque llego a la fecha limite"
                             })),
-                            sendemail(
+                            Meteor.call("sendMensaje",
                               user,
                               {
-                                text:    'El server ' + process.env.ROOT_URL +' Bloqueo automaticamente el proxy de ' + user.profile.firstName + " " + user.profile.lastName + ' porque llego a la fecha limite.' ,  
+                                text:  `El server ${process.env.ROOT_URL} Bloqueo automaticamente el proxy de ${user.profile.firstName} ${user.profile.lastName}  porque llego a la fecha limite.` ,  
                               },
                               'VidKar Bloqueo de Proxy')
                             )
@@ -162,10 +169,10 @@ import { Meteor } from "meteor/meteor";
                               userAdmin: "server",
                               message:
                                 "El server " + process.env.ROOT_URL +" Bloqueo automaticamente el proxy porque consumio: " + user.megas + " MB"
-                            }),sendemail(
+                            }),Meteor.call("sendMensaje",
                               user,
                               {
-                                text:    "El server " + process.env.ROOT_URL +" Bloqueo automaticamente el proxy a: " + user.profile.firstName + " " + user.profile.lastName + " porque consumio: " + user.megas + "MB",  
+                                text:   `El server  ${process.env.ROOT_URL} Bloqueo automaticamente el proxy a: ${user.profile.firstName} ${user.profile.lastName} porque consumio: ${user.megas} MB` ,  
                               },
                               'VidKar Bloqueo de Proxy')
                             ));
@@ -218,10 +225,10 @@ import { Meteor } from "meteor/meteor";
                       try {
                         user.vpnisIlimitado && user.vpnfechaSubscripcion &&
                       new Date(new Date()) > user.vpnfechaSubscripcion &&
-                      sendemail(
+                      Meteor.call("sendMensaje",
                         user,
                         {
-                          text: "El server Bloqueo automaticamente la VPN a: " + user.profile.firstName + " " + user.profile.lastName + " porque paso la fecha limite: " + user.vpnfechaSubscripcion,  
+                          text: `El server Bloqueo automaticamente la VPN a: ${user.profile.firstName} ${user.profile.lastName} porque paso la fecha limite: ${user.vpnfechaSubscripcion}`,  
                         },
                         'VidKar Bloqueo de VPN')
                       } catch (error) {
@@ -240,10 +247,10 @@ import { Meteor } from "meteor/meteor";
                               userAdmin: "server",
                               message:
                                 "El server " + process.env.ROOT_URL +" Bloqueo automaticamente la VPN porque consumio: " + user.vpnmegas + " MB"
-                            }),sendemail(
+                            }),Meteor.call("sendMensaje",
                               user,
                               {
-                                text: "El server Bloqueo automaticamente la VPN a: " + user.profile.firstName + " " + user.profile.lastName + " porque consumio sus: " + user.vpnmegas + "MB",  
+                                text: `El server Bloqueo automaticamente la VPN a: ${user.profile.firstName} ${user.profile.lastName} porque consumio sus: ${user.vpnmegas} MB`,  
                               },
                               'VidKar Bloqueo de VPN')
                             );
