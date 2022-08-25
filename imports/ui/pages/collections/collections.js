@@ -23,52 +23,52 @@ export const VersionsCollection = new Mongo.Collection('versions');
 Meteor.methods({
  async exportDataTo(urlMongoDB) {
   var mi = require("mongoimport");
-   try {
-    await mi({
-       fields: PelisCollection.find().fetch(), // {array} data to import
-       db: "meteor", // {string} name of db
-       collection: 'pelisRegister', // {string|function} name of collection, or use a function to
-       //  return a name, accept one param - [fields] the fields to import
-       host: urlMongoDB,
-       callback: (err, db) => {
-         err && console.error(err);
-       },
-     });
-   } catch (error) {
-     console.log(error);
-   }
+  //  try {
+  //   await mi({
+  //      fields: PelisCollection.find().fetch(), // {array} data to import
+  //      db: "meteor", // {string} name of db
+  //      collection: 'pelisRegister', // {string|function} name of collection, or use a function to
+  //      //  return a name, accept one param - [fields] the fields to import
+  //      host: urlMongoDB,
+  //      callback: (err, db) => {
+  //        err && console.error(err);
+  //      },
+  //    });
+  //  } catch (error) {
+  //    console.log(error);
+  //  }
   
-   try {
-    await mi({
-      fields: DescargasCollection.find().fetch(), // {array} data to import
-      db: "meteor", // {string} name of db
-      collection: 'descargasRegister', // {string|function} name of collection, or use a function to
-      //  return a name, accept one param - [fields] the fields to import
-      host: urlMongoDB,
-      callback: (err, db) => {
-        err && console.error(err);
-      },
-    });
-  } catch (error) {
-    console.log(error);
+  //  try {
+  //   await mi({
+  //     fields: DescargasCollection.find().fetch(), // {array} data to import
+  //     db: "meteor", // {string} name of db
+  //     collection: 'descargasRegister', // {string|function} name of collection, or use a function to
+  //     //  return a name, accept one param - [fields] the fields to import
+  //     host: urlMongoDB,
+  //     callback: (err, db) => {
+  //       err && console.error(err);
+  //     },
+  //   });
+  // } catch (error) {
+  //   console.log(error);
     
-  }
+  // }
 
-  try {
-    await mi({
-      fields: TVCollection.find().fetch(), // {array} data to import
-      db: "meteor", // {string} name of db
-      collection: 'tvRegister', // {string|function} name of collection, or use a function to
-      //  return a name, accept one param - [fields] the fields to import
-      host: urlMongoDB,
-      callback: (err, db) => {
-        err && console.error(err);
-      },
-    });
-  } catch (error) {
-    console.log(error);
+  // try {
+  //   await mi({
+  //     fields: TVCollection.find().fetch(), // {array} data to import
+  //     db: "meteor", // {string} name of db
+  //     collection: 'tvRegister', // {string|function} name of collection, or use a function to
+  //     //  return a name, accept one param - [fields] the fields to import
+  //     host: urlMongoDB,
+  //     callback: (err, db) => {
+  //       err && console.error(err);
+  //     },
+  //   });
+  // } catch (error) {
+  //   console.log(error);
     
-  }
+  // }
 
   // try {
   //   await mi({
@@ -86,85 +86,85 @@ Meteor.methods({
     
   // }
 
-  try {
-    await mi({
-      fields: MensajesCollection.find().fetch(), // {array} data to import
-      db: "meteor", // {string} name of db
-      collection: 'mensajes', // {string|function} name of collection, or use a function to
-      //  return a name, accept one param - [fields] the fields to import
-      host: urlMongoDB,
-      callback: (err, db) => {
-        err && console.error(err);
-      },
-    });
-  } catch (error) {
-    console.log(error);
+  // try {
+  //   await mi({
+  //     fields: MensajesCollection.find().fetch(), // {array} data to import
+  //     db: "meteor", // {string} name of db
+  //     collection: 'mensajes', // {string|function} name of collection, or use a function to
+  //     //  return a name, accept one param - [fields] the fields to import
+  //     host: urlMongoDB,
+  //     callback: (err, db) => {
+  //       err && console.error(err);
+  //     },
+  //   });
+  // } catch (error) {
+  //   console.log(error);
     
-  }
+  // }
 
-  try {
-    await mi({
-      fields: RegisterDataUsersCollection.find().fetch(), // {array} data to import
-      db: "meteor", // {string} name of db
-      collection: 'registerDataUsers', // {string|function} name of collection, or use a function to
-      //  return a name, accept one param - [fields] the fields to import
-      host: urlMongoDB,
-      callback: (err, db) => {
-        err && console.error(err);
-      },
-    });
-  } catch (error) {
-    console.log(error);
+  // try {
+  //   await mi({
+  //     fields: RegisterDataUsersCollection.find().fetch(), // {array} data to import
+  //     db: "meteor", // {string} name of db
+  //     collection: 'registerDataUsers', // {string|function} name of collection, or use a function to
+  //     //  return a name, accept one param - [fields] the fields to import
+  //     host: urlMongoDB,
+  //     callback: (err, db) => {
+  //       err && console.error(err);
+  //     },
+  //   });
+  // } catch (error) {
+  //   console.log(error);
     
-  }
+  // }
 
-  try {
-    await mi({
-      fields: LogsCollection.find().fetch(), // {array} data to import
-      db: "meteor", // {string} name of db
-      collection: 'Logs', // {string|function} name of collection, or use a function to
-      //  return a name, accept one param - [fields] the fields to import
-      host: urlMongoDB,
-      callback: (err, db) => {
-        err && console.error(err);
-      },
-    });
-  } catch (error) {
-    console.log(error);
+  // try {
+  //   await mi({
+  //     fields: LogsCollection.find().fetch(), // {array} data to import
+  //     db: "meteor", // {string} name of db
+  //     collection: 'Logs', // {string|function} name of collection, or use a function to
+  //     //  return a name, accept one param - [fields] the fields to import
+  //     host: urlMongoDB,
+  //     callback: (err, db) => {
+  //       err && console.error(err);
+  //     },
+  //   });
+  // } catch (error) {
+  //   console.log(error);
     
-  }
+  // }
 
-  try {
-    await mi({
-      fields: ServersCollection.find().fetch(), // {array} data to import
-      db: "meteor", // {string} name of db
-      collection: 'servers', // {string|function} name of collection, or use a function to
-      //  return a name, accept one param - [fields] the fields to import
-      host: urlMongoDB,
-      callback: (err, db) => {
-        err && console.error(err);
-      },
-    });
-  } catch (error) {
-    console.log(error);
+  // try {
+  //   await mi({
+  //     fields: ServersCollection.find().fetch(), // {array} data to import
+  //     db: "meteor", // {string} name of db
+  //     collection: 'servers', // {string|function} name of collection, or use a function to
+  //     //  return a name, accept one param - [fields] the fields to import
+  //     host: urlMongoDB,
+  //     callback: (err, db) => {
+  //       err && console.error(err);
+  //     },
+  //   });
+  // } catch (error) {
+  //   console.log(error);
     
-  }
+  // }
 
-  try {
-    await mi({
-      fields: PreciosCollection.find().fetch(), // {array} data to import
-      db: "meteor", // {string} name of db
-      collection: 'precios', // {string|function} name of collection, or use a function to
-      //  return a name, accept one param - [fields] the fields to import
-      host: urlMongoDB,
-      callback: (err, db) => {
-        err && console.error(err);
-      },
-    });
-  } catch (error) {
-    console.log(error);
+  // try {
+  //   await mi({
+  //     fields: PreciosCollection.find().fetch(), // {array} data to import
+  //     db: "meteor", // {string} name of db
+  //     collection: 'precios', // {string|function} name of collection, or use a function to
+  //     //  return a name, accept one param - [fields] the fields to import
+  //     host: urlMongoDB,
+  //     callback: (err, db) => {
+  //       err && console.error(err);
+  //     },
+  //   });
+  // } catch (error) {
+  //   console.log(error);
     
-  }
+  // }
 
   try {
     await mi({
@@ -182,37 +182,37 @@ Meteor.methods({
     
   }
 
-  try {
-    await mi({
-      fields: Meteor.users.find().fetch(), // {array} data to import
-      db: "meteor", // {string} name of db
-      collection: 'users', // {string|function} name of collection, or use a function to
-      //  return a name, accept one param - [fields] the fields to import
-      host: urlMongoDB,
-      callback: (err, db) => {
-        err && console.error(err);
-      },
-    });
-  } catch (error) {
-    console.log(error);
+  // try {
+  //   await mi({
+  //     fields: Meteor.users.find().fetch(), // {array} data to import
+  //     db: "meteor", // {string} name of db
+  //     collection: 'users', // {string|function} name of collection, or use a function to
+  //     //  return a name, accept one param - [fields] the fields to import
+  //     host: urlMongoDB,
+  //     callback: (err, db) => {
+  //       err && console.error(err);
+  //     },
+  //   });
+  // } catch (error) {
+  //   console.log(error);
     
-  }
+  // }
     
-  try {
-    await mi({
-      fields: FilesCollection.find().fetch(), // {array} data to import
-      db: "meteor", // {string} name of db
-      collection: 'files', // {string|function} name of collection, or use a function to
-      //  return a name, accept one param - [fields] the fields to import
-      host: urlMongoDB,
-      callback: (err, db) => {
-        err && console.error(err);
-      },
-    });
-  } catch (error) {
-    console.log(error);
+  // try {
+  //   await mi({
+  //     fields: FilesCollection.find().fetch(), // {array} data to import
+  //     db: "meteor", // {string} name of db
+  //     collection: 'files', // {string|function} name of collection, or use a function to
+  //     //  return a name, accept one param - [fields] the fields to import
+  //     host: urlMongoDB,
+  //     callback: (err, db) => {
+  //       err && console.error(err);
+  //     },
+  //   });
+  // } catch (error) {
+  //   console.log(error);
     
-  }
+  // }
 
   },
 });
