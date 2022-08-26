@@ -498,118 +498,19 @@ export default function UserCardDetails() {
       setMensaje("Revise los Límites del Usuario"),
       handleClickOpen()
     )
-    // validacion = ((users.profile.role == "admin") ? true  : false);
+    
       if (!validacion) return null
 
-    // users.profile.role == 'admin' ? (
-    //   (Meteor.users.update(users._id, {
-    //     $set: {
-    //       baneado: users.baneado ? false : true,
-    //       bloqueadoDesbloqueadoPor: Meteor.userId()
-    //     },
-    //   }),
-    //     LogsCollection.insert({
-    //       type: "PROXY",
-    //       userAfectado: users._id,
-    //       userAdmin: Meteor.userId(),
-    //       message:
-    //         "Ha sido " +
-    //         (!users.baneado ? "Desactivado" : "Activado") +
-    //         " por un Admin"
-    //     }),
-    //     Meteor.call('sendemail', users, {
-    //       text: "Ha sido " +
-    //         (!users.baneado ? "Desactivado" : "Activado") +
-    //         ` el proxy del usuario ${users.username}`
-    //     }, (!users.baneado ? "Desactivado " + Meteor.user().username : "Activado " + Meteor.user().username)),
-    //     Meteor.call('sendMensaje', users, {
-    //       text: "Ha sido " +
-    //         (!users.baneado ? "Desactivado" : "Activado") +
-    //         ` el proxy del usuario ${users.username}`
-    //     }, (!users.baneado ? "Desactivado " + Meteor.user().username : "Activado " + Meteor.user().username))
-    //   )
-    // ) : (
+    Meteor.call("addVentas", users._id, Meteor.userId(),(error,result)=>{
+      if(error) {
+        setMensaje(error.message)
+        handleClickOpen()
+      } else {
+        result && setMensaje(result)
+        result && handleClickOpen()
 
-    !users.baneado ? (
-      Meteor.users.update(users._id, {
-        $set: {
-          baneado: true,
-          bloqueadoDesbloqueadoPor: Meteor.userId()
-        },
-      }),
-      LogsCollection.insert({
-        type: !users.baneado ? "Desactivado" : "Activado",
-        userAfectado: users._id,
-        userAdmin: Meteor.userId(),
-        message:
-          "Ha sido " +
-          (!users.baneado ? "Desactivado" : "Activado") +
-          " por un Admin"
-      }),
-      // Meteor.call('sendemail', users, {
-      //   text: "Ha sido " +
-      //     (!users.baneado ? "Desactivado" : "Activado") +
-      //     ` el proxy del usuario ${users.username}`
-      // },
-      //  (!users.baneado ? "Desactivado " + Meteor.user().username : "Activado " + Meteor.user().username)),
-      Meteor.call('sendMensaje', users, {
-        text: "Ha sido " +
-          (!users.baneado ? "Desactivado" : "Activado") +
-          ` el proxy`
-      }, (!users.baneado ? "Desactivado " + Meteor.user().username : "Activado " + Meteor.user().username))
-    ) : (
-      Meteor.users.update(users._id, {
-        $set: {
-          baneado: users.baneado ? false : true,
-          bloqueadoDesbloqueadoPor: Meteor.userId()
-        },
-      }),
-      LogsCollection.insert({
-        type: !users.baneado ? "Desactivado" : "Activado",
-        userAfectado: users._id,
-        userAdmin: Meteor.userId(),
-        message:
-          "Ha sido " +
-          (!users.baneado ? "Desactivado" : "Activado") +
-          " por un Admin"
-      }),
-      // Meteor.call('sendemail', users, {
-      //   text: "Ha sido " +
-      //     (!users.baneado ? "Desactivado" : "Activado") +
-      //     ` el proxy del usuario ${users.username}`
-      // }, (!users.baneado ? "Desactivado " + Meteor.user().username : "Activado " + Meteor.user().username)),
-      Meteor.call('sendMensaje', users, {
-        text: "Ha sido " +
-          (!users.baneado ? "Desactivado" : "Activado") +
-          ` el proxy`
-      }, (!users.baneado ? "Desactivado " + Meteor.user().username : "Activado " + Meteor.user().username)),
-      precios.map(precio => {
-
-        users.isIlimitado && precio.type == "fecha-proxy" &&
-          (VentasCollection.insert({
-            adminId: Meteor.userId(),
-            userId: users._id,
-            precio: (precio.precio - Meteor.user().descuentoproxy > 0) ? (precio.precio - Meteor.user().descuentoproxy) : 0,
-            comentario: precio.comentario
-          }),
-            setMensaje(precio.comentario),
-            handleClickOpen()
-          )
-
-        !users.isIlimitado && precio.type == "megas" && (precio.megas == users.megas) &&
-          (VentasCollection.insert({
-            adminId: Meteor.userId(),
-            userId: users._id,
-            precio: (precio.precio - Meteor.user().descuentoproxy > 0) ? (precio.precio - Meteor.user().descuentoproxy) : 0,
-            comentario: precio.comentario
-          }),
-            setMensaje(precio.comentario),
-            handleClickOpen()
-          )
-      })
-    )
-    // )
-
+      }
+    } )
 
   }
   const handleChangebaneado = (event) => {
@@ -1077,18 +978,7 @@ export default function UserCardDetails() {
                                                   true
                                                 ),
                                             })
-                                            e.target.value && !users.baneado && (LogsCollection.insert({
-                                              type: 'PROXY',
-                                              userAfectado: users._id,
-                                              userAdmin: Meteor.userId(),
-                                              message:
-                                                `Se Desactivó el PROXY porque estaba activa y cambio la fecha Limite`
-                                            }),
-                                              Meteor.users.update(users._id, {
-                                                $set: {
-                                                  baneado: !users.baneado
-                                                },
-                                              }))
+                                          e.target.value && !users.baneado && Meteor.call("desabilitarProxyUser", users._id, Meteor.userId())
                                           // , Meteor.call('sendemail', users,{text: "La Fecha Limite del Proxy se cambió para: " +
                                           // dateFormat(e.target.value,
                                           //   "yyyy-mm-dd",

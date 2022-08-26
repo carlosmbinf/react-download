@@ -1,6 +1,6 @@
 import { Meteor } from "meteor/meteor";
 import { Accounts } from 'meteor/accounts-base'
-import  execute  from './Ejecutar'
+import execute from './Ejecutar'
 import {
   OnlineCollection,
   PelisCollection,
@@ -18,14 +18,14 @@ import {
 
 if (Meteor.isServer) {
 
-    function streamToString(stream) {
-        const chunks = [];
-        return new Promise((resolve, reject) => {
-            stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
-            stream.on('error', (err) => reject(err));
-            stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
-        })
-    }
+  function streamToString(stream) {
+    const chunks = [];
+    return new Promise((resolve, reject) => {
+      stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
+      stream.on('error', (err) => reject(err));
+      stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
+    })
+  }
 
   console.log("Cargando Métodos...");
   Meteor.methods({
@@ -69,20 +69,20 @@ if (Meteor.isServer) {
       //   : ['carlosmbinf9405@icloud.com'])
       let emails =
         admin &&
-        admin.emails[0] &&
-        admin.emails[0].address != "carlosmbinf@gmail.com"
+          admin.emails[0] &&
+          admin.emails[0].address != "carlosmbinf@gmail.com"
           ? user.emails[0] && user.emails[0].address
             ? [
-                "carlosmbinf@gmail.com",
-                admin.emails[0].address,
-                user.emails[0].address,
-              ]
+              "carlosmbinf@gmail.com",
+              admin.emails[0].address,
+              user.emails[0].address,
+            ]
             : ["carlosmbinf@gmail.com", admin.emails[0].address]
           : user.emails[0] &&
             user.emails[0].address &&
             user.emails[0].address != "carlosmbinf@gmail.com"
-          ? ["carlosmbinf@gmail.com", user.emails[0].address]
-          : ["carlosmbinf@gmail.com"];
+            ? ["carlosmbinf@gmail.com", user.emails[0].address]
+            : ["carlosmbinf@gmail.com"];
       require("gmail-send")({
         user: "carlosmbinf@gmail.com",
         pass: "Lastunas@123",
@@ -113,15 +113,15 @@ if (Meteor.isServer) {
       let id = exist
         ? exist._id
         : await PelisCollection.insert({
-            nombrePeli: pelicula.nombre,
-            urlPeli: pelicula.peli,
-            urlBackground: pelicula.poster,
-            descripcion: pelicula.nombre,
-            tamano: 797,
-            mostrar: true,
-            subtitulo: pelicula.subtitle,
-            year: pelicula.year,
-          });
+          nombrePeli: pelicula.nombre,
+          urlPeli: pelicula.peli,
+          urlBackground: pelicula.poster,
+          descripcion: pelicula.nombre,
+          tamano: 797,
+          mostrar: true,
+          subtitulo: pelicula.subtitle,
+          year: pelicula.year,
+        });
       let peli = await PelisCollection.findOne({ _id: id });
       // console.log(peli);
       try {
@@ -229,6 +229,101 @@ if (Meteor.isServer) {
         };
       }
     },
+    addVentas: async (userChangeid, userId) => {
+      let userChange = await Meteor.users.findOne(userChangeid)
+      let user = await Meteor.users.findOne(userId)
+      // let precio = PreciosCollection.findOne(precioid)
+      let precio;
+      try {
+        if (!userChange.baneado) {
+          await Meteor.call("desabilitarProxyUser", userChangeid, userId)
+          return null
+        } else {
+          await Meteor.call("habilitarProxyUser", userChangeid, userId)
+
+
+          await userChange.isIlimitado
+            ? precio = await PreciosCollection.findOne({ type: "fecha-proxy" })
+            : precio = await PreciosCollection.findOne({ type: "megas", megas: userChange.megas })
+
+          await VentasCollection.insert({
+            adminId: userId,
+            userId: userChangeid,
+            precio: (precio.precio - user.descuentoproxy > 0) ? (precio.precio - user.descuentoproxy) : 0,
+            comentario: precio.comentario
+          })
+
+        }
+
+        return precio.comentario
+      } catch (error) {
+        return error.message
+      }
+
+
+    },
+    desabilitarProxyUser: async (userChangeid, userId) => {
+
+      let userChange = await Meteor.users.findOne(userChangeid)
+      let user = await Meteor.users.findOne(userId)
+
+      await Meteor.users.update(userChangeid, {
+        $set: {
+          baneado: true,
+          bloqueadoDesbloqueadoPor: userId
+        },
+      })
+      await LogsCollection.insert({
+        type: "Proxy",
+        userAfectado: userChangeid,
+        userAdmin: userId,
+        message:
+          "Ha sido Desactivado el proxy por un Admin"
+      })
+      // Meteor.call('sendemail', userChange, {
+      //   text: "Ha sido " +
+      //     (!userChange.baneado ? "Desactivado" : "Activado") +
+      //     ` el proxy del usuario ${userChange.username}`
+      // },
+      //  (!userChange.baneado ? "Desactivado " + user.username : "Activado " + user.username)),
+      await Meteor.call('sendMensaje', userChange, {
+        text: "Ha sido Desactivado el proxy"
+      }, ("Desactivado " + user.username))
+
+    },
+    habilitarProxyUser: async (userChangeid, userId) => {
+
+      let userChange = await Meteor.users.findOne(userChangeid)
+      let user = await Meteor.users.findOne(userId)
+
+
+
+      await Meteor.users.update(userChangeid, {
+        $set: {
+          baneado: userChange.baneado ? false : true,
+          bloqueadoDesbloqueadoPor: userId
+        },
+      })
+      await LogsCollection.insert({
+        type: "Proxy",
+        userAfectado: userChangeid,
+        userAdmin: userId,
+        message: "Ha sido Activado el proxy por un Admin"
+      })
+      // Meteor.call('sendemail', userChange, {
+      //   text: "Ha sido " +
+      //     (!userChange.baneado ? "Desactivado" : "Activado") +
+      //     ` el proxy del usuario ${userChange.username}`
+      // }, (!userChange.baneado ? "Desactivado " + user.username : "Activado " + user.username)),
+      await Meteor.call('sendMensaje', userChange, {
+        text: "Ha sido " +
+          (!userChange.baneado ? "Desactivado" : "Activado") +
+          ` el proxy`
+      }, (!userChange.baneado ? "Desactivado " + user.username : "Activado " + user.username))
+
+
+
+    }
   });
 
 
