@@ -37,6 +37,7 @@ import {
   Pie,
 } from "recharts";
 import { RegisterDataUsersCollection, VentasCollection } from "../collections/collections";
+import { elementTypeAcceptingRef } from "@mui/utils";
 const StyledBadge = withStyles((theme) => ({
   badge: {
     backgroundColor: "#44b700",
@@ -153,22 +154,24 @@ export default function GraphicsLinealConsumoMegasXMeses(options) {
   moment.locale('es')
 
   const consumo = useTracker(() => {
-    Meteor.subscribe("registerDataUser", (id ? { userId: id, type: options.type } : { type: options.type }), {
+    Meteor.subscribe("registerDataUser", (id ? { userId: id } : {}), {
       fields: {
         userId: 1,
         megasGastadosinBytes: 1,
         fecha: 1,
-        type: 1
+        type: 1,
+        vpnMbGastados: 1
       }
     })
-    return RegisterDataUsersCollection.find((id ? { userId: id, type: options.type } : { type: options.type }), {
+    return RegisterDataUsersCollection.find((id ? { userId: id } : {}), {
       fields: {
         userId: 1,
         megasGastadosinBytes: 1,
         fecha: 1,
-        type: 1
+        type: 1,
+        vpnMbGastados: 1
       }
-    })
+    }).fetch()
   });
 
   const gastos = (id,fechaStart, fechaEnd) =>{
@@ -191,7 +194,7 @@ export default function GraphicsLinealConsumoMegasXMeses(options) {
       return totalAPagar
     }
 
-  const aporte = (fechaStart, fechaEnd) =>{
+  const aporte =  (type, fechaStart, fechaEnd) =>{
       let totalConsumo = 0;
       let fechaInicial = new Date(fechaStart)
       let fechaFinal = new Date(fechaEnd)
@@ -201,19 +204,23 @@ export default function GraphicsLinealConsumoMegasXMeses(options) {
       // console.log(`fechaInicial: ${fechaInicial}`);
       // console.log(`fechaFinal: ${fechaFinal}`);
 
-      consumo.forEach(element => {
+     consumo.forEach(element => {
+
       let fechaElement = new Date(element.fecha)
 
-      console.log(`fechaElement: ${fechaElement}`);
+      // console.log(`fechaElement: ${fechaElement}`);
       
 
         // fechaElement >= fechaInicial && fechaElement < fechaFinal && console.log(element.userId)
-        if (id) {
-          element.userId == id && fechaElement >= fechaInicial && fechaElement < fechaFinal && (totalConsumo += element.megasGastadosinBytes)
-        } else {
-          fechaElement >= fechaInicial && fechaElement < fechaFinal && (totalConsumo += element.megasGastadosinBytes)
-        }
-
+       if (element.type == type) {
+         if (id) {
+           element.userId == id && fechaElement >= fechaInicial && fechaElement < fechaFinal && (totalConsumo += (element.type == "proxy" ? (element.megasGastadosinBytes ? element.megasGastadosinBytes : 0) : (element.vpnMbGastados ? element.vpnMbGastados : 0)))
+         } else {
+           fechaElement >= fechaInicial && fechaElement < fechaFinal &&
+             (totalConsumo += (element.type == "proxy" ? (element.megasGastadosinBytes ? element.megasGastadosinBytes : 0) : (element.vpnMbGastados ? element.vpnMbGastados : 0)))
+         }
+       }
+        
       })
       return Number((totalConsumo/1024000000).toFixed(2))
     }
@@ -221,8 +228,8 @@ export default function GraphicsLinealConsumoMegasXMeses(options) {
   const datausers = useTracker(() => {
     let data01 = [];
 
-
-    for (let index = 5; index >= 0; index--) {
+    
+    for (let index = 11; index >= 0; index--) {
       
       let dateStartMonth = moment(new Date())
       let dateEndMonth = moment(new Date())
@@ -238,14 +245,19 @@ export default function GraphicsLinealConsumoMegasXMeses(options) {
       // console.log("Fin DE MES MOMENT: " + dateEndMonth.format("MMMM(YYYY)"));
       data01.push({
         name: `${dateStartMonth.format("MMMM(YYYY)")}`,
-        TotalConsumo: aporte(dateStartMonth.toISOString(), dateEndMonth.toISOString()),
-        // Debe: gastos(usersGeneral._id, dateStartMonth.toISOString(), dateEndMonth.toISOString()),
+        PROXY: aporte("proxy",dateStartMonth.toISOString(), dateEndMonth.toISOString()),
+        VPN: aporte("vpn",dateStartMonth.toISOString(), dateEndMonth.toISOString()),
         // amt: aporte(usersGeneral._id, dateStartMonth.toISOString(), dateEndMonth.toISOString())
       })
 
 
 
     }
+
+    data01.forEach(data=>{
+      console.log(options.type + " =>" ,data.TotalConsumo)
+
+    })
     
     return data01;
     
@@ -254,32 +266,38 @@ export default function GraphicsLinealConsumoMegasXMeses(options) {
   return (
       <Zoom in={true}>
         <ResponsiveContainer>
-          <ComposedChart
-            // width={500}
-            // height={400}
-            data={datausers}
-            margin={{
-              top: 20,
-              right: 20,
-              bottom: 20,
-              left: 20,
-            }}
-          >
-            {/* <CartesianGrid stroke="#f5f5f5" /> */}
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Area
+        <ComposedChart
+          // width={500}
+          // height={400}
+          data={datausers}
+          margin={{
+            top: 20,
+            right: 20,
+            bottom: 20,
+            left: 20,
+          }}
+        >
+          {/* <CartesianGrid stroke="#f5f5f5" /> */}
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip labelStyle={{ color: "rgb(102, 102, 102)" }} contentStyle={{ backgroundColor: "#2a323d5c", backdropFilter: "blur(30px)", borderRadius: 20 }} />
+          <Legend />
+          <Area
             type="monotone"
-            dataKey="TotalConsumo"
+            dataKey="PROXY"
             fill="#3f51b5"
             stroke="#3f51b5"
           />
-            {/* <Bar dataKey="TotalConsumo" barSize={20} fill="#2e7d32" radius={5} />
-            <Bar dataKey="Debe" barSize={20} fill="#d32f2f" radius={5} /> */}
-            {/* <Line type="monotone" dataKey="TotalConsumo" stroke="#ff7300" /> */}
-          </ComposedChart>
+          <Area
+            type="monotone"
+            dataKey="VPN"
+            fill="#2e7d32"
+            stroke="#2e7d32"
+          />
+          {/* <Bar dataKey="TotalConsumo" barSize={20} fill="#2e7d32" radius={5} /> */}
+          {/* <Bar dataKey="VPN" barSize={20} fill="#d32f2f" radius={5} /> 
+            <Line type="monotone" dataKey="PROXY" stroke="#ff7300" /> */}
+        </ComposedChart>
         </ResponsiveContainer>
       </Zoom>
         );

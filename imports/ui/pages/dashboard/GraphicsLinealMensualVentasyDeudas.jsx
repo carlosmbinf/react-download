@@ -261,7 +261,7 @@ export default function GraphicsLinealMensualVentasyDeudas() {
             {/* <CartesianGrid stroke="#f5f5f5" /> */}
             <XAxis dataKey="name" />
             <YAxis />
-            <Tooltip />
+            <Tooltip labelStyle={{ color: "rgb(102, 102, 102)" }} contentStyle={{ backgroundColor: "#2a323d5c", backdropFilter: "blur(30px)", borderRadius: 20 }} />
             <Legend />
             {/* <Area
             type="monotone"

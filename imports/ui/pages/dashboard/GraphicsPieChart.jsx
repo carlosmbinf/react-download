@@ -131,7 +131,7 @@ export default function GraphicsPieChart() {
                     label
 
                 />
-                <Tooltip />
+                <Tooltip labelStyle={{ color: "rgb(102, 102, 102)" }} contentStyle={{ backgroundColor: "#2a323d5c", backdropFilter: "blur(30px)", borderRadius: 20 }} />
             </PieChart>
         </Zoom>
     );
