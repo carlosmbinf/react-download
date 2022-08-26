@@ -153,20 +153,22 @@ export default function GraphicsLinealConsumoMegasXMeses(options) {
   moment.locale('es')
 
   const consumo = useTracker(() => {
-    Meteor.subscribe("registerDataUser", id ? { userId: id, type: options.type} : {type: options.type}, {
+    Meteor.subscribe("registerDataUser", (id ? { userId: id, type: options.type } : { type: options.type }), {
       fields: {
         userId: 1,
         megasGastadosinBytes: 1,
-        fecha: 1
+        fecha: 1,
+        type: 1
       }
     })
-    return RegisterDataUsersCollection.find(id ? { userId: id, type: options.type} : {type: options.type}, {
+    return RegisterDataUsersCollection.find((id ? { userId: id, type: options.type } : { type: options.type }), {
       fields: {
         userId: 1,
         megasGastadosinBytes: 1,
-        fecha: 1
+        fecha: 1,
+        type: 1
       }
-    }).fetch()
+    })
   });
 
   const gastos = (id,fechaStart, fechaEnd) =>{
@@ -199,10 +201,10 @@ export default function GraphicsLinealConsumoMegasXMeses(options) {
       // console.log(`fechaInicial: ${fechaInicial}`);
       // console.log(`fechaFinal: ${fechaFinal}`);
 
-      consumo.map(element => {
+      consumo.forEach(element => {
       let fechaElement = new Date(element.fecha)
 
-      // console.log(`fechaElement: ${fechaElement}`);
+      console.log(`fechaElement: ${fechaElement}`);
       
 
         // fechaElement >= fechaInicial && fechaElement < fechaFinal && console.log(element.userId)
@@ -213,22 +215,12 @@ export default function GraphicsLinealConsumoMegasXMeses(options) {
         }
 
       })
-      return (totalConsumo/1024000000).toFixed(2)
+      return Number((totalConsumo/1024000000).toFixed(2))
     }
 
   const datausers = useTracker(() => {
     let data01 = [];
 
-
-
-
-    Meteor.subscribe("user", id ? id : {}, {
-      fields: {
-        _id: 1,
-        'profile.firstName': 1,
-        'profile.lastName': 1
-      }
-    });
 
     for (let index = 5; index >= 0; index--) {
       
