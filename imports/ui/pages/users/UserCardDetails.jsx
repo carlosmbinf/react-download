@@ -432,59 +432,17 @@ export default function UserCardDetails() {
     // validacion = ((users.profile.role == "admin") ? true  : false);
       if (!validacion) return null
 
+      Meteor.call("addVentasVPN", users._id, Meteor.userId(),(error,result)=>{
+        if(error) {
+          setMensaje(error.message)
+          handleClickOpen()
+        } else {
+          result && setMensaje(result)
+          result && handleClickOpen()
+  
+        }
+      } )
 
-    if (users.vpn || users.vpnplus || users.vpn2mb) {
-
-
-      let nextIp = Meteor.users.findOne({}, { sort: { vpnip: -1 } }) ? Meteor.users.findOne({}, { sort: { vpnip: -1 } }).vpnip : 1
-      let precioVPN = users.vpnisIlimitado
-        ?
-        (PreciosCollection.findOne({ type: "fecha-vpn" }))
-        : (users.vpnplus
-          ? (PreciosCollection.findOne({ type: "vpnplus", megas: users.vpnmegas }))
-          : (users.vpn2mb
-            ? (PreciosCollection.findOne({ type: "vpn2mb", megas: users.vpnmegas }))
-            : 0))
-      //  PreciosCollection.findOne(users.vpnplus?{ type: "vpnplus" }:(users.vpn2mb?{ type: "vpn2mb" }))
-      !users.vpnip &&
-        Meteor.users.update(users._id, {
-          $set: {
-            vpnip: nextIp + 1
-          },
-        })
-      Meteor.users.update(users._id, {
-        $set: {
-          vpn: users.vpn ? false : true
-        },
-      });
-      LogsCollection.insert({
-        type: 'VPN',
-        userAfectado: users._id,
-        userAdmin: Meteor.userId(),
-        message:
-          `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN`
-      });
-      !users.vpn && VentasCollection.insert({
-        adminId: Meteor.userId(),
-        userId: users._id,
-        precio: (precioVPN.precio - Meteor.user().descuentovpn > 0) ? (precioVPN.precio - Meteor.user().descuentovpn) : 0,
-        comentario: precioVPN.comentario
-      })
-      // !users.vpn && alert(`Se Compró el Servicio VPN con un costo: ${(precioVPN.precio - Meteor.user().descuentovpn >= 0) ? (precioVPN.precio - Meteor.user().descuentovpn) : 0}CUP`)
-      !users.vpn && (setMensaje(precioVPN.comentario),
-      handleClickOpen())
-      
-      // Meteor.call('sendemail', users, { text: `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN para el usuario: ${users.username}${users.descuentovpn ? ` Con un descuento de: ${users.descuentovpn}CUP` : ""}` }, `VPN ${Meteor.user().username}`)
-      Meteor.call('sendMensaje', users, { text: `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN` }, `VPN ${Meteor.user().username}`)
-
-     
-
-    }
-    else {
-      setMensaje("INFO!!!\nPrimeramente debe seleccionar una oferta de VPN!!!"),
-      handleClickOpen()
-      // alert("INFO!!!\nPrimeramente debe seleccionar una oferta de VPN!!!")
-    }
   };
 
   const addVenta = () => {
@@ -501,7 +459,7 @@ export default function UserCardDetails() {
     
       if (!validacion) return null
 
-    Meteor.call("addVentas", users._id, Meteor.userId(),(error,result)=>{
+    Meteor.call("addVentasProxy", users._id, Meteor.userId(),(error,result)=>{
       if(error) {
         setMensaje(error.message)
         handleClickOpen()

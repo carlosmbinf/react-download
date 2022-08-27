@@ -229,24 +229,27 @@ if (Meteor.isServer) {
         };
       }
     },
-    addVentas: async (userChangeid, userId) => {
+    addVentasProxy: async (userChangeid, userId) => {
       let userChange = await Meteor.users.findOne(userChangeid)
       let user = await Meteor.users.findOne(userId)
       // let precio = PreciosCollection.findOne(precioid)
       let precio;
-      try {
-        if (!userChange.baneado) {
-          await Meteor.call("desabilitarProxyUser", userChangeid, userId)
-          return null
-        } else {
-          await Meteor.call("habilitarProxyUser", userChangeid, userId)
 
-
-          await userChange.isIlimitado
+      await userChange.isIlimitado
             ? precio = await PreciosCollection.findOne({ type: "fecha-proxy" })
             : precio = await PreciosCollection.findOne({ type: "megas", megas: userChange.megas })
 
-          await VentasCollection.insert({
+
+      try {
+        if (!userChange.baneado ) {
+          await Meteor.call("desabilitarProxyUser", userChangeid, userId)
+          return null
+        } else if( precio || user.username == "carlosmbinf" ){
+          await Meteor.call("habilitarProxyUser", userChangeid, userId)
+
+
+          
+            precio && await VentasCollection.insert({
             adminId: userId,
             userId: userChangeid,
             precio: (precio.precio - user.descuentoproxy > 0) ? (precio.precio - user.descuentoproxy) : 0,
@@ -255,7 +258,7 @@ if (Meteor.isServer) {
 
         }
 
-        return precio.comentario
+        return precio?precio.comentario:`No se encontro Precio a la oferta de Proxy establecida en el usuario: ${userChange.username}`
       } catch (error) {
         return error.message
       }
@@ -321,12 +324,117 @@ if (Meteor.isServer) {
           ` el proxy`
       }, (!userChange.baneado ? "Desactivado " + user.username : "Activado " + user.username))
 
+    },    
+    addVentasVPN: async (userChangeid, userId) => {
+      let userChange = await Meteor.users.findOne(userChangeid)
+      let user = await Meteor.users.findOne(userId)
+      // let precio = PreciosCollection.findOne(precioid)
+      let precio;
 
+      await userChange.vpnisIlimitado
+            ? precio = await PreciosCollection.findOne({ type: "fecha-vpn" })
+            : (userChange.vpnplus
+              ? precio = await PreciosCollection.findOne({ type: "vpnplus", megas: userChange.vpnmegas })
+              : precio = await PreciosCollection.findOne({ type: "vpn2mb", megas: userChange.vpnmegas })
+            )
+
+      try {
+        if (userChange.vpn) {
+          await Meteor.call("desabilitarVPNUser", userChangeid, userId)
+          return null
+        } else if(precio || user.username == "carlosmbinf"){
+          await Meteor.call("habilitarVPNUser", userChangeid, userId)
+
+          await VentasCollection.insert({
+            adminId: userId,
+            userId: user._id,
+            precio: (precio.precio - user.descuentovpn > 0) ? (precio.precio - user.descuentovpn) : 0,
+            comentario: precio.comentario
+          })
+
+        }
+
+        return precio?precio.comentario:`No se encontro Precio a la oferta de VPN establecida en el usuario: ${userChange.username}`
+        
+      } catch (error) {
+        return error.message
+      }
+
+    },
+    desabilitarVPNUser: async (userChangeid, userId) => {
+
+      let userChange = await Meteor.users.findOne(userChangeid)
+      let user = await Meteor.users.findOne(userId)
+
+
+      await Meteor.users.update(userChangeid, {
+        $set: {
+          vpn: false,
+          bloqueadoDesbloqueadoPor: userId
+        },
+      })
+      LogsCollection.insert({
+        type: 'VPN',
+        userAfectado: userChangeid,
+        userAdmin: userId,
+        message:
+          `Se Desactivó la VPN`
+      });
+      // Meteor.call('sendemail', userChange, {
+      //   text: "Ha sido " +
+      //     (!userChange.baneado ? "Desactivado" : "Activado") +
+      //     ` el proxy del usuario ${userChange.username}`
+      // },
+      //  (!userChange.baneado ? "Desactivado " + user.username : "Activado " + user.username)),
+      await Meteor.call('sendMensaje', userChange, {
+        text: "Ha sido Desactivado el proxy"
+      }, ("Desactivado " + user.username))
+
+
+    },
+    habilitarVPNUser: async (userChangeid, userId) => {
+
+      let userChange = await Meteor.users.findOne(userChangeid)
+      let user = await Meteor.users.findOne(userId)
+
+
+
+
+      if (userChange.vpn || userChange.vpnplus || userChange.vpn2mb) {
+
+
+        let nextIp = Meteor.users.findOne({}, { sort: { vpnip: -1 } }) ? Meteor.users.findOne({}, { sort: { vpnip: -1 } }).vpnip : 1
+
+        !userChange.vpnip &&
+          Meteor.users.update(userChangeid, {
+            $set: {
+              vpnip: nextIp + 1
+            },
+          })
+        Meteor.users.update(userChangeid, {
+          $set: {
+            vpn: true
+          },
+        });
+        LogsCollection.insert({
+          type: 'VPN',
+          userAfectado: userChangeid,
+          userAdmin: userId,
+          message:
+            `Se Activo la VPN`
+        });
+        // Meteor.call('sendemail', users, { text: `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN para el usuario: ${users.username}${users.descuentovpn ? ` Con un descuento de: ${users.descuentovpn}CUP` : ""}` }, `VPN ${user.username}`)
+        Meteor.call('sendMensaje', userChange, { text: `Se ${!userChange.vpn ? "Activo" : "Desactivó"} la VPN` }, `VPN ${user.username}`)
+
+      }
+      else {
+        setMensaje("INFO!!!\nPrimeramente debe seleccionar una oferta de VPN!!!"),
+          handleClickOpen()
+        // alert("INFO!!!\nPrimeramente debe seleccionar una oferta de VPN!!!")
+      }
 
     }
+
   });
-
-
-
 
 }
