@@ -212,7 +212,7 @@ if (Meteor.isServer) {
             address: "proxy: " + Meteor.settings.public.IP,
           }).forEach((connection) => {
             !arrayIds.find((id) => connection.connectionId == id) && (
-              console.log( connection.connectionId + " NO ESTA CONECTADO"),
+              // console.log( connection.connectionId + " NO ESTA CONECTADO"),
               OnlineCollection.remove(connection._id))
           });
         }catch(error){
