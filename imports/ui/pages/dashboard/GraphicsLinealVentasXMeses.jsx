@@ -232,7 +232,7 @@ export default function GraphicsLinealVentasXMeses() {
       }
     });
 
-    for (let index = 5; index >= 0; index--) {
+    for (let index = 11; index >= 0; index--) {
       
       let dateStartMonth = moment(new Date())
       let dateEndMonth = moment(new Date())
