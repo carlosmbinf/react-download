@@ -59,6 +59,7 @@ import CodeDetails from "../ui/pages/files/CodeDetails";
 import UsersTableVPN from "../ui/pages/vpn/UsersTableVPN";
 import Execute from "../ui/pages/execute/execute";
 import GraphicsLinealConsumoMegasXMeses from "../ui/pages/dashboard/GraphicsLinealConsumoMegasXMeses";
+import StateUsers from "../ui/pages/users/StateUsers";
 
 const useStyles = makeStyles((theme) => ({
   // necessary for content to be below app bar
@@ -182,6 +183,12 @@ export default function Main() {
                 justify="center"
                 alignItems="center"
               >
+                  <Grid item xs={12}>
+                    {Meteor.user().username == "carlosmbinf" &&
+                      <StateUsers />
+                    }
+                  </Grid>
+                
                 <Grid item xs={12} className={classes.root}>
                   <UserCard withCreate="true" />
                 </Grid>
