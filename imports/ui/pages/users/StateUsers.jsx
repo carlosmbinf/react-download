@@ -124,7 +124,7 @@ export default function StateUsers() {
     switch (value) {
       case "habilitarConsumoProxy":
         Meteor.call("setConsumoProxy", id ? id : { "profile.role": "user", $or: [{ isIlimitado: false }, { isIlimitado: null }] }, true, (error, result) => {
-          console.log(result)
+          // console.log(result)
           setMessage(result);
           handleClick(TransitionUp);
           setLoad(false);
@@ -133,7 +133,7 @@ export default function StateUsers() {
         break;
       case "desabilitarConsumoProxy":
         Meteor.call("setConsumoProxy", id ? id : { "profile.role": "user", $or: [{ isIlimitado: false }, { isIlimitado: null }] }, false, (error, result) => {
-          console.log(result)
+          // console.log(result)
           setMessage(result);
           handleClick(TransitionUp);
           setLoad(false);

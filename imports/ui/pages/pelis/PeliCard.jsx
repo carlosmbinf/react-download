@@ -159,7 +159,7 @@ export default function PeliCard(options) {
   // const [mostrarTriler, setMostrarTriler] = useState([]);
 
   const peli = useTracker(() => {
-    Meteor.subscribe("pelis", {}, {
+    Meteor.subscribe("pelis", { mostrar: "true" }, {
       fields: {
         _id: 1,
         clasificacion: 1,
@@ -167,15 +167,30 @@ export default function PeliCard(options) {
         mostrar: 1,
         urlBackground: 1,
         nombrePeli: 1,
-        urlPeli: 1,
-        urlTrailer: 1,
-        idimdb:1
-      }
+        // urlPeli: 1,
+        // urlTrailer: 1,
+        // idimdb:1
+        year:1
+      },
+      sort: { nombrePeli: 1 }
     });
     if (options.clasificacion == "All") {
       return PelisCollection.find({ mostrar: "true" }).fetch();
     } else {
-      return PelisCollection.find({ mostrar: "true", clasificacion: options.clasificacion }).fetch();
+      return PelisCollection.find({ mostrar: "true", clasificacion: options.clasificacion }, {
+        fields: {
+          _id: 1,
+          clasificacion: 1,
+          vistas: 1,
+          mostrar: 1,
+          urlBackground: 1,
+          nombrePeli: 1,
+          // urlPeli: 1,
+          // urlTrailer: 1,
+          // idimdb:1
+          year: 1
+        }, sort: { vistas: -1, nombrePeli: 1 }
+      }).fetch();
     }
   });
 
@@ -183,12 +198,8 @@ export default function PeliCard(options) {
 
   const items = useTracker(() => {
    
-    let a = []
-    a =  peli.map( (peliGeneral) => {
-          // var mostrar = true
-              // mostrarTriler[peliGeneral._id] = false
+    let a = peli.map( (peliGeneral) => {
               return   <PeliCardOnly peliGeneral={peliGeneral} />
-              
             })
    return a
 });

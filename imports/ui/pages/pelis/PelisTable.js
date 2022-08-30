@@ -132,12 +132,38 @@ export default function PelisTable() {
   const history = useHistory();
 
   const logs = useTracker(() => {
-      Meteor.subscribe("pelis", {},
-      { sort: { nombrePeli: 1 }}); 
+      Meteor.subscribe(
+        "pelis",
+        {},
+        {
+          fields: {
+            _id: 1,
+            nombrePeli: 1,
+            urlBackground: 1,
+            vistas: 1,
+            mostrar: 1,
+            clasificacion: 1,
+          },
+          sort: { nombrePeli: 1 },
+        }
+      ); 
 
     let a = [];
     try {
-      PelisCollection.find({}, { sort: { nombrePeli: 1 } }).map((pelicula) => {
+      PelisCollection.find(
+        {},
+        {
+          fields: {
+            _id: 1,
+            nombrePeli: 1,
+            urlBackground: 1,
+            vistas: 1,
+            mostrar: 1,
+            clasificacion: 1,
+          },
+          sort: { nombrePeli: 1 },
+        }
+      ).map((pelicula) => {
         pelicula &&
           // userReady && adminReady &&
           a.push({
@@ -146,7 +172,9 @@ export default function PelisTable() {
             img: pelicula.urlBackground,
             vistas: pelicula.vistas,
             mostrar: pelicula.mostrar,
-            clasificacion: pelicula.clasificacion.length?pelicula.clasificacion:"Sin Clasificación",
+            clasificacion: pelicula.clasificacion.length
+              ? pelicula.clasificacion
+              : "Sin Clasificación",
           });
       });
     } catch (error) { }

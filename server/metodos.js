@@ -433,6 +433,21 @@ if (Meteor.isServer) {
         // alert("INFO!!!\nPrimeramente debe seleccionar una oferta de VPN!!!")
       }
 
+    }, setConsumoProxy:async (user,status)=>{
+      try {
+        let count = await Meteor.users.update(
+          user ? user : {},
+          {
+            $set: { contandoProxy: status },
+          },
+          { multi: true }
+        );
+        return `Se actualizaron ${count} usuarios`
+      } catch (error) {
+        return error.message
+      }
+    },getUrlTriller: (id) => {
+      return PelisCollection.findOne(id).urlTrailer;
     }
 
   });

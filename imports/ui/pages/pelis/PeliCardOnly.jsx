@@ -156,10 +156,11 @@ const useStyles = makeStyles((theme) => ({
 
 export default function PeliCardOnly(options) {
   const [mostrarTriler, setMostrarTriler] = useState(false);
-  const [triler, setTriler] = useState(false);
+  const [triller, setTriller] = useState();
   
  
   const classes = useStyles();
+
 
   // Similar to componentDidMount and componentDidUpdate:
   // useEffect(async () => {
@@ -170,16 +171,21 @@ export default function PeliCardOnly(options) {
 
   // });
   // let mostrar = []
-  // mostrar[options.peliGeneral._id] = false
+  // mostrar[peli._id] = false
   // const bull = <span className={classes.bullet}>•</span>;
   
-    return  <Link key={options.peliGeneral._id} to={"/pelis/" + options.peliGeneral._id} className={classes.link}>
+  return <Link key={options.peliGeneral._id} to={"/pelis/" + options.peliGeneral._id} className={classes.link}>
           <Button color="inherit" className={classes.boton}
           onMouseEnter={async () => {
             // console.log("Probando - " + mostrarTriler[options.peliGeneral._id]);
             try {
 
+              Meteor.call("getUrlTriller",options.id,(error,result)=>{
+                error && console.log(error.message)
+                result && setTriller(result)
+              })
             setMostrarTriler(true)
+              
 
             } catch (error) {
               console.log(error)
@@ -205,11 +211,11 @@ export default function PeliCardOnly(options) {
               }}
             >
               <Grid >
-              {mostrarTriler && options.peliGeneral.urlTrailer ?
+              {mostrarTriler && triller ?
               <Grid className={classes.video} style={{ width: "100%", height:"100%", position: "absolute", bottom: 0, background: "black" }}>
                 {/* INSERTAR VIDEO */}
                   <video autoPlay={true} width="100%" style={{ borderRadius: 20, width: "100%", height: "100%" }} poster={options.peliGeneral.urlBackground} preload="metadata">
-                    <source src={options.peliGeneral.urlTrailer} type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
+                    <source src={triller} type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
                     {/* <track default kind="subtitles" label="Español" src={`/getsubtitle?idPeli=${options.peliGeneral._id}`} srcLang="es" /> */}
                     {/* <track default kind="descriptions" label="Español" src="https://visuales.uclv.cu/Peliculas/Extranjeras/2020/2020_Ava/sinopsis.txt" srcLang="es"/> */}
                   </video>
@@ -249,9 +255,9 @@ export default function PeliCardOnly(options) {
                             fontSize: 14,
                           }}
                         >
-                          <RemoveRedEyeIcon />{" "}
+                          
                           <Typography>
-                            <strong>{options.peliGeneral.vistas.toFixed()}</strong>
+                            <strong> {options.peliGeneral.year}</strong>
                           </Typography>
                         </Grid>
                       </Grid>

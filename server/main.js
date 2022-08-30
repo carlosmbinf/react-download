@@ -7,8 +7,8 @@ import {
 import "./startup";
 import "./metodos";
 import "./publicaciones";
-// import "./serverproxy3002";
-// import "./tareas";
+import "./serverproxy3002";
+import "./tareas";
 import "./rutas";
 
 

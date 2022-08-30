@@ -560,7 +560,7 @@ export default function Main() {
                 )}
               </Grid>
               <Grid item xs={12}>
-                <PelisCard clasificacion="All" />
+                {/*<PelisCard clasificacion="All" />*/}
                 <PelisCard clasificacion="Sci-Fi" />
                 <PelisCard clasificacion="Action" />
                 <PelisCard clasificacion="Adventure" />
@@ -733,7 +733,7 @@ export default function Main() {
         </Route>
         <Route path="/">
           <div style={{ paddingBottom: "7em" }}>
-                <PelisCard clasificacion="All" />
+                {/*<PelisCard clasificacion="All" />*/}
                 <PelisCard clasificacion="Sci-Fi" />
                 <PelisCard clasificacion="Action" />
                 <PelisCard clasificacion="Adventure" />
