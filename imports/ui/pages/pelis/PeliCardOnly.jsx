@@ -180,7 +180,7 @@ export default function PeliCardOnly(options) {
             // console.log("Probando - " + mostrarTriler[options.peliGeneral._id]);
             try {
 
-              Meteor.call("getUrlTriller",options.id,(error,result)=>{
+              Meteor.call("getUrlTriller",options.peliGeneral._id,(error,result)=>{
                 error && console.log(error.message)
                 result && setTriller(result)
               })
