@@ -171,8 +171,7 @@ export default function PeliCard(options) {
         // urlTrailer: 1,
         // idimdb:1
         year:1
-      },
-      sort: { nombrePeli: 1 }
+      }
     });
     if (options.clasificacion == "All") {
       return PelisCollection.find({ mostrar: "true" }).fetch();
@@ -189,7 +188,7 @@ export default function PeliCard(options) {
           // urlTrailer: 1,
           // idimdb:1
           year: 1
-        }, sort: { vistas: -1, nombrePeli: 1 }
+        }, sort: { vistas: -1,nombrePeli: 1 }
       }).fetch();
     }
   });

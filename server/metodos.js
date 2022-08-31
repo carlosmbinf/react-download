@@ -447,7 +447,8 @@ if (Meteor.isServer) {
         return error.message
       }
     },getUrlTriller: (id) => {
-      return PelisCollection.findOne(id).urlTrailer;
+      let peli = PelisCollection.findOne(id)
+      return peli.urlTrailer?peli.urlTrailer:null;
     }
 
   });
