@@ -161,9 +161,7 @@ export default function GraphicsLinealConsumoMegasXMeses(options) {
         fecha: 1,
         type: 1,
         vpnMbGastados: 1
-      }, sort: {
-        createdAt: -1
-        }
+      }
     })
     return RegisterDataUsersCollection.find((id ? { userId: id } : {}), {
       fields: {

@@ -97,6 +97,7 @@ if (Meteor.isServer) {
             for (var i = 5; i <= links.length - 4; i++) {
                 let nombre = links[i].value
                     .replace(`${year}_`, "")
+                    .replace(`%20`, " ")
                     .replace(/\./g, " ")
                     .replace(`/`, "");
                 // console.log(`Name: ${nombre}`);

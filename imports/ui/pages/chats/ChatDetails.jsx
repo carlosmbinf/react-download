@@ -66,7 +66,7 @@ export default ChatDetails = () => {
     };
 
     const mensajesList = useTracker(() => {
-        Meteor.subscribe("mensajes",{ $or: [{ $and: [{ from: id, to: Meteor.userId() }] }, { $and: [{ from: Meteor.userId(), to: id }] }] }, { sort: { createdAt: -1 } });
+        Meteor.subscribe("mensajes",{ $or: [{ $and: [{ from: id, to: Meteor.userId() }] }, { $and: [{ from: Meteor.userId(), to: id }] }] });
 
         let list = []
         // let mensajes = MensajesCollection.find({ $or: [{ from: Meteor.userId() }, { from: from }, { to: Meteor.userId() }, { to: from }] }, { sort: { createdAt: -1 } }).fetch()

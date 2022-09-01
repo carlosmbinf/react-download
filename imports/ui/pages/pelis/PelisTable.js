@@ -143,8 +143,7 @@ export default function PelisTable() {
             vistas: 1,
             mostrar: 1,
             clasificacion: 1,
-          },
-          sort: { nombrePeli: 1 },
+          }
         }
       ); 
 
