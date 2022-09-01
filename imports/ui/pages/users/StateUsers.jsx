@@ -179,7 +179,7 @@ export default function StateUsers() {
             style={{zIndex:1}}
           />
           {/* <Button onClick={handleClick(TransitionUp)}>Up</Button> */}
-          <h3>Proxy:</h3>
+          <h3>Consumo de Datos del Proxy:</h3>
           <IconButton onClick={()=>makePostRequest("habilitarConsumoProxy")} aria-label="cancel">
             <PlayCircleFilledIcon />
           </IconButton >
