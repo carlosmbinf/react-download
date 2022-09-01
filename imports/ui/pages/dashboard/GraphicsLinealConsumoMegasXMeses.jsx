@@ -170,10 +170,8 @@ export default function GraphicsLinealConsumoMegasXMeses(options) {
         fecha: 1,
         type: 1,
         vpnMbGastados: 1
-      }, sort: {
-        createdAt: -1
       }
-    }).fetch()
+    })
   });
 
   const gastos = (id,fechaStart, fechaEnd) =>{
@@ -196,38 +194,45 @@ export default function GraphicsLinealConsumoMegasXMeses(options) {
       return totalAPagar
     }
 
-  const aporte =  (type, fechaStart, fechaEnd) =>{
+  const aporte =   (type, fechaStart, fechaEnd) =>{
       let totalConsumo = 0;
       let fechaInicial = new Date(fechaStart)
       let fechaFinal = new Date(fechaEnd)
       
       // console.log(`fechaStart: ${fechaStart}`);
       // console.log(`fechaEnd: ${fechaEnd}`);
-      // console.log(`fechaInicial: ${fechaInicial}`);
-      // console.log(`fechaFinal: ${fechaFinal}`);
+      console.log(`fechaInicial: ${fechaInicial}`);
 
-     consumo.forEach(element => {
-
-      let fechaElement = new Date(element.fecha)
+      consumo.forEach((element) => {
+      let fechaElement =  new Date(element.fecha)
 
       // console.log(`fechaElement: ${fechaElement}`);
       
 
-        // fechaElement >= fechaInicial && fechaElement < fechaFinal && console.log(element.userId)
-       if (element.type == type) {
-         if (id) {
-           element.userId == id && fechaElement >= fechaInicial && fechaElement < fechaFinal && (totalConsumo += (element.type == "proxy" ? (element.megasGastadosinBytes ? element.megasGastadosinBytes : 0) : (element.vpnMbGastados ? element.vpnMbGastados : 0)))
-         } else {
-           fechaElement >= fechaInicial && fechaElement < fechaFinal &&
-             (totalConsumo += (element.type == "proxy" ? (element.megasGastadosinBytes ? element.megasGastadosinBytes : 0) : (element.vpnMbGastados ? element.vpnMbGastados : 0)))
-         }
+        // element.type == type && fechaElement >= fechaInicial && fechaElement < fechaFinal && console.log(`fechaElement: ${fechaElement}`)
+        if (element.type == type) {
+          let suma
+          switch (element.type) {
+            case "proxy":
+              suma = (element.megasGastadosinBytes ? element.megasGastadosinBytes : 0)
+              break;
+            case "vpn":
+              suma = (element.vpnMbGastados ? element.vpnMbGastados : 0)
+            default:
+              break;
+          }
+
+         fechaElement >= fechaInicial && fechaElement < fechaFinal &&
+           (totalConsumo += suma)
+
        }
-        
       })
+      console.log(`fechaFinal: ${fechaFinal}`);
+      
       return Number((totalConsumo/1024000000).toFixed(2))
     }
 
-  const datausers = useTracker(() => {
+  const datausers = useTracker( () => {
     let data01 = [];
 
     
@@ -236,19 +241,20 @@ export default function GraphicsLinealConsumoMegasXMeses(options) {
       let dateStartMonth = moment(new Date())
       let dateEndMonth = moment(new Date())
 
-      dateStartMonth.startOf('month').subtract(0 + index, 'month').add(1,'d')
+      dateStartMonth.startOf('month').subtract(1 + index, 'month').add(1,'day')
 
-      dateEndMonth.endOf('month').subtract(0 + index, 'month').add(1,'d')
+      dateEndMonth.startOf('month').subtract(0 + index, 'month').add(1,'day')
 
       // console.log("FECHA ACTUAL: " + new Date().getMilliseconds());
       // console.log("INICIO DE MES MOMENT: " + dateStartMonth.format("dddd, MMMM Do YYYY, h:mm:ss a"));
       // console.log("INICIO DE MES MOMENT: " + dateStartMonth.format("MMMM(YYYY)"));
       // console.log("Fin DE MES MOMENT: " + dateEndMonth.format("dddd, MMMM Do YYYY, h:mm:ss a"));
       // console.log("Fin DE MES MOMENT: " + dateEndMonth.format("MMMM(YYYY)"));
+
       data01.push({
         name: `${dateStartMonth.format("MMMM(YYYY)")}`,
-        PROXY: aporte("proxy",dateStartMonth.toISOString(), dateEndMonth.toISOString()),
-        VPN: aporte("vpn",dateStartMonth.toISOString(), dateEndMonth.toISOString()),
+        PROXY: aporte("proxy", dateStartMonth.toISOString(), dateEndMonth.toISOString()),
+        VPN: aporte("vpn", dateStartMonth.toISOString(), dateEndMonth.toISOString()),
         // amt: aporte(usersGeneral._id, dateStartMonth.toISOString(), dateEndMonth.toISOString())
       })
 
@@ -257,7 +263,7 @@ export default function GraphicsLinealConsumoMegasXMeses(options) {
     }
 
     data01.forEach(data=>{
-      console.log(options.type + " =>" ,data.TotalConsumo)
+      console.log(data.name + " =>" ,data.PROXY)
 
     })
     
