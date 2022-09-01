@@ -285,7 +285,7 @@ if (Meteor.isServer) {
     //////////ACTUALIZAR TRAILERS //////////////
     cron
       .schedule(
-        "0,30 * * * *",
+        "0 * * * *",
         async () => {
            try {
             const IMDb = await require('imdb-light');
