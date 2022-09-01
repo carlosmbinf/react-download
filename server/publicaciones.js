@@ -28,7 +28,7 @@ if (Meteor.isServer) {
         return RegisterDataUsersCollection.find(selector?selector:{},option?option:{});
       });
       Meteor.publish("registerDataUserId", function (id) {
-        return RegisterDataUsersCollection.find({ userAfectado: id });
+        return RegisterDataUsersCollection.find({ userId: id });
       });
       Meteor.publish("pelis", function (selector,option) {
         return PelisCollection.find(selector?selector:{},option?option:{});

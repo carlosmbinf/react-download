@@ -252,6 +252,23 @@ export default function UserCardDetails() {
     return administradores;
   });
 
+  const registroDeDatosConsumidos = useTracker(() => {
+    Meteor.subscribe("registerDataUser", { userId: id }, {
+      fields: {
+        '_id': 1,
+        'userId': 1
+      }
+    })
+    
+
+    return RegisterDataUsersCollection.find({ userId: id }, {
+      fields: {
+        '_id': 1,
+        'userId': 1
+      }
+    });
+  });
+
   const preciosVPNList = useTracker(() => {
     Meteor.subscribe("user", { "vpnip": { $exists: true, $ne: null } }, {
       fields: {
@@ -1796,7 +1813,7 @@ export default function UserCardDetails() {
                   )}
                 </Grid>
               </Paper>
-              {RegisterDataUsersCollection.findOne({ userId: id }) && <>
+              {registroDeDatosConsumidos.count() && <>
                 <Grid container item xs={12} justify="space-evenly" alignItems="center" style={{ paddingTop: 50 }}>
                   <Chip style={{ width: "90%" }} color='primary' label="Consumo de Datos en VidKar:" />
                   <div style={{ width: "100%", height: 300 }}>
@@ -1804,7 +1821,7 @@ export default function UserCardDetails() {
                   </div>
                 </Grid>
                 <Divider variant="middle" /></>}
-              {users.profile.role == "admin" && tieneVentas &&
+              {Meteor.user().profile.role == "admin" && tieneVentas &&
                 <DashboardInit id={id} />
               }
 
