@@ -201,7 +201,7 @@ export default function GraphicsLinealConsumoMegasXMeses(options) {
       
       // console.log(`fechaStart: ${fechaStart}`);
       // console.log(`fechaEnd: ${fechaEnd}`);
-      console.log(`fechaInicial: ${fechaInicial}`);
+      // console.log(`fechaInicial: ${fechaInicial}`);
 
       consumo.forEach((element) => {
       let fechaElement =  new Date(element.fecha)
@@ -227,7 +227,7 @@ export default function GraphicsLinealConsumoMegasXMeses(options) {
 
        }
       })
-      console.log(`fechaFinal: ${fechaFinal}`);
+      // console.log(`fechaFinal: ${fechaFinal}`);
       
       return Number((totalConsumo/1024000000).toFixed(2))
     }
@@ -261,11 +261,6 @@ export default function GraphicsLinealConsumoMegasXMeses(options) {
 
 
     }
-
-    data01.forEach(data=>{
-      console.log(data.name + " =>" ,data.PROXY)
-
-    })
     
     return data01;
     
