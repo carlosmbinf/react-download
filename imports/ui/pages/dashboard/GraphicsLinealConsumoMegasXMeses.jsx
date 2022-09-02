@@ -233,10 +233,14 @@ export default function GraphicsLinealConsumoMegasXMeses(options) {
     }
 
   const datausers = useTracker( () => {
+    Meteor.subscribe("user", (id ? { _id: id } : {}), {
+      fields: {megasGastadosinBytes:1,vpnMbGastados:1}
+    })
+
     let data01 = [];
 
     
-    for (let index = 11; index >= 0; index--) {
+    for (let index = 10; index >= 0; index--) {
       
       let dateStartMonth = moment(new Date())
       let dateEndMonth = moment(new Date())
@@ -261,6 +265,23 @@ export default function GraphicsLinealConsumoMegasXMeses(options) {
 
 
     }
+
+      let proxyMesActual = 0
+      let vpnMesActual = 0
+
+      Meteor.users.find((id ? { _id: id } : {}),{fields:{megasGastadosinBytes:1,vpnMbGastados:1}}).forEach(user=>{
+        proxyMesActual += user.megasGastadosinBytes?user.megasGastadosinBytes:0
+        vpnMesActual += user.vpnMbGastados?user.vpnMbGastados:0
+      })
+
+      let dateStartMonthActual = moment(new Date())
+
+      data01.push({
+        name: `${dateStartMonthActual.format("MMMM(YYYY)")}`,
+        PROXY: Number((proxyMesActual/1024000000).toFixed(2)),
+        VPN: Number((vpnMesActual/1024000000).toFixed(2)),
+        // amt: aporte(usersGeneral._id, dateStartMonth.toISOString(), dateEndMonth.toISOString())
+      })
     
     return data01;
     
