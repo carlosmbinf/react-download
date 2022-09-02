@@ -347,7 +347,7 @@ if (Meteor.isServer) {
 
           await VentasCollection.insert({
             adminId: userId,
-            userId: user._id,
+            userId: userChangeid,
             precio: (precio.precio - user.descuentovpn > 0) ? (precio.precio - user.descuentovpn) : 0,
             comentario: precio.comentario
           })
