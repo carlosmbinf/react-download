@@ -18,6 +18,7 @@
     "@material-ui/styles": "^4.10.0",
     "@mui/icons-material": "^5.4.2",
     "@mui/material": "^5.4.2",
+    "@rive-app/react-canvas": "^3.0.23",
     "@yozora/react-code-editor": "^1.0.0-alpha.40",
     "ajax": "0.0.4",
     "anychart-react": "^1.4.1",

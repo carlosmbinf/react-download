@@ -1,6 +1,7 @@
 import React from "react";
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import LoginForm from "../../components/login/LoginForm";
+import Bear from "../../animations/Bear";
 import { Grid, Typography, Link, ThemeProvider} from "@material-ui/core";
 import Fade from 'react-reveal/Fade';
 import { theme } from "../../../startup/client/theme";
@@ -200,7 +201,7 @@ const LoginPage = () => {
         className={classes.marco}
         justify="center" >
           <Grid item className={classes.form}>
-          
+                <Bear src="/animations/animated_login_screen.riv" autoplay={true} animations="idle"/>
                 <LoginForm />
 
                 {/* <button onClick={handleLoginFacebook}>loguin to facebook</button> */}
