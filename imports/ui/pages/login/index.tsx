@@ -141,6 +141,7 @@ const useStyles = makeStyles((theme: Theme) =>
 const LoginPage = () => {
   const classes = useStyles();
   const [checked, setChecked] = React.useState(true);
+  const [type, setType] = React.useState(true);
 
   const handleChange = () => {
     setChecked((prev) => !prev);
@@ -200,12 +201,10 @@ const LoginPage = () => {
         alignItems="center"
         className={classes.marco}
         justify="center" >
-          <Grid item className={classes.form}>
-                <Bear src="/animations/animated_login_screen.riv" autoplay={true} animations="idle"/>
+          
                 <LoginForm />
 
                 {/* <button onClick={handleLoginFacebook}>loguin to facebook</button> */}
-              </Grid>
           </Grid>
           </Fade>
         </Grid>

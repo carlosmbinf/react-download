@@ -17,11 +17,16 @@ import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import LockIcon from "@material-ui/icons/Lock";
-import { makeStyles, Theme, createStyles, useTheme  } from "@material-ui/core/styles";
+import { makeStyles, Theme, createStyles, useTheme } from "@material-ui/core/styles";
 import FacebookIcon from "@material-ui/icons/Facebook";
 import Tooltip from "@material-ui/core/Tooltip";
 import GoogleIcon from '@mui/icons-material/Google';
 import { VersionsCollection } from "../../../pages/collections/collections";
+
+
+
+import { useRive, useStateMachineInput } from '@rive-app/react-canvas';
+import Bear from "../../../animations/Bear";
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     input: {
@@ -38,6 +43,16 @@ const useStyles = makeStyles((theme: Theme) =>
       color: colors.red[500],
       textAlign: "center",
     },
+    form: {
+      transitionDelay: `600ms !important`,
+      borderRadius: "13%",
+      // background: "#0ebaf775",
+      backgroundImage: "radial-gradient(circle, rgba(2,0,36,0) 0%, rgba(112,96,255,0.7727901158707865) 67%)",
+      opacity: 1,
+      padding: "25px",
+      paddingBottom: 10
+      // backdropFilter: "blur(5px)",
+    },
   })
 );
 
@@ -53,11 +68,45 @@ const LoginForm = ({ className }: Props) => {
   const [openTerminos, setOpenTerminos] = React.useState(false);
   const [openPrivacidad, setOpenPrivacidad] = React.useState(false);
 
+  const STATE_MACHINE_NAME = "Login Machine"
+  const { rive, RiveComponent } = useRive({
+    src: "/animations/animated_login_screen.riv",
+    autoplay: true,
+    animations: "idle",
+    // artboard:"Teddy",
+    stateMachines: STATE_MACHINE_NAME
+  });
+  let isChecking = useStateMachineInput(rive, STATE_MACHINE_NAME, "isChecking")
+  let isHandsUp = useStateMachineInput(rive, STATE_MACHINE_NAME, "isHandsUp")
+  let trigFail = useStateMachineInput(rive, STATE_MACHINE_NAME, "trigFail")
+  let trigSuccess = useStateMachineInput(rive, STATE_MACHINE_NAME, "trigSuccess")
+
+  const actualizarBear = (type) => {
+    switch (type) {
+      case "user":
+        isChecking.value = true
+        break;
+      case "password":
+        isHandsUp.value = true
+        break;
+      case "error":
+        trigFail.fire()
+        break;
+      case "ok":
+        trigSuccess.fire()
+        break;
+      default:
+        isChecking.value = false
+        isHandsUp.value = false
+        break;
+    }
+  }
+
   const history = useHistory();
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
-  
+
 
   const handleClickOpenTerminos = () => {
     setOpenTerminos(true);
@@ -78,13 +127,14 @@ const LoginForm = ({ className }: Props) => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError("");
+    
 
     !email || !password
       ? setError("Wrong credentials")
-      : Meteor.loginWithPassword(email, password, (error) =>
+      :  Meteor.loginWithPassword(email, password, (error) =>
         error
-          ? setError(`Login failed, please try again`)
-          : history.push("/pelis")
+          ? (actualizarBear('error'),setError(`Login failed, please try again`))
+          :(actualizarBear('ok'), history.push("/pelis"))
       );
 
   };
@@ -129,13 +179,13 @@ const LoginForm = ({ className }: Props) => {
   const versionapk = useTracker(() => {
 
     Meteor.subscribe("versions", { type: "apk" }).ready()
-   let version = VersionsCollection.findOne({ type: "apk" })
-    return version?version.version:"";
+    let version = VersionsCollection.findOne({ type: "apk" })
+    return version ? version.version : "";
   });
 
   return (
     <>
-    <Dialog
+      <Dialog
         fullScreen={fullScreen}
         open={openTerminos}
         onClose={handleCloseTerminos}
@@ -144,7 +194,7 @@ const LoginForm = ({ className }: Props) => {
         <DialogTitle id="responsive-dialog-title">{"Términos y condiciones"}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-          La Empresa de Streaming de Cuba S.A. (VidKar) le ofrece el servicio de Streaming y búsqueda de información y de publicidad sujeto a estos términos y condiciones, los cuales establecen el acceso y el uso del sitio web de VidKar, incluyendo los contenidos y servicios, puestos su disposición.
+            La Empresa de Streaming de Cuba S.A. (VidKar) le ofrece el servicio de Streaming y búsqueda de información y de publicidad sujeto a estos términos y condiciones, los cuales establecen el acceso y el uso del sitio web de VidKar, incluyendo los contenidos y servicios, puestos su disposición.
           </DialogContentText>
           <DialogContentText>
             Se le recomienda que periódicamente consulte los términos y condiciones establecidos en el presente documento puesto que VidKar se reserva el derecho de modificarlos cuando lo estime oportuno. Las modificaciones realizadas tendrán plena vigencia a partir de su publicación en el sitio web. La utilización de este sitio web, implica la aceptación integral de los términos y condiciones establecidos en el presente documento.
@@ -179,24 +229,24 @@ const LoginForm = ({ className }: Props) => {
         <DialogTitle id="responsive-dialog-title">{"Política de privacidad"}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-          Esta Política de Privacidad establece los términos en que se utiliza y protege la información y los datos personales que son proporcionados por los usuarios, al momento de su publicación en el sitio web de VidKar.
+            Esta Política de Privacidad establece los términos en que se utiliza y protege la información y los datos personales que son proporcionados por los usuarios, al momento de su publicación en el sitio web de VidKar.
           </DialogContentText>
           <DialogContentText>
-          A los efectos de la presente "Política", se entiende por Usuario a la persona que voluntariamente se registre en este sitio web, mediante los formularios establecidos por el sitio web de VidKar, en tanto Visitante es aquella persona que accede libremente a la información disponible en este sitio Web sin necesidad de registrarse previamente.
+            A los efectos de la presente "Política", se entiende por Usuario a la persona que voluntariamente se registre en este sitio web, mediante los formularios establecidos por el sitio web de VidKar, en tanto Visitante es aquella persona que accede libremente a la información disponible en este sitio Web sin necesidad de registrarse previamente.
           </DialogContentText>
           <DialogContentText>
-          VidKar y el Usuario asumen la obligación de mantener el principio de confidencialidad de dicha información, así como de utilizar ésta exclusivamente en los términos pactados en el correspondiente contrato.
+            VidKar y el Usuario asumen la obligación de mantener el principio de confidencialidad de dicha información, así como de utilizar ésta exclusivamente en los términos pactados en el correspondiente contrato.
           </DialogContentText>
           <DialogContentText>
-          El tratamiento a la información y los datos personales que se realiza en el sitio https://vidkar.ddns.net de VidKar, se rige por las siguientes reglas:
+            El tratamiento a la información y los datos personales que se realiza en el sitio https://vidkar.ddns.net de VidKar, se rige por las siguientes reglas:
 
- <li>Los datos personales de los Usuarios serán utilizados para el cumplimiento de los fines indicados en el formulario correspondiente y siempre dentro de la competencia y atribuciones de VidKar.</li> 
- <li>VidKar asegurará la confidencialidad de los datos personales de los usuarios, requeridos para su registro en el sitio web de VidKar.</li>
- <li>VidKar publicará el contenido de la información suministrada y el sitio de enlace, respetando la integridad de los contenidos que se suministran, siempre y cuando estos no comprendan algún elemento que atente contra la dignidad de personas, ideas, religiones o símbolos de cualquier país o de una entidad nacional o internacional; sean contrarios a la ley, a la moral, a las buenas costumbres, a las normas de conducta generalmente aceptadas o atenten contra el orden público.</li> 
- <li>VidKar realizará el filtrado y tratamiento de datos mediante mecanismos automatizados, con el objetivo de generar registros de la actividad de los visitantes y registros de audiencia y sólo utilizará dicha información para la elaboración de informes que cumplan con los objetivos de evaluación del comportamiento del servicio en cuestión. En ningún caso realizará operaciones que impliquen asociar dicha información a algún usuario identificado o identificable o relacionar a este con otro sitio web sin su consentimiento.</li> 
- <li>Ambas partes respetarán las disposiciones vigentes sobre derechos de Propiedad Intelectual.</li> 
- <li>El Usuario garantiza y declara que es legítimo titular de los derechos de Propiedad Intelectual asociados a los contenidos, informaciones y datos objeto de publicidad en el sitio web de VidKar o que en su defecto cuenta con la debida autorización del titular de tales derechos. Los derechos antes mencionados comprenden sin limitación: las marcas, nombres comerciales, lemas comerciales, emblemas empresariales, rótulos de establecimientos, indicaciones de procedencia; nombres de dominio; dibujos industriales y diseños industriales; derechos de autor que comprenden cualquier manifestación de las artes sin que se limiten: a las obras escritas y orales, las obras musicales, con letra o sin ella; las obras audiovisuales; las obras radiofónicas; las obras de dibujo, pintura, grabado, diseño y otras similares; las obras fotográficas y otras de carácter similar; las obras de artes plásticas; los mapas, planos, croquis y otras obras similares; las traducciones, versiones, adaptaciones, arreglos musicales y demás transformaciones de carácter creativo de una obra científica, literaria, artística o educacional; las antologías, enciclopedias y otras compilaciones.</li> 
- <li>El Usuario garantiza que las informaciones, contenidos y datos proporcionados para su publicaciín en el sitio web, no violan los derechos de Propiedad Intelectual de terceros, ni atentan contra la dignidad de las personas. El Usuario será responsable ante posibles reclamaciones y perjuicios que se generen por tales motivos.</li> 
+            <li>Los datos personales de los Usuarios serán utilizados para el cumplimiento de los fines indicados en el formulario correspondiente y siempre dentro de la competencia y atribuciones de VidKar.</li>
+            <li>VidKar asegurará la confidencialidad de los datos personales de los usuarios, requeridos para su registro en el sitio web de VidKar.</li>
+            <li>VidKar publicará el contenido de la información suministrada y el sitio de enlace, respetando la integridad de los contenidos que se suministran, siempre y cuando estos no comprendan algún elemento que atente contra la dignidad de personas, ideas, religiones o símbolos de cualquier país o de una entidad nacional o internacional; sean contrarios a la ley, a la moral, a las buenas costumbres, a las normas de conducta generalmente aceptadas o atenten contra el orden público.</li>
+            <li>VidKar realizará el filtrado y tratamiento de datos mediante mecanismos automatizados, con el objetivo de generar registros de la actividad de los visitantes y registros de audiencia y sólo utilizará dicha información para la elaboración de informes que cumplan con los objetivos de evaluación del comportamiento del servicio en cuestión. En ningún caso realizará operaciones que impliquen asociar dicha información a algún usuario identificado o identificable o relacionar a este con otro sitio web sin su consentimiento.</li>
+            <li>Ambas partes respetarán las disposiciones vigentes sobre derechos de Propiedad Intelectual.</li>
+            <li>El Usuario garantiza y declara que es legítimo titular de los derechos de Propiedad Intelectual asociados a los contenidos, informaciones y datos objeto de publicidad en el sitio web de VidKar o que en su defecto cuenta con la debida autorización del titular de tales derechos. Los derechos antes mencionados comprenden sin limitación: las marcas, nombres comerciales, lemas comerciales, emblemas empresariales, rótulos de establecimientos, indicaciones de procedencia; nombres de dominio; dibujos industriales y diseños industriales; derechos de autor que comprenden cualquier manifestación de las artes sin que se limiten: a las obras escritas y orales, las obras musicales, con letra o sin ella; las obras audiovisuales; las obras radiofónicas; las obras de dibujo, pintura, grabado, diseño y otras similares; las obras fotográficas y otras de carácter similar; las obras de artes plásticas; los mapas, planos, croquis y otras obras similares; las traducciones, versiones, adaptaciones, arreglos musicales y demás transformaciones de carácter creativo de una obra científica, literaria, artística o educacional; las antologías, enciclopedias y otras compilaciones.</li>
+            <li>El Usuario garantiza que las informaciones, contenidos y datos proporcionados para su publicaciín en el sitio web, no violan los derechos de Propiedad Intelectual de terceros, ni atentan contra la dignidad de las personas. El Usuario será responsable ante posibles reclamaciones y perjuicios que se generen por tales motivos.</li>
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -205,65 +255,101 @@ const LoginForm = ({ className }: Props) => {
           </Button>
         </DialogActions>
       </Dialog>
-      <form onSubmit={handleSubmit} className={className}>
-        <Grid
-          container
-          direction="column"
-          justify="center"
-          alignContent="center"
-        >
-          {error && (
-            <Typography
-              className={classes.errorContainer}
-              variant="body1"
-              component="p"
-            >
-              {error}
-            </Typography>
-          )}
-          <TextField
-            required
-            color="secondary"
-            label="email"
-            variant="outlined"
-            className={classes.input}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <AccountCircleIcon />
-                </InputAdornment>
-              ),
-            }}
+      <Grid item container justify="center" alignContent="center" xs={12}>
+      <RiveComponent
+            // onMouseEnter={() => rive && rive.play()}
+            // onMouseLeave={() => rive && rive.pause()}
+            // onMouseOver={()=> rive.play()}
+            onClick={() => console.log(rive)}
+            // onLoad={() => console.log(rive)}
+            width={200}
+            height={150}
+          style={{ width: 200, height: 150}}
           />
-          <TextField
-            required
-            color="secondary"
-            label="Password"
-            variant="outlined"
-            className={classes.input}
-            type="password"
-            onChange={(e) => setPassword(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <LockIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            type="submit"
-            className={classes.button}
-            startIcon={<ExitToAppIcon />}
+      </Grid>
+      
+      <Grid item className={classes.form} >
+        
+        <form onSubmit={handleSubmit} className={className}>
+          
+
+          <Grid
+            container
+            direction="column"
+            justify="center"
+            alignContent="center"
           >
-            Login
-          </Button>
-        </Grid>
-      </form>
+
+            <TextField
+              required
+              color="secondary"
+              label="email"
+              variant="outlined"
+              className={classes.input}
+              value={email}
+              onChange={(e) => {
+                e.preventDefault()
+                setEmail(e.target.value)
+              }}
+              onFocus={(event) => {
+                actualizarBear('user')
+              }}
+              onBlur={(event) => {
+                // console.log("PERDIO EL FOCUS")
+                actualizarBear('')
+              }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <AccountCircleIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <TextField
+              required
+              color="secondary"
+              label="Password"
+              variant="outlined"
+              className={classes.input}
+              type="password"
+              onChange={(e) => setPassword(e.target.value)}
+              onFocus={(event) => {
+                actualizarBear('password')
+              }}
+              onBlur={(event) => {
+                // console.log("PERDIO EL FOCUS")
+                actualizarBear('')
+              }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <LockIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+            {error && (
+              <Typography
+                className={classes.errorContainer}
+                variant="body1"
+                component="p"
+              >
+                {error}
+              </Typography>
+            )}
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              className={classes.button}
+              startIcon={<ExitToAppIcon />}
+            >
+              Login
+            </Button>
+          </Grid>
+        </form>
+      </Grid>
       <br />
       <Divider />
       <Grid container direction="column" justify="center" alignContent="center">
@@ -320,7 +406,7 @@ const LoginForm = ({ className }: Props) => {
               color="primary"
               type="submit"
               className={classes.button}
-              // startIcon={<FacebookIcon />}
+            // startIcon={<FacebookIcon />}
             >
               Descargar APK {versionapk}
             </Button>
@@ -328,8 +414,8 @@ const LoginForm = ({ className }: Props) => {
         </Grid>
       </Grid>
       <Divider />
-      <Grid container justify="center" alignContent="center" spacing={4}>
-        <Grid item xs={4}>
+      <Grid container justify="center" alignContent="center" >
+        <Grid item container justify="center" alignContent="center" xs={12} sm={6} md={4}>
           <Tooltip
             title={
               "Términos y condiciones"
@@ -341,13 +427,13 @@ const LoginForm = ({ className }: Props) => {
               color="primary"
               type="submit"
               className={classes.button}
-              // startIcon={<FacebookIcon />}
+            // startIcon={<FacebookIcon />}
             >
               Términos y condiciones
             </Button>
           </Tooltip>
         </Grid>
-        <Grid item xs={4}>
+        <Grid item container justify="center" alignContent="center" xs={12} sm={6} md={4}>
           <Tooltip
             title={
               "Política de privacidad"
@@ -359,8 +445,8 @@ const LoginForm = ({ className }: Props) => {
               color="primary"
               type="submit"
               className={classes.button}
-              // startIcon={<FacebookIcon />}
-            > 
+            // startIcon={<FacebookIcon />}
+            >
               Política de privacidad
             </Button>
           </Tooltip>
