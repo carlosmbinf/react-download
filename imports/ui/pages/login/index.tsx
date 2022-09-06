@@ -20,7 +20,7 @@ import HeroBot from "../../animations/HeroBot";
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      height: "100vh",
+      // height: "100vh",
       overflow: "hidden",
       backgroundImage: 'radial-gradient(circle, rgba(238,174,174,0.8323704481792717) 0%, rgba(112,96,255,0.958420868347339) 100%)',
       backgroundPosition: "center",
@@ -81,15 +81,15 @@ const useStyles = makeStyles((theme: Theme) =>
       // backdropFilter: "blur(5px)",
     },
     background: {
-      position: "absolute",
+      // position: "absolute",
       top: 0,
       left: 0,
       width: "100%",
-      height: "100vh",
+      minHeight: "100vh",
       // zIndex:-1,
       backgroundImage: 'url("/img/marcoTVLuces.png")',
       backgroundPosition: "center",
-      backgroundSize: "contain",
+      backgroundSize: "125vh",
       backgroundRepeat: "no-repeat",
       '@media ( max-height: 600px)': {
         backgroundImage: 'none',
@@ -109,14 +109,13 @@ const useStyles = makeStyles((theme: Theme) =>
       zIndex: 1000
     },
     vidKarTitle: {
-      position: "absolute", top: "2em",
+      position: "absolute", top: "1em",
       '@media ( max-height: 500px)': {
+      },
+      [theme.breakpoints.down('sm')]: {
         position: "relative",
         top: "0.5em",
         paddingBottom: "0.5em",
-      },
-      [theme.breakpoints.down('sm')]: {
-
       },
       [theme.breakpoints.up('sm')]: {
       },
@@ -125,11 +124,11 @@ const useStyles = makeStyles((theme: Theme) =>
     },
 
     vidKarSubTitle: {
-      position: "absolute", bottom: "1em",
+      position: "absolute", top: "4em",
       '@media ( max-height: 500px)': {
-        display: "none",
       },
       [theme.breakpoints.down('sm')]: {
+        display: "none",
       },
       [theme.breakpoints.up('sm')]: {
       },
@@ -160,7 +159,21 @@ const LoginPage = () => {
 
   return (
     <ThemeProvider theme={theme}>
+      
       <Grid
+        container
+        direction="row"
+        alignItems="center"
+        className={classes.root}
+        justify="center"
+      >
+        {/* <Slide direction="up" in={checked} mountOnEnter>
+
+            </Slide> */}
+        <Grid item className={classes.heroBot}>
+          <HeroBot />
+        </Grid>
+        <Grid
         container
         direction="row"
         alignItems="center"
@@ -194,12 +207,12 @@ const LoginPage = () => {
                 }}
               >
                 Por una vida mas saludable!!!
-                <br />
+                {/* <br />
                 Quedate en:
                 <br />
                 <ChevronRightIcon />
                 <HomeIcon />
-                <ChevronLeftIcon />
+                <ChevronLeftIcon /> */}
               </Typography>
             </Grid>
           </Fade>
@@ -222,19 +235,6 @@ const LoginPage = () => {
 
 
       </Grid>
-      <Grid
-        container
-        direction="row"
-        alignItems="center"
-        className={classes.root}
-        justify="center"
-      >
-        {/* <Slide direction="up" in={checked} mountOnEnter>
-
-            </Slide> */}
-        <Grid item className={classes.heroBot}>
-          <HeroBot />
-        </Grid>
         <Grid item xs={7}>
           <Fade in>
             <Grid
