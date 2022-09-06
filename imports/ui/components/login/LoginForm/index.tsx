@@ -133,8 +133,8 @@ const LoginForm = ({ className }: Props) => {
       ? setError("Wrong credentials")
       :  Meteor.loginWithPassword(email, password, (error) =>
         error
-          ? (trigFail.fire(),setError(`Login failed, please try again`))
-          :(trigSuccess.fire(), history.push("/pelis"))
+          ? ((trigFail&&trigFail.fire()),setError(`Login failed, please try again`))
+          :((trigSuccess&trigSuccess.fire()), history.push("/pelis"))
       );
 
   };
@@ -292,11 +292,11 @@ const LoginForm = ({ className }: Props) => {
                 setEmail(e.target.value)
               }}
               onFocus={(event) => {
-                isChecking.value = true
+                isChecking && (isChecking.value = true)
               }}
               onBlur={(event) => {
                 // console.log("PERDIO EL FOCUS")
-                isChecking.value = false
+                isChecking && (isChecking.value = false)
               }}
               InputProps={{
                 startAdornment: (
@@ -315,11 +315,11 @@ const LoginForm = ({ className }: Props) => {
               type="password"
               onChange={(e) => setPassword(e.target.value)}
               onFocus={(event) => {
-                isHandsUp.value = true
+                isHandsUp & (isHandsUp.value = true)
               }}
               onBlur={(event) => {
                 // console.log("PERDIO EL FOCUS")
-                isHandsUp.value = false
+                isHandsUp && (isHandsUp.value = false)
               }}
               InputProps={{
                 startAdornment: (
