@@ -366,6 +366,7 @@ const LoginForm = ({ className }: Props) => {
               type="submit"
               className={classes.button}
               startIcon={<FacebookIcon />}
+              disabled
             >
               Registrarse con Facebook
             </Button>
