@@ -204,6 +204,7 @@ const LoginPage = () => {
                 style={{
                   // fontSize: "18px",
                   textAlign: "center",
+                  color:"black"
                 }}
               >
                 Por una vida mas saludable!!!
