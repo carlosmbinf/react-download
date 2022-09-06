@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTracker } from "meteor/react-meteor-data";
 import { useHistory } from "react-router-dom";
 import { colors, Divider, Typography } from "@material-ui/core";
@@ -76,31 +76,31 @@ const LoginForm = ({ className }: Props) => {
     // artboard:"Teddy",
     stateMachines: STATE_MACHINE_NAME
   });
-  let isChecking = useStateMachineInput(rive, STATE_MACHINE_NAME, "isChecking")
-  let isHandsUp = useStateMachineInput(rive, STATE_MACHINE_NAME, "isHandsUp")
-  let trigFail = useStateMachineInput(rive, STATE_MACHINE_NAME, "trigFail")
-  let trigSuccess = useStateMachineInput(rive, STATE_MACHINE_NAME, "trigSuccess")
 
-  const actualizarBear = (type) => {
-    switch (type) {
-      case "user":
-        isChecking.value = true
-        break;
-      case "password":
-        isHandsUp.value = true
-        break;
-      case "error":
-        trigFail.fire()
-        break;
-      case "ok":
-        trigSuccess.fire()
-        break;
-      default:
-        isChecking.value = false
-        isHandsUp.value = false
-        break;
-    }
-  }
+  var isChecking = useStateMachineInput(rive, STATE_MACHINE_NAME, "isChecking")
+  var isHandsUp = useStateMachineInput(rive, STATE_MACHINE_NAME, "isHandsUp")
+  var trigFail = useStateMachineInput(rive, STATE_MACHINE_NAME, "trigFail")
+  var trigSuccess = useStateMachineInput(rive, STATE_MACHINE_NAME, "trigSuccess")
+  
+ 
+  // const actualizarBear = (type) => {
+  //   switch (type) {
+  //     case "user":
+  //       isChecking.value = true
+  //       break;
+  //     case "password":
+  //       isHandsUp.value = true
+  //       break;
+  //     case "error":
+  //       trigFail.fire()
+  //       break;
+  //     case "ok":
+  //       trigSuccess.fire()
+  //       break;
+  //     default:
+  //       break;
+  //   }
+  // }
 
   const history = useHistory();
 
@@ -133,8 +133,8 @@ const LoginForm = ({ className }: Props) => {
       ? setError("Wrong credentials")
       :  Meteor.loginWithPassword(email, password, (error) =>
         error
-          ? (actualizarBear('error'),setError(`Login failed, please try again`))
-          :(actualizarBear('ok'), history.push("/pelis"))
+          ? (trigFail.fire(),setError(`Login failed, please try again`))
+          :(trigSuccess.fire(), history.push("/pelis"))
       );
 
   };
@@ -292,11 +292,11 @@ const LoginForm = ({ className }: Props) => {
                 setEmail(e.target.value)
               }}
               onFocus={(event) => {
-                actualizarBear('user')
+                isChecking.value = true
               }}
               onBlur={(event) => {
                 // console.log("PERDIO EL FOCUS")
-                actualizarBear('')
+                isChecking.value = false
               }}
               InputProps={{
                 startAdornment: (
@@ -315,11 +315,11 @@ const LoginForm = ({ className }: Props) => {
               type="password"
               onChange={(e) => setPassword(e.target.value)}
               onFocus={(event) => {
-                actualizarBear('password')
+                isHandsUp.value = true
               }}
               onBlur={(event) => {
                 // console.log("PERDIO EL FOCUS")
-                actualizarBear('')
+                isHandsUp.value = false
               }}
               InputProps={{
                 startAdornment: (
