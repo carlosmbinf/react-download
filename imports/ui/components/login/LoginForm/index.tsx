@@ -26,7 +26,6 @@ import { VersionsCollection } from "../../../pages/collections/collections";
 
 
 import { useRive, useStateMachineInput } from '@rive-app/react-canvas';
-import Bear from "../../../animations/Bear";
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     input: {
@@ -53,6 +52,7 @@ const useStyles = makeStyles((theme: Theme) =>
       paddingBottom: 10
       // backdropFilter: "blur(5px)",
     },
+    
   })
 );
 

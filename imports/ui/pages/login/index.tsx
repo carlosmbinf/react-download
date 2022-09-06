@@ -2,7 +2,7 @@ import React from "react";
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import LoginForm from "../../components/login/LoginForm";
 import Bear from "../../animations/Bear";
-import { Grid, Typography, Link, ThemeProvider} from "@material-ui/core";
+import { Grid, Typography, Link, ThemeProvider } from "@material-ui/core";
 import Fade from 'react-reveal/Fade';
 import { theme } from "../../../startup/client/theme";
 import {
@@ -16,10 +16,11 @@ import {
 import HomeIcon from '@material-ui/icons/Home';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import HeroBot from "../../animations/HeroBot";
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      height:"100vh",
+      height: "100vh",
       overflow: "hidden",
       backgroundImage: 'radial-gradient(circle, rgba(238,174,174,0.8323704481792717) 0%, rgba(112,96,255,0.958420868347339) 100%)',
       backgroundPosition: "center",
@@ -76,15 +77,15 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundImage: "radial-gradient(circle, rgba(2,0,36,0) 0%, rgba(112,96,255,0.7727901158707865) 67%)",
       opacity: 1,
       padding: "25px",
-      paddingBottom:10
+      paddingBottom: 10
       // backdropFilter: "blur(5px)",
     },
-    background:{
+    background: {
       position: "absolute",
-      top:0,
-      left:0,
-      width:"100%",
-      height:"100vh",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100vh",
       // zIndex:-1,
       backgroundImage: 'url("/img/marcoTVLuces.png")',
       backgroundPosition: "center",
@@ -102,13 +103,13 @@ const useStyles = makeStyles((theme: Theme) =>
       [theme.breakpoints.up("lg")]: {
         // backgroundColor: "green",
       },
-      
-    },
-    marco:{
 
-    },    
-    vidKarTitle:{
-      position: "absolute",top: "2em",
+    },
+    marco: {
+      zIndex: 1000
+    },
+    vidKarTitle: {
+      position: "absolute", top: "2em",
       '@media ( max-height: 500px)': {
         position: "relative",
         top: "0.5em",
@@ -123,8 +124,8 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
 
-    vidKarSubTitle:{
-      position: "absolute",bottom: "1em",
+    vidKarSubTitle: {
+      position: "absolute", bottom: "1em",
       '@media ( max-height: 500px)': {
         display: "none",
       },
@@ -134,6 +135,14 @@ const useStyles = makeStyles((theme: Theme) =>
       },
       [theme.breakpoints.up('md')]: {
       },
+      zIndex: 1000
+    },
+    heroBot: {
+      position: "fixed",
+      bottom: -56,
+      left: 0,
+      height: "50vh",
+      width: "50vh"
     }
   })
 );
@@ -147,7 +156,7 @@ const LoginPage = () => {
     setChecked((prev) => !prev);
   };
 
- 
+
 
   return (
     <ThemeProvider theme={theme}>
@@ -157,59 +166,61 @@ const LoginPage = () => {
         alignItems="center"
         className={classes.background}
         justify="center">
-          
-            <Grid item xs={12} className={classes.vidKarTitle} >
-            <Fade top>
-          <Grid container direction="row" justify="center" alignItems="center">
-                  <Typography
-                    variant="body1"
-                    component="h1"
-                    style={{ fontSize: "36px", textAlign: "center", paddingBottom: 2 }}
-                  >
-                    <strong>🅥🅘🅓🅚🅐🅡</strong>
-                  </Typography>
-                </Grid>
-              </Fade>
-              
+
+        <Grid item xs={12} className={classes.vidKarTitle} >
+          <Fade top>
+            <Grid container direction="row" justify="center" alignItems="center">
+              <Typography
+                variant="body1"
+                component="h1"
+                style={{ fontSize: "36px", textAlign: "center", paddingBottom: 2 }}
+                color="textPrimary"
+              >
+                <strong>🅥🅘🅓🅚🅐🅡</strong>
+              </Typography>
+            </Grid>
+          </Fade>
+
         </Grid>
         <Grid item xs={12} className={classes.vidKarSubTitle} >
-        <Fade bottom>
-        <Grid container direction="row" justify="center" alignItems="center">
-                <Typography
-                  variant="body1"
-                  component="h1"
-                  style={{ 
-                    // fontSize: "18px",
-                   textAlign: "center"
-                  }}
-                >
-                  Por una vida mas saludable!!!
-                  <br />
-                  Quedate en:
-                  <br/>
-                  <ChevronRightIcon/>
-                  <HomeIcon/>
-                  <ChevronLeftIcon/>
-                </Typography>
-              </Grid>
-        </Fade>
-        </Grid>
-        <Grid>
-        <Fade bottom>
-        <Grid container
-        direction="row"
-        alignItems="center"
-        className={classes.marco}
-        justify="center" >
-          
-                <LoginForm />
-
-                {/* <button onClick={handleLoginFacebook}>loguin to facebook</button> */}
-          </Grid>
+          <Fade bottom>
+            <Grid container direction="row" justify="center" alignItems="center">
+              <Typography
+                variant="body1"
+                component="h1"
+                style={{
+                  // fontSize: "18px",
+                  textAlign: "center",
+                }}
+              >
+                Por una vida mas saludable!!!
+                <br />
+                Quedate en:
+                <br />
+                <ChevronRightIcon />
+                <HomeIcon />
+                <ChevronLeftIcon />
+              </Typography>
+            </Grid>
           </Fade>
         </Grid>
-        
-          
+        <Grid className={classes.marco}>
+          <Fade bottom
+
+          >
+            <Grid container
+              direction="row"
+              alignItems="center"
+              justify="center" >
+
+              <LoginForm />
+
+              {/* <button onClick={handleLoginFacebook}>loguin to facebook</button> */}
+            </Grid>
+          </Fade>
+        </Grid>
+
+
       </Grid>
       <Grid
         container
@@ -221,7 +232,9 @@ const LoginPage = () => {
         {/* <Slide direction="up" in={checked} mountOnEnter>
 
             </Slide> */}
-
+        <Grid item className={classes.heroBot}>
+          <HeroBot />
+        </Grid>
         <Grid item xs={7}>
           <Fade in>
             <Grid
@@ -230,7 +243,7 @@ const LoginPage = () => {
               direction="column"
               alignItems="center"
             >
-              
+
               <Grid item>
                 {/* <img src="/bg_home.png" className={classes.img} /> */}
               </Grid>
