@@ -13,6 +13,7 @@ import {
   Divider,
   Zoom,
   Slide,
+  IconButton,
 } from "@material-ui/core";
 
 import Fade from "react-reveal/Fade";
@@ -33,6 +34,21 @@ import PermContactCalendarRoundedIcon from "@material-ui/icons/PermContactCalend
 import MailIcon from "@material-ui/icons/Mail";
 import RemoveRedEyeIcon from '@material-ui/icons/RemoveRedEye';
 import PeliCardOnly from "./PeliCardOnly";
+
+
+import { Splide, SplideSlide, SplideTrack } from '@splidejs/react-splide';
+// Default theme
+import '@splidejs/react-splide/dist/css/themes/splide-skyblue.min.css';
+import CancelIcon from '@material-ui/icons/Cancel';
+
+// // or other themes
+// import '@splidejs/react-splide/css/skyblue';
+// import '@splidejs/react-splide/css/sea-green';
+
+// // or only core styles
+// import '@splidejs/react-splide/css/core';
+
+
 const StyledBadge = withStyles((theme) => ({
   badge: {
     backgroundColor: "#44b700",
@@ -70,7 +86,7 @@ const useStyles = makeStyles((theme) => ({
     padding: "2em",
   },
   primary: {
-    width:"100%",
+    width: "100%",
     minWidth: 220,
     // maxWidth: 220,
     // maxHeight: 263,
@@ -84,7 +100,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundRepeat: "no-repeat",
   },
   secundary: {
-    width:"100%",
+    width: "100%",
     minWidth: 220,
     // maxWidth: 220,
     // maxHeight: 263,
@@ -99,7 +115,7 @@ const useStyles = makeStyles((theme) => ({
   },
   boton: {
     width: "220px",
-    margin:15,
+    margin: 15,
     borderRadius: 20,
     padding: 0,
     flex: "1 1 0px",
@@ -129,7 +145,7 @@ const useStyles = makeStyles((theme) => ({
   pos: {
     marginBottom: 12,
   },
-  
+
   link: {
     borderRadius: 20,
     textDecoration: "none",
@@ -153,9 +169,13 @@ const useStyles = makeStyles((theme) => ({
     background:
       "linear-gradient(180deg, rgba(0,0,0,0) 0%, #20262ecf 82%);",
   },
+  splideArrows:{
+    backgroundColor:"blue",
+    
+  }
 }));
 
-export default function PeliCard(options) {
+export default function PeliCardSplide(options) {
   // const [mostrarTriler, setMostrarTriler] = useState([]);
 
   const peli = useTracker(() => {
@@ -170,7 +190,7 @@ export default function PeliCard(options) {
         // urlPeli: 1,
         // urlTrailer: 1,
         // idimdb:1
-        year:1
+        year: 1
       }
     });
     if (options.clasificacion == "All") {
@@ -188,7 +208,7 @@ export default function PeliCard(options) {
           // urlTrailer: 1,
           // idimdb:1
           year: 1
-        }, sort: { vistas: -1,nombrePeli: 1 }
+        }, sort: { vistas: -1, nombrePeli: 1 }
       }).fetch();
     }
   });
@@ -196,37 +216,37 @@ export default function PeliCard(options) {
   const classes = useStyles();
 
   const items = useTracker(() => {
-   
-    let a = peli.map( (peliGeneral) => {
-              return   <PeliCardOnly peliGeneral={peliGeneral} />
-            })
-   return a
-});
+
+    let a = peli.map((peliGeneral) => {
+      return <PeliCardOnly peliGeneral={peliGeneral} />
+    })
+    return a
+  });
 
 
   if (options.withCreate == "true") {
     return (
-    <>
-      <Fade top >
-        <Grid
-          container
-          direction="column"
-          justify="center"
-          alignItems="center"
-          className={classes.root2}
-        >
-          <Link to={"/create-pelis"} className={classes.link}>
-            <Button color="inherit" className={classes.boton}>
-              <Paper elevation={5} className={classes.rootADD}>
-                <Grid container spacing={3}>
-                  <Grid item xs={12}>
-                    <Grid
-                      container
-                      direction="column"
-                      justify="center"
-                      alignItems="center"
-                    >
-                      <Grid item>
+      <>
+        <Fade top >
+          <Grid
+            container
+            direction="column"
+            justify="center"
+            alignItems="center"
+            className={classes.root2}
+          >
+            <Link to={"/create-pelis"} className={classes.link}>
+              <Button color="inherit" className={classes.boton}>
+                <Paper elevation={5} className={classes.rootADD}>
+                  <Grid container spacing={3}>
+                    <Grid item xs={12}>
+                      <Grid
+                        container
+                        direction="column"
+                        justify="center"
+                        alignItems="center"
+                      >
+                        <Grid item>
                           <Typography fontSize="large" color="secondary">
                             <AddCircleRoundedIcon />
                           </Typography>
@@ -236,35 +256,76 @@ export default function PeliCard(options) {
                             AGREGAR PELÍCULA
                           </Typography>
                         </Grid>
+                      </Grid>
                     </Grid>
                   </Grid>
-                </Grid>
-              </Paper>
-            </Button>
-          </Link>
-        </Grid>
-      </Fade>
+                </Paper>
+              </Button>
+            </Link>
+          </Grid>
+        </Fade>
       </>
     );
   }
   return peli.length > 0 ? <Fade left>
-          <Grid
-            container
-            direction="row"
-            justify="flex-start"
-            alignItems="center"
-            style={{padding:60,paddingBottom:0,paddingRight:0}}
-          >
-            <Grid item xs={12}>
-              <Typography variant="h4" gutterBottom style={{color:"white"}}>
-                {options.clasificacion}
-              </Typography>
+    <Grid
+      container
+      direction="row"
+      justify="flex-start"
+      alignItems="center"
+      style={{ padding: 60, paddingBottom: 0, paddingRight: 0 }}
+    >
+      <Grid item xs={12}>
+        <Typography variant="h4" gutterBottom style={{ color: "white" }}>
+          {options.clasificacion}
+        </Typography>
 
-            </Grid>
-          </Grid>
-          {/* <div style={{ width: "100%" }}> */}
-            <Carousel items={items} />
-          {/* </div> */}
-        </Fade>
-        : ""
+      </Grid>
+    </Grid>
+    {/* <div style={{ width: "100%" }}> */}
+    {/* <Carousel items={items} /> */}
+    <Splide aria-label="My Favorite Images" options={ {
+    rewind: true,
+    // width : 800,
+    // gap   : '1rem',
+    // perPage: 10,
+    autoWidth:true,
+    // padding:{left:50,right:50},
+    arrows:true,
+    autoplay:true,
+    pagination:false
+  } }
+    hasTrack={ false } 
+  >
+    <div style={{
+      paddingLeft:90,
+      paddingRight:60
+    }} className="custom-wrapper" >
+    <SplideTrack aria-controls={options.clasificacion}>
+    {items.map(element => {
+        return(
+        <SplideSlide>
+          {element}
+        </SplideSlide>)
+      })}  
+    </SplideTrack>
+    </div>
+   
+    <div style={{
+      paddingLeft:0,
+      paddingRight:0
+    }} className="splide__arrows">
+    
+    {/* <button aria-controls={options.clasificacion} className="splide__arrow splide__arrow--prev">Prevc</button> */}
+    <button aria-controls={options.clasificacion} className="splide__arrow splide__arrow--prev"><IconButton  className="splide__arrow splide__arrow--prev">
+            <CancelIcon />
+          </IconButton></button>
+    <button aria-controls={options.clasificacion} className="splide__arrow splide__arrow--next"><CancelIcon /></button>
+  </div>
+      
+    </Splide>
+    
+    {/* </div> */}
+  </Fade>
+    : ""
 }

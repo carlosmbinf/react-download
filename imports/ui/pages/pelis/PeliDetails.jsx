@@ -586,7 +586,7 @@ export default function PeliDetails() {
 
                       <Typography color="textPrimary">
                         <RemoveRedEyeIcon />{" "}
-                        <strong>{peliDetails.vistas.toFixed()}</strong>
+                        <strong>{peliDetails.vistas&&peliDetails.vistas.toFixed()}</strong>
                       </Typography>
                     </Grid>
                   </Grid>

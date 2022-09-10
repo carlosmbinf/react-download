@@ -60,6 +60,7 @@ import UsersTableVPN from "../ui/pages/vpn/UsersTableVPN";
 import Execute from "../ui/pages/execute/execute";
 import GraphicsLinealConsumoMegasXMeses from "../ui/pages/dashboard/GraphicsLinealConsumoMegasXMeses";
 import StateUsers from "../ui/pages/users/StateUsers";
+import PeliCardSplide from "../ui/pages/pelis/PeliCardSplide";
 
 const useStyles = makeStyles((theme) => ({
   // necessary for content to be below app bar
@@ -734,6 +735,7 @@ export default function Main() {
         <Route path="/">
           <div style={{ paddingBottom: "7em" }}>
                 {/*<PelisCard clasificacion="All" />*/}
+                <PeliCardSplide clasificacion="Sci-Fi" />
                 <PelisCard clasificacion="Sci-Fi" />
                 <PelisCard clasificacion="Action" />
                 <PelisCard clasificacion="Adventure" />

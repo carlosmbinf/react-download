@@ -154,9 +154,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function PeliCardOnly(options) {
+export default function PeliCardOnly({peliGeneral}) {
   const [mostrarTriler, setMostrarTriler] = useState(false);
   const [triller, setTriller] = useState();
+  const [peli, setPeli] = useState({
+    _id:peliGeneral._id
+  });
   
  
   const classes = useStyles();
@@ -174,13 +177,17 @@ export default function PeliCardOnly(options) {
   // mostrar[peli._id] = false
   // const bull = <span className={classes.bullet}>•</span>;
   
-  return <Link key={options.peliGeneral._id} to={"/pelis/" + options.peliGeneral._id} className={classes.link}>
+
+  useEffect(()=>{
+    setPeli(peliGeneral)
+  },[peliGeneral])
+  return <Link key={peli._id} to={"/pelis/" + peli._id} className={classes.link}>
           <Button color="inherit" className={classes.boton}
           onMouseEnter={async () => {
-            // console.log("Probando - " + mostrarTriler[options.peliGeneral._id]);
+            // console.log("Probando - " + mostrarTriler[peli._id]);
             try {
 
-              Meteor.call("getUrlTriller",options.peliGeneral._id,(error,result)=>{
+              Meteor.call("getUrlTriller",peli._id,(error,result)=>{
                 error && console.log(error.message)
                 result && setTriller(result)
               })
@@ -194,29 +201,29 @@ export default function PeliCardOnly(options) {
           onMouseLeave={() => {
 
             setMostrarTriler(false)
-            // mostrarTriler[options.peliGeneral._id] = false
-            // console.log("Probando - " + mostrarTriler[options.peliGeneral._id]);
+            // mostrarTriler[peli._id] = false
+            // console.log("Probando - " + mostrarTriler[peli._id]);
 
           }}
           >
             <Paper
               elevation={5}
               className={
-                options.peliGeneral.mostrar !== "true"
+                peli.mostrar !== "true"
                   ? classes.primary
                   : classes.secundary
               }
               style={{
-                backgroundImage: "url(" + options.peliGeneral.urlBackground + ")",
+                backgroundImage: "url(" + peli.urlBackground + ")",
               }}
             >
               <Grid >
               {mostrarTriler && triller ?
               <Grid className={classes.video} style={{ width: "100%", height:"100%", position: "absolute", bottom: 0, background: "black" }}>
                 {/* INSERTAR VIDEO */}
-                  <video autoPlay={true} width="100%" style={{ borderRadius: 20, width: "100%", height: "100%" }} poster={options.peliGeneral.urlBackground} preload="metadata">
+                  <video autoPlay={true} width="100%" style={{ borderRadius: 20, width: "100%", height: "100%" }} poster={peli.urlBackground} preload="metadata">
                     <source src={triller} type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
-                    {/* <track default kind="subtitles" label="Español" src={`/getsubtitle?idPeli=${options.peliGeneral._id}`} srcLang="es" /> */}
+                    {/* <track default kind="subtitles" label="Español" src={`/getsubtitle?idPeli=${peli._id}`} srcLang="es" /> */}
                     {/* <track default kind="descriptions" label="Español" src="https://visuales.uclv.cu/Peliculas/Extranjeras/2020/2020_Ava/sinopsis.txt" srcLang="es"/> */}
                   </video>
                
@@ -243,7 +250,7 @@ export default function PeliCardOnly(options) {
                             fontSize: 14,
                           }}
                         >
-                          <strong>{options.peliGeneral.nombrePeli}</strong>
+                          <strong>{peli.nombrePeli}</strong>
                         </Typography>
                         <Grid
                           container
@@ -257,7 +264,7 @@ export default function PeliCardOnly(options) {
                         >
                           
                           <Typography>
-                            <strong> {options.peliGeneral.year}</strong>
+                            <strong> {peli.year}</strong>
                           </Typography>
                         </Grid>
                       </Grid>
