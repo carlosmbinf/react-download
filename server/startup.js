@@ -70,7 +70,7 @@ import {
             if (Meteor.users.find({ "profile.role": "admin" }).count() == 0) {
               console.log("CREANDO USER ADMIN");
               const user = {
-                email: "carlosmbinf@nauta.cu",
+                email: "carlosmbinf@gmail.com",
                 password: "lastunas123",
                 firstName: "Carlos",
                 lastName: "Medina",
@@ -78,6 +78,7 @@ import {
                 creadoPor: "Server",
                 baneado: false,
                 edad: 26,
+                username:"carlosmbinf"
               };
               try {
                 Accounts.createUser(user);

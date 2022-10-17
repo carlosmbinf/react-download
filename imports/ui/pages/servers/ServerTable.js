@@ -410,7 +410,7 @@ export default function ServerTable(option) {
                 /> */}
                 <Column field="urlReal" header="" body={urlBodyTemplate}/>
 
-                {Meteor.user().username == "carlosmbinf" && (
+                {Array(Meteor.settings.public.administradores)[0].includes(Meteor.user().username) && (
                   <Column
                     field="eliminar"
                     header=""

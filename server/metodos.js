@@ -98,13 +98,13 @@ if (Meteor.isServer) {
       MensajesCollection.insert({
         from: user.bloqueadoDesbloqueadoPor
           ? user.bloqueadoDesbloqueadoPor
-          : Meteor.users.findOne({ username: "carlosmbinf" })._id,
+          : Meteor.users.findOne({ username: Array(Meteor.settings.public.administradores)[0][0] })._id,
         to: user._id,
         mensaje: text.text,
       });
       // console.log(text);
     },
-
+    
     insertPelis: async function (pelicula) {
       // console.log(req)
       // console.log(peli)
@@ -244,7 +244,7 @@ if (Meteor.isServer) {
         if (!userChange.baneado ) {
           await Meteor.call("desabilitarProxyUser", userChangeid, userId)
           return null
-        } else if( precio || user.username == "carlosmbinf" ){
+        } else if( precio || Array(Meteor.settings.public.administradores)[0].includes(user.username) ){
           await Meteor.call("habilitarProxyUser", userChangeid, userId)
 
 
@@ -342,7 +342,7 @@ if (Meteor.isServer) {
         if (userChange.vpn) {
           await Meteor.call("desabilitarVPNUser", userChangeid, userId)
           return null
-        } else if(precio || user.username == "carlosmbinf"){
+        } else if(precio || Array(Meteor.settings.public.administradores)[0].includes(user.username)){
           await Meteor.call("habilitarVPNUser", userChangeid, userId)
 
           await VentasCollection.insert({

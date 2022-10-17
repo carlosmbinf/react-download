@@ -3,7 +3,8 @@
 		"baseUrl": "http://localhost:5500/",
 		"MONGO_URL":"mongodb://127.0.0.1:27017/meteor",
 		"ROOT_URL": "https://vidkar.ddns.net",
-		"IP": "152.206.118.158"
+		"IP": "152.206.118.158",
+		"administradores":["carlosmbinf","Osmede"]
 	 },
 	 "private":{
 

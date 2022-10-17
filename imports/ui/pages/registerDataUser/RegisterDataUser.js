@@ -138,7 +138,7 @@ return Meteor.users.findOne(id)
 
     if (id) {
       Meteor.subscribe("registerDataUser", { userId: id })
-    } else if (Meteor.user().username == "carlosmbinf") {
+    } else if (Array(Meteor.settings.public.administradores)[0].includes(Meteor.user().username)) {
       Meteor.subscribe("registerDataUser");
     } else {
       Meteor.subscribe("user", { 'bloqueadoDesbloqueadoPor': Meteor.userId() }, { fields: { 'bloqueadoDesbloqueadoPor': 1 } });

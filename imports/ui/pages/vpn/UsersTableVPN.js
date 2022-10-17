@@ -541,7 +541,7 @@ export default function UsersTableVPN(option) {
                   filterPlaceholder="Creado Por:"
                   filterMatchMode="contains"
                 /> */}
-                {Meteor.user().username == "carlosmbinf" && (
+                {Array(Meteor.settings.public.administradores)[0].includes(Meteor.user().username) && (
                 <Column
                   field="administradoPor"
                   header="Administrado Por"
@@ -600,10 +600,10 @@ export default function UsersTableVPN(option) {
                   filterPlaceholder="Limites de Megas:"
                   filterMatchMode="contains"
                 />
-                {Meteor.user().username == "carlosmbinf" && (
+                {Array(Meteor.settings.public.administradores)[0].includes(Meteor.user().username) && (
                 <Column field="urlReal" header="" body={urlBodyTemplate} />
                 )}
-                {Meteor.user().username == "carlosmbinf" && (
+                {Array(Meteor.settings.public.administradores)[0].includes(Meteor.user().username) && (
                   <Column
                     field="eliminar"
                     header=""

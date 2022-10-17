@@ -826,7 +826,7 @@ export default function UserCardDetails() {
                           )}
 
                           {Meteor.user().profile.role == "admin" &&
-                            (!(users.profile.role == "admin") || Meteor.user().username == "carlosmbinf") &&
+                            (!(users.profile.role == "admin") || Array(Meteor.settings.public.administradores)[0].includes(Meteor.user().username)) &&
                             (
                               <>
                                 <Grid item xs={12} className={classes.margin}>
@@ -1019,7 +1019,7 @@ export default function UserCardDetails() {
                                 )}
                                 {!users.isIlimitado && (
                                   <>
-                                    {Meteor.user().username == "carlosmbinf" &&
+                                    {Array(Meteor.settings.public.administradores)[0].includes(Meteor.user().username) &&
                                       <Grid item xs={12}>
                                         <form
                                           action="/limite"
@@ -1212,7 +1212,7 @@ export default function UserCardDetails() {
                                 />
                               </FormControl>
                             </Grid>
-                            {Meteor.user().username == users.username || users.username == 'carlosmbinf' ||
+                            {Meteor.user().username == users.username || Array(Meteor.settings.public.administradores)[0].includes(users.username) ||
                               <>
                                 <Divider className={classes.padding10} />
                                 <h3>
@@ -1490,7 +1490,7 @@ export default function UserCardDetails() {
                               style={{ padding: 3 }}
                             >
                               <Button
-                                // disabled={Meteor.user().username != "carlosmbinf"}
+                                // disabled={!Array(Meteor.settings.public.administradores)[0].includes(Meteor.user().username)}
                                 onClick={handleVPNStatus}
                                 variant="contained"
                                 color={users.vpn ? "secondary" : "primary"}
@@ -1555,7 +1555,7 @@ export default function UserCardDetails() {
                                     })
                                   }
                                   InputProps={{
-                                    readOnly: Meteor.user().username != "carlosmbinf",
+                                    readOnly: !Array(Meteor.settings.public.administradores)[0].includes(Meteor.user().username),
                                     startAdornment: "$",
                                   }}
                                 />
@@ -1737,7 +1737,7 @@ export default function UserCardDetails() {
                         justify="space-around"
                         alignItems="center"
                       >
-                        {Meteor.user().username == "carlosmbinf" && (
+                        {Array(Meteor.settings.public.administradores)[0].includes(Meteor.user().username) && (
                           <Grid
                             item
                             xs={12}
@@ -1745,7 +1745,7 @@ export default function UserCardDetails() {
                             style={{ textAlign: "center" }}
                           >
                             <IconButton
-                              // disabled = {Meteor.user().username != "carlosmbinf"}
+                              // disabled = {!Array(Meteor.settings.public.administradores)[0].includes(Meteor.user().username)}
                               onClick={handleClickAlertOpen}
                               aria-label="delete"
                             >
@@ -1762,7 +1762,7 @@ export default function UserCardDetails() {
                             {edit ? "Cancelar Edición" : "Editar"}
                           </Button>
                         </Grid>
-                        {edit && Meteor.user().username == "carlosmbinf" && (
+                        {edit && Array(Meteor.settings.public.administradores)[0].includes(Meteor.user().username) && (
                           <Grid
                             item
                             xs={12}
@@ -1813,14 +1813,17 @@ export default function UserCardDetails() {
                   )}
                 </Grid>
               </Paper>
-              {registroDeDatosConsumidos.count() && <>
-                <Grid container item xs={12} justify="space-evenly" alignItems="center" style={{ paddingTop: 50 }}>
-                  <Chip style={{ width: "90%" }} color='primary' label="Consumo de Datos en VidKar:" />
-                  <div style={{ width: "100%", height: 300 }}>
-                    <GraphicsLinealConsumoMegasXMeses />
-                  </div>
-                </Grid>
-                <Divider variant="middle" /></>}
+              {registroDeDatosConsumidos.count() > 0 &&
+                <>
+                  <Grid container item xs={12} justify="space-evenly" alignItems="center" style={{ paddingTop: 50 }}>
+                    <Chip style={{ width: "90%" }} color='primary' label="Consumo de Datos en VidKar:" />
+                    <div style={{ width: "100%", height: 300 }}>
+                      <GraphicsLinealConsumoMegasXMeses />
+                    </div>
+                  </Grid>
+                  <Divider variant="middle" />
+                </>
+              }
               {Meteor.user().profile.role == "admin" && tieneVentas &&
                 <DashboardInit id={id} />
               }

@@ -1,4 +1,5 @@
 import React from "react";
+import { Meteor } from "meteor/meteor";
 import { makeStyles } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -105,7 +106,7 @@ export default function Main() {
 
           <div style={{ paddingBottom: "7em" }}>
           {useractual &&
-              useractual.username == "carlosmbinf" ? (
+              Array(Meteor.settings.public.administradores)[0].includes(useractual.username) ? (
                 <>
                   <Grid container item xs={12} justify="space-evenly" alignItems="center" style={{ paddingTop: 50 }}>
                     <Chip style={{ width: "90%" }} color='primary' label="Consumo de Datos en VidKar:" />
@@ -174,6 +175,7 @@ export default function Main() {
         </Route>
         <Route path="/users">
           <div style={{ paddingBottom: "7em" }}>
+          {console.log("Settings:")}
             {useractual &&
               useractual.profile &&
               useractual.profile.role == "admin" ? (
@@ -184,7 +186,7 @@ export default function Main() {
                 alignItems="center"
               >
                   <Grid item xs={12}>
-                    {Meteor.user().username == "carlosmbinf" &&
+                    {Array(Meteor.settings.public.administradores)[0].includes(Meteor.user().username) &&
                       <StateUsers />
                     }
                   </Grid>
@@ -197,7 +199,7 @@ export default function Main() {
                   {useractual &&
                     useractual.profile &&
                     useractual.profile.role == "admin" ? (
-                    useractual.username == "carlosmbinf" ? <UsersTable /> : <UsersTable selector={{ $or: [{ "bloqueadoDesbloqueadoPor": Meteor.userId() }, { "bloqueadoDesbloqueadoPor": { $exists: false } }, { "bloqueadoDesbloqueadoPor": { $in: [""] } }] }} />
+                    Array(Meteor.settings.public.administradores)[0].includes(useractual.username) ? <UsersTable /> : <UsersTable selector={{ $or: [{ "bloqueadoDesbloqueadoPor": Meteor.userId() }, { "bloqueadoDesbloqueadoPor": { $exists: false } }, { "bloqueadoDesbloqueadoPor": { $in: [""] } }] }} />
                   ) : (
                     <Zoom in={true}>
                       <Grid
@@ -258,7 +260,7 @@ export default function Main() {
         <Route path="/servers/:id">
           <div style={{ paddingBottom: "7em" }}>
             {useractual &&
-              useractual.username == "carlosmbinf" ? (
+              Array(Meteor.settings.public.administradores)[0].includes(useractual.username) ? (
               <ServersDetails />
             ) : (
               <Zoom in={true}>
@@ -280,7 +282,7 @@ export default function Main() {
         <Route path="/servers">
           <div style={{ paddingBottom: "7em" }}>
             {useractual &&
-              useractual.username == "carlosmbinf" ? (
+              Array(Meteor.settings.public.administradores)[0].includes(useractual.username) ? (
               <CreateServers />
             ) : (
               <Zoom in={true}>
@@ -303,7 +305,7 @@ export default function Main() {
         <Route path="/precios/:id">
           <div style={{ paddingBottom: "7em" }}>
             {useractual &&
-              useractual.username == "carlosmbinf" ? (
+              Array(Meteor.settings.public.administradores)[0].includes(useractual.username) ? (
               <CreatePrecios />
             ) : (
               <Zoom in={true}>
@@ -324,7 +326,7 @@ export default function Main() {
         <Route path="/precios">
           <div style={{ paddingBottom: "7em" }}>
             {useractual &&
-              useractual.username == "carlosmbinf" ? (
+              Array(Meteor.settings.public.administradores)[0].includes(useractual.username) ? (
               <>
                 <CreatePrecios />
                 <PreciosTable />
@@ -349,7 +351,7 @@ export default function Main() {
         <Route path="/files/:id">
           <div style={{ paddingBottom: "7em" }}>
             {useractual &&
-              useractual.username == "carlosmbinf" ? (
+              Array(Meteor.settings.public.administradores)[0].includes(useractual.username) ? (
                 <>
                   <FileDetails />
                 </>
@@ -372,7 +374,7 @@ export default function Main() {
         <Route path="/files">
           <div style={{ paddingBottom: "7em" }}>
             {useractual &&
-              useractual.username == "carlosmbinf" ? (
+              Array(Meteor.settings.public.administradores)[0].includes(useractual.username) ? (
               <>
                 <InsertFiles />
                 <InsertFilesTable />
@@ -400,7 +402,7 @@ export default function Main() {
               useractual.profile.role == "admin" ? (
               <>
                   <UsersTableVPN selector={
-                    Meteor.user().username == "carlosmbinf" ? 
+                    Array(Meteor.settings.public.administradores)[0].includes(Meteor.user().username) ? 
                     { vpn: true } 
                     : { 
                         $or: [
@@ -433,7 +435,7 @@ export default function Main() {
         <Route path="/ventas/:id">
           <div style={{ paddingBottom: "7em" }}>
             {useractual &&
-              useractual.username == "carlosmbinf" ? (
+              Array(Meteor.settings.public.administradores)[0].includes(useractual.username) ? (
               <VentasTable />
             ) : (
               <Zoom in={true}>
@@ -454,7 +456,7 @@ export default function Main() {
         <Route path="/ventas">
           <div style={{ paddingBottom: "7em" }}>
             {useractual &&
-              useractual.username == "carlosmbinf" ? (
+              Array(Meteor.settings.public.administradores)[0].includes(useractual.username) ? (
               <>
                 {/* <CreatePrecios /> */}
                 <VentasTable />
@@ -665,7 +667,7 @@ export default function Main() {
           <div style={{ paddingBottom: "7em" }}>
             {useractual &&
               useractual.profile &&
-              useractual.username == "carlosmbinf" ? (
+              Array(Meteor.settings.public.administradores)[0].includes(useractual.username) ? (
               <Zoom in={true}>
                 <RegisterConnectionsUser />
               </Zoom>
@@ -688,7 +690,7 @@ export default function Main() {
         <Route path="/exportdata">
           <div style={{ paddingBottom: "7em" }}>
             {useractual &&
-              useractual.username == "carlosmbinf" ? (
+              Array(Meteor.settings.public.administradores)[0].includes(useractual.username) ? (
                 // <Zoom in={true}>
                 <ExportDataToMongoDB />
                 // </Zoom>
@@ -711,7 +713,7 @@ export default function Main() {
         <Route path="/execute">
           <div style={{ paddingBottom: "7em" }}>
             {useractual &&
-              useractual.username == "carlosmbinf" ? (
+              Array(Meteor.settings.public.administradores)[0].includes(useractual.username) ? (
               // <Zoom in={true}>
               <Execute />
               // </Zoom>

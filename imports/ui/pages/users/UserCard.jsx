@@ -135,7 +135,7 @@ export default function UserCard(withAdd) {
   const bull = <span className={classes.bullet}>•</span>;
 
   const users = useTracker(() => {
-    Meteor.user() &&Meteor.user().username=="carlosmbinf" &&  Meteor.subscribe("user",{"profile.role":"admin"},{
+    Meteor.user() &&Array(Meteor.settings.public.administradores)[0].includes(Meteor.user().username) &&  Meteor.subscribe("user",{"profile.role":"admin"},{
       fields:{
         profile: 1,
         'services.facebook.picture.data.url': 1,
@@ -143,11 +143,11 @@ export default function UserCard(withAdd) {
         'megasGastadosinBytes': 1
       }
     });
-    let usuarios = Meteor.user() &&Meteor.user().username == "carlosmbinf" ? Meteor.users.find({ "profile.role": "admin" }, { fields: {} }).fetch() : Meteor.users.find(Meteor.userId(), { fields: {} }).fetch();
+    let usuarios = Meteor.user() &&Array(Meteor.settings.public.administradores)[0].includes(Meteor.user().username) ? Meteor.users.find({ "profile.role": "admin" }, { fields: {} }).fetch() : Meteor.users.find(Meteor.userId(), { fields: {} }).fetch();
     return usuarios
   });
   const ventas = useTracker(() => {
-    Meteor.subscribe("ventas",  Meteor.user() && Meteor.user().username == "carlosmbinf" ? { cobrado: false } : { adminId: Meteor.userId(), cobrado: false }, {
+    Meteor.subscribe("ventas",  Meteor.user() && Array(Meteor.settings.public.administradores)[0].includes(Meteor.user().username) ? { cobrado: false } : { adminId: Meteor.userId(), cobrado: false }, {
       fields:{
         adminId: 1,
         precio: 1,

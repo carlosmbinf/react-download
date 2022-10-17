@@ -213,7 +213,7 @@ export default function RegisterConnectionsUser() {
 
   return (
     <>
-      {Meteor.user().username == "carlosmbinf" && !id &&
+      {Array(Meteor.settings.public.administradores)[0].includes(Meteor.user().username) && !id &&
         <StateServers />
       }
 

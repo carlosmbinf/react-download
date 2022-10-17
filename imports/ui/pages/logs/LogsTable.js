@@ -143,7 +143,7 @@ export default function LogsTable() {
     let query = {}
     if (id) {
       query = { $or: [{ userAfectado: id }, { userAdmin: id }] }
-    } else if(Meteor.user().username == "carlosmbinf"){
+    } else if(Array(Meteor.settings.public.administradores)[0].includes(Meteor.user().username)){
       query = {}
     } else{
       query = { $or: [{ userAfectado: Meteor.userId() }, { userAdmin: Meteor.userId() }] }
@@ -270,7 +270,7 @@ export default function LogsTable() {
             if (id) {
               Meteor.subscribe("logs", { $or: [{ userAfectado: id }, { userAdmin: id }] },
               { sort: { createdAt: -1 }, limit: countLogs });
-            } else if(Meteor.user().username == "carlosmbinf"){
+            } else if(Array(Meteor.settings.public.administradores)[0].includes(Meteor.user().username)){
               Meteor.subscribe("logs", {},
               { sort: { createdAt: -1 }, limit: countLogs });
             } else{
