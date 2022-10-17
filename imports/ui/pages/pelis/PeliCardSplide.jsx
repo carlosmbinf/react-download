@@ -169,9 +169,9 @@ const useStyles = makeStyles((theme) => ({
     background:
       "linear-gradient(180deg, rgba(0,0,0,0) 0%, #20262ecf 82%);",
   },
-  splideArrows:{
-    backgroundColor:"blue",
-    
+  splideArrows: {
+    backgroundColor: "blue",
+
   }
 }));
 
@@ -284,47 +284,43 @@ export default function PeliCardSplide(options) {
     </Grid>
     {/* <div style={{ width: "100%" }}> */}
     {/* <Carousel items={items} /> */}
-    <Splide aria-label="My Favorite Images" options={ {
-    rewind: true,
-    // width : 800,
-    // gap   : '1rem',
-    // perPage: 10,
-    autoWidth:true,
-    // padding:{left:50,right:50},
-    arrows:true,
-    autoplay:true,
-    pagination:false
-  } }
-    hasTrack={ false } 
-  >
-    <div style={{
-      paddingLeft:90,
-      paddingRight:60
-    }} className="custom-wrapper" >
-    <SplideTrack aria-controls={options.clasificacion}>
-    {items.map(element => {
-        return(
-        <SplideSlide>
-          {element}
-        </SplideSlide>)
-      })}  
-    </SplideTrack>
-    </div>
-   
-    <div style={{
-      paddingLeft:0,
-      paddingRight:0
-    }} className="splide__arrows">
-    
-    {/* <button aria-controls={options.clasificacion} className="splide__arrow splide__arrow--prev">Prevc</button> */}
-    <button aria-controls={options.clasificacion} className="splide__arrow splide__arrow--prev"><IconButton  className="splide__arrow splide__arrow--prev">
-            <CancelIcon />
-          </IconButton></button>
-    <button aria-controls={options.clasificacion} className="splide__arrow splide__arrow--next"><CancelIcon /></button>
-  </div>
-      
+    <Splide aria-label="My Favorite Images" options={{
+      rewind: true,
+      // width : 800,
+      // gap   : '1rem',
+      // perPage: 10,
+      autoWidth: true,
+      // padding:{left:50,right:50},
+      arrows: true,
+      autoplay: true,
+      pagination: false
+    }}
+      // hasTrack={false}
+    >
+      {/* <div style={{
+        paddingLeft: 90,
+        paddingRight: 60
+      }} className="custom-wrapper" > */}
+          {items.map(element => {
+            return (
+              <SplideSlide>
+                {element}
+              </SplideSlide>)
+          })}
+      {/* </div> */}
+
+      <div style={{
+        paddingLeft: 0,
+        paddingRight: 0
+      }} className="splide__arrows">
+
+        <button aria-controls={options.clasificacion} className="splide__arrow splide__arrow--prev">Prevc</button>
+        <button aria-controls={options.clasificacion} className="splide__arrow splide__arrow--prev"><CancelIcon /></button>
+        <button aria-controls={options.clasificacion} className="splide__arrow splide__arrow--next"><CancelIcon /></button>
+      </div>
+
     </Splide>
-    
+
     {/* </div> */}
   </Fade>
     : ""
