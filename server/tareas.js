@@ -327,4 +327,36 @@ if (Meteor.isServer) {
     console.log(error);
   }
 
+  try {
+    //////////ACTUALIZAR TRAILERS //////////////
+    cron
+      .schedule(
+        "30 0 * * *",
+        async () => {
+           try {
+           await Meteor.call('closeproxy', function (error, result) {
+            console.log(`${result} a las ${new Date()}`)
+           });
+           
+           await Meteor.call('listenproxy', function (error, result) {
+            console.log(`${result} a las ${new Date()}`)
+           });
+
+          } catch (error) {
+            console.log(error)
+          }
+
+        },
+        {
+          scheduled: true,
+          timezone: "America/Havana",
+        }
+      )
+      .start();
+
+
+  } catch (error) {
+    console.log(error);
+  }
+
 }
