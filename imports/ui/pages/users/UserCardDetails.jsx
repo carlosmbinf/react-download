@@ -217,6 +217,11 @@ export default function UserCardDetails() {
     return Meteor.users.findOne({ _id: id });
   });
 
+  const creadoPor = useTracker(() => {
+    users && users.creadoPor ? Meteor.subscribe( "userID", users.creadoPor ) : Meteor.subscribe("users", { username: Meteor.settings.public.administradores[0] });
+    return users && users.creadoPor ? Meteor.users.findOne({ _id: users.creadoPor }) : Meteor.users.findOne({ username: Meteor.settings.public.administradores[0] });
+    });
+
   const servers = useTracker(() => {
     Meteor.subscribe("servers").ready()
     let serv = []
@@ -1612,6 +1617,28 @@ export default function UserCardDetails() {
                             <Typography>Usuario: {users.username}</Typography>
                           </Grid>
                         </Grid>
+                        <Grid item xs={12}>
+                          <Grid container direction="row">
+                            <Typography>
+                              {users.movil && "Movil: " + users.movil}
+                            </Typography>
+                          </Grid>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Grid container direction="row">
+                            <Typography>
+                              {users.createdAt && "Fecha de Creacion de la cuenta: " + users.createdAt}
+                            </Typography>
+                          </Grid>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Grid container direction="row">
+                            <Typography>
+                              Creado por: { users.creadoPor ? creadoPor.username : Meteor.settings.public.administradores[0] }
+                            </Typography>
+                          </Grid>
+                        </Grid>
+                        
                       </Paper>
 
                       {(users.megasGastadosinBytes || users.fechaSubscripcion || users.megas) &&
