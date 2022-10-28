@@ -218,7 +218,7 @@ export default function UserCardDetails() {
   });
 
   const creadoPor = useTracker(() => {
-    users && users.creadoPor ? Meteor.subscribe( "userID", users.creadoPor ) : Meteor.subscribe("users", { username: Meteor.settings.public.administradores[0] });
+    users && (users.creadoPor ? Meteor.subscribe( "userID", users.creadoPor ) : Meteor.subscribe("users", { username: Meteor.settings.public.administradores[0] }));
     return users && users.creadoPor ? Meteor.users.findOne({ _id: users.creadoPor }) : Meteor.users.findOne({ username: Meteor.settings.public.administradores[0] });
     });
 
@@ -1634,7 +1634,9 @@ export default function UserCardDetails() {
                         <Grid item xs={12}>
                           <Grid container direction="row">
                             <Typography>
-                              Creado por: { users.creadoPor ? creadoPor.username : Meteor.settings.public.administradores[0] }
+                              Creado por: { users.creadoPor ? ( creadoPor ? creadoPor.username : users.creadoPor ) : Meteor.settings.public.administradores[0] }
+                              {console.log("Creado POR ID: " + users.creadoPor)}
+                              {console.log("Var Creado Por: " + creadoPor)}
                             </Typography>
                           </Grid>
                         </Grid>
