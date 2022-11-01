@@ -83,6 +83,7 @@ export default function CreatePrecios() {
   const [type, setType] = useState("megas");
   const [megas, setmegas] = useState(0);
   const [comentario, setcomentario] = useState("");
+  const [detalles, setdetalles] = useState("");
   const [open, setOpen] = React.useState(false);
   const [message, setMessage] = React.useState("");
   const [transition, setTransition] = React.useState(undefined);
@@ -114,6 +115,7 @@ export default function CreatePrecios() {
         type,
         megas: (type == "megas" || type == "vpn2mb" || type == "vpnplus") ? megas : null,
         comentario,
+        detalles
       };
       try {
         let id = await PreciosCollection.insert(datosPrecios)
@@ -284,9 +286,9 @@ export default function CreatePrecios() {
                                 value={megas}
                                 onInput={(e) => setmegas(e.target.value)}
                                 InputProps={{
-                                  startAdornment: (
+                                  endAdornment: (
                                     <InputAdornment position="start">
-                                      <AccountCircle />
+                                      MB
                                     </InputAdornment>
                                   ),
                                 }}
@@ -294,7 +296,7 @@ export default function CreatePrecios() {
                             </FormControl>
                           </Grid>
                         }
-                        <Grid item xs={12} sm={4} lg={3}>
+                        <Grid item xs={12} sm={4}>
                           <FormControl variant="outlined">
                             <TextField                              
                               className={classes.margin}
@@ -305,13 +307,29 @@ export default function CreatePrecios() {
                               color="secondary"
                               value={comentario}
                               onInput={(e) => setcomentario(e.target.value)}
-                              InputProps={{
-                                startAdornment: (
-                                  <InputAdornment position="start">
-                                    <AccountCircle />
-                                  </InputAdornment>
-                                ),
-                              }}
+                              
+                            />
+                          </FormControl>
+                        </Grid>
+
+                        <Grid item xs={12} sm={4}>
+                          <FormControl variant="outlined">
+                            <TextField                              
+                              className={classes.margin}
+                              id="detalles"
+                              name="detalles"
+                              label="Detalles"
+                              variant="outlined"
+                              color="secondary"
+                              value={detalles}
+                              onInput={(e) => setdetalles(e.target.value)}
+                              // InputProps={{
+                              //   startAdornment: (
+                              //     <InputAdornment position="start">
+                              //       <AccountCircle />
+                              //     </InputAdornment>
+                              //   ),
+                              // }}
                             />
                           </FormControl>
                         </Grid>

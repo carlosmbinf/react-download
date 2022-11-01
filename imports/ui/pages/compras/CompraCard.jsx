@@ -155,7 +155,7 @@ const user = useTracker(() => {
     return (
       <>
               <Button
-              color="inherit"
+              color="secondary"
               className={classes.boton}
             >
                 <Paper
@@ -208,7 +208,7 @@ const user = useTracker(() => {
                           // }
                         >
                           {/* <PermContactCalendarRoundedIcon />{" "} */}
-                          ${compra.comentario}
+                          {compra.detalles}
                         </Typography>
                       </Grid>
                       <Divider  />
