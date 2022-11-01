@@ -35,6 +35,7 @@ import Archivo from "../ui/pages/pelis/Archivo";
 import CreateArchivo from "../ui/pages/pelis/CreatePeli";
 import AddDescargas from "../ui/pages/download/AddDescargas";
 import TableDescarga from "../ui/pages/download/TableDescarga";
+import CompraCard from "../ui/pages/compras/CompraCard";
 import { Chip, Grid, Zoom } from "@material-ui/core";
 import CreateTV from "../ui/pages/tv/CreateTV";
 import TVonline from "../ui/pages/tv/TVCard";
@@ -150,6 +151,7 @@ export default function Main() {
         </Route>
         <Route path="/users/:id">
           <div style={{ paddingBottom: "7em" }}>
+          <CompraCard type="megas"/>
             <UserCardDetails />
             {useractual &&
               useractual.profile &&
