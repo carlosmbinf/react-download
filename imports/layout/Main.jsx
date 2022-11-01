@@ -151,7 +151,9 @@ export default function Main() {
         </Route>
         <Route path="/users/:id">
           <div style={{ paddingBottom: "7em" }}>
-          <CompraCard type="megas"/>
+            {/* {Meteor.settings.public.mostrarCompras == true && */}
+            <CompraCard type="megas"/>
+             {/* } */}
             <UserCardDetails />
             {useractual &&
               useractual.profile &&

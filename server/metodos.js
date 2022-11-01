@@ -229,6 +229,37 @@ if (Meteor.isServer) {
         };
       }
     },
+    addVentasOnly: async (userChangeid, adminId,compra) => {
+
+      ///////REVISAR EN ADDVENTASONLY  el descuento que se debe de hacer
+      let userChange = await Meteor.users.findOne(userChangeid)
+      // let admin = await Meteor.users.findOne(adminId)
+      // let precio = PreciosCollection.findOne(precioid)
+      diferenciaDePrecios = userChange.bloqueadoDesbloqueadoPor != adminId ? await (compra.precio - PreciosCollection.findOne({
+        adminId: Meteor.users.findOne({ username: Meteor.settings.public.administradores[0] })._id,
+        type: compra.type,
+        megas: compra.type
+      }).precio) : 0
+
+
+      try {
+                  
+        compra && await VentasCollection.insert({
+            adminId: adminId,
+            userId: userChangeid,
+            precio: (compra.precio - diferenciaDePrecios),
+            comentario: compra.comentario
+          })
+
+        
+
+        return compra?compra.comentario:`No se encontro Precio a la oferta establecida en el usuario: ${userChange.username}`
+      } catch (error) {
+        return error.message
+      }
+
+
+    },
     addVentasProxy: async (userChangeid, userId) => {
       let userChange = await Meteor.users.findOne(userChangeid)
       let user = await Meteor.users.findOne(userId)

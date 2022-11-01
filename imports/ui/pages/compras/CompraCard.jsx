@@ -19,7 +19,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { useTheme } from '@material-ui/core/styles';
 
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Fade from 'react-reveal/Fade';
 import Carousel from "../../components/carousel/Carousel";
 import {PreciosCollection} from "../collections/collections";
@@ -139,46 +139,66 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function CompraCard(options) {
-
+  const [openDialog, setOpenDialog] = React.useState(-1);
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
-
+  const { id } = useParams()
   
-
-  const precios = useTracker(() => {
-    Meteor.subscribe("precios",{type:options.type});
-    return PreciosCollection.find({type:options.type}).fetch();
-  });
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
-
-const user = useTracker(() => {
-    Meteor.subscribe("user",{"_id":Meteor.userId()},{
+  const user = useTracker(() => {
+    Meteor.subscribe("user",{"_id":id},{
       fields:{
         megasGastadosinBytes:1,
         fechaSubscripcion:1,
-        megas:1
+        megas:1,
+        bloqueadoDesbloqueadoPor:1
       }
     });
-    return Meteor.user();
+    return Meteor.users.findOne(id);
   });
 
+  const precios = useTracker(() => {
+    Meteor.subscribe("precios", { userId: user&&user.bloqueadoDesbloqueadoPor ? user.bloqueadoDesbloqueadoPor : "", type: options.type });
+    return PreciosCollection.find({ userId: user&&user.bloqueadoDesbloqueadoPor ? user.bloqueadoDesbloqueadoPor : "", type:options.type}).fetch();
+  });
+
+  const adminDelUser = useTracker(() => {
+    Meteor.subscribe("user",{"_id":user&&user.bloqueadoDesbloqueadoPor ? user.bloqueadoDesbloqueadoPor : ""},{
+      fields:{
+        descuentoproxy:1,
+        descuentovpn:1,
+        username:1,
+        _id:1
+      }
+    });
+    return Meteor.users.findOne({"_id":user&&user.bloqueadoDesbloqueadoPor ? user.bloqueadoDesbloqueadoPor : ""});
+  });
+  
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
+
+
+
   const items = precios.map((compra, i) => {
-  const [openDialog, setOpenDialog] = React.useState(false);
+  
     
 
     const handleClickOpen = () => {
       console.log(compra)
-      setOpenDialog(true);
+      setOpenDialog(i);
     };
   
     const handleClose = () => {
-      setOpenDialog(false);
+      setOpenDialog(-1);
+    };
+
+    const comprar = () => {
+      Meteor.call("addVentasOnly",id,adminDelUser._id,compra)
+      handleClose()
     };
     return (
       <>
       <Dialog
-        open={openDialog}
+        open={openDialog == i}
         onClose={handleClose}
         fullScreen={fullScreen} 
         aria-labelledby="alert-dialog-title"
@@ -211,7 +231,7 @@ const user = useTracker(() => {
           <Button onClick={handleClose} color="primary">
             Cancelar
           </Button>
-          <Button onClick={handleClose} color="primary" autoFocus>
+          <Button onClick={comprar} color="primary" autoFocus>
             Comprar
           </Button>
         </DialogActions>
@@ -301,7 +321,7 @@ const user = useTracker(() => {
   return (
     <>
 
-    {(user.megasGastadosinBytes || user.fechaSubscripcion || user.megas) && precios.length && <Fade left>
+      {user && ( user.megasGastadosinBytes || user.fechaSubscripcion || user.megas) && precios.length > 0 && <Fade left>
         <div style={{ width: "100%" }}>
             <Carousel items={items} />
           </div>
