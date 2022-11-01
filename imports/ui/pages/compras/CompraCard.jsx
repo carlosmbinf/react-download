@@ -11,6 +11,14 @@ import { Tracker } from "meteor/tracker";
 import { useTracker } from "meteor/react-meteor-data";
 import Badge from "@material-ui/core/Badge";
 import Avatar from "@material-ui/core/Avatar";
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { useTheme } from '@material-ui/core/styles';
+
 import { Link } from "react-router-dom";
 import Fade from 'react-reveal/Fade';
 import Carousel from "../../components/carousel/Carousel";
@@ -131,13 +139,18 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function CompraCard(options) {
+
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
+
+  
 
   const precios = useTracker(() => {
     Meteor.subscribe("precios",{type:options.type});
     return PreciosCollection.find({type:options.type}).fetch();
   });
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
 const user = useTracker(() => {
     Meteor.subscribe("user",{"_id":Meteor.userId()},{
@@ -151,12 +164,62 @@ const user = useTracker(() => {
   });
 
   const items = precios.map((compra, i) => {
+  const [openDialog, setOpenDialog] = React.useState(false);
     
+
+    const handleClickOpen = () => {
+      console.log(compra)
+      setOpenDialog(true);
+    };
+  
+    const handleClose = () => {
+      setOpenDialog(false);
+    };
     return (
       <>
+      <Dialog
+        open={openDialog}
+        onClose={handleClose}
+        fullScreen={fullScreen} 
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Usted desea comprar el siguiente artículo?"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            <br/>
+           <Paper elevation={12} style={{borderRadius:30,padding:10,paddingRight:20,paddingBottom:1, backgroundColor:"#3f51b5"}}>
+           <ul>
+              <li>
+                  <strong>{compra.detalles}</strong>
+                  <h5 style={{textAlign:"end"}}>Precio: <strong>{compra.precio}CUP</strong></h5>
+                </li>
+            </ul>
+            </Paper> 
+            <br/>
+            <p>
+              Nota:
+              <br/>
+              Una vez que se confirme que se recibió el pago se activará automáticamente la compra seleccionada.
+              <br/>
+              Por favor comuníquese con su administrador para más información.
+            </p>
+            
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Cancelar
+          </Button>
+          <Button onClick={handleClose} color="primary" autoFocus>
+            Comprar
+          </Button>
+        </DialogActions>
+      </Dialog>
               <Button
               color="secondary"
               className={classes.boton}
+              onClick={handleClickOpen}
             >
                 <Paper
                   elevation={5}
