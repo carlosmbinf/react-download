@@ -294,6 +294,12 @@ export const SchemaVentasCollection = new SimpleSchema({
     type: String,
     optional: true,
   },
+  gananciasAdmin:{
+    type: Number,
+    defaultValue: 0,
+    optional:true
+  }
+
 });
 
 VentasCollection.attachSchema(SchemaVentasCollection);
@@ -664,11 +670,6 @@ export const SchemaFilesCollection = new SimpleSchema({
         this.unset();  // Prevent user from supplying their own value
       }
     }
-  },
-  gananciasAdmin:{
-    type: Number,
-    defaultValue: 0,
-    optional:true
   }
 });
 

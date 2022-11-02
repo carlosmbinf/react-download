@@ -162,7 +162,7 @@ export default function VentasTable(option) {
           precio: data.precio&&data.precio,
           comentario: data.comentario&&data.comentario,
           cobrado: data.cobrado&&data.cobrado,
-          ganancias: data.ganancias?data.ganancias:0
+          ganancias: data.gananciasAdmin?data.gananciasAdmin:0
         })
     );
 
