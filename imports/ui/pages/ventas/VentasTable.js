@@ -161,7 +161,8 @@ export default function VentasTable(option) {
           createdAt: data.createdAt&&data.createdAt.toString(),
           precio: data.precio&&data.precio,
           comentario: data.comentario&&data.comentario,
-          cobrado: data.cobrado&&data.cobrado
+          cobrado: data.cobrado&&data.cobrado,
+          ganancias: data.ganancias?data.ganancias:0
         })
     );
 
@@ -203,6 +204,14 @@ export default function VentasTable(option) {
       <React.Fragment>
         <span className="p-column-title">Creado:</span>
         {rowData.createdAt}
+      </React.Fragment>
+    );
+  };
+  const gananciasBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">Ganancias:</span>
+        {rowData.ganancias}
       </React.Fragment>
     );
   };
@@ -343,6 +352,14 @@ export default function VentasTable(option) {
                   field="precio"
                   header="Precio"
                   body={precioBodyTemplate}
+                  filter
+                  filterPlaceholder="Precio"
+                  filterMatchMode="contains"
+                />
+                <Column
+                  field="ganancias"
+                  header="Ganancias"
+                  body={gananciasBodyTemplate}
                   filter
                   filterPlaceholder="Precio"
                   filterMatchMode="contains"
