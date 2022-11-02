@@ -176,7 +176,25 @@ export default function CompraCard(options) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
-
+    const name = (type) => {
+      switch(type) {
+              case "megas":
+                return "Proxy por Megas"
+                break;
+                case "fecha-proxy":
+                return "Proxy por Tiempo"
+                break;
+              case "vpnplus":
+                return "VPN por Megas"
+                break;
+              case "fecha-vpn":
+                return "VPN por Tiempo"
+                break;
+              default:
+                "Compras"
+                break
+            }
+    }
 
   const items = precios.map((compra, i) => {
   
@@ -195,6 +213,9 @@ export default function CompraCard(options) {
       Meteor.call("addVentasOnly",id,adminDelUser._id,compra)
       handleClose()
     };
+
+    
+
     return (
       <>
       <Dialog
@@ -228,14 +249,16 @@ export default function CompraCard(options) {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="primary">
+          <Button variant="contained" onClick={handleClose} color="primary">
             Cancelar
           </Button>
-          <Button onClick={comprar} color="primary" autoFocus>
+          <Button variant="contained" onClick={comprar} color="primary" autoFocus>
             Comprar
           </Button>
         </DialogActions>
       </Dialog>
+            <h2>{name}</h2>
+            <br/>
               <Button
               color="secondary"
               className={classes.boton}
@@ -320,9 +343,10 @@ export default function CompraCard(options) {
 
   return (
     <>
-
       {user && ( user.megasGastadosinBytes || user.fechaSubscripcion || user.megas) && precios.length > 0 && <Fade left>
         <div style={{ width: "100%" }}>
+        <br/>
+          <h2 style={{ textAlign : "center" }}>{name(options.type)}</h2>
             <Carousel items={items} />
           </div>
         </Fade>}

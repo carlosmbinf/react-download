@@ -665,6 +665,11 @@ export const SchemaFilesCollection = new SimpleSchema({
       }
     }
   },
+  gananciasAdmin:{
+    type: Number,
+    defaultValue: 0,
+    optional:true
+  }
 });
 
 FilesCollection.attachSchema(SchemaFilesCollection)

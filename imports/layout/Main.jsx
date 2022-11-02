@@ -149,11 +149,21 @@ export default function Main() {
 
           <Footer />
         </Route>
-        <Route path="/users/:id">
+        <Route path="/compras/:id">
           <div style={{ paddingBottom: "7em" }}>
             {/* {Meteor.settings.public.mostrarCompras == true && */}
             <CompraCard type="megas"/>
+            <CompraCard type="fecha-proxy"/>
+            <CompraCard type="vpnplus"/>
+            <CompraCard type="fecha-vpn"/>
              {/* } */}
+          </div>
+
+          <Footer />
+        </Route>
+        
+        <Route path="/users/:id">
+          <div style={{ paddingBottom: "7em" }}>
             <UserCardDetails />
             {useractual &&
               useractual.profile &&

@@ -229,31 +229,61 @@ if (Meteor.isServer) {
         };
       }
     },
+    getAdminPrincipal: async () => {
+
+      ///////REVISAR EN ADDVENTASONLY  el descuento que se debe de hacer
+      // let admin = await Meteor.users.findOne(adminId)
+      // let precio = PreciosCollection.findOne(precioid)
+      
+
+      try {
+         let adminPrincipal = await Meteor.users.findOne({ username: Meteor.settings.public.administradores[0] })    
+         return adminPrincipal ? adminPrincipal : null
+      } catch (error) {
+        return error.message
+      }
+
+
+    },
+    getPrecioOficial: async (compra) => {
+
+      try {
+        let adminPrincipal = await Meteor.users.findOne({ username: Meteor.settings.public.administradores[0] })
+
+        let precioOficial = await PreciosCollection.findOne({
+          userId: adminPrincipal._id,
+          type: compra.type,
+          megas: compra.megas
+        })   
+
+        return precioOficial ? precioOficial : null
+      } catch (error) {
+        return error.message
+      }
+
+
+    },
     addVentasOnly: async (userChangeid, adminId,compra) => {
 
       ///////REVISAR EN ADDVENTASONLY  el descuento que se debe de hacer
       let userChange = await Meteor.users.findOne(userChangeid)
       // let admin = await Meteor.users.findOne(adminId)
       // let precio = PreciosCollection.findOne(precioid)
-      diferenciaDePrecios = userChange.bloqueadoDesbloqueadoPor != adminId ? await (compra.precio - PreciosCollection.findOne({
-        adminId: Meteor.users.findOne({ username: Meteor.settings.public.administradores[0] })._id,
-        type: compra.type,
-        megas: compra.type
-      }).precio) : 0
+      let adminPrincipal = await Meteor.users.findOne({ username: Meteor.settings.public.administradores[0] })
 
+      let precioOficial = await Meteor.call('getPrecioOficial', compra );
 
       try {
                   
         compra && await VentasCollection.insert({
             adminId: adminId,
             userId: userChangeid,
-            precio: (compra.precio - diferenciaDePrecios),
+            precio: precioOficial ? precioOficial.precio : compra.precio,
+            gananciasAdmin: precioOficial ? compra.precio - precioOficial.precio : 0,
             comentario: compra.comentario
           })
 
-        
-
-        return compra?compra.comentario:`No se encontro Precio a la oferta establecida en el usuario: ${userChange.username}`
+        return compra ? compra.comentario : `No se encontro Precio a la oferta establecida en el usuario: ${userChange.username}`
       } catch (error) {
         return error.message
       }
