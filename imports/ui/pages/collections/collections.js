@@ -336,6 +336,11 @@ export const SchemaPreciosCollection = new SimpleSchema({
     defaultValue: 0,
     optional: true,
   },
+  heredaDe: {
+    type: String,
+    optional: true,
+    defaultValue: null,
+  },
   comentario: {
     type: String,
     optional: true,

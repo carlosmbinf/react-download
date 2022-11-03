@@ -229,6 +229,19 @@ if (Meteor.isServer) {
         };
       }
     },
+    getListadosPreciosOficiales: async()=>{
+      try{
+        let userAdmin = await Meteor.call('getAdminPrincipal');
+        let listadoDePrecios =  await PreciosCollection.find({userId:userAdmin._id}).fetch()
+        console.log("listadoDePrecios")
+        console.log(listadoDePrecios)
+        return listadoDePrecios?listadoDePrecios:null;
+
+      }catch(error){
+        console.log(error);
+      }
+      
+    },
     getAdminPrincipal: async () => {
 
       ///////REVISAR EN ADDVENTASONLY  el descuento que se debe de hacer

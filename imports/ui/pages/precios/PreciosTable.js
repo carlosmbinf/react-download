@@ -152,7 +152,9 @@ export default function PreciosTable(option) {
           precio: data.precio && data.precio,
           type: data.type && data.type,
           megas: data.megas ? data.megas : 0,
-          comentario: data.comentario && data.comentario
+          comentario: data.comentario && data.comentario,
+          creadoPor: data.userId && data.userId,
+          heredaDe: data.heredaDe ? heredaDe : "No Hereda"
         })
     );
 
@@ -181,6 +183,23 @@ export default function PreciosTable(option) {
       </React.Fragment>
     );
   };
+  const creadoPorBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">Creado Por:</span>
+        <Chip color="primary" label={rowData.creadoPor} />
+      </React.Fragment>
+    );
+  };
+  const heredaDeBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">Hereda De:</span>
+        <Chip color="primary" label={rowData.heredaDe} />
+      </React.Fragment>
+    );
+  };
+  
   const precioBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
@@ -285,7 +304,7 @@ export default function PreciosTable(option) {
                 // reorderableColumns={true}
                 // resizableColumns={true}
               >
-                {/* <Column
+                <Column
                   field="id"
                   body={iDBodyTemplate}
                   wrap="nowrap"
@@ -293,7 +312,15 @@ export default function PreciosTable(option) {
                   filter
                   filterPlaceholder="ID"
                   filterMatchMode="contains"
-                /> */}
+                />
+                <Column
+                  field="heredaDe"
+                  header="Hereda de"
+                  body={heredaDeBodyTemplate}
+                  filter
+                  filterPlaceholder="Hereda De:"
+                  filterMatchMode="contains"
+                />
                 <Column
                   field="createdAt"
                   header="Fecha de Creado"
@@ -302,6 +329,15 @@ export default function PreciosTable(option) {
                   filterPlaceholder="Fecha"
                   filterMatchMode="contains"
                 />
+                <Column
+                  field="creadoPor"
+                  header="Creado Por"
+                  body={creadoPorBodyTemplate}
+                  filter
+                  filterPlaceholder="Creado Por:"
+                  filterMatchMode="contains"
+                />
+                
                 <Column
                   field="precio"
                   header="Precio"

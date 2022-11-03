@@ -11,6 +11,7 @@ import { useTracker } from "meteor/react-meteor-data";
 import Select from "@material-ui/core/Select";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
+import FormHelperText from '@material-ui/core/FormHelperText';
 
 import Snackbar from "@material-ui/core/Snackbar";
 import Slide from "@material-ui/core/Slide";
@@ -88,6 +89,24 @@ export default function CreatePrecios() {
   const [message, setMessage] = React.useState("");
   const [transition, setTransition] = React.useState(undefined);
   const [load, setLoad] = React.useState(false);
+  const [heredaDe, setheredaDe] = React.useState(null);
+
+
+
+  //Probando Select
+  const [openSelect, setOpenSelect] = React.useState(false);
+  const handleChangeSelect = (event) => {
+    setheredaDe(event.target.value);
+  };
+
+  const handleCloseSelect = () => {
+    setOpenSelect(false);
+  };
+
+  const handleOpenSelect = () => {
+    setOpenSelect(true);
+  };
+
 
   function TransitionUp(props) {
     return <Slide {...props} direction="up" />;
@@ -162,6 +181,19 @@ export default function CreatePrecios() {
     setType(event.target.value);
   };
 
+  const listadoDePreciosOriginales = useTracker(() => {
+    Meteor.subscribe("user",{ username : Meteor.settings.public.administradores[0] } );
+    
+    Meteor.subscribe("precios",{ heredaDe : null })
+    let a = Meteor.call("getListadosPreciosOficiales");
+    
+
+    return a;
+  });
+
+
+
+
   const classes = useStyles();
 
   return (
@@ -193,6 +225,7 @@ export default function CreatePrecios() {
             key={transition ? transition.name : ""}
           />
           {/* <Button onClick={handleClick(TransitionUp)}>Up</Button> */}
+
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <Grid
@@ -220,6 +253,27 @@ export default function CreatePrecios() {
                         Datos:
                       </Grid>
                       <Grid container>
+                      <Grid item xs={12} sm={4} lg={3}>
+                        <FormControl variant="outlined" className={classes.formControl}>
+                          <InputLabel shrink id="demo-simple-select-outlined-label">
+                            Hereda De:
+                          </InputLabel>
+                          <Select
+                            labelId="demo-simple-select-outlined-label"
+                            id="demo-simple-select-outlined"
+                            value={heredaDe}
+                            onChange={handleChangeSelect}
+                            label="Hereda De"
+                            value={listadoDePreciosOriginales?listadoDePreciosOriginales:null}
+                          >
+                            <MenuItem value={null}>
+                              <em>No Hereda</em>
+                            </MenuItem>
+                            {listadoDePreciosOriginales&&listadoDePreciosOriginales.map(element=><MenuItem value={element._id}>element._id</MenuItem>)}
+                          </Select>
+                          <FormHelperText>Selecccione de cual Precio hereda el suyo...</FormHelperText>
+                        </FormControl>
+                      </Grid>
                         <Grid item xs={12} sm={4} lg={3}>
                           <FormControl required variant="outlined">
                             <TextField
