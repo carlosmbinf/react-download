@@ -229,18 +229,14 @@ if (Meteor.isServer) {
         };
       }
     },
-    getListadosPreciosOficiales: async()=>{
+    getListadosPreciosOficiales: async ()=>{     
+      
       try{
-        let userAdmin = await Meteor.call('getAdminPrincipal');
-        let listadoDePrecios =  await PreciosCollection.find({userId:userAdmin._id}).fetch()
-        console.log("listadoDePrecios")
-        console.log(listadoDePrecios)
-        return listadoDePrecios?listadoDePrecios:null;
-
+        // let userAdmin = await Meteor.call('getAdminPrincipal');
+        return await  PreciosCollection.find({}).fetch()
       }catch(error){
         console.log(error);
       }
-      
     },
     getAdminPrincipal: async () => {
 

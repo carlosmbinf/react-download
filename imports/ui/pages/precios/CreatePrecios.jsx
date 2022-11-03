@@ -28,6 +28,7 @@ import SendIcon from "@material-ui/icons/Send";
 import CloseIcon from "@material-ui/icons/Close";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import { PreciosCollection } from "../collections/collections";
+import { Autocomplete } from "@material-ui/lab";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -92,11 +93,36 @@ export default function CreatePrecios() {
   const [heredaDe, setheredaDe] = React.useState(null);
 
 
+  const adminPrincial = useTracker(() => {
+    Meteor.subscribe("user",{ username : Meteor.settings.public.administradores[0] } );
+    let admin = Meteor.users.findOne({ username: Meteor.settings.public.administradores[0] }) 
+    return admin;
+  });
+
+  const listadoDePreciosOriginales = useTracker(() => {
+
+    Meteor.subscribe("precios",{userId:adminPrincial&&adminPrincial._id})
+    
+    let a = []
+    a.push({value:null,label:"NO HEREDA"})
+    PreciosCollection.find({userId:adminPrincial&&adminPrincial._id}).forEach(element=>{
+      a.push({value:element._id,label:`${element.precio} ${element.type}`})
+    });
+    // Meteor.call("getListadosPreciosOficiales",(error,result)=>{
+    //   console.log(result);
+    //   result.forEach(e=>a.push)
+    //   a = result
+    // });
+    
+    // console.log(a)
+
+    return a;
+  });
 
   //Probando Select
-  const [openSelect, setOpenSelect] = React.useState(false);
-  const handleChangeSelect = (event) => {
-    setheredaDe(event.target.value);
+  const [searchHerencia, setsearchHerencia] = React.useState("");
+  const handleChangeSelect = (event,newValue) => {
+    setheredaDe(newValue);
   };
 
   const handleCloseSelect = () => {
@@ -181,15 +207,7 @@ export default function CreatePrecios() {
     setType(event.target.value);
   };
 
-  const listadoDePreciosOriginales = useTracker(() => {
-    Meteor.subscribe("user",{ username : Meteor.settings.public.administradores[0] } );
-    
-    Meteor.subscribe("precios",{ heredaDe : null })
-    let a = Meteor.call("getListadosPreciosOficiales");
-    
-
-    return a;
-  });
+  
 
 
 
@@ -253,26 +271,49 @@ export default function CreatePrecios() {
                         Datos:
                       </Grid>
                       <Grid container>
-                      <Grid item xs={12} sm={4} lg={3}>
-                        <FormControl variant="outlined" className={classes.formControl}>
-                          <InputLabel shrink id="demo-simple-select-outlined-label">
-                            Hereda De:
-                          </InputLabel>
-                          <Select
-                            labelId="demo-simple-select-outlined-label"
-                            id="demo-simple-select-outlined"
-                            value={heredaDe}
-                            onChange={handleChangeSelect}
-                            label="Hereda De"
-                            value={listadoDePreciosOriginales?listadoDePreciosOriginales:null}
-                          >
-                            <MenuItem value={null}>
+                      <Grid item container xs={12}>
+                       <FormControl fullWidth variant="outlined" className={classes.formControl}>
+                          <Autocomplete
+                                  fullWidth
+                                  value={heredaDe}
+                                  onChange={(event,newValue)=>{
+                                    handleChangeSelect(event,newValue)
+                                    console.log(newValue)
+
+                                  }}
+                                  inputValue={searchHerencia}
+                                  className={classes.margin}
+                                  onInputChange={(event, newInputValue) => {
+                                    setsearchHerencia(newInputValue);
+                                  }}
+                                  id="controllable-states-demo"
+                                  options={listadoDePreciosOriginales}
+                                  getOptionLabel={(option) => option.label}
+                                  renderInput={(params) => (
+                                    <TextField
+                                      {...params}
+                                      label="Hereda De"
+                                      variant="outlined"
+                                    />
+                                  )}
+                                />
+                          {/* <Select
+                              labelId="demo-simple-select-outlined-label1"
+                              id="demo-simple-select-outlined1"
+                              value={heredaDe}
+                              onChange={handleChangeSelect}
+                              label="Hereda De"
+                              // defaultValue={listadoDePreciosOriginales?listadoDePreciosOriginales[0]._id:null}
+                            >
+                               <MenuItem value={null}>
                               <em>No Hereda</em>
                             </MenuItem>
-                            {listadoDePreciosOriginales&&listadoDePreciosOriginales.map(element=><MenuItem value={element._id}>element._id</MenuItem>)}
-                          </Select>
+                              {listadoDePreciosOriginales.map((element)=>{return <MenuItem value={element._id}>{element._id}</MenuItem>})}
+                            </Select> */}
                           <FormHelperText>Selecccione de cual Precio hereda el suyo...</FormHelperText>
                         </FormControl>
+                        <br/>
+                        <br/>
                       </Grid>
                         <Grid item xs={12} sm={4} lg={3}>
                           <FormControl required variant="outlined">
