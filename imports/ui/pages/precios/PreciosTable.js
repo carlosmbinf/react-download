@@ -154,7 +154,7 @@ export default function PreciosTable(option) {
           megas: data.megas ? data.megas : 0,
           comentario: data.comentario && data.comentario,
           creadoPor: data.userId && data.userId,
-          heredaDe: data.heredaDe ? heredaDe : "No Hereda"
+          heredaDe: data.heredaDe ? data.heredaDe : "No Hereda"
         })
     );
 
