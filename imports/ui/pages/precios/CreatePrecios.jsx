@@ -197,7 +197,8 @@ useEffect(() => {
         type,
         megas: (type == "megas" || type == "vpn2mb" || type == "vpnplus") ? megas : null,
         comentario,
-        detalles
+        detalles,
+        heredaDe:buscarPrecio?buscarPrecio._id:null
       };
       try {
         let id = await PreciosCollection.insert(datosPrecios)
