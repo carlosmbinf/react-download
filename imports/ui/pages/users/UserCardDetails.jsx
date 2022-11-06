@@ -232,7 +232,7 @@ export default function UserCardDetails() {
   });
 
   const preciosList = useTracker(() => {
-    Meteor.subscribe("precios", { userId: Meteor.user()._id, type: "megas" })
+    Meteor.subscribe("precios", { userId: Meteor.userId(), type: "megas" })
     let precioslist = []
     PreciosCollection.find({userId:Meteor.userId(), type: "megas" }, { sort: { precio: 1 } }).fetch().map((a) => {
       precioslist.push({ value: a.megas, label: a.megas + 'MB • $' + ((a.precio - Meteor.user().descuentoproxy >= 0) ? (a.precio - Meteor.user().descuentoproxy) : 0) })
@@ -1879,7 +1879,7 @@ export default function UserCardDetails() {
                   <Divider variant="middle" />
                 </>
               }
-              {Meteor.user().profile.role == "admin" && tieneVentas &&
+              {Meteor.user()&&Meteor.user().profile.role == "admin" && tieneVentas &&
                 <DashboardInit id={id} />
               }
 

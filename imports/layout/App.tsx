@@ -32,7 +32,7 @@ import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import Avatar from "@material-ui/core/Avatar";
 import { Meteor } from "meteor/meteor";
 import Fade from "react-reveal/Fade";
-import { MensajesCollection, OnlineCollection } from "../ui/pages/collections/collections";
+import { MensajesCollection, OnlineCollection, VentasCollection } from "../ui/pages/collections/collections";
 
 
 
@@ -53,6 +53,7 @@ import { Suspense } from "react";
 import SpinnerModal from "../ui/components/spinnerModal/SpinnerModal";
 import ImportExportIcon from '@material-ui/icons/ImportExport';
 import MailOutlineRoundedIcon from '@material-ui/icons/MailOutlineRounded';
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import Badge from '@material-ui/core/Badge';
 
 const drawerWidth = 240;
@@ -222,6 +223,40 @@ export default function PersistentDrawerLeft() {
 // }
 
 
+const compras = useTracker(() => {
+    
+  var notification = null 
+
+  Meteor.subscribe("ventas", {
+    userId: Meteor.user() && Meteor.user()._id,
+    cobradoAlAdmin: false
+  }, { fields: { 
+    _id: 1,
+    userId:1,
+    cobradoAlAdmin: 1
+  } });
+  
+  let compra = VentasCollection.find({
+    userId: Meteor.user() && Meteor.user()._id,
+    cobradoAlAdmin: false
+  }).fetch()
+
+  let options = {
+    
+    body: `Tienes ${compra.length} Compras pendientes...`,
+    icon: "/favicon.ico",
+    // dir: "ltr",
+    // onClick: ()=>{alert("hola")} 
+  };
+
+  //mens.length > 0 && (
+   // notification = new Notification("VIDKAR", options)
+  // alert(options.body)
+  //  )
+  
+  return compra;
+});
+
   const mensajes = useTracker(() => {
     
     var notification = null 
@@ -377,6 +412,18 @@ export default function PersistentDrawerLeft() {
                       // color="textSecondary"
                       noWrap
                     >
+                      <IconButton 
+                      // disabled={mensajes.length > 0 ? false : true} 
+                      type='submit' aria-label="delete" onClick={() => 
+                        history.push(`/compras/${Meteor.user()._id}`)
+                        // showNotification()
+                        }>
+                        <Badge badgeContent={compras.length} color="secondary">
+                          <ShoppingCartIcon />
+                        </Badge>
+                        
+                      </IconButton>
+
                       <IconButton 
                       // disabled={mensajes.length > 0 ? false : true} 
                       type='submit' aria-label="delete" onClick={() => 

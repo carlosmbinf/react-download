@@ -62,6 +62,7 @@ import UsersTableVPN from "../ui/pages/vpn/UsersTableVPN";
 import Execute from "../ui/pages/execute/execute";
 import GraphicsLinealConsumoMegasXMeses from "../ui/pages/dashboard/GraphicsLinealConsumoMegasXMeses";
 import StateUsers from "../ui/pages/users/StateUsers";
+import VentasTableSinCompra from "../ui/pages/compras/VentasTableSinCompra";
 
 const useStyles = makeStyles((theme) => ({
   // necessary for content to be below app bar
@@ -153,9 +154,10 @@ export default function Main() {
           <div style={{ paddingBottom: "7em" }}>
             {/* {Meteor.settings.public.mostrarCompras == true && */}
             <CompraCard type="megas"/>
-            <CompraCard type="fecha-proxy"/>
+            {/* <CompraCard type="fecha-proxy"/> */}
             <CompraCard type="vpnplus"/>
-            <CompraCard type="fecha-vpn"/>
+            {/* <CompraCard type="fecha-vpn"/> */}
+            <VentasTableSinCompra/>
              {/* } */}
           </div>
 
@@ -164,11 +166,6 @@ export default function Main() {
         
         <Route path="/users/:id">
           <div style={{ paddingBottom: "7em" }}>
-          <CompraCard type="megas"/>
-            <CompraCard type="fecha-proxy"/>
-            <CompraCard type="vpnplus"/>
-            <CompraCard type="fecha-vpn"/>
-            
             <UserCardDetails />
             {useractual &&
               useractual.profile &&
