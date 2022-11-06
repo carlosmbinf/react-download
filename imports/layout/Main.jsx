@@ -164,6 +164,11 @@ export default function Main() {
         
         <Route path="/users/:id">
           <div style={{ paddingBottom: "7em" }}>
+          <CompraCard type="megas"/>
+            <CompraCard type="fecha-proxy"/>
+            <CompraCard type="vpnplus"/>
+            <CompraCard type="fecha-vpn"/>
+            
             <UserCardDetails />
             {useractual &&
               useractual.profile &&
@@ -469,7 +474,7 @@ export default function Main() {
         <Route path="/ventas">
           <div style={{ paddingBottom: "7em" }}>
             {useractual &&
-              Array(Meteor.settings.public.administradores)[0].includes(useractual.username) ? (
+             useractual.profile.role == "admin" ? (
               <>
                 {/* <CreatePrecios /> */}
                 <VentasTable />

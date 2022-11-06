@@ -338,12 +338,17 @@ if (Meteor.isServer) {
       let userChange = await Meteor.users.findOne(userChangeid)
       let user = await Meteor.users.findOne(userId)
 
+      let baneado = userChange.baneado
+
+      !baneado&&
       await Meteor.users.update(userChangeid, {
         $set: {
           baneado: true,
           bloqueadoDesbloqueadoPor: userId
         },
       })
+
+      !baneado&&
       await LogsCollection.insert({
         type: "Proxy",
         userAfectado: userChangeid,
@@ -351,12 +356,15 @@ if (Meteor.isServer) {
         message:
           "Ha sido Desactivado el proxy por un Admin"
       })
+      
       // Meteor.call('sendemail', userChange, {
       //   text: "Ha sido " +
       //     (!userChange.baneado ? "Desactivado" : "Activado") +
       //     ` el proxy del usuario ${userChange.username}`
       // },
       //  (!userChange.baneado ? "Desactivado " + user.username : "Activado " + user.username)),
+
+      !baneado&&
       await Meteor.call('sendMensaje', userChange, {
         text: "Ha sido Desactivado el proxy"
       }, ("Desactivado " + user.username))
@@ -366,15 +374,17 @@ if (Meteor.isServer) {
 
       let userChange = await Meteor.users.findOne(userChangeid)
       let user = await Meteor.users.findOne(userId)
-
-
-
+      console.log(userChange);
+      let baneado = userChange.baneado
+      baneado &&
       await Meteor.users.update(userChangeid, {
         $set: {
-          baneado: userChange.baneado ? false : true,
+          baneado: false,
           bloqueadoDesbloqueadoPor: userId
         },
       })
+
+      baneado &&
       await LogsCollection.insert({
         type: "Proxy",
         userAfectado: userChangeid,
@@ -386,11 +396,81 @@ if (Meteor.isServer) {
       //     (!userChange.baneado ? "Desactivado" : "Activado") +
       //     ` el proxy del usuario ${userChange.username}`
       // }, (!userChange.baneado ? "Desactivado " + user.username : "Activado " + user.username)),
+
+      baneado &&
       await Meteor.call('sendMensaje', userChange, {
         text: "Ha sido " +
           (!userChange.baneado ? "Desactivado" : "Activado") +
           ` el proxy`
       }, (!userChange.baneado ? "Desactivado " + user.username : "Activado " + user.username))
+
+    },
+    habilitarProxyUserinVentas: async (userUsername, adminusername) => {
+
+      let userChange = await Meteor.users.findOne({ username: userUsername })
+      let admin = await Meteor.users.findOne({username:adminusername})
+      let baneado = userChange.baneado
+      baneado &&
+      await Meteor.users.update(userChange._id, {
+        $set: {
+          baneado: false,
+          bloqueadoDesbloqueadoPor: admin._id
+        },
+      })
+
+      baneado &&
+      await LogsCollection.insert({
+        type: "Proxy",
+        userAfectado: userChange._id,
+        userAdmin: admin._id,
+        message: "Ha sido Activado el proxy por un Admin"
+      })
+      // Meteor.call('sendemail', userChange, {
+      //   text: "Ha sido " +
+      //     (!userChange.baneado ? "Desactivado" : "Activado") +
+      //     ` el proxy del usuario ${userChange.username}`
+      // }, (!userChange.baneado ? "Desactivado " + user.username : "Activado " + user.username)),
+
+      baneado &&
+      await Meteor.call('sendMensaje', userChange, {
+        text: "Ha sido " +
+          (!userChange.baneado ? "Desactivado" : "Activado") +
+          ` el proxy`
+      }, (!userChange.baneado ? "Desactivado " + admin.username : "Activado " + admin.username))
+
+    },
+    desabilitarProxyUserinVentas: async (userUsername, adminusername) => {
+
+      let userChange = await Meteor.users.findOne({ username: userUsername })
+      let admin = await Meteor.users.findOne({username:adminusername})
+      let baneado = userChange.baneado
+      !baneado &&
+      await Meteor.users.update(userChange._id, {
+        $set: {
+          baneado: true,
+          bloqueadoDesbloqueadoPor: admin._id
+        },
+      })
+
+      !baneado &&
+      await LogsCollection.insert({
+        type: "Proxy",
+        userAfectado: userChange._id,
+        userAdmin: admin._id,
+        message: "Ha sido Desactivado el proxy por un Admin"
+      })
+      // Meteor.call('sendemail', userChange, {
+      //   text: "Ha sido " +
+      //     (!userChange.baneado ? "Desactivado" : "Activado") +
+      //     ` el proxy del usuario ${userChange.username}`
+      // }, (!userChange.baneado ? "Desactivado " + user.username : "Activado " + user.username)),
+
+      !baneado &&
+      await Meteor.call('sendMensaje', userChange, {
+        text: "Ha sido " +
+          (!userChange.baneado ? "Desactivado" : "Activado") +
+          ` el proxy`
+      }, (!userChange.baneado ? "Desactivado " + admin.username : "Activado " + admin.username))
 
     },
     addVentasVPN: async (userChangeid, userId) => {

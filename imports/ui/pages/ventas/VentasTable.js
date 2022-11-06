@@ -138,6 +138,9 @@ export default function VentasTable(option) {
   //   return OnlineCollection.find({"userId" : Meteor.userId()}).fetch();
   // });
 
+  const isAdminOficial = useTracker(() => {
+    return Meteor.settings.public.administradores.includes(Meteor.user().username) 
+  })
   const user = (id) =>{
     Meteor.subscribe("user",id,{fields:{
       username: 1
@@ -147,9 +150,10 @@ export default function VentasTable(option) {
   const ventas = useTracker(() => {
     
     let a = [];
-    Meteor.subscribe("ventas",option.selector?option.selector:{}).ready()&&   
 
-    VentasCollection.find(option.selector?option.selector:{}, {
+    Meteor.subscribe("ventas", isAdminOficial ? {} : { adminId: Meteor.userId() }).ready() &&   
+
+    VentasCollection.find(isAdminOficial ? {} : { adminId: Meteor.userId() }, {
       sort: { createdAt: -1 }
     }).map(
       (data) =>
@@ -162,7 +166,8 @@ export default function VentasTable(option) {
           precio: data.precio&&data.precio,
           comentario: data.comentario&&data.comentario,
           cobrado: data.cobrado&&data.cobrado,
-          ganancias: data.gananciasAdmin?data.gananciasAdmin:0
+          ganancias: data.gananciasAdmin?data.gananciasAdmin:0,
+          cobradoAlAdmin:data.cobradoAlAdmin&&data.cobradoAlAdmin
         })
     );
 
@@ -271,10 +276,60 @@ export default function VentasTable(option) {
             aria-label="delete"
             color={rowData.cobrado ? "primary" : "secondary"}
             onClick={() => {
+              try {
               VentasCollection.update(rowData.id, { $set: { cobrado: rowData.cobrado ? false : true } })
+              } catch (error) {
+                console.log(error)
+              }
+              
             }}
           >
             {rowData.cobrado
+              ? <RadioButtonCheckedIcon fontSize="large"/>
+              : <RadioButtonUncheckedIcon fontSize="large"/>}
+          </IconButton>
+          {/* <Button
+            color={rowData.cobrado ? "primary" : "secondary"}
+            // variant="contained"
+            onClick={VentasCollection.update(rowData._id,{$set:{cobrado: !rowData.cobrado}})}
+            label={rowData.cobrado?"Cobrado":"Sin Cobrar"}
+          >
+            {rowData.cobrado
+              ? <RadioButtonCheckedIcon fontSize="large"/>
+              : <RadioButtonUncheckedIcon fontSize="large"/>}
+          </Button> */}
+        </Tooltip>
+      </React.Fragment>
+    );
+  };
+
+  
+  const cobradoAlAdminBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">Cobrado Al Admin: </span>
+        <Tooltip
+          title={
+            rowData.cobradoAlAdmin ? "Cobrado" : "Sin Cobrar"
+          }
+        >
+          <IconButton
+            // disabled
+            aria-label="delete"
+            color={rowData.cobradoAlAdmin ? "primary" : "secondary"}
+            onClick={() => {
+              try {
+                rowData.cobradoAlAdmin ?
+                  Meteor.call("desabilitarProxyUserinVentas", rowData.userId, rowData.adminId) :
+                  Meteor.call("habilitarProxyUserinVentas", rowData.userId, rowData.adminId)
+              VentasCollection.update(rowData.id, { $set: { cobradoAlAdmin: rowData.cobradoAlAdmin ? false : true } })
+              } catch (error) {
+                console.log(error)
+              }
+              
+            }}
+          >
+            {rowData.cobradoAlAdmin
               ? <RadioButtonCheckedIcon fontSize="large"/>
               : <RadioButtonUncheckedIcon fontSize="large"/>}
           </IconButton>
@@ -372,16 +427,24 @@ export default function VentasTable(option) {
                   filterPlaceholder="Comentario:"
                   filterMatchMode="contains"
                 />
+                {isAdminOficial &&
                 <Column
-                  field="url"
+                  field="cobrado"
                   header="Cobrado"
                   body={cobradoBodyTemplate}
-                />
+                />}
                 <Column
-                  field="eliminar"
-                  // header="Eliminar"
-                  body={eliminarBodyTemplate}
+                  field="cobradoAlAdmin"
+                  header="Cobrado Al Admin"
+                  body={cobradoAlAdminBodyTemplate}
                 />
+                
+                {isAdminOficial &&
+                  <Column
+                    field="eliminar"
+                    // header="Eliminar"
+                    body={eliminarBodyTemplate}
+                  />}
               </DataTable>
             </div>
           </div>

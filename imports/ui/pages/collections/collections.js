@@ -285,6 +285,11 @@ export const SchemaVentasCollection = new SimpleSchema({
     defaultValue: false,
     optional: true,
   },
+  cobradoAlAdmin: {
+    type: Boolean,
+    defaultValue: false,
+    optional: true,
+  },
   precio: {
     type: Number,
     defaultValue: 0,

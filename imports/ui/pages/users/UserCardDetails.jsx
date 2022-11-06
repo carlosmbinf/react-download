@@ -836,8 +836,10 @@ export default function UserCardDetails() {
                             </form>
                           )}
 
-                          {Meteor.user().profile.role == "admin" &&
-                            (!(users.profile.role == "admin") || Array(Meteor.settings.public.administradores)[0].includes(Meteor.user().username)) &&
+                          {
+                          // Meteor.user().profile.role == "admin" &&
+                          //   (!(users.profile.role == "admin") || Array(Meteor.settings.public.administradores)[0].includes(Meteor.user().username)) &&
+                          (Array(Meteor.settings.public.administradores)[0].includes(Meteor.user().username) || Meteor.user().profile.role == "admin") &&
                             (
                               <>
                                 <Grid item xs={12} className={classes.margin}>
