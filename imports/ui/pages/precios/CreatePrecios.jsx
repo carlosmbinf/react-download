@@ -1,4 +1,4 @@
-import React, { useState, useEffect  } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
@@ -90,39 +90,39 @@ export default function CreatePrecios() {
   const [message, setMessage] = React.useState("");
   const [transition, setTransition] = React.useState(undefined);
   const [load, setLoad] = React.useState(false);
-  const [heredaDe, setheredaDe] = React.useState({value:null,label:"NO HEREDA"});
+  const [heredaDe, setheredaDe] = React.useState({ value: null, label: "NO HEREDA" });
 
 
-  const types = (type)=>{
-    switch (type){
-          case "megas":
-          return "Proxy por Megas";
-          break;
-          case "fecha-proxy":
-          return "Proxy por Fecha";
-          break;
-          case "vpnplus":
-          return "VPN por Megas";
-          break;
-          case "fecha-vpn":
-          return "VPN por Fecha";
-          break;
-          default:
-          return type;
-          break;
-        }
+  const types = (type) => {
+    switch (type) {
+      case "megas":
+        return "Proxy por Megas";
+        break;
+      case "fecha-proxy":
+        return "Proxy por Fecha";
+        break;
+      case "vpnplus":
+        return "VPN por Megas";
+        break;
+      case "fecha-vpn":
+        return "VPN por Fecha";
+        break;
+      default:
+        return type;
+        break;
+    }
   }
 
   const buscarPrecio = useTracker(() => {
-    heredaDe.value&&Meteor.subscribe("precios",{_id:heredaDe.value})
-    let precioOficial = heredaDe.value?PreciosCollection.findOne({_id:heredaDe.value}):null
-    
+    heredaDe.value && Meteor.subscribe("precios", { _id: heredaDe.value })
+    let precioOficial = heredaDe.value ? PreciosCollection.findOne({ _id: heredaDe.value }) : null
+
     return precioOficial;
   });
 
 
-useEffect(() => {
-   if(buscarPrecio != null){
+  useEffect(() => {
+    if (buscarPrecio != null) {
       setType(buscarPrecio.type);
       setcomentario(buscarPrecio.comentario);
       setmegas(buscarPrecio.megas);
@@ -131,33 +131,33 @@ useEffect(() => {
   });
 
   const adminPrincial = useTracker(() => {
-    Meteor.subscribe("user",{ username : Meteor.settings.public.administradores[0] } );
-    let admin = Meteor.users.findOne({ username: Meteor.settings.public.administradores[0] }) 
+    Meteor.subscribe("user", { username: Meteor.settings.public.administradores[0] });
+    let admin = Meteor.users.findOne({ username: Meteor.settings.public.administradores[0] })
     return admin;
   });
 
   const listadoDePreciosOriginales = useTracker(() => {
 
-    Meteor.subscribe("precios",{userId:adminPrincial&&adminPrincial._id})
-    Meteor.subscribe("precios",{userId:Meteor.userId()})
-    
+    Meteor.subscribe("precios", { userId: adminPrincial && adminPrincial._id })
+    Meteor.subscribe("precios", { userId: Meteor.userId() })
+
     let listadoDePreciosOficiales = []
-    listadoDePreciosOficiales.push({value:null,label:"NO HEREDA"})
+    listadoDePreciosOficiales.push({ value: null, label: "NO HEREDA" })
     let preciosAgregados = []
-    PreciosCollection.find({userId:adminPrincial&&adminPrincial._id},{sort:{type:1,megas:1}}).forEach(element=>{
-      listadoDePreciosOficiales.push({value:element._id,label:`${element.megas?element.megas+" MB":"ILIMITADO"}  -  ${types(element.type)}  -  ${element.precio} CUP`})
+    PreciosCollection.find({ userId: adminPrincial && adminPrincial._id }, { sort: { type: 1, megas: 1 } }).forEach(element => {
+      listadoDePreciosOficiales.push({ value: element._id, label: `${element.megas ? element.megas + " MB" : "ILIMITADO"}  -  ${types(element.type)}  -  ${element.precio} CUP` })
     });
 
-    PreciosCollection.find({userId:Meteor.userId()},{sort:{type:1,megas:1}}).forEach(element=>{
-      preciosAgregados.push({value:element.heredaDe,label:`${element.megas?element.megas+" MB":"ILIMITADO"}  -  ${types(element.type)}  -  ${element.precio} CUP`})
+    PreciosCollection.find({ userId: Meteor.userId() }, { sort: { type: 1, megas: 1 } }).forEach(element => {
+      preciosAgregados.push({ value: element.heredaDe, label: `${element.megas ? element.megas + " MB" : "ILIMITADO"}  -  ${types(element.type)}  -  ${element.precio} CUP` })
     });
-    
+
     return listadoDePreciosOficiales.filter(elementa => !preciosAgregados.find(elementb => elementa.value == elementb.value));
   });
 
   //Probando Select
   const [searchHerencia, setsearchHerencia] = React.useState("");
-  const handleChangeSelect = (event,newValue) => {
+  const handleChangeSelect = (event, newValue) => {
     setheredaDe(newValue);
   };
 
@@ -197,7 +197,7 @@ useEffect(() => {
         megas: (type == "megas" || type == "vpn2mb" || type == "vpnplus") ? megas : null,
         comentario,
         detalles,
-        heredaDe:buscarPrecio?buscarPrecio._id:null
+        heredaDe: buscarPrecio ? buscarPrecio._id : null
       };
       try {
         let id = await PreciosCollection.insert(datosPrecios)
@@ -207,13 +207,13 @@ useEffect(() => {
           setmegas(),
           setdetalles(""),
           setprecio(),
-          setheredaDe({value:null,label:"NO HEREDA"}),
+          setheredaDe({ value: null, label: "NO HEREDA" }),
           setMessage(`Precio ${datosPrecios.precio} CUP Creado`),
           handleClick(TransitionUp),
           setLoad(false),
           setOpen(true))
-          
-          
+
+
 
       } catch (error) {
         setMessage("Ocurrió un Error");
@@ -253,7 +253,7 @@ useEffect(() => {
     setType(event.target.value);
   };
 
-  
+
 
 
 
@@ -313,41 +313,41 @@ useEffect(() => {
                       // noValidate
                       autoComplete="true"
                     >
-                    <Grid item container xs={12}>
-                       <FormControl fullWidth variant="outlined" required className={classes.formControl}>
+                      <Grid item container xs={12}>
+                        <FormControl fullWidth variant="outlined" required className={classes.formControl}>
                           <Autocomplete
-                          required
-                                  fullWidth
-                                  value={heredaDe}
-                                  onChange={(event,newValue)=>{
-                                    (newValue && newValue.value)?
-                                    handleChangeSelect(event,newValue)
-                                    :handleChangeSelect(event,{value:null,label:"NO HEREDA"})
-                                    
-                                    !(newValue && newValue.value) && setprecio(0)
-                                    !(newValue && newValue.value)&&setType("");
-                                    !(newValue && newValue.value)&&setcomentario("");
-                                    !(newValue && newValue.value)&&setmegas();
-                                    !(newValue && newValue.value)&&setdetalles("");
-                                  }}
-                                  defaultValue={{value:null,label:"NO HEREDA"}}
-                                  inputValue={searchHerencia}
-                                  className={classes.margin}
-                                  onInputChange={(event, newInputValue) => {
-                                    setsearchHerencia(newInputValue)
-                                  }}
-                                  id="controllable-states-demo"
-                                  options={listadoDePreciosOriginales}
-                                  getOptionLabel={(option) => option.label}
-                                  getOptionSelected={(option)=> option.label}
-                                  renderInput={(params) => (
-                                    <TextField
-                                      {...params}
-                                      label="Hereda De"
-                                      variant="outlined"
-                                    />
-                                  )}
-                                />
+                            required
+                            fullWidth
+                            value={heredaDe}
+                            onChange={(event, newValue) => {
+                              (newValue && newValue.value) ?
+                                handleChangeSelect(event, newValue)
+                                : handleChangeSelect(event, { value: null, label: "NO HEREDA" })
+
+                              !(newValue && newValue.value) && setprecio(0)
+                              !(newValue && newValue.value) && setType("");
+                              !(newValue && newValue.value) && setcomentario("");
+                              !(newValue && newValue.value) && setmegas();
+                              !(newValue && newValue.value) && setdetalles("");
+                            }}
+                            defaultValue={{ value: null, label: "NO HEREDA" }}
+                            inputValue={searchHerencia}
+                            className={classes.margin}
+                            onInputChange={(event, newInputValue) => {
+                              setsearchHerencia(newInputValue)
+                            }}
+                            id="controllable-states-demo"
+                            options={listadoDePreciosOriginales}
+                            getOptionLabel={(option) => option.label}
+                            getOptionSelected={(option) => option.label}
+                            renderInput={(params) => (
+                              <TextField
+                                {...params}
+                                label="Hereda De"
+                                variant="outlined"
+                              />
+                            )}
+                          />
                           {/* <Select
                               labelId="demo-simple-select-outlined-label1"
                               id="demo-simple-select-outlined1"
@@ -363,148 +363,148 @@ useEffect(() => {
                             </Select> */}
                           <FormHelperText>Selecccione de cual Precio hereda el suyo...</FormHelperText>
                         </FormControl>
-                        <br/>
-                        <br/>
+                        <br />
+                        <br />
                       </Grid>
-                      
-                      <Grid container className={classes.margin}>
-                        Datos:
-                      </Grid>
-                      <Grid item xs={12} sm={4} lg={3}>
-                                                <FormControl required variant="outlined">
-                                                  <TextField
-                                                    required
-                                                    className={classes.margin}
-                                                    id="precio"
-                                                    name="Precio"
-                                                    label="Precio"
-                                                    variant="outlined"
-                                                    color="secondary"
-                                                    type="number"
-                                                    value={precio}
-                                                    onInput={(e) => setprecio(e.target.value)}
-                                                    InputProps={{
-                                                      startAdornment: (
-                                                        <InputAdornment position="start">
-                                                          $
-                                                        </InputAdornment>
-                                                      ),
-                                                    }}
-                                                  />
-                                                </FormControl>
-                                              </Grid>
-                      <Grid container>
-                                            
-                                              <Grid item xs={12} sm={4} lg={3}>
-                                                <FormControl
-                                                  variant="outlined"
-                                                  className={classes.formControl}
-                                                  required
-                                                >
-                                                  <InputLabel id="demo-simple-select-outlined-label">
-                                                    Type
-                                                  </InputLabel>
-                                                  <Select
-                                                   disabled={buscarPrecio?true:false}
-                                                    required
-                                                    labelId="demo-simple-select-outlined-label"
-                                                    id="demo-simple-select-outlined"
-                                                    value={type}
-                                                    onChange={handleChange}
-                                                    label="Type"
-                                                  >
-                                                    {/* <MenuItem value="">
+                      {(heredaDe.value != null || Meteor.settings.public.administradores.includes(Meteor.user().username) )&& <Grid>
+                        <Grid container className={classes.margin}>
+                          Datos:
+                        </Grid>
+                        <Grid item xs={12} sm={4} lg={3}>
+                          <FormControl required variant="outlined">
+                            <TextField
+                              required
+                              className={classes.margin}
+                              id="precio"
+                              name="Precio"
+                              label="Precio"
+                              variant="outlined"
+                              color="secondary"
+                              type="number"
+                              value={precio}
+                              onInput={(e) => setprecio(e.target.value)}
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    $
+                                  </InputAdornment>
+                                ),
+                              }}
+                            />
+                          </FormControl>
+                        </Grid>
+                        <Grid container>
+
+                          <Grid item xs={12} sm={4} lg={3}>
+                            <FormControl
+                              variant="outlined"
+                              className={classes.formControl}
+                              required
+                            >
+                              <InputLabel id="demo-simple-select-outlined-label">
+                                Type
+                              </InputLabel>
+                              <Select
+                                disabled={buscarPrecio ? true : false}
+                                required
+                                labelId="demo-simple-select-outlined-label"
+                                id="demo-simple-select-outlined"
+                                value={type}
+                                onChange={handleChange}
+                                label="Type"
+                              >
+                                {/* <MenuItem value="">
                                                     <em>None</em>
                                                   </MenuItem> */}
-                                                    <MenuItem value={"megas"}>Megas</MenuItem>
-                                                    <MenuItem value={"fecha-proxy"}>Fecha - Proxy</MenuItem>
-                                                    <MenuItem value={"fecha-vpn"}>Fecha - VPN</MenuItem>
-                                                    <MenuItem value={"vpn2mb"}>VPN 2MB</MenuItem>
-                                                    <MenuItem value={"vpnplus"}>VPN Plus</MenuItem>
-                                                  </Select>
-                                                </FormControl>
-                                              </Grid>
-                                              { (type == "megas" || type == "vpn2mb" || type == "vpnplus") &&
-                                                <Grid item xs={12} sm={4} lg={3}>
-                                                  <FormControl  required={(type == "megas" || type == "vpn2mb" || type == "vpnplus")?true:false} variant="outlined">
-                                                    <TextField
-                                                      required={(type == "megas" || type == "vpn2mb" || type == "vpnplus")?true:false}
-                                                      className={classes.margin}
-                                                      id="megas"
-                                                      name="megas"
-                                                      label="Megas"
-                                                      variant="outlined"
-                                                      color="secondary"
-                                                      type="number"
-                                                      value={megas}
-                                                      disabled={buscarPrecio?true:false}
-                                                      onInput={(e) => setmegas(e.target.value)}
-                                                      InputProps={{
-                                                        endAdornment: (
-                                                          <InputAdornment position="start">
-                                                            MB
-                                                          </InputAdornment>
-                                                        ),
-                                                      }}
-                                                    />
-                                                  </FormControl>
-                                                </Grid>
-                                              }
-                                              <Grid item xs={12} sm={4}>
-                                                <FormControl  required variant="outlined">
-                                                  <TextField                              
-                                                    className={classes.margin}
-                                                    id="comentario"
-                                                    name="comentario"
-                                                    label="Comentario"
-                                                    variant="outlined"
-                                                    color="secondary"
-                                                    value={comentario}
-                                                    required
-                                                    disabled={buscarPrecio?true:false}
-                                                    onInput={(e) => setcomentario(e.target.value)}
-                                                    
-                                                  />
-                                                </FormControl>
-                                              </Grid>
-                      
-                                              <Grid item xs={12} sm={4}>
-                                                <FormControl required variant="outlined">
-                                                  <TextField                              
-                                                    className={classes.margin}
-                                                    id="detalles"
-                                                    name="detalles"
-                                                    label="Detalles"
-                                                    variant="outlined"
-                                                    color="secondary"
-                                                    value={detalles}
-                                                    required
-                                                    disabled={buscarPrecio?true:false}
-                                                    onInput={(e) => setdetalles(e.target.value)}
-                                                    // InputProps={{
-                                                    //   startAdornment: (
-                                                    //     <InputAdornment position="start">
-                                                    //       <AccountCircle />
-                                                    //     </InputAdornment>
-                                                    //   ),
-                                                    // }}
-                                                  />
-                                                </FormControl>
-                                              </Grid>
-                      
-                                            </Grid>
+                                <MenuItem value={"megas"}>Megas</MenuItem>
+                                <MenuItem value={"fecha-proxy"}>Fecha - Proxy</MenuItem>
+                                <MenuItem value={"fecha-vpn"}>Fecha - VPN</MenuItem>
+                                <MenuItem value={"vpn2mb"}>VPN 2MB</MenuItem>
+                                <MenuItem value={"vpnplus"}>VPN Plus</MenuItem>
+                              </Select>
+                            </FormControl>
+                          </Grid>
+                          {(type == "megas" || type == "vpn2mb" || type == "vpnplus") &&
+                            <Grid item xs={12} sm={4} lg={3}>
+                              <FormControl required={(type == "megas" || type == "vpn2mb" || type == "vpnplus") ? true : false} variant="outlined">
+                                <TextField
+                                  required={(type == "megas" || type == "vpn2mb" || type == "vpnplus") ? true : false}
+                                  className={classes.margin}
+                                  id="megas"
+                                  name="megas"
+                                  label="Megas"
+                                  variant="outlined"
+                                  color="secondary"
+                                  type="number"
+                                  value={megas}
+                                  disabled={buscarPrecio ? true : false}
+                                  onInput={(e) => setmegas(e.target.value)}
+                                  InputProps={{
+                                    endAdornment: (
+                                      <InputAdornment position="start">
+                                        MB
+                                      </InputAdornment>
+                                    ),
+                                  }}
+                                />
+                              </FormControl>
+                            </Grid>
+                          }
+                          <Grid item xs={12} sm={4}>
+                            <FormControl required variant="outlined">
+                              <TextField
+                                className={classes.margin}
+                                id="comentario"
+                                name="comentario"
+                                label="Comentario"
+                                variant="outlined"
+                                color="secondary"
+                                value={comentario}
+                                required
+                                disabled={buscarPrecio ? true : false}
+                                onInput={(e) => setcomentario(e.target.value)}
 
-                      <Grid item xs={12} className={classes.flex}>
-                        <Button
-                          variant="contained"
-                          type="submit"
-                          color="secondary"
-                        >
-                          <SendIcon />
-                          Send
-                        </Button>
-                      </Grid>
+                              />
+                            </FormControl>
+                          </Grid>
 
+                          <Grid item xs={12} sm={4}>
+                            <FormControl required variant="outlined">
+                              <TextField
+                                className={classes.margin}
+                                id="detalles"
+                                name="detalles"
+                                label="Detalles"
+                                variant="outlined"
+                                color="secondary"
+                                value={detalles}
+                                required
+                                disabled={buscarPrecio ? true : false}
+                                onInput={(e) => setdetalles(e.target.value)}
+                              // InputProps={{
+                              //   startAdornment: (
+                              //     <InputAdornment position="start">
+                              //       <AccountCircle />
+                              //     </InputAdornment>
+                              //   ),
+                              // }}
+                              />
+                            </FormControl>
+                          </Grid>
+
+                        </Grid>
+
+                        <Grid item xs={12} className={classes.flex}>
+                          <Button
+                            variant="contained"
+                            type="submit"
+                            color="secondary"
+                          >
+                            <SendIcon />
+                            Send
+                          </Button>
+                        </Grid>
+                      </Grid>}
                     </form>
                   </Grid>
                 </Grid>
