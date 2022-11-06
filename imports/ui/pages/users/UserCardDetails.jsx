@@ -232,9 +232,9 @@ export default function UserCardDetails() {
   });
 
   const preciosList = useTracker(() => {
-    Meteor.subscribe("precios", { type: "megas" })
+    Meteor.subscribe("precios", { userId: Meteor.user()._id, type: "megas" })
     let precioslist = []
-    PreciosCollection.find({ type: "megas" }, { sort: { precio: 1 } }).fetch().map((a) => {
+    PreciosCollection.find({userId:Meteor.userId(), type: "megas" }, { sort: { precio: 1 } }).fetch().map((a) => {
       precioslist.push({ value: a.megas, label: a.megas + 'MB • $' + ((a.precio - Meteor.user().descuentoproxy >= 0) ? (a.precio - Meteor.user().descuentoproxy) : 0) })
     })
     return precioslist
@@ -286,9 +286,9 @@ export default function UserCardDetails() {
       }
     }).ready()
     // Meteor.subscribe("precios",{$or:[{ type: "vpnplus"},{ type: "vpn2mb"}] }).ready()
-    Meteor.subscribe("precios", { $or: [{ type: "vpnplus" }, { type: "vpn2mb" }] })
+    Meteor.subscribe("precios", {userId:Meteor.userId(), $or: [{ type: "vpnplus" }, { type: "vpn2mb" }] })
     let precioslist = []
-    PreciosCollection.find({ $or: [{ type: "vpnplus" }, { type: "vpn2mb" }] }, {
+    PreciosCollection.find({userId:Meteor.userId(), $or: [{ type: "vpnplus" }, { type: "vpn2mb" }] }, {
       sort: {
         precio: 1
       }
@@ -325,7 +325,7 @@ export default function UserCardDetails() {
     history.push("/users");
   }
 
-  function handleSubmit(event) {
+  function handleChangePasswordSubmit(event) {
     event.preventDefault();
     // console.log( 'Email:', email, 'Password: ', password, 'firstName: ', firstName);
 
@@ -355,7 +355,7 @@ export default function UserCardDetails() {
 
   }
 
-  function handleLimite(event) {
+  function handleLimiteManual(event) {
     event.preventDefault();
 
     // You should see email and password in console.
@@ -441,6 +441,7 @@ export default function UserCardDetails() {
     alert('Se reinicio los datos de la VPN de ' + users.profile.firstName)
   };
 
+  
   const handleVPNStatus = (event) => {
     let validacion = false;
 
@@ -453,6 +454,11 @@ export default function UserCardDetails() {
     )
     // validacion = ((users.profile.role == "admin") ? true  : false);
       if (!validacion) return null
+
+      // console.log("COMPRA")
+      // console.log(preciosVPNList.find(element=>{
+      //   return element.type == compra.value.split("/")[0]
+      // }));
 
       Meteor.call("addVentasVPN", users._id, Meteor.userId(),(error,result)=>{
         if(error) {
@@ -754,7 +760,7 @@ export default function UserCardDetails() {
                               action="/hello"
                               method="post"
                               className={classes.root}
-                              onSubmit={handleSubmit}
+                              onSubmit={handleChangePasswordSubmit}
                               // noValidate
                               autoComplete="true"
                             >
@@ -1030,7 +1036,7 @@ export default function UserCardDetails() {
                                           action="/limite"
                                           method="post"
                                           // className={classes.root}
-                                          onSubmit={handleLimite}
+                                          onSubmit={handleLimiteManual}
                                           // noValidate
                                           autoComplete="true"
                                         >
@@ -1081,7 +1087,14 @@ export default function UserCardDetails() {
                                         {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
                                         <Autocomplete
                                           fullWidth
-                                        value={users.megas && PreciosCollection.findOne({ type: "megas", megas: users.megas }) ? { value: users.megas, label: (users.megas + 'MB • $' + ((PreciosCollection.findOne({ type: "megas", megas: users.megas }).precio - users.descuentoproxy) > 0 ? PreciosCollection.findOne({ type: "megas", megas: users.megas }).precio - users.descuentoproxy : 0)) } : ""}
+                                        value={users.megas && PreciosCollection.findOne({ userId: Meteor.userId(), type: "megas", megas: users.megas }) ?
+                                          {
+                                            value: users.megas,
+                                            label: (users.megas + 'MB • $' + ((PreciosCollection.findOne({ type: "megas", megas: users.megas }).precio - users.descuentoproxy) > 0 ?
+                                              PreciosCollection.findOne({ type: "megas", megas: users.megas }).precio - users.descuentoproxy :
+                                              0))
+                                          } :
+                                          ""}
                                           onChange={(event, newValue) => {
                                             Meteor.users.update(users._id, {
                                               $set: { megas: newValue.value },
@@ -1329,6 +1342,7 @@ export default function UserCardDetails() {
                                         <Switch
                                           checked={users.vpnisIlimitado}
                                           onChange={() => {
+                                            users.vpnisIlimitado && setCompra({value:"fecha-vpn",label})
                                             Meteor.users.update(users._id, {
                                               $set: {
                                                 vpnisIlimitado: !users.vpnisIlimitado,
@@ -1424,7 +1438,17 @@ export default function UserCardDetails() {
                                 {/* <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel> */}
                                 <Autocomplete
                                   fullWidth
-                                  value={users.vpnplus ? { value: `vpnplus/${users.vpnmegas}`, label: "VPN PLUS • " + users.vpnmegas + "MB" } : (users.vpn2mb ? { value: `vpn2mb/${users.vpnmegas}`, label: "VPN 2MB • " + users.vpnmegas + "MB" } : {})}
+                                    value={users.vpnplus ?
+                                      {
+                                        value: `vpnplus/${users.vpnmegas}`,
+                                        label: "VPN PLUS • " + users.vpnmegas + "MB"
+                                      } :
+                                      (users.vpn2mb ?
+                                        {
+                                          value: `vpn2mb/${users.vpnmegas}`,
+                                          label: "VPN 2MB • " + users.vpnmegas + "MB"
+                                        } :
+                                        {})}
                                   onChange={(event, newValue) => {
                                     newValue.value.split("/")[0] == "vpnplus" ?
                                       Meteor.users.update(users._id, {

@@ -339,8 +339,7 @@ export default function Main() {
         </Route>
         <Route path="/precios">
           <div style={{ paddingBottom: "7em" }}>
-            {useractual &&
-              Array(Meteor.settings.public.administradores)[0].includes(useractual.username) ? (
+            {useractual.profile.role == "admin" ? (
               <>
                 <CreatePrecios />
                 <PreciosTable />

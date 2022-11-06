@@ -32,7 +32,7 @@ const htmlUrls = require('html-urls')
 
 if (Meteor.isServer) {
 
-
+    console.log("Cargando Rutas...");
     var conteoPost = 0;
     function streamToString(stream) {
         const chunks = [];
