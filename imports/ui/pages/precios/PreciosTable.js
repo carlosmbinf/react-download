@@ -139,10 +139,14 @@ export default function PreciosTable(option) {
   const precios = useTracker(() => {
     // Meteor.subscribe("users");
     let a = [];
-    Meteor.subscribe("precios",option.selector?option.selector:{}).ready()&&   
 
-    PreciosCollection.find(option.selector?option.selector:{}, {
-      sort: { type: 1, precio: 1 }
+    let isAdminOficial = Meteor.settings.public.administradores.find((element) => element == Meteor.user().username)
+
+    console.log(isAdminOficial);
+    Meteor.subscribe("precios", isAdminOficial ? {} : { userId: Meteor.userId() }).ready() &&
+
+    PreciosCollection.find(isAdminOficial?{}:{userId:Meteor.userId()}, {
+      sort: {userId:1, type: 1, precio: 1 }
     }).map(
       (data) =>
         data &&

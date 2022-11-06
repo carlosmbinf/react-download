@@ -5,7 +5,7 @@ var cron = require("node-cron");
 
 
 if (Meteor.isServer) {
-
+  console.log("Cargando Tareas...");
 
   try {
     cron

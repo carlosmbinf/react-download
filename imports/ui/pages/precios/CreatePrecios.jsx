@@ -81,9 +81,9 @@ const useStyles = makeStyles((theme) => ({
 
 export default function CreatePrecios() {
   // const [createdAt, setcreatedAt] = useState("");
-  const [precio, setprecio] = useState(0);
+  const [precio, setprecio] = useState();
   const [type, setType] = useState("megas");
-  const [megas, setmegas] = useState(0);
+  const [megas, setmegas] = useState();
   const [comentario, setcomentario] = useState("");
   const [detalles, setdetalles] = useState("");
   const [open, setOpen] = React.useState(false);
@@ -139,21 +139,20 @@ useEffect(() => {
   const listadoDePreciosOriginales = useTracker(() => {
 
     Meteor.subscribe("precios",{userId:adminPrincial&&adminPrincial._id})
+    Meteor.subscribe("precios",{userId:Meteor.userId()})
     
-    let a = []
-    a.push({value:null,label:"NO HEREDA"})
+    let listadoDePreciosOficiales = []
+    listadoDePreciosOficiales.push({value:null,label:"NO HEREDA"})
+    let preciosAgregados = []
     PreciosCollection.find({userId:adminPrincial&&adminPrincial._id},{sort:{type:1,megas:1}}).forEach(element=>{
-      a.push({value:element._id,label:`${element.megas?element.megas+" MB":"ILIMITADO"}  -  ${types(element.type)}  -  ${element.precio} CUP`})
+      listadoDePreciosOficiales.push({value:element._id,label:`${element.megas?element.megas+" MB":"ILIMITADO"}  -  ${types(element.type)}  -  ${element.precio} CUP`})
     });
-    // Meteor.call("getListadosPreciosOficiales",(error,result)=>{
-    //   console.log(result);
-    //   result.forEach(e=>a.push)
-    //   a = result
-    // });
-    
-    // console.log(a)
 
-    return a;
+    PreciosCollection.find({userId:Meteor.userId()},{sort:{type:1,megas:1}}).forEach(element=>{
+      preciosAgregados.push({value:element.heredaDe,label:`${element.megas?element.megas+" MB":"ILIMITADO"}  -  ${types(element.type)}  -  ${element.precio} CUP`})
+    });
+    
+    return listadoDePreciosOficiales.filter(elementa => !preciosAgregados.find(elementb => elementa.value == elementb.value));
   });
 
   //Probando Select
@@ -203,10 +202,19 @@ useEffect(() => {
       try {
         let id = await PreciosCollection.insert(datosPrecios)
         id && (
+          setType(""),
+          setcomentario(""),
+          setmegas(),
+          setdetalles(""),
+          setprecio(),
+          setheredaDe({value:null,label:"NO HEREDA"}),
           setMessage(`Precio ${datosPrecios.precio} CUP Creado`),
           handleClick(TransitionUp),
           setLoad(false),
           setOpen(true))
+          
+          
+
       } catch (error) {
         setMessage("Ocurrió un Error");
         handleClick(TransitionUp);
@@ -312,11 +320,15 @@ useEffect(() => {
                                   fullWidth
                                   value={heredaDe}
                                   onChange={(event,newValue)=>{
-                                    console.log("newValue " + newValue)
-
-                                    newValue?
+                                    (newValue && newValue.value)?
                                     handleChangeSelect(event,newValue)
                                     :handleChangeSelect(event,{value:null,label:"NO HEREDA"})
+                                    
+                                    !(newValue && newValue.value) && setprecio(0)
+                                    !(newValue && newValue.value)&&setType("");
+                                    !(newValue && newValue.value)&&setcomentario("");
+                                    !(newValue && newValue.value)&&setmegas();
+                                    !(newValue && newValue.value)&&setdetalles("");
                                   }}
                                   defaultValue={{value:null,label:"NO HEREDA"}}
                                   inputValue={searchHerencia}
@@ -388,18 +400,18 @@ useEffect(() => {
                                                   variant="outlined"
                                                   className={classes.formControl}
                                                   required
-                                                  disabled={buscarPrecio?true:false}
                                                 >
                                                   <InputLabel id="demo-simple-select-outlined-label">
                                                     Type
                                                   </InputLabel>
                                                   <Select
+                                                   disabled={buscarPrecio?true:false}
+                                                    required
                                                     labelId="demo-simple-select-outlined-label"
                                                     id="demo-simple-select-outlined"
                                                     value={type}
                                                     onChange={handleChange}
                                                     label="Type"
-                                                    defaultValue={'megas'}
                                                   >
                                                     {/* <MenuItem value="">
                                                     <em>None</em>
@@ -414,7 +426,7 @@ useEffect(() => {
                                               </Grid>
                                               { (type == "megas" || type == "vpn2mb" || type == "vpnplus") &&
                                                 <Grid item xs={12} sm={4} lg={3}>
-                                                  <FormControl disabled={buscarPrecio?true:false} required={(type == "megas" || type == "vpn2mb" || type == "vpnplus")?true:false} variant="outlined">
+                                                  <FormControl  required={(type == "megas" || type == "vpn2mb" || type == "vpnplus")?true:false} variant="outlined">
                                                     <TextField
                                                       required={(type == "megas" || type == "vpn2mb" || type == "vpnplus")?true:false}
                                                       className={classes.margin}
@@ -425,6 +437,7 @@ useEffect(() => {
                                                       color="secondary"
                                                       type="number"
                                                       value={megas}
+                                                      disabled={buscarPrecio?true:false}
                                                       onInput={(e) => setmegas(e.target.value)}
                                                       InputProps={{
                                                         endAdornment: (
@@ -438,7 +451,7 @@ useEffect(() => {
                                                 </Grid>
                                               }
                                               <Grid item xs={12} sm={4}>
-                                                <FormControl disabled={buscarPrecio?true:false} variant="outlined">
+                                                <FormControl  required variant="outlined">
                                                   <TextField                              
                                                     className={classes.margin}
                                                     id="comentario"
@@ -447,6 +460,8 @@ useEffect(() => {
                                                     variant="outlined"
                                                     color="secondary"
                                                     value={comentario}
+                                                    required
+                                                    disabled={buscarPrecio?true:false}
                                                     onInput={(e) => setcomentario(e.target.value)}
                                                     
                                                   />
@@ -454,7 +469,7 @@ useEffect(() => {
                                               </Grid>
                       
                                               <Grid item xs={12} sm={4}>
-                                                <FormControl disabled={buscarPrecio?true:false} variant="outlined">
+                                                <FormControl required variant="outlined">
                                                   <TextField                              
                                                     className={classes.margin}
                                                     id="detalles"
@@ -463,6 +478,8 @@ useEffect(() => {
                                                     variant="outlined"
                                                     color="secondary"
                                                     value={detalles}
+                                                    required
+                                                    disabled={buscarPrecio?true:false}
                                                     onInput={(e) => setdetalles(e.target.value)}
                                                     // InputProps={{
                                                     //   startAdornment: (

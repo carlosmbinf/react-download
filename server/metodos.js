@@ -17,7 +17,7 @@ import {
 } from "../imports/ui/pages/collections/collections";
 
 if (Meteor.isServer) {
-
+  console.log("Cargando Métodos...");
   function streamToString(stream) {
     const chunks = [];
     return new Promise((resolve, reject) => {
@@ -27,7 +27,6 @@ if (Meteor.isServer) {
     })
   }
 
-  console.log("Cargando Métodos...");
   Meteor.methods({
     execute: async function (command) {
       try {
@@ -104,7 +103,7 @@ if (Meteor.isServer) {
       });
       // console.log(text);
     },
-    
+
     insertPelis: async function (pelicula) {
       // console.log(req)
       // console.log(peli)
@@ -229,12 +228,12 @@ if (Meteor.isServer) {
         };
       }
     },
-    getListadosPreciosOficiales: async ()=>{     
-      
-      try{
+    getListadosPreciosOficiales: async () => {
+
+      try {
         // let userAdmin = await Meteor.call('getAdminPrincipal');
-        return await  PreciosCollection.find({}).fetch()
-      }catch(error){
+        return await PreciosCollection.find({}).fetch()
+      } catch (error) {
         console.log(error);
       }
     },
@@ -243,11 +242,11 @@ if (Meteor.isServer) {
       ///////REVISAR EN ADDVENTASONLY  el descuento que se debe de hacer
       // let admin = await Meteor.users.findOne(adminId)
       // let precio = PreciosCollection.findOne(precioid)
-      
+
 
       try {
-         let adminPrincipal = await Meteor.users.findOne({ username: Meteor.settings.public.administradores[0] })    
-         return adminPrincipal ? adminPrincipal : null
+        let adminPrincipal = await Meteor.users.findOne({ username: Meteor.settings.public.administradores[0] })
+        return adminPrincipal ? adminPrincipal : null
       } catch (error) {
         return error.message
       }
@@ -263,7 +262,7 @@ if (Meteor.isServer) {
           userId: adminPrincipal._id,
           type: compra.type,
           megas: compra.megas
-        })   
+        })
 
         return precioOficial ? precioOficial : null
       } catch (error) {
@@ -272,7 +271,7 @@ if (Meteor.isServer) {
 
 
     },
-    addVentasOnly: async (userChangeid, adminId,compra) => {
+    addVentasOnly: async (userChangeid, adminId, compra) => {
 
       ///////REVISAR EN ADDVENTASONLY  el descuento que se debe de hacer
       let userChange = await Meteor.users.findOne(userChangeid)
@@ -280,17 +279,17 @@ if (Meteor.isServer) {
       // let precio = PreciosCollection.findOne(precioid)
       let adminPrincipal = await Meteor.users.findOne({ username: Meteor.settings.public.administradores[0] })
 
-      let precioOficial = await Meteor.call('getPrecioOficial', compra );
+      let precioOficial = await Meteor.call('getPrecioOficial', compra);
 
       try {
-                  
+
         compra && await VentasCollection.insert({
-            adminId: adminId,
-            userId: userChangeid,
-            precio: precioOficial ? precioOficial.precio : compra.precio,
-            gananciasAdmin: precioOficial ? compra.precio - precioOficial.precio : 0,
-            comentario: compra.comentario
-          })
+          adminId: adminId,
+          userId: userChangeid,
+          precio: precioOficial ? precioOficial.precio : compra.precio,
+          gananciasAdmin: precioOficial ? compra.precio - precioOficial.precio : 0,
+          comentario: compra.comentario
+        })
 
         return compra ? compra.comentario : `No se encontro Precio a la oferta establecida en el usuario: ${userChange.username}`
       } catch (error) {
@@ -306,29 +305,28 @@ if (Meteor.isServer) {
       let precio;
 
       await userChange.isIlimitado
-            ? precio = await PreciosCollection.findOne({ type: "fecha-proxy" })
-            : precio = await PreciosCollection.findOne({ type: "megas", megas: userChange.megas })
+        ? precio = await PreciosCollection.findOne({ userId: userId, type: "fecha-proxy" })
+        : precio = await PreciosCollection.findOne({ userId: userId, type: "megas", megas: userChange.megas })
 
 
       try {
-        if (!userChange.baneado ) {
+        if (!userChange.baneado) {
           await Meteor.call("desabilitarProxyUser", userChangeid, userId)
           return null
-        } else if( precio || Array(Meteor.settings.public.administradores)[0].includes(user.username) ){
+        } else if (precio || Array(Meteor.settings.public.administradores)[0].includes(user.username)) {
           await Meteor.call("habilitarProxyUser", userChangeid, userId)
+          precio && await Meteor.call("addVentasOnly", userChangeid, userId, precio)
 
-
-          
-            precio && await VentasCollection.insert({
-            adminId: userId,
-            userId: userChangeid,
-            precio: (precio.precio - user.descuentoproxy > 0) ? (precio.precio - user.descuentoproxy) : 0,
-            comentario: precio.comentario
-          })
+          //   await VentasCollection.insert({
+          //   adminId: userId,
+          //   userId: userChangeid,
+          //   precio: (precio.precio - user.descuentoproxy > 0) ? (precio.precio - user.descuentoproxy) : 0,
+          //   comentario: precio.comentario
+          // })
 
         }
 
-        return precio?precio.comentario:`No se encontro Precio a la oferta de Proxy establecida en el usuario: ${userChange.username}`
+        return precio ? precio.comentario : `No se encontro Precio a la oferta de Proxy del usuario: ${userChange.username}`
       } catch (error) {
         return error.message
       }
@@ -394,7 +392,7 @@ if (Meteor.isServer) {
           ` el proxy`
       }, (!userChange.baneado ? "Desactivado " + user.username : "Activado " + user.username))
 
-    },    
+    },
     addVentasVPN: async (userChangeid, userId) => {
       let userChange = await Meteor.users.findOne(userChangeid)
       let user = await Meteor.users.findOne(userId)
@@ -402,30 +400,31 @@ if (Meteor.isServer) {
       let precio;
 
       await userChange.vpnisIlimitado
-            ? precio = await PreciosCollection.findOne({ type: "fecha-vpn" })
-            : (userChange.vpnplus
-              ? precio = await PreciosCollection.findOne({ type: "vpnplus", megas: userChange.vpnmegas })
-              : precio = await PreciosCollection.findOne({ type: "vpn2mb", megas: userChange.vpnmegas })
-            )
+        ? precio = await PreciosCollection.findOne({ userId: userId, type: "fecha-vpn" })
+        : (userChange.vpnplus
+          ? precio = await PreciosCollection.findOne({ userId: userId, type: "vpnplus", megas: userChange.vpnmegas })
+          : precio = await PreciosCollection.findOne({ userId: userId, type: "vpn2mb", megas: userChange.vpnmegas })
+        )
 
       try {
         if (userChange.vpn) {
           await Meteor.call("desabilitarVPNUser", userChangeid, userId)
           return null
-        } else if(precio || Array(Meteor.settings.public.administradores)[0].includes(user.username)){
+        } else if (precio || Array(Meteor.settings.public.administradores)[0].includes(user.username)) {
           await Meteor.call("habilitarVPNUser", userChangeid, userId)
 
-          await VentasCollection.insert({
-            adminId: userId,
-            userId: userChangeid,
-            precio: (precio.precio - user.descuentovpn > 0) ? (precio.precio - user.descuentovpn) : 0,
-            comentario: precio.comentario
-          })
+          precio && await Meteor.call("addVentasOnly", userChangeid, userId, precio)
+          // VentasCollection.insert({
+          //   adminId: userId,
+          //   userId: userChangeid,
+          //   precio: (precio.precio - user.descuentovpn > 0) ? (precio.precio - user.descuentovpn) : 0,
+          //   comentario: precio.comentario
+          // })
 
         }
 
-        return precio?precio.comentario:`No se encontro Precio a la oferta de VPN establecida en el usuario: ${userChange.username}`
-        
+        return precio ? precio.comentario : `No se encontro Precio a la oferta de VPN del usuario: ${userChange.username}`
+
       } catch (error) {
         return error.message
       }
@@ -503,7 +502,7 @@ if (Meteor.isServer) {
         // alert("INFO!!!\nPrimeramente debe seleccionar una oferta de VPN!!!")
       }
 
-    }, setConsumoProxy:async (user,status)=>{
+    }, setConsumoProxy: async (user, status) => {
       try {
         let count = await Meteor.users.update(
           user ? user : {},
@@ -516,9 +515,9 @@ if (Meteor.isServer) {
       } catch (error) {
         return error.message
       }
-    },getUrlTriller: (id) => {
+    }, getUrlTriller: (id) => {
       let peli = PelisCollection.findOne(id)
-      return peli.urlTrailer?peli.urlTrailer:null;
+      return peli.urlTrailer ? peli.urlTrailer : null;
     }
 
   });
