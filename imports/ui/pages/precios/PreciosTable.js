@@ -142,7 +142,6 @@ export default function PreciosTable(option) {
 
     let isAdminOficial = Meteor.settings.public.administradores.find((element) => element == Meteor.user().username)
 
-    console.log(isAdminOficial);
     Meteor.subscribe("precios", isAdminOficial ? {} : { userId: Meteor.userId() }).ready() &&
 
     PreciosCollection.find(isAdminOficial?{}:{userId:Meteor.userId()}, {

@@ -350,6 +350,10 @@ export const SchemaPreciosCollection = new SimpleSchema({
     type: String,
     optional: true,
   },
+  detalles: {
+    type: String,
+    optional: true,
+  },
 });
 
 PreciosCollection.attachSchema(SchemaPreciosCollection);

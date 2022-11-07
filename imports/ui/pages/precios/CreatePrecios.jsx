@@ -199,15 +199,16 @@ export default function CreatePrecios() {
         detalles: buscarPrecio ? buscarPrecio.detalles : detalles,
         heredaDe: buscarPrecio ? buscarPrecio._id : null
       };
+
       try {
         let id = await PreciosCollection.insert(datosPrecios)
         id && (
+          setheredaDe({ value: null, label: "NO HEREDA" }),
           setType(""),
           setcomentario(""),
           setmegas(),
           setdetalles(""),
-          setprecio(),
-          setheredaDe({ value: null, label: "NO HEREDA" }),
+          setprecio(0),
           setMessage(`Precio ${datosPrecios.precio} CUP Creado`),
           handleClick(TransitionUp),
           setLoad(false),

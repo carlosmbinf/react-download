@@ -191,7 +191,6 @@ export default function Main() {
         </Route>
         <Route path="/users">
           <div style={{ paddingBottom: "7em" }}>
-          {console.log("Settings:")}
             {useractual &&
               useractual.profile &&
               useractual.profile.role == "admin" ? (
