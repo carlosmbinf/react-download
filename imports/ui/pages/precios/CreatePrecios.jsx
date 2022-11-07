@@ -195,8 +195,8 @@ export default function CreatePrecios() {
         precio,
         type,
         megas: (type == "megas" || type == "vpn2mb" || type == "vpnplus") ? megas : null,
-        comentario,
-        detalles,
+        comentario: buscarPrecio ? buscarPrecio.comentario : comentario,
+        detalles: buscarPrecio ? buscarPrecio.detalles : detalles,
         heredaDe: buscarPrecio ? buscarPrecio._id : null
       };
       try {
