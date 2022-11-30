@@ -251,6 +251,7 @@ export default function CompraCard(options) {
     };
 
     const comprar = () => {
+      Meteor.users.update({_id:id},{$set:compra.type=="megas"?{megas:compra.megas}:{vpnmegas:compra.megas}})
       Meteor.call("addVentasOnly", id, adminDelUser._id, compra)
       handleClose()
     };
