@@ -2,7 +2,7 @@
   "name": "VIDKAR",
   "private": true,
   "scripts": {
-    "start": "MONGO_URL='mongodb://root:lastunas123@vidkar-shard-00-00.92q4y.mongodb.net:27017,vidkar-shard-00-01.92q4y.mongodb.net:27017,vidkar-shard-00-02.92q4y.mongodb.net:27017/meteor?ssl=true&replicaSet=atlas-axzwc9-shard-0&authSource=admin&retryWrites=true&w=majority' meteor run --port 6000 --settings=settings.json --allow-superuser",
+    "start": "DDP_DEFAULT_CONNECTION_URL=http://vidkar.ddns.net:6000 meteor run --port 6000 --settings=settings.json --allow-superuser",
     "test": "meteor test --once --driver-package meteortesting:mocha",
     "test-app": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",
     "visualize": "meteor --production --extra-packages bundle-visualizer"
@@ -50,7 +50,6 @@
     "primeicons": "^4.0.0",
     "primereact": "^5.0.1",
     "proxy-chain": "^1.0.0",
-    "re2": "^1.17.4",
     "react": "^16.14.0",
     "react-alice-carousel": "^2.3.0",
     "react-bell-chat": "^1.0.51",
@@ -67,8 +66,7 @@
     "simple-text-search": "^1.1.5",
     "srt-to-vtt": "^1.1.3",
     "styled-components": "^5.2.1",
-    "ws": "^7.4.4",
-    "youtube-dl": "^3.1.0"
+    "ws": "^7.4.4"
   },
   "meteor": {
     "mainModule": {

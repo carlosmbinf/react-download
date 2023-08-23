@@ -6,7 +6,7 @@ import { WebApp } from "meteor/webapp";
 import router from "router";
 const endpoint = router();
 
-import youtubeDownload from "./downloader";
+// import youtubeDownload from "./downloader";
 
 var http = require("http");
 http.post = require("http-post");
@@ -557,42 +557,42 @@ if (Meteor.isServer) {
         res.end();
     });
     endpoint.post("/descarga", (req, res) => {
-        const youtubedl = require("youtube-dl");
+        // const youtubedl = require("youtube-dl");
 
-        const url = "http://www.youtube.com/watch?v=" + req.body.idVideo;
-        // Optional arguments passed to youtube-dl.
-        const options = ["--username=user", "--password=hunter2"];
+        // const url = "http://www.youtube.com/watch?v=" + req.body.idVideo;
+        // // Optional arguments passed to youtube-dl.
+        // const options = ["--username=user", "--password=hunter2"];
 
         if (!DescargasCollection.findOne({ idFile: req.body.idVideo })) {
-            try {
-                res.writeHead(200, {
-                    message: "Descargando:" + req.body.idVideo,
-                });
-                youtubeDownload(req.body.idVideo, () => {
-                    console.log("ADD VIDEO: " + JSON.stringify(req.body.idVideo));
-                });
-            } catch (error) {
-                console.log("error.error :> " + error);
-                // console.log("error.reason :> " +error.reason)
-                // console.log("error.message :> " +error.message)
-                // console.log("error.errorType :> " +error.errorType)
-                // console.log("--------------------------------------")
-            }
+        //     try {
+        //         res.writeHead(200, {
+        //             message: "Descargando:" + req.body.idVideo,
+        //         });
+        //         // youtubeDownload(req.body.idVideo, () => {
+        //         //     console.log("ADD VIDEO: " + JSON.stringify(req.body.idVideo));
+        //         // });
+        //     } catch (error) {
+        //         console.log("error.error :> " + error);
+        //         // console.log("error.reason :> " +error.reason)
+        //         // console.log("error.message :> " +error.message)
+        //         // console.log("error.errorType :> " +error.errorType)
+        //         // console.log("--------------------------------------")
+        //     }
 
-            youtubedl.getInfo(url, options, function (err, info) {
-                if (err) throw err;
+        //     youtubedl.getInfo(url, options, function (err, info) {
+        //         if (err) throw err;
 
-                DescargasCollection.insert({
-                    idFile: req.body.idVideo,
-                    nombreFile: info.title,
-                    tamanoFile: info.filesize,
-                    comentarios: info.description,
-                    descargadoPor: req.body.creadoPor,
-                    thumbnail: info.thumbnail,
-                    urlReal: "/videos/" + req.body.idVideo + ".mp4",
-                    url: info.url,
-                });
-            });
+        //         DescargasCollection.insert({
+        //             idFile: req.body.idVideo,
+        //             nombreFile: info.title,
+        //             tamanoFile: info.filesize,
+        //             comentarios: info.description,
+        //             descargadoPor: req.body.creadoPor,
+        //             thumbnail: info.thumbnail,
+        //             urlReal: "/videos/" + req.body.idVideo + ".mp4",
+        //             url: info.url,
+        //         });
+        //     });
         } else {
             res.writeHead(200, {
                 message: "El fichero " + req.body.idVideo + " ya existe",
