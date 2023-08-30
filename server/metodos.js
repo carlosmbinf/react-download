@@ -166,46 +166,73 @@ if (Meteor.isServer) {
         const imdbId = require("imdb-id");
         const IMDb = require("imdb-light");
 
-        let idimdb = await imdbId(peli.nombrePeli);
-        // console.log("ID de IMDB => " + idimdb)
+        let idimdb
+        //////ACTUALIZANDO IDIMDB
+        try {
+          idimdb = await imdbId(peli.nombrePeli);
+        } catch (error) {
+          console.log(error.message);
+        }
+        console.log("ID de IMDB => peli.nombrePeli -> " + idimdb)
 
-        PelisCollection.update(
-          { _id: id },
-          {
-            $set: {
-              idimdb: idimdb,
-            },
-          },
-          { multi: true }
-        );
 
-        await IMDb.trailer(idimdb, (url) => {
-          // console.log(url)  // output is direct mp4 url (also have expiration timeout)
-
-          PelisCollection.update(
+        //////ACTUALIZANDO IDIMDB EN PELI
+        try {
+          idimdb && PelisCollection.update(
             { _id: id },
             {
               $set: {
-                urlTrailer: url,
-                // clasificacion: details.Genres.split(", ")
-              },
-            }
-          );
-        });
-
-        await IMDb.fetch(idimdb, (details) => {
-          // console.log(details)  // etc...
-          PelisCollection.update(
-            { _id: id },
-            {
-              $set: {
-                descripcion: details.Plot,
-                clasificacion: details.Genres.split(", "),
+                idimdb: idimdb,
               },
             },
             { multi: true }
           );
-        });
+        } catch (error) {
+          console.log(error.message);
+        }
+
+
+
+
+        /////////ACTUALIZANDO TRILERS
+        try {
+          idimdb && await IMDb.trailer(idimdb, (url) => {
+            // console.log(url)  // output is direct mp4 url (also have expiration timeout)
+
+            PelisCollection.update(
+              { _id: id },
+              {
+                $set: {
+                  urlTrailer: url,
+                  // clasificacion: details.Genres.split(", ")
+                },
+              }
+            );
+          });
+        } catch (error) {
+          console.log(error.message);
+        }
+
+
+        //////ACTUALIZANDO CLASIFICACION
+        try {
+          idimdb && await IMDb.fetch(idimdb, (details) => {
+            // console.log(details)  // etc...
+            PelisCollection.update(
+              { _id: id },
+              {
+                $set: {
+                  descripcion: details.Plot,
+                  clasificacion: details.Genres.split(", "),
+                },
+              },
+              { multi: true }
+            );
+          });
+        } catch (error) {
+          console.log(error.message);
+        }
+
 
         return {
           message: exist

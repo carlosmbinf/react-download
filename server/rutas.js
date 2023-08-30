@@ -92,16 +92,17 @@ if (Meteor.isServer) {
             //   //   'https://microlink.io',
             //   //   ...
             //   // ]
-
+            console.log(links)
 
             for (var i = 5; i <= links.length - 4; i++) {
                 let nombre = links[i].value
                     .replace(`${year}_`, "")
-                    .replace(`%20`, " ")
+                    .replace(/%20/g, ' ')
                     .replace(/\./g, " ")
-                    .replace(`/`, "");
+                    .replace(`/`, "")
+                    .replace(`(${year})`, "");
                 // console.log(`Name: ${nombre}`);
-                // console.log(links[i]);
+                console.log(links[i]);
                 let a = await getPeli(nombre, year, links[i].url)
                 a && (a.nombre && a.year && a.peli && a.poster) && pelis.push(a);
                 console.log(`Name: ${nombre}`);
