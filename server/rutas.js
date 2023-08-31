@@ -24,9 +24,9 @@ import {
     DescargasCollection,
     TVCollection,
     RegisterDataUsersCollection
-  } from "../imports/ui/pages/collections/collections";
+} from "../imports/ui/pages/collections/collections";
 
-  
+
 const got = require('got')
 const htmlUrls = require('html-urls')
 
@@ -92,7 +92,7 @@ if (Meteor.isServer) {
             //   //   'https://microlink.io',
             //   //   ...
             //   // ]
-            console.log(links)
+            // console.log(links)
 
             for (var i = 5; i <= links.length - 4; i++) {
                 let nombre = links[i].value
@@ -102,20 +102,19 @@ if (Meteor.isServer) {
                     .replace(`/`, "")
                     .replace(`(${year})`, "");
                 // console.log(`Name: ${nombre}`);
-                console.log(links[i]);
+                // console.log(links[i]);
                 let a = await getPeli(nombre, year, links[i].url)
-                a && (a.nombre && a.year && a.peli && a.poster) && pelis.push(a);
-                console.log(`Name: ${nombre}`);
+                a && (a.nombre && a.year && a.peli && a.poster) && await pelis.push(a);
+                // console.log(`Name: ${nombre}`);
 
 
             }
-            // console.log(pelis);
             // console.log(pelis.length)
             try {
                 pelis &&
-                    pelis.forEach( (element) => {
-// console.log(element);
-                       Meteor.call("insertPelis",element)
+                    await pelis.forEach(async (element) => {
+                        // console.log(element);
+                      await  Meteor.call("insertPelis", element)
 
                         // http.post("http://localhost:6000/insertPelis", element, (opciones, res, body) => {
                         //     if (!opciones.headers.error) {
@@ -282,50 +281,85 @@ if (Meteor.isServer) {
 
             });
 
-            const imdbId = require('imdb-id');
+            var nameToImdb = require("name-to-imdb");
             const IMDb = require('imdb-light');
 
-            let idimdb = await imdbId(peli.nombrePeli)
+
             // console.log("ID de IMDB => " + idimdb)
-
-            PelisCollection.update(
-                { _id: id },
-                {
-                    $set: {
-                        idimdb: idimdb
-                    },
-                },
-                { multi: true }
-            );
-
-            await IMDb.trailer(idimdb, (url) => {
-                // console.log(url)  // output is direct mp4 url (also have expiration timeout)
-
-                PelisCollection.update(
-                    { _id: id },
-                    {
-                        $set: {
-                            urlTrailer: url,
-                            // clasificacion: details.Genres.split(", ")
-                        },
-                    }
-                );
+            var idimdb;
+            nameToImdb(peli.nombrePeli, function (err, res, inf) {
+                console.log(res); // "tt0121955"
+                // inf contains info on where we matched that name - e.g. metadata, or on imdb
+                // and the meta object with all the available data
+                console.log(inf);
+                idimdb = res && res
             })
+                // try {
+                //     var result = await nameToImdb({ name: peli.nombrePeli, year: peli.year });
+                //     console.log(result.res); // "tt0133093"
+                //     console.log(result.inf); // {match: 'metadata', isCached: false, meta: {...}}    
+                //     idimdb = result.res && result.res
+                // } catch (error) {
+                //     console.log(error);
+                // }
+                
 
-            await IMDb.fetch(idimdb, (details) => {
-                // console.log(details)  // etc...
-                PelisCollection.update(
+            //////ACTUALIZANDO IDIMDB EN PELI
+            try {
+                idimdb && PelisCollection.update(
                     { _id: id },
                     {
                         $set: {
-                            descripcion: details.Plot,
-                            clasificacion: details.Genres.split(", ")
+                            idimdb: idimdb,
                         },
                     },
                     { multi: true }
                 );
-            })
+            } catch (error) {
+                console.log(error.message);
+            }
 
+
+
+
+            /////////ACTUALIZANDO TRILERS
+            try {
+                idimdb && await IMDb.trailer(idimdb, (url) => {
+                    // console.log(url)  // output is direct mp4 url (also have expiration timeout)
+
+                    PelisCollection.update(
+                        { _id: id },
+                        {
+                            $set: {
+                                urlTrailer: url,
+                                // clasificacion: details.Genres.split(", ")
+                            },
+                        }
+                    );
+                });
+            } catch (error) {
+                console.log(error.message);
+            }
+
+
+            //////ACTUALIZANDO CLASIFICACION
+            try {
+                idimdb && await IMDb.fetch(idimdb, (details) => {
+                    // console.log(details)  // etc...
+                    PelisCollection.update(
+                        { _id: id },
+                        {
+                            $set: {
+                                descripcion: details.Plot,
+                                clasificacion: details.Genres.split(", "),
+                            },
+                        },
+                        { multi: true }
+                    );
+                });
+            } catch (error) {
+                console.log(error.message);
+            }
 
 
             res.writeHead(200, {
@@ -718,7 +752,7 @@ if (Meteor.isServer) {
         })
 
 
-        
-  WebApp.connectHandlers.use(bodyParser.urlencoded({ extended: true }));
-  WebApp.connectHandlers.use(endpoint);
+
+    WebApp.connectHandlers.use(bodyParser.urlencoded({ extended: true }));
+    WebApp.connectHandlers.use(endpoint);
 }

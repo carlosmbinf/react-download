@@ -143,9 +143,9 @@ if (Meteor.isServer) {
             try {
               var stream = response.pipe(srt2vtt());
               // stream.on("finish", function () {});
-              streamToString(stream).then((data) => {
+              await streamToString(stream).then( async (data) => {
                 data &&
-                  PelisCollection.update(
+                  await PelisCollection.update(
                     { _id: id },
                     {
                       $set: {
@@ -163,22 +163,25 @@ if (Meteor.isServer) {
             }
           }));
 
-        const imdbId = require("imdb-id");
-        const IMDb = require("imdb-light");
 
-        let idimdb
-        //////ACTUALIZANDO IDIMDB
-        try {
-          idimdb = await imdbId(peli.nombrePeli);
-        } catch (error) {
-          console.log(error.message);
-        }
-        console.log("ID de IMDB => peli.nombrePeli -> " + idimdb)
+          var nameToImdb = require("name-to-imdb");
+          const IMDb = require('imdb-light');
 
+
+          console.log("Nombre Peli: " + peli.nombrePeli)
+          var idimdb;
+        await nameToImdb({ name: pelicula.nombre, year: pelicula.year }, async (err, res, inf) => {
+            err && console.log(`err IMDB de ${pelicula.nombre} =>  ${err}`)
+             await console.log(`id IMDB de ${pelicula.nombre} =>  ${res}`); // "tt0121955"
+              // inf contains info on where we matched that name - e.g. metadata, or on imdb
+              // and the meta object with all the available data
+              await console.log(`info IMDB de ${pelicula.nombre} =>  ${inf}`);
+              idimdb = res && res;
+          })
 
         //////ACTUALIZANDO IDIMDB EN PELI
         try {
-          idimdb && PelisCollection.update(
+          idimdb && await PelisCollection.update(
             { _id: id },
             {
               $set: {
@@ -196,10 +199,10 @@ if (Meteor.isServer) {
 
         /////////ACTUALIZANDO TRILERS
         try {
-          idimdb && await IMDb.trailer(idimdb, (url) => {
+          idimdb && await IMDb.trailer(idimdb, async (url) => {
             // console.log(url)  // output is direct mp4 url (also have expiration timeout)
 
-            PelisCollection.update(
+           await PelisCollection.update(
               { _id: id },
               {
                 $set: {
@@ -216,9 +219,9 @@ if (Meteor.isServer) {
 
         //////ACTUALIZANDO CLASIFICACION
         try {
-          idimdb && await IMDb.fetch(idimdb, (details) => {
+          idimdb && await IMDb.fetch(idimdb,async (details) => {
             // console.log(details)  // etc...
-            PelisCollection.update(
+            await PelisCollection.update(
               { _id: id },
               {
                 $set: {
@@ -367,23 +370,23 @@ if (Meteor.isServer) {
 
       let baneado = userChange.baneado
 
-      !baneado&&
-      await Meteor.users.update(userChangeid, {
-        $set: {
-          baneado: true,
-          bloqueadoDesbloqueadoPor: userId
-        },
-      })
+      !baneado &&
+        await Meteor.users.update(userChangeid, {
+          $set: {
+            baneado: true,
+            bloqueadoDesbloqueadoPor: userId
+          },
+        })
 
-      !baneado&&
-      await LogsCollection.insert({
-        type: "Proxy",
-        userAfectado: userChangeid,
-        userAdmin: userId,
-        message:
-          "Ha sido Desactivado el proxy por un Admin"
-      })
-      
+      !baneado &&
+        await LogsCollection.insert({
+          type: "Proxy",
+          userAfectado: userChangeid,
+          userAdmin: userId,
+          message:
+            "Ha sido Desactivado el proxy por un Admin"
+        })
+
       // Meteor.call('sendemail', userChange, {
       //   text: "Ha sido " +
       //     (!userChange.baneado ? "Desactivado" : "Activado") +
@@ -391,10 +394,10 @@ if (Meteor.isServer) {
       // },
       //  (!userChange.baneado ? "Desactivado " + user.username : "Activado " + user.username)),
 
-      !baneado&&
-      await Meteor.call('sendMensaje', userChange, {
-        text: "Ha sido Desactivado el proxy"
-      }, ("Desactivado " + user.username))
+      !baneado &&
+        await Meteor.call('sendMensaje', userChange, {
+          text: "Ha sido Desactivado el proxy"
+        }, ("Desactivado " + user.username))
 
     },
     habilitarProxyUser: async (userChangeid, userId) => {
@@ -404,20 +407,20 @@ if (Meteor.isServer) {
       console.log(userChange);
       let baneado = userChange.baneado
       baneado &&
-      await Meteor.users.update(userChangeid, {
-        $set: {
-          baneado: false,
-          bloqueadoDesbloqueadoPor: userId
-        },
-      })
+        await Meteor.users.update(userChangeid, {
+          $set: {
+            baneado: false,
+            bloqueadoDesbloqueadoPor: userId
+          },
+        })
 
       baneado &&
-      await LogsCollection.insert({
-        type: "Proxy",
-        userAfectado: userChangeid,
-        userAdmin: userId,
-        message: "Ha sido Activado el proxy por un Admin"
-      })
+        await LogsCollection.insert({
+          type: "Proxy",
+          userAfectado: userChangeid,
+          userAdmin: userId,
+          message: "Ha sido Activado el proxy por un Admin"
+        })
       // Meteor.call('sendemail', userChange, {
       //   text: "Ha sido " +
       //     (!userChange.baneado ? "Desactivado" : "Activado") +
@@ -425,33 +428,33 @@ if (Meteor.isServer) {
       // }, (!userChange.baneado ? "Desactivado " + user.username : "Activado " + user.username)),
 
       baneado &&
-      await Meteor.call('sendMensaje', userChange, {
-        text: "Ha sido " +
-          (!userChange.baneado ? "Desactivado" : "Activado") +
-          ` el proxy`
-      }, (!userChange.baneado ? "Desactivado " + user.username : "Activado " + user.username))
+        await Meteor.call('sendMensaje', userChange, {
+          text: "Ha sido " +
+            (!userChange.baneado ? "Desactivado" : "Activado") +
+            ` el proxy`
+        }, (!userChange.baneado ? "Desactivado " + user.username : "Activado " + user.username))
 
     },
     habilitarProxyUserinVentas: async (userUsername, adminusername) => {
 
       let userChange = await Meteor.users.findOne({ username: userUsername })
-      let admin = await Meteor.users.findOne({username:adminusername})
+      let admin = await Meteor.users.findOne({ username: adminusername })
       let baneado = userChange.baneado
       baneado &&
-      await Meteor.users.update(userChange._id, {
-        $set: {
-          baneado: false,
-          bloqueadoDesbloqueadoPor: admin._id
-        },
-      })
+        await Meteor.users.update(userChange._id, {
+          $set: {
+            baneado: false,
+            bloqueadoDesbloqueadoPor: admin._id
+          },
+        })
 
       baneado &&
-      await LogsCollection.insert({
-        type: "Proxy",
-        userAfectado: userChange._id,
-        userAdmin: admin._id,
-        message: "Ha sido Activado el proxy por un Admin"
-      })
+        await LogsCollection.insert({
+          type: "Proxy",
+          userAfectado: userChange._id,
+          userAdmin: admin._id,
+          message: "Ha sido Activado el proxy por un Admin"
+        })
       // Meteor.call('sendemail', userChange, {
       //   text: "Ha sido " +
       //     (!userChange.baneado ? "Desactivado" : "Activado") +
@@ -459,33 +462,33 @@ if (Meteor.isServer) {
       // }, (!userChange.baneado ? "Desactivado " + user.username : "Activado " + user.username)),
 
       baneado &&
-      await Meteor.call('sendMensaje', userChange, {
-        text: "Ha sido " +
-          (!userChange.baneado ? "Desactivado" : "Activado") +
-          ` el proxy`
-      }, (!userChange.baneado ? "Desactivado " + admin.username : "Activado " + admin.username))
+        await Meteor.call('sendMensaje', userChange, {
+          text: "Ha sido " +
+            (!userChange.baneado ? "Desactivado" : "Activado") +
+            ` el proxy`
+        }, (!userChange.baneado ? "Desactivado " + admin.username : "Activado " + admin.username))
 
     },
     desabilitarProxyUserinVentas: async (userUsername, adminusername) => {
 
       let userChange = await Meteor.users.findOne({ username: userUsername })
-      let admin = await Meteor.users.findOne({username:adminusername})
+      let admin = await Meteor.users.findOne({ username: adminusername })
       let baneado = userChange.baneado
       !baneado &&
-      await Meteor.users.update(userChange._id, {
-        $set: {
-          baneado: true,
-          bloqueadoDesbloqueadoPor: admin._id
-        },
-      })
+        await Meteor.users.update(userChange._id, {
+          $set: {
+            baneado: true,
+            bloqueadoDesbloqueadoPor: admin._id
+          },
+        })
 
       !baneado &&
-      await LogsCollection.insert({
-        type: "Proxy",
-        userAfectado: userChange._id,
-        userAdmin: admin._id,
-        message: "Ha sido Desactivado el proxy por un Admin"
-      })
+        await LogsCollection.insert({
+          type: "Proxy",
+          userAfectado: userChange._id,
+          userAdmin: admin._id,
+          message: "Ha sido Desactivado el proxy por un Admin"
+        })
       // Meteor.call('sendemail', userChange, {
       //   text: "Ha sido " +
       //     (!userChange.baneado ? "Desactivado" : "Activado") +
@@ -493,11 +496,11 @@ if (Meteor.isServer) {
       // }, (!userChange.baneado ? "Desactivado " + user.username : "Activado " + user.username)),
 
       !baneado &&
-      await Meteor.call('sendMensaje', userChange, {
-        text: "Ha sido " +
-          (!userChange.baneado ? "Desactivado" : "Activado") +
-          ` el proxy`
-      }, (!userChange.baneado ? "Desactivado " + admin.username : "Activado " + admin.username))
+        await Meteor.call('sendMensaje', userChange, {
+          text: "Ha sido " +
+            (!userChange.baneado ? "Desactivado" : "Activado") +
+            ` el proxy`
+        }, (!userChange.baneado ? "Desactivado " + admin.username : "Activado " + admin.username))
 
     },
     addVentasVPN: async (userChangeid, userId) => {

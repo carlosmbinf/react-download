@@ -45,6 +45,7 @@
     "meteor-node-stubs": "^1.0.0",
     "moment": "^2.29.1",
     "mongoimport": "^1.0.6",
+    "name-to-imdb": "^3.0.4",
     "node-cron": "^3.0.0",
     "primeflex": "^2.0.0",
     "primeicons": "^4.0.0",
