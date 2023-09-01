@@ -11,10 +11,10 @@
 
 	 },
 	 "google": {
-		"client_secret": "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",
-		"client_id": "467443357554-7k3uu2kjecbf7n7m4b5s6q353frprv45.apps.googleusercontent.com",
+		"client_secret": "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",
+		"client_id": "1043110071233-5mf355rcrf02hq4ja99uaq9kspokur1t.apps.googleusercontent.com",
 		"validClientIds": [
-		  "467443357554-7k3uu2kjecbf7n7m4b5s6q353frprv45.apps.googleusercontent.com"
+		  "1043110071233-5mf355rcrf02hq4ja99uaq9kspokur1t.apps.googleusercontent.com"
 		]
 	  },
 	  "facebook": {

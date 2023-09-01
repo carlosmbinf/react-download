@@ -181,6 +181,7 @@ if (Meteor.isServer) {
 
         //////ACTUALIZANDO IDIMDB EN PELI
         try {
+          console.log(`Update IDIMDB - Nombre Peli: ${peli.nombrePeli}`)
           idimdb && await PelisCollection.update(
             { _id: id },
             {
@@ -199,6 +200,7 @@ if (Meteor.isServer) {
 
         /////////ACTUALIZANDO TRILERS
         try {
+          console.log(`Update urlTrailer - Nombre Peli: ${peli.nombrePeli}`)
           idimdb && await IMDb.trailer(idimdb, async (url) => {
             // console.log(url)  // output is direct mp4 url (also have expiration timeout)
 
@@ -218,6 +220,7 @@ if (Meteor.isServer) {
 
 
         //////ACTUALIZANDO CLASIFICACION
+        console.log(`Update descripcion y clasificacion - Nombre Peli: ${peli.nombrePeli}`)
         try {
           idimdb && await IMDb.fetch(idimdb,async (details) => {
             // console.log(details)  // etc...
