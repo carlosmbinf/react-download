@@ -885,43 +885,7 @@ export default function UserCardDetails() {
                                     alignItems: "center",
                                   }}
                                 >
-                                  <FormControlLabel
-                                    control={
-                                      <Tooltip
-                                        title={
-                                          users.isIlimitado
-                                            ? "Cambiar consumo por MB"
-                                            : "Cambiar consumo por Fecha"
-                                        }
-                                      >
-                                        <Switch
-                                          checked={users.isIlimitado}
-                                          onChange={() => {
-                                            Meteor.users.update(users._id, {
-                                              $set: {
-                                                isIlimitado: !users.isIlimitado,
-                                              },
-                                            });
-                                          }}
-                                          name="Ilimitado"
-                                          color={
-                                            users.isIlimitado
-                                              ? "secondary"
-                                              : "primary"
-                                          }
-                                        />
-                                      </Tooltip>
-                                    }
-                                  label={
-                                    users.isIlimitado
-                                      ? ` ${PreciosCollection.findOne({ type: "fecha-proxy" })
-                                        ? `Limitado por Fecha ($${PreciosCollection.findOne({ type: "fecha-proxy" }).precio - users.descuentoproxy})`
-                                        : `Limitado por Fecha`}`
-                                      : "Puede Consumir " +
-                                      (users.megas ? users.megas : 0) +
-                                      " MB"
-                                  }
-                                  />
+                                  
                                   {/* <FormControlLabel variant="outlined" label="Primary">
                                   
                                 </FormControlLabel> */}
