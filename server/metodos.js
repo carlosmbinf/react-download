@@ -304,7 +304,7 @@ if (Meteor.isServer) {
 
 
     },
-    addVentasOnly: async (userChangeid, adminId, compra) => {
+    addVentasOnly: async (userChangeid, adminId, compra,type) => {
 
       ///////REVISAR EN ADDVENTASONLY  el descuento que se debe de hacer
       let userChange = await Meteor.users.findOne(userChangeid)
@@ -321,7 +321,8 @@ if (Meteor.isServer) {
           userId: userChangeid,
           precio: precioOficial ? precioOficial.precio : compra.precio,
           gananciasAdmin: precioOficial ? compra.precio - precioOficial.precio : 0,
-          comentario: compra.comentario
+          comentario: compra.comentario,
+          type:type
         })
 
         return compra ? compra.comentario : `No se encontro Precio a la oferta establecida en el usuario: ${userChange.username}`
@@ -348,7 +349,7 @@ if (Meteor.isServer) {
           return null
         } else if (precio || Array(Meteor.settings.public.administradores)[0].includes(user.username)) {
           await Meteor.call("habilitarProxyUser", userChangeid, userId)
-          precio && await Meteor.call("addVentasOnly", userChangeid, userId, precio)
+          precio && await Meteor.call("addVentasOnly", userChangeid, userId, precio, "PROXY")
 
           //   await VentasCollection.insert({
           //   adminId: userId,
@@ -526,7 +527,7 @@ if (Meteor.isServer) {
         } else if (precio || Array(Meteor.settings.public.administradores)[0].includes(user.username)) {
           await Meteor.call("habilitarVPNUser", userChangeid, userId)
 
-          precio && await Meteor.call("addVentasOnly", userChangeid, userId, precio)
+          precio && await Meteor.call("addVentasOnly", userChangeid, userId, precio, "VPN")
           // VentasCollection.insert({
           //   adminId: userId,
           //   userId: userChangeid,

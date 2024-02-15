@@ -303,6 +303,10 @@ export const SchemaVentasCollection = new SimpleSchema({
     type: Number,
     defaultValue: 0,
     optional:true
+  },
+  type:{
+     type: String,
+    optional: false
   }
 
 });
