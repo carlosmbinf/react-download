@@ -100,7 +100,7 @@ if (Meteor.isServer) {
           await users.forEach(async (user) => {
             const ultimaVentaProxy = getLastPurchaseDate(user._id, 'PROXY'); // Función para obtener la última compra de proxy
             const haceUnMes = ultimaVentaProxy ? moment(ultimaVentaProxy).add(1, 'months') < moment(new Date()) : false;
-            console.log("PROXY HACE UN MES? " + haceUnMes + " ultimaVentaProxy" + ultimaVentaProxy)
+            // console.log("PROXY HACE UN MES? " + haceUnMes + " ultimaVentaProxy" + ultimaVentaProxy)
             if (user.isIlimitado && user.fechaSubscripcion && new Date() >= new Date(user.fechaSubscripcion)) {
               await bloquearUsuarioProxy(user, "porque llegó a la fecha límite");
             } else if (!user.isIlimitado) {
@@ -179,7 +179,7 @@ if (Meteor.isServer) {
           await users.forEach((user) => {
             const ultimaVentaVPN = getLastPurchaseDate(user._id, 'VPN'); // Función para obtener la última compra de VPN
             const haceUnMes = ultimaVentaVPN ? moment(ultimaVentaVPN).add(1, 'months') < moment(new Date()) : false;
-            console.log("VPN HACE UN MES? " + haceUnMes + " ultimaVentaVPN: " + ultimaVentaVPN)
+            // console.log("VPN HACE UN MES? " + haceUnMes + " ultimaVentaVPN: " + ultimaVentaVPN)
             if (user.vpnisIlimitado && user.vpnfechaSubscripcion && new Date() > user.vpnfechaSubscripcion) {
               bloquearUsuarioVPN(user, "porque llegó a la fecha límite");
             } else if (!user.vpnisIlimitado && (user.vpnMbGastados ? user.vpnMbGastados : 0) >= ((user.vpnmegas ? Number(user.vpnmegas) : 0) * 1024000)) {
