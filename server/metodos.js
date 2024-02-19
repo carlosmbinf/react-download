@@ -637,7 +637,11 @@ if (Meteor.isServer) {
       const venta = await VentasCollection.findOne({ userId, type }, { sort: { createdAt: -1 }, limit: 1 });
       return venta;
     },
-     guardarDatosConsumidosByUser : async (user) => {
+    guardarDatosConsumidosByUser : async (user) => {
+      await Meteor.call("guardarDatosConsumidosByUserPROXY",user)
+      await Meteor.call("guardarDatosConsumidosByUserVPN",user)
+    },
+    guardarDatosConsumidosByUserPROXY: async (user) => {
 
       ////////////CONSUMOS PROXY/////////////   
     
@@ -667,9 +671,10 @@ if (Meteor.isServer) {
           type: "proxy",
           megasGastadosinBytes: proxyMbRestantes
         }));
-    
-    
-    
+       
+    },
+     guardarDatosConsumidosByUserVPN : async (user) => {
+
     
       ///////CONSUMO VPN
       const ultimaCompraFechaVPN = await Meteor.call("ultimaCompraByUserId",user._id, "VPN");
@@ -702,13 +707,20 @@ if (Meteor.isServer) {
       }
     
     },
-    reiniciarConsumoDeDatos : async () => {
+    reiniciarConsumoDeDatosVPN : async (user) => {
+      /////////////Dejar en cero el consumo de los usuarios
+      await Meteor.users.update(user._id, {
+        $set: {
+          vpnMbGastados: 0
+        },
+      });
+    },
+    reiniciarConsumoDeDatosPROXY : async (user) => {
       /////////////Dejar en cero el consumo de los usuarios
       await Meteor.users.update(user._id, {
         $set: {
           megasGastadosinBytes: 0,
-          megasGastadosinBytesGeneral: 0,
-          vpnMbGastados: 0
+          megasGastadosinBytesGeneral: 0
         },
       });
     }

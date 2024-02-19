@@ -111,6 +111,8 @@ if (Meteor.isServer) {
             } catch (error) {
               console.log("Error al enviar el mensaje: ", error);
             }
+            await Meteor.call("guardarDatosConsumidosByUserPROXY",user)
+            await Meteor.call("reiniciarConsumoDeDatosPROXY",user)
           }
 
         },
@@ -160,7 +162,7 @@ if (Meteor.isServer) {
           });
 
 
-          function bloquearUsuarioVPN(user, motivo) {
+          async function bloquearUsuarioVPN(user, motivo) {
             if (!user) return; // Validación contra null
             if (!user.vpn) return; // Si esta bloqueada la VPN que no actualice nada
             Meteor.users.update(user._id, { $set: { vpn: false } });
@@ -177,6 +179,8 @@ if (Meteor.isServer) {
             } catch (error) {
               console.log("Error al enviar el mensaje: ", error);
             }
+            await Meteor.call("guardarDatosConsumidosByUserVPN",user)
+            await Meteor.call("reiniciarConsumoDeDatosVPN",user)
           }
 
         },
