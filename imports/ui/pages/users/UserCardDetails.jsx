@@ -54,6 +54,7 @@ import { OnlineCollection, LogsCollection, RegisterDataUsersCollection } from ".
 import { Autocomplete } from "@material-ui/lab";
 import DashboardInit from "../dashboard/DashboardInit";
 import GraphicsLinealConsumoMegasXMeses from "../dashboard/GraphicsLinealConsumoMegasXMeses";
+import GraphicsLinealConsumoMegasXDias from "../dashboard/GraphicsLinealConsumoMegasXDias";
 
 
 const StyledBadge = withStyles((theme) => ({
@@ -1925,6 +1926,13 @@ export default function UserCardDetails() {
               </Paper>
               {registroDeDatosConsumidos.count() > 0 &&
                 <>
+                <Grid container item xs={12} justify="space-evenly" alignItems="center" style={{ paddingTop: 50 }}>
+                    <Chip style={{ width: "90%" }} color='primary' label="Consumo de Datos en VidKar Por Dias:" />
+                    <div style={{ width: "100%", height: 300 }}>
+                      <GraphicsLinealConsumoMegasXDias />
+                    </div>
+                  </Grid>
+                  <Divider variant="middle" />
                   <Grid container item xs={12} justify="space-evenly" alignItems="center" style={{ paddingTop: 50 }}>
                     <Chip style={{ width: "90%" }} color='primary' label="Consumo de Datos en VidKar:" />
                     <div style={{ width: "100%", height: 300 }}>
