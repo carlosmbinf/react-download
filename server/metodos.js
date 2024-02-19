@@ -632,7 +632,87 @@ if (Meteor.isServer) {
     }, getUrlTriller: (id) => {
       let peli = PelisCollection.findOne(id)
       return peli.urlTrailer ? peli.urlTrailer : null;
+    },
+    ultimaCompraByUserId : async (userId, type) => {
+      const venta = await VentasCollection.findOne({ userId, type }, { sort: { createdAt: -1 }, limit: 1 });
+      return venta;
+    },
+     guardarDatosConsumidosByUser : async (user) => {
+
+      ////////////CONSUMOS PROXY/////////////   
+    
+      const ultimaCompraFecha = await Meteor.call("ultimaCompraByUserId",user._id, "PROXY");
+    
+      // Encuentra todos los documentos que coincidan con los criterios de búsqueda
+      const registrosPROXY = await RegisterDataUsersCollection.find({
+        userId: user._id,
+        type: "proxy",
+        fecha: { $gt: ultimaCompraFecha.createdAt }
+      });
+
+      
+      // Inicializa una variable para almacenar la sumatoria de megasGastadosinBytes
+      let consumidosPROXY = 0;
+    
+      // Itera sobre los resultados y suma los valores de megasGastadosinBytes
+      await registrosPROXY.forEachAsync(registro => {
+        consumidosPROXY += registro.megasGastadosinBytes;
+      });
+    
+      //REGISTRAR DATOS CONSUMIDOS EN PROXY
+      const proxyMbRestantes = user.megasGastadosinBytes - consumidosPROXY
+      proxyMbRestantes > 0 &&
+        (await RegisterDataUsersCollection.insert({
+          userId: user._id,
+          type: "proxy",
+          megasGastadosinBytes: proxyMbRestantes
+        }));
+    
+    
+    
+    
+      ///////CONSUMO VPN
+      const ultimaCompraFechaVPN = await Meteor.call("ultimaCompraByUserId",user._id, "VPN");
+    
+      // Encuentra todos los documentos que coincidan con los criterios de búsqueda
+      const registrosVPN = await RegisterDataUsersCollection.find({
+        userId: user._id,
+        type: "vpn",
+        fecha: { $gt: ultimaCompraFechaVPN.createdAt }
+      });
+    
+      // Inicializa una variable para almacenar la sumatoria de vpnMbGastados
+      let consumidosVPN = 0;
+    
+      // Itera sobre los resultados y suma los valores de vpnMbGastados
+      await registrosVPN.forEach(registro => {
+        consumidosVPN += registro.vpnMbGastados;
+      });
+    
+    
+      //REGISTRAR DATOS CONSUMIDOS EN VPN
+      // Calcular el total de vpnMbGastados restantes y actualizar la colección
+      const vpnMbRestantes = user.vpnMbGastados - consumidosVPN;
+      if (vpnMbRestantes > 0) {
+        await RegisterDataUsersCollection.insert({
+          userId: user._id,
+          type: "vpn",
+          vpnMbGastados: vpnMbRestantes
+        });
+      }
+    
+    },
+    reiniciarConsumoDeDatos : async () => {
+      /////////////Dejar en cero el consumo de los usuarios
+      await Meteor.users.update(user._id, {
+        $set: {
+          megasGastadosinBytes: 0,
+          megasGastadosinBytesGeneral: 0,
+          vpnMbGastados: 0
+        },
+      });
     }
+    
 
   });
 

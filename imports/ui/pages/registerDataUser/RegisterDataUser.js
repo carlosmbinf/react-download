@@ -137,14 +137,14 @@ return Meteor.users.findOne(id)
   const registroDeDatos = useTracker(() => {
 
     if (id) {
-      Meteor.subscribe("registerDataUser", { userId: id })
+      Meteor.subscribe("registerDataUser", { userId: id,type: options.type })
     } else if (Array(Meteor.settings.public.administradores)[0].includes(Meteor.user().username)) {
-      Meteor.subscribe("registerDataUser");
+      Meteor.subscribe("registerDataUser",{type: options.type});
     } else {
       Meteor.subscribe("user", { 'bloqueadoDesbloqueadoPor': Meteor.userId() }, { fields: { 'bloqueadoDesbloqueadoPor': 1 } });
 
       let usuariosMios = Meteor.users.find({ 'bloqueadoDesbloqueadoPor': Meteor.userId() }, { fields: { 'bloqueadoDesbloqueadoPor': 1 } })
-      usuariosMios.map(element => Meteor.subscribe("registerDataUser", { userId: element._id }))
+      usuariosMios.map(element => Meteor.subscribe("registerDataUser", { userId: element._id, type: options.type }))
     }
     
     
@@ -177,9 +177,6 @@ return Meteor.users.findOne(id)
              megasGastadosinBytes: (register.megasGastadosinBytes?Number.parseFloat(
                register.megasGastadosinBytes / 1000000):0)
              .toFixed(2),
-             megasGastadosinBytesGeneral:(register.megasGastadosinBytesGeneral?Number.parseFloat(
-              register.megasGastadosinBytesGeneral / 1000000):0)
-            .toFixed(2),
              createdAt: register.fecha && register.fecha.toString(),
            });
          }
@@ -299,18 +296,7 @@ return Meteor.users.findOne(id)
                       filter
                       filterPlaceholder="Search"
                       filterMatchMode="contains"
-                    />}
-                    {options.type != 'vpn' &&
-                    <Column
-                      field="megasGastadosinBytesGeneral"
-                      header="Megas Consumidos en el Servidor"
-                      body={megasGastadosinBytesGeneralBodyTemplate}
-                      filter
-                      filterPlaceholder="Search"
-                      filterMatchMode="contains"
-                    />
-                }
-                
+                    />}               
                 
                 <Column
                   field="createdAt"

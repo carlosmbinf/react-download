@@ -130,14 +130,17 @@ export default function LogsTable() {
   const history = useHistory();
 
   const user = identificador =>  {
-    Meteor.subscribe("user", identificador, {
+    Meteor.subscribe("userID", identificador, {
       fields: {
         profile: 1,
         username: 1
       }
     }).ready();
       // console.log(Meteor.users.findOne(identificador));
-      return Meteor.users.findOne(identificador)
+      return Meteor.users.findOne(identificador,{fields: {
+        profile: 1,
+        username: 1
+      }})
     }
   const logs = useTracker(() => {
     let query = {}

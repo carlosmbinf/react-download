@@ -51,8 +51,8 @@ if (Meteor.isServer) {
       Meteor.publish("user", function (selector,option) {
         return Meteor.users.find(selector?selector:{},option?option:{});
       });
-      Meteor.publish("userID", function (id) {
-        return Meteor.users.find({ _id: id });
+      Meteor.publish("userID", function (id,option) {
+        return Meteor.users.find(id,option?option:{});
       });
       Meteor.publish("userRole", function (role) {
         return Meteor.users.find({ "profile.role": role });

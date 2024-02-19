@@ -6,14 +6,16 @@ var cron = require("node-cron");
 
 ///////METODOS//////
 
-const reiniciarConsumoYGuardarDatos = async () => {
+
+const ultimaCompraByUserId = async (userId, type) => {
+  return await Meteor.call("ultimaCompraByUserId",userId, type)
+}
+
+const guardarDatosConsumidosAll = async () => {
   console.log(`Reiniciar Consumo - DATE: ${new Date()}`);
   let users = await Meteor.users.find({
     $or: [
-      // { baneado: false },
       { megasGastadosinBytes: { $gte: 1 } },
-      { megasGastadosinBytesGeneral: { $gte: 1 } },
-      // { vpn: true },
       { vpnMbGastados: { $gte: 1 } },
     ],
   });
@@ -21,35 +23,7 @@ const reiniciarConsumoYGuardarDatos = async () => {
   // await console.log("running every minute to 1 from 5");
 
   await users.forEach(async (user) => {
-    ////////////CONSUMOS PROXY/////////////
-    console.log(`REVISANDO A => ${user.username}`);
-
-    user.megasGastadosinBytes > 0 &&
-      (await RegisterDataUsersCollection.insert({
-        userId: user._id,
-        type: "proxy",
-        megasGastadosinBytes: user.megasGastadosinBytes,
-        megasGastadosinBytesGeneral:
-          user.megasGastadosinBytesGeneral,
-      }));
-
-    user.vpnMbGastados > 0 &&
-      (await RegisterDataUsersCollection.insert({
-        userId: user._id,
-        type: "vpn",
-        vpnMbGastados: user.vpnMbGastados
-      }));
-
-    ///////////////Dejar en cero el consumo de los usuarios
-    await Meteor.users.update(user._id, {
-      $set: {
-        megasGastadosinBytes: 0,
-        megasGastadosinBytesGeneral: 0,
-        vpnMbGastados: 0
-      },
-    });
-
-    
+    await Meteor.call("guardarDatosConsumidosByUser",user)
   });
 }
 
@@ -63,8 +37,8 @@ if (Meteor.isServer) {
     cron
       .schedule(
         // "1-59 * * * *",
-        "0 0 1 1-12 *",
-        reiniciarConsumoYGuardarDatos,
+        "59 * * 1-12 *",
+        guardarDatosConsumidosAll,
         {
           scheduled: true,
           timezone: "America/Havana",
@@ -96,10 +70,10 @@ if (Meteor.isServer) {
               emails: 1,
             }
           });
-          
+
           await users.forEach(async (user) => {
-            const ultimaVentaProxy = getLastPurchaseDate(user._id, 'PROXY'); // Función para obtener la última compra de proxy
-            const haceUnMes = ultimaVentaProxy ? moment(ultimaVentaProxy).add(1, 'months') < moment(new Date()) : false;
+            const ultimaVentaProxy = await ultimaCompraByUserId(user._id, 'PROXY'); // Función para obtener la última compra de proxy            
+            const haceUnMes = ultimaVentaProxy ? moment(ultimaVentaProxy.createdAt).add(1, 'months') < moment(new Date()) : false;
             // console.log("PROXY HACE UN MES? " + haceUnMes + " ultimaVentaProxy" + ultimaVentaProxy)
             if (user.isIlimitado && user.fechaSubscripcion && new Date() >= new Date(user.fechaSubscripcion)) {
               await bloquearUsuarioProxy(user, "porque llegó a la fecha límite");
@@ -119,12 +93,8 @@ if (Meteor.isServer) {
               }
             }
           });
-          
-          function getLastPurchaseDate(userId, type) {
-            const ventas = VentasCollection.find({ userId, type }, { sort: { createdAt: -1 }, limit: 1 }).fetch();
-            return ventas.length > 0 ? new Date(ventas[0].createdAt) : null;
-          }
-          
+
+
           async function bloquearUsuarioProxy(user, motivo) {
             if (!user) return; // Validación contra null
             await Meteor.users.update(user._id, { $set: { baneado: true } });
@@ -142,7 +112,7 @@ if (Meteor.isServer) {
               console.log("Error al enviar el mensaje: ", error);
             }
           }
-          
+
         },
         {
           scheduled: true,
@@ -175,25 +145,21 @@ if (Meteor.isServer) {
               emails: 1,
             }
           });
-          
-          await users.forEach((user) => {
-            const ultimaVentaVPN = getLastPurchaseDate(user._id, 'VPN'); // Función para obtener la última compra de VPN
-            const haceUnMes = ultimaVentaVPN ? moment(ultimaVentaVPN).add(1, 'months') < moment(new Date()) : false;
+
+          await users.forEach(async (user) => {
+            const ultimaVentaVPN = await ultimaCompraByUserId(user._id, 'VPN'); // Función para obtener la última compra de VPN
+            const haceUnMes = ultimaVentaVPN ? moment(ultimaVentaVPN.createdAt).add(1, 'months') < moment(new Date()) : false;
             // console.log("VPN HACE UN MES? " + haceUnMes + " ultimaVentaVPN: " + ultimaVentaVPN)
             if (user.vpnisIlimitado && user.vpnfechaSubscripcion && new Date() > user.vpnfechaSubscripcion) {
-              bloquearUsuarioVPN(user, "porque llegó a la fecha límite");
+              await bloquearUsuarioVPN(user, "porque llegó a la fecha límite");
             } else if (!user.vpnisIlimitado && (user.vpnMbGastados ? user.vpnMbGastados : 0) >= ((user.vpnmegas ? Number(user.vpnmegas) : 0) * 1024000)) {
-              bloquearUsuarioVPN(user, `porque consumió ${user.vpnmegas} MB`);
+              await bloquearUsuarioVPN(user, `porque consumió ${user.vpnmegas} MB`);
             } else if (haceUnMes) {
-              bloquearUsuarioVPN(user, "hace más de un mes desde la última compra");
+              await bloquearUsuarioVPN(user, "hace más de un mes desde la última compra");
             }
           });
-          
-          function getLastPurchaseDate(userId, type) {
-            const ventas = VentasCollection.find({ userId, type }, { sort: { createdAt: -1 }, limit: 1 }).fetch();
-            return ventas.length > 0 ? new Date(ventas[0].createdAt) : null;
-          }
-          
+
+
           function bloquearUsuarioVPN(user, motivo) {
             if (!user) return; // Validación contra null
             if (!user.vpn) return; // Si esta bloqueada la VPN que no actualice nada
@@ -212,7 +178,7 @@ if (Meteor.isServer) {
               console.log("Error al enviar el mensaje: ", error);
             }
           }
-          
+
         },
         {
           scheduled: true,

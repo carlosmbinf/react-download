@@ -244,11 +244,6 @@ export const SchemaRegisterDataUsersCollection = new SimpleSchema({
     defaultValue: 0,
     optional: true,
   },
-  megasGastadosinBytesGeneral: {
-    type: Number,
-    defaultValue: 0,
-    optional: true,
-  },
   type: {
     type: String,
     defaultValue: "proxy",

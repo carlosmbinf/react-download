@@ -228,7 +228,7 @@ const compras = useTracker(() => {
   var notification = null 
 
   Meteor.subscribe("ventas", {
-    userId: Meteor.user() && Meteor.user()._id,
+    userId: Meteor.userId(),
     cobradoAlAdmin: false
   }, { fields: { 
     _id: 1,
@@ -237,7 +237,7 @@ const compras = useTracker(() => {
   } });
   
   let compra = VentasCollection.find({
-    userId: Meteor.user() && Meteor.user()._id,
+    userId: Meteor.userId(),
     cobradoAlAdmin: false
   }).fetch()
 
@@ -259,38 +259,33 @@ const compras = useTracker(() => {
 
   const mensajes = useTracker(() => {
     
-    var notification = null 
-
-    Meteor.subscribe("mensajes", {
-      $or: [
-        // { from: Meteor.userId() },
-        { to: Meteor.userId() }
-      ], leido: false
-    }, { fields: { 
-      _id: 1,
-      to:1,
-      leido:1
-    } });
+    Meteor.subscribe(
+      "mensajes",
+      {
+        to: Meteor.userId(),
+        leido: false,
+      },
+      {
+        fields: {
+          _id: 1,
+          to: 1,
+          leido: 1,
+        },
+      }
+    );
     
     let mens = MensajesCollection.find({
-      $or: [
-        // { from: Meteor.userId() },
-        { to: Meteor.userId() }
-      ], leido: false
-    }).fetch()
+      to: Meteor.userId(),
+      leido: false,
+    }).count();
 
     let options = {
       
-      body: `Tienes ${mens.length} Mensajes sin leer...`,
+      body: `Tienes ${mens} Mensajes sin leer...`,
       icon: "/favicon.ico",
       // dir: "ltr",
       // onClick: ()=>{alert("hola")} 
     };
-
-    //mens.length > 0 && (
-     // notification = new Notification("VIDKAR", options)
-    // alert(options.body)
-    //  )
     
     return mens;
   });
@@ -298,7 +293,13 @@ const compras = useTracker(() => {
 
   const userActual = useTracker(() => {
 
-    Meteor.subscribe("userID", Meteor.userId());
+    Meteor.subscribe("userID", {_id: Meteor.userId()}, {
+      fields: {
+        _id: 1,
+        profile:1,
+        picture:1
+      },
+    }).ready();
     return Meteor.user();
   });
 
@@ -430,7 +431,7 @@ const compras = useTracker(() => {
                         history.push(`/chat`)
                         // showNotification()
                         }>
-                        <Badge badgeContent={mensajes.length} color="secondary">
+                        <Badge badgeContent={mensajes} color="secondary">
                           <MailOutlineRoundedIcon />
                         </Badge>
                         

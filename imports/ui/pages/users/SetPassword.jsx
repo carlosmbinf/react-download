@@ -62,6 +62,15 @@ export default function SetPassword() {
   const [open, setOpen] = React.useState(false);
 
   const userActual = useTracker(() => {
+    Meteor.subscribe("userID", {_id:Meteor.userId()}, {
+      fields: {
+        _id: 1,
+        profile:1,
+        picture:1,
+        'services.password':1,
+        movil:1
+      },
+    }).ready()
     return Meteor.user();
   });
  

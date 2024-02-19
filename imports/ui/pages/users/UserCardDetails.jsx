@@ -206,7 +206,12 @@ export default function UserCardDetails() {
   const bull = <span className={classes.bullet}>•</span>;
 
   const tieneVentas = useTracker(() => {
-    Meteor.subscribe("ventas", { adminId: id })
+    Meteor.subscribe("ventas", { adminId: id }, {
+      fields: {
+        _id: 1,
+        adminId: 1
+      },
+    })
     // console.log(VentasCollection.find({ adminId: id}).fetch());
     // console.log(VentasCollection.find({ adminId: id }).count() > 0);
     return VentasCollection.find({ adminId: id }).count() > 0
@@ -218,23 +223,60 @@ export default function UserCardDetails() {
   });
 
   const creadoPor = useTracker(() => {
-    users && (users.creadoPor ? Meteor.subscribe( "userID", users.creadoPor ) : Meteor.subscribe("users", { username: Meteor.settings.public.administradores[0] }));
-    return users && users.creadoPor ? Meteor.users.findOne({ _id: users.creadoPor }) : Meteor.users.findOne({ username: Meteor.settings.public.administradores[0] });
+    users && (users.creadoPor ? Meteor.subscribe("userID", users.creadoPor, {
+      fields: {
+        _id: 1,
+        adminId: 1
+      }
+    }) : Meteor.subscribe("users", { username: Meteor.settings.public.administradores[0] }, {
+      fields: {
+        _id: 1,
+        adminId: 1
+      }
+    }));
+    return users && users.creadoPor ? Meteor.users.findOne({ _id: users.creadoPor }, {
+      fields: {
+        _id: 1,
+        adminId: 1
+      }
+    }) : Meteor.users.findOne({ username: Meteor.settings.public.administradores[0] }, {
+      fields: {
+        _id: 1,
+        adminId: 1
+      }
     });
+  });
 
   const servers = useTracker(() => {
     Meteor.subscribe("servers").ready()
     let serv = []
-    ServersCollection.find({ active: true }).fetch().map((a) => {
+    ServersCollection.find({ active: true }, {
+      fields: {
+        ip: 1
+      }
+    }).fetch().map((a) => {
       serv.push(a.ip)
     })
     return serv
   });
 
   const preciosList = useTracker(() => {
-    Meteor.subscribe("precios", { userId: Meteor.userId(), type: "megas" })
+    Meteor.subscribe("precios", { userId: Meteor.userId(), type: "megas" }, {
+      fields: {
+        userId:1,
+        type:1,
+        megas: 1,
+        precio: 1
+      }
+    })
     let precioslist = []
-    PreciosCollection.find({userId:Meteor.userId(), type: "megas" }, { sort: { precio: 1 } }).fetch().map((a) => {
+    PreciosCollection.find({ userId: Meteor.userId(), type: "megas" }, {
+      fields: {
+        megas: 1,
+        precio: 1
+      },
+      sort: { precio: 1 }
+    }).fetch().map((a) => {
       precioslist.push({ value: a.megas, label: a.megas + 'MB • $' + ((a.precio - Meteor.user().descuentoproxy >= 0) ? (a.precio - Meteor.user().descuentoproxy) : 0) })
     })
     return precioslist
@@ -286,9 +328,22 @@ export default function UserCardDetails() {
       }
     }).ready()
     // Meteor.subscribe("precios",{$or:[{ type: "vpnplus"},{ type: "vpn2mb"}] }).ready()
-    Meteor.subscribe("precios", {userId:Meteor.userId(), $or: [{ type: "vpnplus" }, { type: "vpn2mb" }] })
+    Meteor.subscribe("precios", {userId:Meteor.userId(), $or: [{ type: "vpnplus" }, { type: "vpn2mb" }] },{
+      fields: {
+        userId:1,
+        type:1,
+        megas: 1,
+        precio: 1
+      }
+    })
     let precioslist = []
     PreciosCollection.find({userId:Meteor.userId(), $or: [{ type: "vpnplus" }, { type: "vpn2mb" }] }, {
+      fields: {
+        userId:1,
+        type:1,
+        megas: 1,
+        precio: 1
+      },
       sort: {
         precio: 1
       }

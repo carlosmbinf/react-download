@@ -90,12 +90,7 @@ export default function Main() {
   const useractual = useTracker(() => {
     return Meteor.user();
   });
-  const user = (id) => {
-    Meteor.subscribe("user", id,{fields:{
-      'profile.role': 1
-    }});
-    return Meteor.users.findOne(id)
-  }
+  
   return (
     <>
       <div className={classes.toolbar} />
@@ -176,8 +171,8 @@ export default function Main() {
                     style={{ textAlign: "center", marginTop: 100 }}
                   >
                     <Grid item>
-                      <RegisterDataUserTable type="proxy" />
-                      <RegisterDataUserTable type="vpn" />
+                      {/* <RegisterDataUserTable type="proxy" />
+                      <RegisterDataUserTable type="vpn" /> */}
                       <LogsTable />
                       <RegisterConnectionsUser />
                     </Grid>
