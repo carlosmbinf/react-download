@@ -446,44 +446,30 @@ export default function UserCardDetails() {
       },
     });
   };
-  const handleReiniciarConsumo = (event) => {
-    users.megasGastadosinBytes >= 0 &&
-      RegisterDataUsersCollection.insert({
-        type: "proxy",
-        userId: users._id,
-        megasGastadosinBytes: users.megasGastadosinBytes,
-        megasGastadosinBytesGeneral: users.megasGastadosinBytesGeneral,
-      })
-    Meteor.users.update(users._id, {
-      $set: {
-        megasGastadosinBytes: 0,
-        megasGastadosinBytesGeneral: 0
-      },
-    });
+  const handleReiniciarConsumo = async (event) => {
+    console.log("INICIO")
+    await Meteor.call("guardarDatosConsumidosByUserPROXY",users)
+    await Meteor.call("reiniciarConsumoDeDatosPROXY",users)
+    await Meteor.call("desactivarUserProxy",users)
+
+    desactivarUserVPN
     LogsCollection.insert({
       type: 'Reinicio PROXY',
       userAfectado: users._id,
       userAdmin: Meteor.userId(),
       message:
-        `Ha sido Reiniciado el consumo de Datos del PROXY de ${users.profile.firstName} ${users.profile.lastName}`
+        `Ha sido Reiniciado el consumo de Datos del PROXY de ${users.profile.firstName} ${users.profile.lastName} y desactivado el proxy`
     });
     // Meteor.call('sendemail', users, { text: `Ha sido Reiniciado el consumo de Datos del PROXY de ${users.profile.firstName} ${users.profile.lastName}` }, 'Reinicio ' + Meteor.user().username)
-    Meteor.call('sendMensaje', users, { text: `Ha sido Reiniciado el consumo de Datos del PROXY` }, 'Reinicio ' + Meteor.user().username)
+    Meteor.call('sendMensaje', users, { text: `Ha sido Reiniciado el consumo de Datos del PROXY, y desactivado el proxy` }, 'Reinicio ' + Meteor.user().username)
 
     alert('Se reinicio los datos del PROXY de ' + users.profile.firstName)
   };
 
-  const handleReiniciarConsumoVPN = (event) => {
-    RegisterDataUsersCollection.insert({
-      type: "vpn",
-      userId: users._id,
-      vpnMbGastados: users.vpnMbGastados
-    })
-    Meteor.users.update(users._id, {
-      $set: {
-        vpnMbGastados: 0
-      },
-    });
+  const handleReiniciarConsumoVPN = async (event) => {
+    await Meteor.call("guardarDatosConsumidosByUserVPN",users)
+    await Meteor.call("reiniciarConsumoDeDatosVPN",users)
+    await Meteor.call("desactivarUserVPN",users)
     LogsCollection.insert({
       type: 'Reinicio VPN',
       userAfectado: users._id,
@@ -1053,7 +1039,7 @@ export default function UserCardDetails() {
                                       >
                                         {users.megasGastadosinBytes == 0
                                           ? "Sin Consumo"
-                                          : "Reiniciar Consumo"}
+                                          : "Reiniciar Consumo y Desactivar"}
                                       </Button>
                                     </Grid>
 
@@ -1211,7 +1197,7 @@ export default function UserCardDetails() {
                                       >
                                         {users.megasGastadosinBytes == 0
                                           ? "Sin Consumo"
-                                          : "Reiniciar Consumo"}
+                                          : "Reiniciar Consumo y Desactivar"}
                                       </Button>
                                     </Grid>
 

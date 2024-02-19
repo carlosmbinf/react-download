@@ -247,8 +247,6 @@ export default function GraphicsLinealConsumoMegasXDias(options) {
               let dateStartDay = moment(dateStartMonth).date(day).startOf('day');
               let dateEndDay = moment(dateStartMonth).date(day).endOf('day');
   
-              console.log(dateStartDay)
-              console.log(dateEndDay)
               let dailyData = {
                   name: dateStartDay.format("DD"),
                   PROXY: aporte("proxy", dateStartDay.toISOString(), dateEndDay.toISOString()),

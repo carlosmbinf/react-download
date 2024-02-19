@@ -723,6 +723,22 @@ if (Meteor.isServer) {
           megasGastadosinBytesGeneral: 0
         },
       });
+    },
+    desactivarUserProxy : async (user) => {
+      /////////////Dejar en cero el consumo de los usuarios
+      await Meteor.users.update(user._id, {
+        $set: {
+          baneado: true
+        },
+      });
+    },
+    desactivarUserVPN : async (user) => {
+      /////////////Dejar en cero el consumo de los usuarios
+      await Meteor.users.update(user._id, {
+        $set: {
+          vpn: false
+        },
+      });
     }
     
 
