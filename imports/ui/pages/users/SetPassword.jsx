@@ -52,7 +52,7 @@ const DialogActions = withStyles((theme) => ({
   },
 }))(MuiDialogActions);
 
-export default function SetPassword() {
+ const SetPassword = () => {
   const [valueusername, setvalueusername] = React.useState();
   const [valuepassword, setvaluepassword] = React.useState();
   const [valueemail, setvalueemail] = React.useState();
@@ -62,15 +62,15 @@ export default function SetPassword() {
   const [open, setOpen] = React.useState(false);
 
   const userActual = useTracker(() => {
-    Meteor.subscribe("userID", {_id:Meteor.userId()}, {
+    Meteor.subscribe("user", {_id:Meteor.userId()}, {
       fields: {
         _id: 1,
         profile:1,
         picture:1,
-        'services.password':1,
-        movil:1
+        movil:1,
+        services:1
       },
-    }).ready()
+    })
     return Meteor.user();
   });
  
@@ -239,3 +239,5 @@ export default function SetPassword() {
     </Dialog>
   );
 }
+
+export default SetPassword;

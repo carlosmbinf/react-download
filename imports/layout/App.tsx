@@ -297,7 +297,8 @@ const compras = useTracker(() => {
       fields: {
         _id: 1,
         profile:1,
-        picture:1
+        picture:1,
+        'services.password.bcrypt':1
       },
     }).ready();
     return Meteor.user();
@@ -596,12 +597,7 @@ const compras = useTracker(() => {
         </main>
         
       </div>
-          <Suspense
-            fallback={<SpinnerModal/>}
-          >
-            <SetPassword/>
-            </Suspense>
-      
+            <SetPassword/>      
     </>
   );
 }
