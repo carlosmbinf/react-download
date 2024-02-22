@@ -665,6 +665,7 @@ if (Meteor.isServer) {
     
       //REGISTRAR DATOS CONSUMIDOS EN PROXY
       const proxyMbRestantes = user.megasGastadosinBytes - consumidosPROXY
+      console.log("Usuario con megas restantes: " - user.username + " con: " + proxyMbRestantes + "MB")
       proxyMbRestantes > 0 &&
         (await RegisterDataUsersCollection.insert({
           userId: user._id,
@@ -698,6 +699,7 @@ if (Meteor.isServer) {
       //REGISTRAR DATOS CONSUMIDOS EN VPN
       // Calcular el total de vpnMbGastados restantes y actualizar la colección
       const vpnMbRestantes = user.vpnMbGastados - consumidosVPN;
+      console.log("Usuario con megas restantes: " - user.username + " con: " + vpnMbRestantes + "MB")
       if (vpnMbRestantes > 0) {
         await RegisterDataUsersCollection.insert({
           userId: user._id,

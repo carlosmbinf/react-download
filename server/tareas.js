@@ -37,7 +37,7 @@ if (Meteor.isServer) {
     cron
       .schedule(
         // "1-59 * * * *",
-        "59 * * 1-12 *",
+        "59 23 * 1-12 *",
         guardarDatosConsumidosAll,
         {
           scheduled: true,
@@ -243,10 +243,10 @@ if (Meteor.isServer) {
   // }
 
   try {
-    //////////Cerrar proxys a las 12 y 30 //////////////
+    //////////Cerrar proxys a las 12 y 00 //////////////
     cron
       .schedule(
-        "30 0 * * *",
+        "0 0 * * *",
         async () => {
           try {
             await Meteor.call('closeproxy', function (error, result) {
