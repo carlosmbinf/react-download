@@ -23,7 +23,7 @@ const guardarDatosConsumidosAll = async () => {
   // await console.log("running every minute to 1 from 5");
 
   await users.forEach(async (user) => {
-    await Meteor.call("guardarDatosConsumidosByUser",user)
+    await Meteor.call("guardarDatosConsumidosByUserDiario",user)
   });
 }
 
@@ -111,7 +111,7 @@ if (Meteor.isServer) {
             } catch (error) {
               console.log("Error al enviar el mensaje: ", error);
             }
-            await Meteor.call("guardarDatosConsumidosByUserPROXY",user)
+            await Meteor.call("guardarDatosConsumidosByUserPROXYDiario",user)
             await Meteor.call("reiniciarConsumoDeDatosPROXY",user)
           }
 
@@ -179,7 +179,7 @@ if (Meteor.isServer) {
             } catch (error) {
               console.log("Error al enviar el mensaje: ", error);
             }
-            await Meteor.call("guardarDatosConsumidosByUserVPN",user)
+            await Meteor.call("guardarDatosConsumidosByUserVPNDiario",user)
             await Meteor.call("reiniciarConsumoDeDatosVPN",user)
           }
 

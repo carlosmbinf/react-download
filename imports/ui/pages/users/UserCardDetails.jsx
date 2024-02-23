@@ -448,11 +448,11 @@ export default function UserCardDetails() {
   };
   const handleReiniciarConsumo = async (event) => {
     console.log("INICIO")
-    await Meteor.call("guardarDatosConsumidosByUserPROXY",users)
+    await Meteor.call("guardarDatosConsumidosByUserPROXYDiario",users)
+    await Meteor.call("guardarDatosConsumidosByUserPROXYMensual",users)
     await Meteor.call("reiniciarConsumoDeDatosPROXY",users)
     await Meteor.call("desactivarUserProxy",users)
 
-    desactivarUserVPN
     LogsCollection.insert({
       type: 'Reinicio PROXY',
       userAfectado: users._id,
@@ -467,7 +467,8 @@ export default function UserCardDetails() {
   };
 
   const handleReiniciarConsumoVPN = async (event) => {
-    await Meteor.call("guardarDatosConsumidosByUserVPN",users)
+    await Meteor.call("guardarDatosConsumidosByUserVPNDiario",users)
+    await Meteor.call("guardarDatosConsumidosByUserVPNMensual",users)
     await Meteor.call("reiniciarConsumoDeDatosVPN",users)
     await Meteor.call("desactivarUserVPN",users)
     LogsCollection.insert({

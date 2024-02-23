@@ -249,6 +249,10 @@ export const SchemaRegisterDataUsersCollection = new SimpleSchema({
     defaultValue: "proxy",
     optional: false,
   },
+  register: {
+    type: String,
+    optional: false,
+  }
 });
 
 RegisterDataUsersCollection.attachSchema(SchemaRegisterDataUsersCollection);
