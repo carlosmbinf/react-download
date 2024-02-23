@@ -641,6 +641,11 @@ if (Meteor.isServer) {
       await Meteor.call("guardarDatosConsumidosByUserPROXYDiario",user)
       await Meteor.call("guardarDatosConsumidosByUserVPNDiario",user)
     },
+    guardarDatosConsumidosByUserMensual : async (user) => {
+      await Meteor.call("guardarDatosConsumidosByUserPROXYMensual",user)
+      await Meteor.call("guardarDatosConsumidosByUserVPNMensual",user)
+    },
+    
     guardarDatosConsumidosByUserPROXYMensual: async (user) => {
 
       ////////////CONSUMOS PROXY/////////////   

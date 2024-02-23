@@ -12,7 +12,6 @@ const ultimaCompraByUserId = async (userId, type) => {
 }
 
 const guardarDatosConsumidosAll = async () => {
-  console.log(`Reiniciar Consumo - DATE: ${new Date()}`);
   let users = await Meteor.users.find({
     $or: [
       { megasGastadosinBytes: { $gte: 1 } },
@@ -23,7 +22,24 @@ const guardarDatosConsumidosAll = async () => {
   // await console.log("running every minute to 1 from 5");
 
   await users.forEach(async (user) => {
+    console.log(`Reiniciar Consumo Diario - DATE: ${new Date()}, USER: ${user.username ? user.username : user._id}`);
     await Meteor.call("guardarDatosConsumidosByUserDiario",user)
+  });
+}
+
+const guardarDatosConsumidosAllMensual = async () => {
+  let users = await Meteor.users.find({
+    $or: [
+      { megasGastadosinBytes: { $gte: 1 } },
+      { vpnMbGastados: { $gte: 1 } },
+    ],
+  });
+  await console.log("Count " + users.count());
+  // await console.log("running every minute to 1 from 5");
+
+  await users.forEach(async (user) => {
+    console.log(`Reiniciar Consumo Mensual - DATE: ${new Date()}, USER: ${user.username ? user.username : user._id}`);
+    await Meteor.call("guardarDatosConsumidosByUserMensual",user)
   });
 }
 
@@ -37,8 +53,25 @@ if (Meteor.isServer) {
     cron
       .schedule(
         // "1-59 * * * *",
-        "59 23 * 1-12 *",
+        "55 23 * 1-12 *",
         guardarDatosConsumidosAll,
+        {
+          scheduled: true,
+          timezone: "America/Havana",
+        }
+      )
+      .start();
+
+
+  } catch (error) {
+    console.log(error);
+  }
+  try {
+    cron
+      .schedule(
+        // "1-59 * * * *",
+        "0 0 1 1-12 *",
+        guardarDatosConsumidosAllMensual,
         {
           scheduled: true,
           timezone: "America/Havana",
@@ -112,6 +145,7 @@ if (Meteor.isServer) {
               console.log("Error al enviar el mensaje: ", error);
             }
             await Meteor.call("guardarDatosConsumidosByUserPROXYDiario",user)
+            await Meteor.call("guardarDatosConsumidosByUserPROXYMensual",user)
             await Meteor.call("reiniciarConsumoDeDatosPROXY",user)
           }
 
@@ -180,6 +214,7 @@ if (Meteor.isServer) {
               console.log("Error al enviar el mensaje: ", error);
             }
             await Meteor.call("guardarDatosConsumidosByUserVPNDiario",user)
+            await Meteor.call("guardarDatosConsumidosByUserVPNMensual",user)
             await Meteor.call("reiniciarConsumoDeDatosVPN",user)
           }
 
