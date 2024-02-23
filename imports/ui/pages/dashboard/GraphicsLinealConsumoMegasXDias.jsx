@@ -160,7 +160,8 @@ export default function GraphicsLinealConsumoMegasXDias(options) {
         megasGastadosinBytes: 1,
         fecha: 1,
         type: 1,
-        vpnMbGastados: 1
+        vpnMbGastados: 1,
+        register:1
       }
     })
     return RegisterDataUsersCollection.find((id ? { userId: id, register:"diario" } : {register:"diario"}), {
