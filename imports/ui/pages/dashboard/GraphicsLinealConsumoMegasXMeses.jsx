@@ -154,7 +154,7 @@ export default function GraphicsLinealConsumoMegasXMeses(options) {
   moment.locale('es')
 
   const consumo = useTracker(() => {
-    Meteor.subscribe("registerDataUser", (id ? { userId: id } : {}), {
+    Meteor.subscribe("registerDataUser", (id ? { userId: id , register:"mensual"} : {register:"mensual"}), {
       fields: {
         userId: 1,
         megasGastadosinBytes: 1,
@@ -163,7 +163,7 @@ export default function GraphicsLinealConsumoMegasXMeses(options) {
         vpnMbGastados: 1
       }
     })
-    return RegisterDataUsersCollection.find((id ? { userId: id } : {}), {
+    return RegisterDataUsersCollection.find((id ? { userId: id, register:"mensual" } : {register:"mensual"}), {
       fields: {
         userId: 1,
         megasGastadosinBytes: 1,
