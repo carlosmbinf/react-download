@@ -178,7 +178,7 @@ return Meteor.users.findOne(id)
                register.megasGastadosinBytes / 1000000):0)
              .toFixed(2),
              createdAt: register.fecha && register.fecha.toString(),
-             registro: register.register
+             registro: register.register ? register.register : ""
            });
          }
        );
@@ -245,7 +245,7 @@ const registerBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
         <span className="p-column-title">Registro</span>
-        <Chip color={rowData.rowData.registro !="diario" ? "secondary" : "primary"} label={rowData.registro} />
+        <Chip color={rowData.registro !="diario" ? "secondary" : "primary"} label={rowData.registro} />
       </React.Fragment>
     );
   };
