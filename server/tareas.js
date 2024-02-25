@@ -18,13 +18,12 @@ const guardarDatosConsumidosAll = async () => {
       { vpnMbGastados: { $gte: 1 } },
     ],
   });
-  await console.log("Count " + users.count());
+  await console.log("Count User Diarios " + users.count());
   // await console.log("running every minute to 1 from 5");
 
-  await users.forEach(async (user) => {
-    console.log(`Reiniciar Consumo Diario - DATE: ${new Date()}, USER: ${user.username ? user.username : user._id}`);
-    await Meteor.call("guardarDatosConsumidosByUserDiario",user)
-  });
+  users.fetch().forEach( async user => {
+   await Meteor.call("guardarDatosConsumidosByUserDiario",user)
+  })
 }
 
 const guardarDatosConsumidosAllMensual = async () => {
@@ -34,11 +33,10 @@ const guardarDatosConsumidosAllMensual = async () => {
       { vpnMbGastados: { $gte: 1 } },
     ],
   });
-  await console.log("Count " + users.count());
+  await console.log("Count user Mensual" + users.count());
   // await console.log("running every minute to 1 from 5");
 
   await users.forEach(async (user) => {
-    console.log(`Reiniciar Consumo Mensual - DATE: ${new Date()}, USER: ${user.username ? user.username : user._id}`);
     await Meteor.call("guardarDatosConsumidosByUserMensual",user)
   });
 }
@@ -52,8 +50,9 @@ if (Meteor.isServer) {
   try {
     cron
       .schedule(
-        // "1-59 * * * *",
-        "55 23 * 1-12 *",
+        "0 0 * 1-12 *",
+        // "* * * 1-12 *",
+
         guardarDatosConsumidosAll,
         {
           scheduled: true,

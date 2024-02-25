@@ -635,29 +635,37 @@ if (Meteor.isServer) {
     },
     ultimaCompraByUserId : async (userId, type) => {
       const venta = await VentasCollection.findOne({ userId, type }, { sort: { createdAt: -1 }, limit: 1 });
-      return venta;
+      return venta?venta:null;
     },
     guardarDatosConsumidosByUserDiario : async (user) => {
-      await Meteor.call("guardarDatosConsumidosByUserPROXYDiario",user)
-      await Meteor.call("guardarDatosConsumidosByUserVPNDiario",user)
+    console.log(`Reiniciar Consumo Diario - DATE: ${new Date()}, USER: ${user.username ? user.username : user._id}`);
+      
+    user.megasGastadosinBytes > 0 && await Meteor.call("guardarDatosConsumidosByUserPROXYDiario",user)
+    user.vpnMbGastados > 0 && await Meteor.call("guardarDatosConsumidosByUserVPNDiario",user)
+      
     },
     guardarDatosConsumidosByUserMensual : async (user) => {
-      await Meteor.call("guardarDatosConsumidosByUserPROXYMensual",user)
-      await Meteor.call("guardarDatosConsumidosByUserVPNMensual",user)
+    console.log(`Reiniciar Consumo Mensual - DATE: ${new Date()}, USER: ${user.username ? user.username : user._id}`);
+    user.megasGastadosinBytes > 0 && await Meteor.call("guardarDatosConsumidosByUserPROXYMensual",user)
+    user.vpnMbGastados > 0 && await Meteor.call("guardarDatosConsumidosByUserVPNMensual",user)
     },
     
     guardarDatosConsumidosByUserPROXYMensual: async (user) => {
+      console.log("guardarDatosConsumidosByUserPROXYMensual");
 
       ////////////CONSUMOS PROXY/////////////   
     
+    try{
       const ultimaCompraFecha = await Meteor.call("ultimaCompraByUserId",user._id, "PROXY");
-    
+
+      if (ultimaCompraFecha ) {
+
       // Encuentra todos los documentos que coincidan con los criterios de búsqueda
       const registrosPROXY = await RegisterDataUsersCollection.find({
         userId: user._id,
         type: "proxy",
         fecha: { $gt: ultimaCompraFecha.createdAt },
-        register:"diario"
+        register:"mensual"
       });
 
       
@@ -671,22 +679,39 @@ if (Meteor.isServer) {
     
       //REGISTRAR DATOS CONSUMIDOS EN PROXY
       const proxyMbRestantes = user.megasGastadosinBytes - consumidosPROXY
-      console.log("Usuario con megas restantes: " - user.username + " con: " + proxyMbRestantes + "MB")
-      proxyMbRestantes > 0 &&
+      
+      if (proxyMbRestantes > 0) {
+        console.log("Registro Proxy Mensual, megas: " + user.username + " con: " + proxyMbRestantes + "byte, -> " + (proxyMbRestantes / 1024 / 1024) + "MB")
         (await RegisterDataUsersCollection.insert({
           userId: user._id,
           type: "proxy",
           megasGastadosinBytes: proxyMbRestantes,
-          register:"diario"
-        }));
-       
+          register:"mensual"
+        }));}
+      }else{
+        console.log(`Revisar el usuario no tiene ultima compra Proxy Mensual, USER: ${user.username ? user.username : user._id}`)
+        await RegisterDataUsersCollection.insert({
+          userId: user._id,
+          type: "proxy",
+          megasGastadosinBytes: user.megasGastadosinBytes,
+          register:"mensual"
+        })
+        await Meteor.call("reiniciarConsumoDeDatosPROXY",user);
+        await Meteor.call("desactivarUserProxy",user)
+      }
+      } catch (error) {
+        console.log(error)
+      }
     },
     guardarDatosConsumidosByUserVPNMensual : async (user) => {
-
+      console.log("guardarDatosConsumidosByUserVPNMensual");
     
       ///////CONSUMO VPN
+    try{
       const ultimaCompraFechaVPN = await Meteor.call("ultimaCompraByUserId",user._id, "VPN");
-    
+
+      if (ultimaCompraFechaVPN ) {
+
       // Encuentra todos los documentos que coincidan con los criterios de búsqueda
       const registrosVPN = await RegisterDataUsersCollection.find({
         userId: user._id,
@@ -706,9 +731,10 @@ if (Meteor.isServer) {
     
       //REGISTRAR DATOS CONSUMIDOS EN VPN
       // Calcular el total de vpnMbGastados restantes y actualizar la colección
-      const vpnMbRestantes = user.vpnMbGastados - consumidosVPN;
-      console.log("Usuario con megas restantes: " - user.username + " con: " + vpnMbRestantes + "MB")
+      const vpnMbRestantes =  user.vpnMbGastados - consumidosVPN;
+     
       if (vpnMbRestantes > 0) {
+        console.log("Registro VPN Mensual, megas: " + user.username + " con: " + vpnMbRestantes + "byte, -> " + (vpnMbRestantes / 1024 / 1024) + "MB")
         await RegisterDataUsersCollection.insert({
           userId: user._id,
           type: "vpn",
@@ -716,23 +742,37 @@ if (Meteor.isServer) {
           register:"mensual"
         });
       }
-    
+    }else{
+      console.log(`Revisar el usuario no tiene ultima compra VPN Mensual, USER: ${user.username ? user.username : user._id}`)
+      await RegisterDataUsersCollection.insert({
+        userId: user._id,
+        type: "vpn",
+        vpnMbGastados: user.vpnMbGastados,
+        register:"mensual"
+      })
+      await Meteor.call("reiniciarConsumoDeDatosVPN",user)
+      await Meteor.call("desactivarUserVPN",user)
+    }
+    } catch (error) {
+      console.log(error)
+    }
     },
     guardarDatosConsumidosByUserPROXYDiario: async (user) => {
-
       ////////////CONSUMOS PROXY/////////////   
     
+    try{
       const ultimaCompraFecha = await Meteor.call("ultimaCompraByUserId",user._id, "PROXY");
-    
+
+      if (ultimaCompraFecha ) {
+
       // Encuentra todos los documentos que coincidan con los criterios de búsqueda
       const registrosPROXY = await RegisterDataUsersCollection.find({
         userId: user._id,
         type: "proxy",
         fecha: { $gt: ultimaCompraFecha.createdAt },
-        register:"mensual"
+        register:"diario"
       });
 
-      
       // Inicializa una variable para almacenar la sumatoria de megasGastadosinBytes
       let consumidosPROXY = 0;
     
@@ -740,25 +780,42 @@ if (Meteor.isServer) {
       await registrosPROXY.forEachAsync(registro => {
         consumidosPROXY += registro.megasGastadosinBytes;
       });
+      
     
       //REGISTRAR DATOS CONSUMIDOS EN PROXY
-      const proxyMbRestantes = user.megasGastadosinBytes - consumidosPROXY
-      console.log("Usuario con megas restantes: " - user.username + " con: " + proxyMbRestantes + "MB")
-      proxyMbRestantes > 0 &&
-        (await RegisterDataUsersCollection.insert({
+      const proxyMbRestantes = user.megasGastadosinBytes - consumidosPROXY;
+     
+      if (proxyMbRestantes > 0) {
+        console.log("Registro Proxy Diario, megas: " + user.username + " con: " + proxyMbRestantes + "byte, -> " + (proxyMbRestantes / 1024 / 1024) + "MB")
+        await RegisterDataUsersCollection.insert({
           userId: user._id,
           type: "proxy",
           megasGastadosinBytes: proxyMbRestantes,
-          register:"mensual"
-        }));
-       
+          register:"diario"
+        });}
+      }else{
+        console.log(`Revisar el usuario no tiene ultima compra Proxy Diario, USER: ${user.username ? user.username : user._id}`)
+        await RegisterDataUsersCollection.insert({
+          userId: user._id,
+          type: "proxy",
+          megasGastadosinBytes: user.megasGastadosinBytes,
+          register:"diario"
+        })
+        await Meteor.call("reiniciarConsumoDeDatosPROXY",user)
+        await Meteor.call("desactivarUserProxy",user)
+      }
+      } catch (error) {
+        console.log(error)
+      }
     },
     guardarDatosConsumidosByUserVPNDiario : async (user) => {
 
-    
+    try {
       ///////CONSUMO VPN
       const ultimaCompraFechaVPN = await Meteor.call("ultimaCompraByUserId",user._id, "VPN");
-    
+
+      if (ultimaCompraFechaVPN ) {
+
       // Encuentra todos los documentos que coincidan con los criterios de búsqueda
       const registrosVPN = await RegisterDataUsersCollection.find({
         userId: user._id,
@@ -766,7 +823,6 @@ if (Meteor.isServer) {
         fecha: { $gt: ultimaCompraFechaVPN.createdAt },
         register:"diario"
       });
-    
       // Inicializa una variable para almacenar la sumatoria de vpnMbGastados
       let consumidosVPN = 0;
     
@@ -775,12 +831,12 @@ if (Meteor.isServer) {
         consumidosVPN += registro.vpnMbGastados;
       });
     
-    
       //REGISTRAR DATOS CONSUMIDOS EN VPN
       // Calcular el total de vpnMbGastados restantes y actualizar la colección
       const vpnMbRestantes = user.vpnMbGastados - consumidosVPN;
-      console.log("Usuario con megas restantes: " - user.username + " con: " + vpnMbRestantes + "MB")
+     
       if (vpnMbRestantes > 0) {
+        console.log("Registro VPN Diario, megas: " + user.username + " con: " + vpnMbRestantes  + "byte, -> " + (vpnMbRestantes / 1024 / 1024) + "MB")
         await RegisterDataUsersCollection.insert({
           userId: user._id,
           type: "vpn",
@@ -788,7 +844,21 @@ if (Meteor.isServer) {
           register:"diario"
         });
       }
-    
+    }else{
+      console.log(`Revisar el usuario no tiene ultima compra VPN Diario, USER: ${user.username ? user.username : user._id}`)
+      await RegisterDataUsersCollection.insert({
+        userId: user._id,
+        type: "vpn",
+        vpnMbGastados: user.vpnMbGastados,
+        register:"diario"
+      })
+      await Meteor.call("reiniciarConsumoDeDatosVPN",user)
+      await Meteor.call("desactivarUserVPN",user)
+    }
+    } catch (error) {
+      console.log(error)
+    }
+      
     },
     reiniciarConsumoDeDatosVPN : async (user) => {
       /////////////Dejar en cero el consumo de los usuarios
