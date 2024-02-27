@@ -50,13 +50,12 @@ if (Meteor.isServer) {
   try {
     cron
       .schedule(
-        "0 0 * 1-12 *",
-        // "* * * 1-12 *",
-
+        // "1-59 * * * *",
+        "55 22 * 1-12 *",
         guardarDatosConsumidosAll,
         {
           scheduled: true,
-          timezone: "America/Montevideo",
+          timezone: "America/Havana",
         }
       )
       .start();
