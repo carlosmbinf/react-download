@@ -56,7 +56,7 @@ if (Meteor.isServer) {
         guardarDatosConsumidosAll,
         {
           scheduled: true,
-          timezone: "America/Havana",
+          timezone: "America/Montevideo",
         }
       )
       .start();
