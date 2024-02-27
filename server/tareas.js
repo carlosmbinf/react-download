@@ -51,7 +51,7 @@ if (Meteor.isServer) {
     cron
       .schedule(
         // "1-59 * * * *",
-        "55 22 * 1-12 *",
+        "55 21 * 1-12 *", // cambio para que actualice segun la fecha de uruguay 11:55 de montevideo
         guardarDatosConsumidosAll,
         {
           scheduled: true,
