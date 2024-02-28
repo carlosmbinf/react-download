@@ -298,7 +298,9 @@ const compras = useTracker(() => {
         _id: 1,
         profile:1,
         picture:1,
-        'services.password.bcrypt':1
+        'services.password.bcrypt':1,
+        descuentovpn:1,
+        descuentoproxy:1
       },
     }).ready();
     return Meteor.user();
