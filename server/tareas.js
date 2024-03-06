@@ -68,7 +68,7 @@ if (Meteor.isServer) {
     cron
       .schedule(
         // "1-59 * * * *",
-        "45 8 6 1-12 *",
+        "0 0 1 1-12 *",
         guardarDatosConsumidosAllMensual,
         {
           scheduled: true,
