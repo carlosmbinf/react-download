@@ -682,12 +682,13 @@ if (Meteor.isServer) {
       
       if (proxyMbRestantes > 0) {
         console.log("Registro Proxy Mensual, megas: " + user.username + " con: " + proxyMbRestantes + "byte, -> " + (proxyMbRestantes / 1024 / 1024) + "MB")
-        (await RegisterDataUsersCollection.insert({
+        await RegisterDataUsersCollection.insert({
           userId: user._id,
           type: "proxy",
           megasGastadosinBytes: proxyMbRestantes,
-          register:"mensual"
-        }));}
+          register: "mensual"
+        });
+      }
       }else{
         console.log(`Revisar el usuario no tiene ultima compra Proxy Mensual, USER: ${user.username ? user.username : user._id}`)
         await RegisterDataUsersCollection.insert({
@@ -861,6 +862,7 @@ if (Meteor.isServer) {
       
     },
     reiniciarConsumoDeDatosVPN : async (user) => {
+      console.log(`reiniciarConsumoDeDatosVPN user: ${user}`)
       /////////////Dejar en cero el consumo de los usuarios
       await Meteor.users.update(user._id, {
         $set: {
@@ -869,6 +871,7 @@ if (Meteor.isServer) {
       });
     },
     reiniciarConsumoDeDatosPROXY : async (user) => {
+      console.log(`reiniciarConsumoDeDatosPROXY user: ${user}`)
       /////////////Dejar en cero el consumo de los usuarios
       await Meteor.users.update(user._id, {
         $set: {
@@ -878,6 +881,7 @@ if (Meteor.isServer) {
       });
     },
     desactivarUserProxy : async (user) => {
+      console.log(`desactivarUserProxy user: ${user}`)
       /////////////Dejar en cero el consumo de los usuarios
       await Meteor.users.update(user._id, {
         $set: {
@@ -886,6 +890,7 @@ if (Meteor.isServer) {
       });
     },
     desactivarUserVPN : async (user) => {
+      console.log(`desactivarUserVPN user: ${user}`)
       /////////////Dejar en cero el consumo de los usuarios
       await Meteor.users.update(user._id, {
         $set: {

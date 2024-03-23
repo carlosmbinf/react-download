@@ -64,23 +64,23 @@ if (Meteor.isServer) {
   } catch (error) {
     console.log(error);
   }
-  try {
-    cron
-      .schedule(
-        // "1-59 * * * *",
-        "0 0 1 1-12 *",
-        guardarDatosConsumidosAllMensual,
-        {
-          scheduled: true,
-          timezone: "America/Havana",
-        }
-      )
-      .start();
+  // try {
+  //   cron
+  //     .schedule(
+  //       // "1-59 * * * *",
+  //       "0 0 1 1-12 *",
+  //       guardarDatosConsumidosAllMensual,
+  //       {
+  //         scheduled: true,
+  //         timezone: "America/Havana",
+  //       }
+  //     )
+  //     .start();
 
 
-  } catch (error) {
-    console.log(error);
-  }
+  // } catch (error) {
+  //   console.log(error);
+  // }
 
   try {
     //////////////////Banear proxy ///////////////////
