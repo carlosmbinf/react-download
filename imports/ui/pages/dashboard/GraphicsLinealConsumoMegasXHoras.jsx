@@ -145,7 +145,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function GraphicsLinealConsumoMegasXMeses(options) {
+export default function GraphicsLinealConsumoMegasXHoras(options) {
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
 
@@ -155,7 +155,7 @@ export default function GraphicsLinealConsumoMegasXMeses(options) {
   const getDataUsers = async () => {
     try {
       const result = await new Promise((resolve, reject) => {
-        Meteor.call('getDatosDashboardByUser', "MENSUAL", id, (error, result) => {
+        Meteor.call('getDatosDashboardByUser', "HORA", id, (error, result) => {
           if (error) {
             console.log("error", error);
             reject(error);

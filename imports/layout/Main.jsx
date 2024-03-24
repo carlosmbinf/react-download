@@ -64,6 +64,7 @@ import GraphicsLinealConsumoMegasXMeses from "../ui/pages/dashboard/GraphicsLine
 import StateUsers from "../ui/pages/users/StateUsers";
 import VentasTableSinCompra from "../ui/pages/compras/VentasTableSinCompra";
 import GraphicsLinealConsumoMegasXDias from "../ui/pages/dashboard/GraphicsLinealConsumoMegasXDias";
+import GraphicsLinealConsumoMegasXHoras from "../ui/pages/dashboard/GraphicsLinealConsumoMegasXHoras";
 
 const useStyles = makeStyles((theme) => ({
   // necessary for content to be below app bar
@@ -106,6 +107,13 @@ export default function Main() {
           {useractual &&
               Array(Meteor.settings.public.administradores)[0].includes(useractual.username) ? (
                 <>
+                  <Grid container item xs={12} justify="space-evenly" alignItems="center" style={{ paddingTop: 50 }}>
+                    <Chip style={{ width: "90%" }} color='primary' label="Consumo de Datos en VidKar Por Horas:" />
+                    <div style={{ width: "100%", height: 300 }}>
+                      <GraphicsLinealConsumoMegasXHoras />
+                    </div>
+                  </Grid>
+                  <Divider variant="middle" />
                   <Grid container item xs={12} justify="space-evenly" alignItems="center" style={{ paddingTop: 50 }}>
                     <Chip style={{ width: "90%" }} color='primary' label="Consumo de Datos en VidKar Por Dias:" />
                     <div style={{ width: "100%", height: 300 }}>

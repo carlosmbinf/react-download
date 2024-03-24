@@ -15,6 +15,7 @@ import {
   TVCollection,
   RegisterDataUsersCollection
 } from "../imports/ui/pages/collections/collections";
+import moment from "moment";
 
 if (Meteor.isServer) {
   console.log("Cargando Métodos...");
@@ -637,6 +638,12 @@ if (Meteor.isServer) {
       const venta = await VentasCollection.findOne({ userId, type }, { sort: { createdAt: -1 }, limit: 1 });
       return venta?venta:null;
     },
+    guardarDatosConsumidosByUserHoras : async (user) => {
+      console.log(`Consumo Horas - DATE: ${new Date()}, USER: ${user.username ? user.username : user._id}`);
+        
+      user.megasGastadosinBytes > 0 && await Meteor.call("guardarDatosConsumidosByUserPROXYHoras",user)
+      user.vpnMbGastados > 0 && await Meteor.call("guardarDatosConsumidosByUserVPNHoras",user)
+    },
     guardarDatosConsumidosByUserDiario : async (user) => {
     console.log(`Reiniciar Consumo Diario - DATE: ${new Date()}, USER: ${user.username ? user.username : user._id}`);
       
@@ -758,6 +765,107 @@ if (Meteor.isServer) {
       console.log(error)
     }
     },
+    guardarDatosConsumidosByUserPROXYHoras: async (user) => {
+      ////////////CONSUMOS PROXY/////////////   
+    
+    try{
+      const ultimaCompraFecha = await Meteor.call("ultimaCompraByUserId",user._id, "PROXY");
+
+      if (ultimaCompraFecha ) {
+
+      // Encuentra todos los documentos que coincidan con los criterios de búsqueda
+      const registrosPROXY = await RegisterDataUsersCollection.find({
+        userId: user._id,
+        type: "proxy",
+        fecha: { $gt: ultimaCompraFecha.createdAt }
+      });
+
+      // Inicializa una variable para almacenar la sumatoria de megasGastadosinBytes
+      let consumidosPROXY = 0;
+    
+      // Itera sobre los resultados y suma los valores de megasGastadosinBytes
+      await registrosPROXY.forEachAsync(registro => {
+        consumidosPROXY += registro.megasGastadosinBytes;
+      });
+      
+    
+      //REGISTRAR DATOS CONSUMIDOS EN PROXY
+      const proxyMbRestantes = user.megasGastadosinBytes - consumidosPROXY;
+     
+      if (proxyMbRestantes > 0) {
+        console.log("Registro Proxy Horas, megas: " + user.username + " con: " + proxyMbRestantes + "byte, -> " + (proxyMbRestantes / 1024 / 1024) + "MB")
+        await RegisterDataUsersCollection.insert({
+          userId: user._id,
+          type: "proxy",
+          megasGastadosinBytes: proxyMbRestantes,
+          register:"hora"
+        });}
+      }else{
+        console.log(`Revisar el usuario no tiene ultima compra Proxy Diario, USER: ${user.username ? user.username : user._id}`)
+        await RegisterDataUsersCollection.insert({
+          userId: user._id,
+          type: "proxy",
+          megasGastadosinBytes: user.megasGastadosinBytes,
+          register:"hora"
+        })
+        await Meteor.call("reiniciarConsumoDeDatosPROXY",user)
+        await Meteor.call("desactivarUserProxy",user)
+      }
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    guardarDatosConsumidosByUserVPNHoras : async (user) => {
+
+      try {
+        ///////CONSUMO VPN
+        const ultimaCompraFechaVPN = await Meteor.call("ultimaCompraByUserId",user._id, "VPN");
+  
+        if (ultimaCompraFechaVPN ) {
+  
+        // Encuentra todos los documentos que coincidan con los criterios de búsqueda
+        const registrosVPN = await RegisterDataUsersCollection.find({
+          userId: user._id,
+          type: "vpn",
+          fecha: { $gt: ultimaCompraFechaVPN.createdAt }
+        });
+        // Inicializa una variable para almacenar la sumatoria de vpnMbGastados
+        let consumidosVPN = 0;
+      
+        // Itera sobre los resultados y suma los valores de vpnMbGastados
+        await registrosVPN.forEach(registro => {
+          consumidosVPN += registro.vpnMbGastados;
+        });
+      
+        //REGISTRAR DATOS CONSUMIDOS EN VPN
+        // Calcular el total de vpnMbGastados restantes y actualizar la colección
+        const vpnMbRestantes = user.vpnMbGastados - consumidosVPN;
+       
+        if (vpnMbRestantes > 0) {
+          console.log("Registro VPN Hora, megas: " + user.username + " con: " + vpnMbRestantes  + "byte, -> " + (vpnMbRestantes / 1024 / 1024) + "MB")
+          await RegisterDataUsersCollection.insert({
+            userId: user._id,
+            type: "vpn",
+            vpnMbGastados: vpnMbRestantes,
+            register:"hora"
+          });
+        }
+      }else{
+        console.log(`Revisar el usuario no tiene ultima compra VPN Diario, USER: ${user.username ? user.username : user._id}`)
+        await RegisterDataUsersCollection.insert({
+          userId: user._id,
+          type: "vpn",
+          vpnMbGastados: user.vpnMbGastados,
+          register:"hora"
+        })
+        await Meteor.call("reiniciarConsumoDeDatosVPN",user)
+        await Meteor.call("desactivarUserVPN",user)
+      }
+      } catch (error) {
+        console.log(error)
+      }
+        
+      },
     guardarDatosConsumidosByUserPROXYDiario: async (user) => {
       ////////////CONSUMOS PROXY/////////////   
     
@@ -897,6 +1005,125 @@ if (Meteor.isServer) {
           vpn: false
         },
       });
+    },
+    getDatosDashboardByUser: async (tipoDeDashboard, idUser) => {
+      //tipoDeDashboard = "DIARIO" || "MENSUAL" || "HORA"
+
+
+      const aporte = (type, fechaStart, fechaEnd) => {
+        let totalConsumo = 0;
+        let fechaInicial = new Date(fechaStart)
+        let fechaFinal = new Date(fechaEnd)
+
+
+        const consumo = RegisterDataUsersCollection.find((idUser ? {
+          userId: idUser, fecha: {
+            $gte: fechaInicial,
+            $lt: fechaFinal
+          }
+        } : {
+          fecha: {
+            $gte: fechaInicial,
+            $lt: fechaFinal
+          }
+        }), {
+          fields: {
+            userId: 1,
+            megasGastadosinBytes: 1,
+            fecha: 1,
+            type: 1,
+            vpnMbGastados: 1
+          }
+        }).fetch()
+        
+        consumo.forEach((element) => {
+          let fechaElement = new Date(element.fecha)
+
+         if (element.type == type) {
+          let suma
+          switch (element.type) {
+            case "proxy":
+              suma = (element.megasGastadosinBytes ? element.megasGastadosinBytes : 0)
+              break;
+            case "vpn":
+              suma = (element.vpnMbGastados ? element.vpnMbGastados : 0)
+            default:
+              break;
+          }
+
+         fechaElement >= fechaInicial && fechaElement < fechaFinal &&
+           (totalConsumo += suma)
+
+       }
+        })
+
+        return Number((totalConsumo / 1024000000).toFixed(2))
+      }
+
+        let data01 = [];
+        if (tipoDeDashboard == "HORA") {
+          let dateStartDay = moment(new Date()).startOf('day');
+          let dateEndDay = moment(new Date()).endOf('day');
+
+          for (let hour = 0; hour < 24; hour++) {
+            let dateStartHour = moment(dateStartDay).hour(hour).startOf('hour');
+            let dateEndHour = moment(dateStartDay).hour(hour).endOf('hour');
+
+            let hourlyData = {
+              name: dateStartHour.format("HH:mm"),
+              PROXY: aporte("proxy", dateStartHour.toISOString(), dateEndHour.toISOString()),
+              VPN: aporte("vpn", dateStartHour.toISOString(), dateEndHour.toISOString())
+            };
+
+            data01.push(hourlyData);
+          }
+        } else if (tipoDeDashboard == "DIARIO") {
+          let dateStartMonth = moment(new Date()).startOf('month');
+          let daysInMonth = dateStartMonth.daysInMonth();
+
+
+          for (let day = 1; day <= daysInMonth; day++) {
+            let dateStartDay = moment(dateStartMonth).date(day).startOf('day');
+            let dateEndDay = moment(dateStartMonth).date(day).endOf('day');
+
+            let dailyData = {
+              name: dateStartDay.format("DD"),
+              PROXY: aporte("proxy", dateStartDay.toISOString(), dateEndDay.toISOString()),
+              VPN: aporte("vpn", dateStartDay.toISOString(), dateEndDay.toISOString())
+            };
+
+            data01.push(dailyData);
+          }
+        } else if (tipoDeDashboard == "MENSUAL") {
+          for (let month = 11; month >= 0; month--) {
+            let dateStartMonth = moment(new Date()).startOf('month').subtract(month, 'months').add(1, 'days');
+            let daysInMonth = dateStartMonth.daysInMonth();
+
+            let monthlyData = {
+              name: dateStartMonth.format("MM/YYYY"),
+              PROXY: aporte("proxy", dateStartMonth.toISOString(), moment(dateStartMonth).endOf('month').add(1, 'days').toISOString()),
+              VPN: aporte("vpn", dateStartMonth.toISOString(), moment(dateStartMonth).endOf('month').add(1, 'days').toISOString())
+            };
+
+            data01.push(monthlyData);
+          }
+        }
+
+        return data01;
+    },
+    actualizarPrecio: async (id,values) => {
+      try {
+        await VentasCollection.update(id, {
+          $set: {
+            precio: values.precio,
+            comentario: values.comentario,
+            gananciasAdmin: values.ganancias
+          },
+        });
+        return "Precio Actualizado"
+      } catch (error) {
+        return error.message
+      }
     }
     
 

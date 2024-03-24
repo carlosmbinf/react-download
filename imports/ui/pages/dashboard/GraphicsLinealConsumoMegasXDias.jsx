@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
@@ -152,119 +152,36 @@ export default function GraphicsLinealConsumoMegasXDias(options) {
   let { id } = useParams();
   
   moment.locale('es')
-
-  const consumo = useTracker(() => {
-    Meteor.subscribe("registerDataUser", (id ? { userId: id, register:"diario" } : {register:"diario"}), {
-      fields: {
-        userId: 1,
-        megasGastadosinBytes: 1,
-        fecha: 1,
-        type: 1,
-        vpnMbGastados: 1,
-        register:1
-      }
-    })
-    return RegisterDataUsersCollection.find((id ? { userId: id, register:"diario" } : {register:"diario"}), {
-      fields: {
-        userId: 1,
-        megasGastadosinBytes: 1,
-        fecha: 1,
-        type: 1,
-        vpnMbGastados: 1
-      }
-    })
-  });
-
-  const gastos = (id,fechaStart, fechaEnd) =>{
-      let totalAPagar = 0;
-      let fechaInicial = new Date(fechaStart)
-      let fechaFinal = new Date(fechaEnd)
-
-      // console.log(`fechaInicial: ${fechaInicial}`);
-      // console.log(`fechaFinal: ${fechaFinal}`);
-
-      ventas.map(element => {
-        let fechaElement = new Date(element.createdAt)
-
-      // console.log(`fechaElement: ${fechaElement}`);
-
-        // fechaElement >= fechaInicial && fechaElement < fechaFinal && console.log(element.userId)
-      element.adminId == id && fechaElement >= fechaInicial && fechaElement < fechaFinal && !element.cobrado && (totalAPagar += element.precio)
-
-      })
-      return totalAPagar
-    }
-
-  const aporte =   (type, fechaStart, fechaEnd) =>{
-      let totalConsumo = 0;
-      let fechaInicial = new Date(fechaStart)
-      let fechaFinal = new Date(fechaEnd)
-      
-      // console.log(`fechaStart: ${fechaStart}`);
-      // console.log(`fechaEnd: ${fechaEnd}`);
-      // console.log(`fechaInicial: ${fechaInicial}`);
-
-      consumo.forEach((element) => {
-      let fechaElement =  new Date(element.fecha)
-
-      // console.log(`fechaElement: ${fechaElement}`);
-      
-
-        // element.type == type && fechaElement >= fechaInicial && fechaElement < fechaFinal && console.log(`fechaElement: ${fechaElement}`)
-        if (element.type == type) {
-          let suma
-          switch (element.type) {
-            case "proxy":
-              suma = (element.megasGastadosinBytes ? element.megasGastadosinBytes : 0)
-              break;
-            case "vpn":
-              suma = (element.vpnMbGastados ? element.vpnMbGastados : 0)
-            default:
-              break;
+  const getDataUsers = async () => {
+    try {
+      const result = await new Promise((resolve, reject) => {
+        Meteor.call('getDatosDashboardByUser', "DIARIO", id, (error, result) => {
+          if (error) {
+            console.log("error", error);
+            reject(error);
+          } else {
+            console.log("result", result);
+            resolve(result);
           }
-
-         fechaElement >= fechaInicial && fechaElement < fechaFinal &&
-           (totalConsumo += suma)
-
-       }
-      })
-      // console.log(`fechaFinal: ${fechaFinal}`);
-      
-      return Number((totalConsumo/1024000000).toFixed(2))
+        });
+      });
+      return result;
+    } catch (error) {
+      console.log("error", error);
+      return [];
     }
+  };
 
-    const datausers = useTracker(() => {
-      Meteor.subscribe("user", (id ? { _id: id } : {}), {
-          fields: { megasGastadosinBytes: 1, vpnMbGastados: 1 }
-      })
+  const [datausers, setDataUsers] = useState(null);
   
-      let data01 = [];
-  
-          let dateStartMonth = moment(new Date()).startOf('month');
-          let daysInMonth = dateStartMonth.daysInMonth();
-  
-             
-          for (let day = 1; day <= daysInMonth; day++) {
-              let dateStartDay = moment(dateStartMonth).date(day).startOf('day');
-              let dateEndDay = moment(dateStartMonth).date(day).endOf('day');
-  
-              let dailyData = {
-                  name: dateStartDay.format("DD"),
-                  PROXY: aporte("proxy", dateStartDay.toISOString(), dateEndDay.toISOString()),
-                  VPN: aporte("vpn", dateStartDay.toISOString(), dateEndDay.toISOString())
-              };
-  
-              data01.push(dailyData);
-          }
-  
-          
-      
-  
-      return data01;
-  
-  });
-  
-  
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getDataUsers();
+      setDataUsers(data);
+    };
+
+    fetchData();
+  }, [id]);
 
   return (
       <Zoom in={true}>

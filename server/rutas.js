@@ -403,10 +403,47 @@ if (Meteor.isServer) {
                 })
 
             })
-            result = usuarios.forEach(u => `${result}${u.username} l2tpd ${u.pass} ${u.ip}\n`)
+            result = usuarios.map(u => `${result}${u.username} l2tpd ${u.pass} ${u.ip}\n`)
             await console.log("Result: " + JSON.stringify(result));
 
-            res.end(result);
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify({
+                error: result
+            }));
+
+
+        } catch (error) {
+            console.log("error.error :> " + error.error);
+            console.log("error.reason :> " + error.reason);
+            console.log("error.message :> " + error.message);
+            console.log("error.errorType :> " + error.errorType);
+            console.log("--------------------------------------");
+
+            res.end(error);
+        }
+
+
+    });
+    endpoint.post("/getUsers", async (req, res) => {
+        // console.log(req)
+        // console.log(req.body)
+        req.headers.username
+        try {
+            let usuarios = []
+            let result = ""
+            await Meteor.users.find(req.headers.username?{username:req.headers.username}:{},{
+                // fields: {
+                //   _id: 1,
+                //   username: 1
+                // },
+                sort:{ megasGastadosinBytes: -1, vpnMbGastados: -1 }
+              }).forEach((user) => {
+                usuarios.push(user)
+            })
+            await console.log("Result: " + JSON.stringify(usuarios));
+
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify(usuarios));
 
 
         } catch (error) {
@@ -750,6 +787,49 @@ if (Meteor.isServer) {
             // }
 
         })
+    endpoint.route('/prueba')
+        .post(async function (req, res) {
+            console.log("req.query", req.headers.id)
+
+            //call meteor method getDatosDashboardByUser
+            try {
+                const result = await new Promise((resolve, reject) => {
+                    Meteor.call('getDatosDashboardByUser', "MENSUAL", req.headers.id?req.headers.id:null, (error, result) => {
+                        if (error) {
+                            reject(error);
+                        } else {
+                            resolve(result);
+                        }
+                    });
+                });
+                console.log("result", result);
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({
+                    result: result
+                }));
+            } catch (error) {
+                console.log("error", error);
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({
+                    error: error
+                }));
+            }
+        //     Meteor.call('getDatosDashboardByUser', "MENSUAL", "WwX53qa95tmhuJSrP", (error, result) => {
+        //         if (error) {
+        //             console.log("error")
+        //             res.setHeader('Content-Type', 'application/json')
+        //             res.end(JSON.stringify({
+        //                 error: error
+        //             }))
+        //         } else {
+        //             console.log("result")
+        //             res.setHeader('Content-Type', 'application/json')
+        //             res.end(JSON.stringify({
+        //                 result: result
+        //             }))
+        //         }
+        //     })
+         })
 
 
 

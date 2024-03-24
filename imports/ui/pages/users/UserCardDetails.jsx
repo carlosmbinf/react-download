@@ -55,6 +55,7 @@ import { Autocomplete } from "@material-ui/lab";
 import DashboardInit from "../dashboard/DashboardInit";
 import GraphicsLinealConsumoMegasXMeses from "../dashboard/GraphicsLinealConsumoMegasXMeses";
 import GraphicsLinealConsumoMegasXDias from "../dashboard/GraphicsLinealConsumoMegasXDias";
+import GraphicsLinealConsumoMegasXHoras from "../dashboard/GraphicsLinealConsumoMegasXHoras";
 
 
 const StyledBadge = withStyles((theme) => ({
@@ -448,8 +449,7 @@ export default function UserCardDetails() {
   };
   const handleReiniciarConsumo = async (event) => {
     console.log("INICIO")
-    await Meteor.call("guardarDatosConsumidosByUserPROXYDiario",users)
-    await Meteor.call("guardarDatosConsumidosByUserPROXYMensual",users)
+    await Meteor.call("guardarDatosConsumidosByUserPROXYHoras",users)
     await Meteor.call("reiniciarConsumoDeDatosPROXY",users)
     await Meteor.call("desactivarUserProxy",users)
 
@@ -467,8 +467,7 @@ export default function UserCardDetails() {
   };
 
   const handleReiniciarConsumoVPN = async (event) => {
-    await Meteor.call("guardarDatosConsumidosByUserVPNDiario",users)
-    await Meteor.call("guardarDatosConsumidosByUserVPNMensual",users)
+    await Meteor.call("guardarDatosConsumidosByUserVPNHoras",users)
     await Meteor.call("reiniciarConsumoDeDatosVPN",users)
     await Meteor.call("desactivarUserVPN",users)
     LogsCollection.insert({
@@ -1913,6 +1912,12 @@ export default function UserCardDetails() {
               </Paper>
               {registroDeDatosConsumidos.count() > 0 &&
                 <>
+                <Grid container item xs={12} justify="space-evenly" alignItems="center" style={{ paddingTop: 50 }}>
+                    <Chip style={{ width: "90%" }} color='primary' label="Consumo de Datos en VidKar Por Horas:" />
+                    <div style={{ width: "100%", height: 300 }}>
+                      <GraphicsLinealConsumoMegasXHoras />
+                    </div>
+                  </Grid>
                 <Grid container item xs={12} justify="space-evenly" alignItems="center" style={{ paddingTop: 50 }}>
                     <Chip style={{ width: "90%" }} color='primary' label="Consumo de Datos en VidKar Por Dias:" />
                     <div style={{ width: "100%", height: 300 }}>

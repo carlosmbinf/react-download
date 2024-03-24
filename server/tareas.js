@@ -22,7 +22,7 @@ const guardarDatosConsumidosAll = async () => {
   // await console.log("running every minute to 1 from 5");
 
   users.fetch().forEach( async user => {
-   await Meteor.call("guardarDatosConsumidosByUserDiario",user)
+   await Meteor.call("guardarDatosConsumidosByUserHoras",user)
   })
 }
 
@@ -51,7 +51,7 @@ if (Meteor.isServer) {
     cron
       .schedule(
         // "1-59 * * * *",
-        "55 21 * 1-12 *", // cambio para que actualice segun la fecha de uruguay 11:55 de montevideo
+        "55 * * 1-12 *", // cambio para que actualice segun la fecha de uruguay 11:55 de montevideo
         guardarDatosConsumidosAll,
         {
           scheduled: true,
@@ -106,9 +106,10 @@ if (Meteor.isServer) {
             const ultimaVentaProxy = await ultimaCompraByUserId(user._id, 'PROXY'); // Función para obtener la última compra de proxy            
             const haceUnMes = ultimaVentaProxy ? moment(ultimaVentaProxy.createdAt).add(1, 'months') < moment(new Date()) : false;
             // console.log("PROXY HACE UN MES? " + haceUnMes + " ultimaVentaProxy" + ultimaVentaProxy)
-            if (user.isIlimitado && user.fechaSubscripcion && new Date() >= new Date(user.fechaSubscripcion)) {
-              await bloquearUsuarioProxy(user, "porque llegó a la fecha límite");
-            } else if (!user.isIlimitado) {
+            if (user.isIlimitado) {
+              if (user.fechaSubscripcion && new Date() >= new Date(user.fechaSubscripcion))
+                await bloquearUsuarioProxy(user, "porque llegó a la fecha límite");
+            } else {
               const megasGastados = user.megasGastadosinBytes ? user.megasGastadosinBytes / 1024000 : 0;
               const megasContratados = user.megas ? Number(user.megas) : 0;
               if ((megasGastados >= megasContratados || haceUnMes) && !user.baneado) {
@@ -142,8 +143,7 @@ if (Meteor.isServer) {
             } catch (error) {
               console.log("Error al enviar el mensaje: ", error);
             }
-            await Meteor.call("guardarDatosConsumidosByUserPROXYDiario",user)
-            await Meteor.call("guardarDatosConsumidosByUserPROXYMensual",user)
+            await Meteor.call("guardarDatosConsumidosByUserPROXYHoras",user)
             await Meteor.call("reiniciarConsumoDeDatosPROXY",user)
           }
 
@@ -184,50 +184,52 @@ if (Meteor.isServer) {
             const ultimaVentaVPN = await ultimaCompraByUserId(user._id, 'VPN'); // Función para obtener la última compra de VPN
             const haceUnMes = ultimaVentaVPN ? moment(ultimaVentaVPN.createdAt).add(1, 'months') < moment(new Date()) : false;
             // console.log("VPN HACE UN MES? " + haceUnMes + " ultimaVentaVPN: " + ultimaVentaVPN)
-            if (user.vpnisIlimitado && user.vpnfechaSubscripcion && new Date() > user.vpnfechaSubscripcion) {
-              await bloquearUsuarioVPN(user, "porque llegó a la fecha límite");
-            } else if (!user.vpnisIlimitado && (user.vpnMbGastados ? user.vpnMbGastados : 0) >= ((user.vpnmegas ? Number(user.vpnmegas) : 0) * 1024000)) {
-              await bloquearUsuarioVPN(user, `porque consumió ${user.vpnmegas} MB`);
-            } else if (haceUnMes) {
-              await bloquearUsuarioVPN(user, "hace más de un mes desde la última compra");
+            if (user.vpnisIlimitado) {
+              if (user.vpnfechaSubscripcion && new Date() > user.vpnfechaSubscripcion)
+                await bloquearUsuarioVPN(user, "porque llegó a la fecha límite");
+            } else {
+              if ((user.vpnMbGastados ? user.vpnMbGastados : 0) >= ((user.vpnmegas ? Number(user.vpnmegas) : 0) * 1024000)) {
+                await bloquearUsuarioVPN(user, `porque consumió ${user.vpnmegas} MB`);
+              } else if (haceUnMes) {
+                await bloquearUsuarioVPN(user, "hace más de un mes desde la última compra");
+              }
             }
           });
 
 
-          async function bloquearUsuarioVPN(user, motivo) {
-            if (!user) return; // Validación contra null
-            if (!user.vpn) return; // Si esta bloqueada la VPN que no actualice nada
-            Meteor.users.update(user._id, { $set: { vpn: false } });
-            LogsCollection.insert({
-              type: "Bloqueo VPN",
-              userAfectado: user._id,
-              userAdmin: "server",
-              message: `El servidor ${process.env.ROOT_URL} bloqueó automáticamente la VPN ${motivo}`,
-            });
-            try {
-              Meteor.call("sendMensaje", user, {
-                text: `El servidor ${process.env.ROOT_URL} bloqueó automáticamente la VPN de ${user.profile.firstName} ${user.profile.lastName} ${motivo}`,
-              }, 'VidKar Bloqueo de VPN');
-            } catch (error) {
-              console.log("Error al enviar el mensaje: ", error);
-            }
-            await Meteor.call("guardarDatosConsumidosByUserVPNDiario",user)
-            await Meteor.call("guardarDatosConsumidosByUserVPNMensual",user)
-            await Meteor.call("reiniciarConsumoDeDatosVPN",user)
-          }
+    async function bloquearUsuarioVPN(user, motivo) {
+      if (!user) return; // Validación contra null
+      if (!user.vpn) return; // Si esta bloqueada la VPN que no actualice nada
+      Meteor.users.update(user._id, { $set: { vpn: false } });
+      LogsCollection.insert({
+        type: "Bloqueo VPN",
+        userAfectado: user._id,
+        userAdmin: "server",
+        message: `El servidor ${process.env.ROOT_URL} bloqueó automáticamente la VPN ${motivo}`,
+      });
+      try {
+        Meteor.call("sendMensaje", user, {
+          text: `El servidor ${process.env.ROOT_URL} bloqueó automáticamente la VPN de ${user.profile.firstName} ${user.profile.lastName} ${motivo}`,
+        }, 'VidKar Bloqueo de VPN');
+      } catch (error) {
+        console.log("Error al enviar el mensaje: ", error);
+      }
+      await Meteor.call("guardarDatosConsumidosByUserVPNHoras", user)
+      await Meteor.call("reiniciarConsumoDeDatosVPN", user)
+    }
 
-        },
-        {
-          scheduled: true,
-          timezone: "America/Havana",
+  },
+  {
+    scheduled: true,
+      timezone: "America/Havana",
         }
       )
       .start();
 
 
-  } catch (error) {
-    console.log(error);
-  }
+} catch (error) {
+  console.log(error);
+}
 
   // try {
   //   //////////ACTUALIZAR TRAILERS //////////////

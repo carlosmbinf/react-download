@@ -15,6 +15,11 @@ import {
   Zoom,
   IconButton,
   Chip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
 } from "@material-ui/core";
 import { Meteor } from "meteor/meteor";
 import { Tracker } from "meteor/tracker";
@@ -33,6 +38,7 @@ import "primeflex/primeflex.css";
 import "./VentasTable.css";
 import { Dropdown } from "primereact/dropdown";
 //icons
+import EditIcon from '@material-ui/icons/Edit';
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
 import PermContactCalendarRoundedIcon from "@material-ui/icons/PermContactCalendarRounded";
@@ -132,6 +138,22 @@ export default function VentasTable(option) {
   const [selectedConProxy, setSelectedConProxy] = React.useState(null);
   const dt = React.useRef(null);
   const history = useHistory();
+  const [precio, setPrecio] = React.useState(0);
+  const [comentario, setComentario] = React.useState("");
+  const [ganancias, setGanancias] = React.useState(0);
+  const [openDialog, setOpenDialog] = React.useState(false);
+  const [idVentaAModificar, setIdVentaAModificar] = React.useState(null);
+  
+  const actualizarPrecio = (id) => {
+    console.log('Actualizar precio:', id, precio);
+    Meteor.call('actualizarPrecio', id, {precio,comentario, ganancias}, (error) => {
+      if (error) {
+        console.error('Error al actualizar el precio:', error);
+      } else {
+        console.log('Precio actualizado correctamente');
+      }
+    });
+  };
 
   // var userOnline = useTracker(() => {
 
@@ -259,6 +281,34 @@ export default function VentasTable(option) {
             <DeleteIcon fontSize="large" />
           </IconButton>
         </Tooltip>
+      </React.Fragment>
+    );
+  };
+  const editarBodyTemplate = (rowData) => {
+  
+    return (
+      <React.Fragment>
+        <span className="p-column-title"></span>
+        <Tooltip
+          title={`Editar Compra`}
+        >
+          <IconButton
+            // disabled
+            aria-label="edit"
+            color="primary"
+            onClick={() => {
+              setIdVentaAModificar(rowData.id)
+              setPrecio(rowData.precio)
+              setOpenDialog(true)
+              setComentario(rowData.comentario)
+              setGanancias(rowData.ganancias)
+              // Add your edit logic here
+            }}
+          >
+            <EditIcon fontSize="large" />
+          </IconButton>
+        </Tooltip>
+        
       </React.Fragment>
     );
   };
@@ -444,12 +494,77 @@ export default function VentasTable(option) {
                     field="eliminar"
                     // header="Eliminar"
                     body={eliminarBodyTemplate}
-                  />}
+                  />
+                  
+                  }
+                  {isAdminOficial &&
+                  <Column
+                    field="editar"
+                    header="Editar"
+                    body={editarBodyTemplate}
+                  />
+                  }
               </DataTable>
             </div>
           </div>
         </div>
       </Zoom>
+      <Dialog
+      open={openDialog}
+      onClose={() => setOpenDialog(false)}
+      aria-labelledby="form-dialog-title"
+    >
+      <DialogTitle id="form-dialog-title">Editar Compra</DialogTitle>
+      <DialogContent>
+      <TextField
+      variant="outlined"
+        autoFocus
+        margin="normal"
+        id="nuevoPrecio"
+        label="Nuevo Precio"
+        type="number"
+        fullWidth
+        value={precio}
+        onChange={(e) => {setPrecio(e.target.value)}}
+        color="secondary"
+      />
+      <TextField
+      variant="outlined"
+        autoFocus
+        margin="normal"
+        id="nuevoComentario"
+        label="Nuevo Comentario"
+        type="text"
+        fullWidth
+        value={comentario}
+        onChange={(e) => {setComentario(e.target.value)}}
+        color="secondary"
+      />
+      <TextField
+      variant="outlined"
+        autoFocus
+        margin="normal"
+        id="nuevoGanancias"
+        label="Nueva Ganancias"
+        type="number"
+        fullWidth
+        value={ganancias}
+        onChange={(e) => {setGanancias(e.target.value)}}
+        color="secondary"
+      />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={() => setOpenDialog(false)} color="primary">
+          Cancelar
+        </Button>
+        <Button onClick={() => {
+          actualizarPrecio(idVentaAModificar)
+          setOpenDialog(false)
+          }} color="primary">
+          Guardar
+        </Button>
+      </DialogActions>
+    </Dialog>
     </>
   );
 }
