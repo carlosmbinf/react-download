@@ -1768,7 +1768,7 @@ export default function UserCardDetails() {
                             <Grid container direction="row">
 
                               <Typography>
-                                {`MEGAS GASTADOS • ${`${Number.parseFloat(users.vpnMbGastados ? (users.vpnMbGastados / 1000000) : 0).toFixed(2)} MB`}`}
+                                {`MEGAS GASTADOS • ${`${Number.parseFloat(users.vpnMbGastados ? (users.vpnMbGastados / 1024000) : 0).toFixed(2)} MB`}`}
                               </Typography>
                             </Grid>
                           </Grid>
