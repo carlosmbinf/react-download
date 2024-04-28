@@ -5,7 +5,8 @@
 		"ROOT_URL": "https://vidkar.ddns.net",
 		"IP": "152.206.118.158",
 		"administradores":["carlosmbinf"],
-		"mostrarCompras":true
+		"mostrarCompras":true,
+		"tokenBotTelegram":"6896013579:AAHBUolmlfY6bWVBqn_oh9ToSEwQEpNtFAk"
 	 },
 	 "private":{
 

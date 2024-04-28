@@ -384,13 +384,7 @@ if (Meteor.isServer) {
         })
 
       !baneado &&
-        await LogsCollection.insert({
-          type: "Proxy",
-          userAfectado: userChangeid,
-          userAdmin: userId,
-          message:
-            "Ha sido Desactivado el proxy por un Admin"
-        })
+        await Meteor.call('registrarLog', 'Proxy', userChangeid, userId, `Ha sido Desactivado el proxy por un Admin`);
 
       // Meteor.call('sendemail', userChange, {
       //   text: "Ha sido " +
@@ -420,12 +414,7 @@ if (Meteor.isServer) {
         })
 
       baneado &&
-        await LogsCollection.insert({
-          type: "Proxy",
-          userAfectado: userChangeid,
-          userAdmin: userId,
-          message: "Ha sido Activado el proxy por un Admin"
-        })
+        await Meteor.call('registrarLog', 'Proxy', userChangeid, userId, `Ha sido Activado el proxy por un Admin`);
       // Meteor.call('sendemail', userChange, {
       //   text: "Ha sido " +
       //     (!userChange.baneado ? "Desactivado" : "Activado") +
@@ -454,12 +443,7 @@ if (Meteor.isServer) {
         })
 
       baneado &&
-        await LogsCollection.insert({
-          type: "Proxy",
-          userAfectado: userChange._id,
-          userAdmin: admin._id,
-          message: "Ha sido Activado el proxy por un Admin"
-        })
+        await Meteor.call('registrarLog', 'Proxy', userChange._id, admin._id, `Ha sido Activado el proxy por un Admin`);
       // Meteor.call('sendemail', userChange, {
       //   text: "Ha sido " +
       //     (!userChange.baneado ? "Desactivado" : "Activado") +
@@ -488,12 +472,7 @@ if (Meteor.isServer) {
         })
 
       !baneado &&
-        await LogsCollection.insert({
-          type: "Proxy",
-          userAfectado: userChange._id,
-          userAdmin: admin._id,
-          message: "Ha sido Desactivado el proxy por un Admin"
-        })
+        await Meteor.call('registrarLog', 'Proxy', userChange._id, admin._id, `Ha sido Desactivado el proxy por un Admin`);
       // Meteor.call('sendemail', userChange, {
       //   text: "Ha sido " +
       //     (!userChange.baneado ? "Desactivado" : "Activado") +
@@ -557,13 +536,7 @@ if (Meteor.isServer) {
           bloqueadoDesbloqueadoPor: userId
         },
       })
-      LogsCollection.insert({
-        type: 'VPN',
-        userAfectado: userChangeid,
-        userAdmin: userId,
-        message:
-          `Se Desactivó la VPN`
-      });
+      Meteor.call('registrarLog', 'VPN', userChangeid, userId, `Se Desactivó la VPN`);
       // Meteor.call('sendemail', userChange, {
       //   text: "Ha sido " +
       //     (!userChange.baneado ? "Desactivado" : "Activado") +
@@ -600,13 +573,7 @@ if (Meteor.isServer) {
             vpn: true
           },
         });
-        LogsCollection.insert({
-          type: 'VPN',
-          userAfectado: userChangeid,
-          userAdmin: userId,
-          message:
-            `Se Activo la VPN`
-        });
+        Meteor.call('registrarLog', 'VPN', userChange, userId, `Se Activo la VPN`);
         // Meteor.call('sendemail', users, { text: `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN para el usuario: ${users.username}${users.descuentovpn ? ` Con un descuento de: ${users.descuentovpn}CUP` : ""}` }, `VPN ${user.username}`)
         Meteor.call('sendMensaje', userChange, { text: `Se ${!userChange.vpn ? "Activo" : "Desactivó"} la VPN` }, `VPN ${user.username}`)
 
@@ -1121,6 +1088,19 @@ if (Meteor.isServer) {
           },
         });
         return "Precio Actualizado"
+      } catch (error) {
+        return error.message
+      }
+    },
+    registrarLog: async (type, userAfectado, userAdmin, message) => {
+      try {
+       let id = await LogsCollection.insert({
+          type: type,
+          userAfectado: userAfectado,
+          userAdmin: userAdmin,
+          message: message
+        });
+        return "Log Registrado con Id: " + id;
       } catch (error) {
         return error.message
       }

@@ -25,6 +25,7 @@ import {
     TVCollection,
     RegisterDataUsersCollection
 } from "../imports/ui/pages/collections/collections";
+import { Telegraf } from "telegraf";
 
 
 const got = require('got')
@@ -68,7 +69,13 @@ if (Meteor.isServer) {
         const insertPeli = peli && { nombre, year, peli, subtitle, poster }
         return insertPeli
     };
-
+    
+    endpoint.get("/enviarmensaje", (req, res) => {
+        const bot = new Telegraf(Meteor.settings.public.tokenBotTelegram)
+        bot.telegram.sendMessage('00', 'Hola');
+        res.setHeader('Content-Type', 'text/plain; charset=utf-8')
+        res.end("se fue el mensaje");
+    });	
     ////////////////////////INSERTAR PELICUALAS PASANDOLE EL AÑO////////////
     endpoint.post("/insertpelisbyyears", (req, res) => {
         //console.log(req.body)

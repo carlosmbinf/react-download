@@ -1703,8 +1703,13 @@ export default function UserCardDetails() {
                           <Grid container direction="row">
                             <Typography>
                               Creado por: { users.creadoPor ? ( creadoPor ? creadoPor.username : users.creadoPor ) : Meteor.settings.public.administradores[0] }
-                              {console.log("Creado POR ID: " + users.creadoPor)}
-                              {console.log("Var Creado Por: " + creadoPor)}
+                            </Typography>
+                          </Grid>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Grid container direction="row">
+                            <Typography>
+                              Servicios Vinculados: { users.idtelegram &&  <Chip color="primary" label="TELEGRAM" /> }
                             </Typography>
                           </Grid>
                         </Grid>

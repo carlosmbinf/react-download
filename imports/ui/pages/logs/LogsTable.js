@@ -163,7 +163,7 @@ export default function LogsTable() {
         query,
         { sort: { createdAt: -1 }, limit: countLogs }
       ).map((log) => {
-        let admin = log.userAdmin == "server" ? log.userAdmin : user(log.userAdmin)
+        let admin = log.userAdmin.toUpperCase() == "SERVER" ? log.userAdmin : user(log.userAdmin)
         let usuario = user(log.userAfectado)
       //  let userReady = Meteor.subscribe("user", log.userAfectado, {
       //     fields: {
@@ -187,7 +187,7 @@ export default function LogsTable() {
             type: log.type,
             nombreUserAfectado: `${usuario.profile.firstName} ${usuario.profile.lastName}`,
             nombreUserAdmin: 
-              admin == "server"
+            log.userAdmin.toUpperCase() == "SERVER" && admin != null && admin != ""
                 ? "SERVER"
                 : `${admin.profile && admin.profile.firstName} ${admin.profile && admin.profile.lastName}`,
             mensaje: log.message,
@@ -207,50 +207,50 @@ export default function LogsTable() {
   );
   const createAtBodyTemplate = (rowData) => {
     return (
-      <React.Fragment>
+      <>
         <span className="p-column-title">Fecha del Log</span>
         {rowData.createdAt}
-      </React.Fragment>
+      </>
     );
   };
   const iDBodyTemplate = (rowData) => {
     return (
-      <React.Fragment>
+      <>
         <span className="p-column-title">ID</span>
         {rowData.id}
-      </React.Fragment>
+      </>
     );
   };
   const typeBodyTemplate = (rowData) => {
     return (
-      <React.Fragment>
+      <>
         <span className="p-column-title">Tipo de Log</span>
         {rowData.type}
-      </React.Fragment>
+      </>
     );
   };
   const nombreAfectadoBodyTemplate = (rowData) => {
     return (
-      <React.Fragment>
+      <>
         <span className="p-column-title">Nombre y Apellidos del Usuario Afectado</span>
         {rowData.nombreUserAfectado}
-      </React.Fragment>
+      </>
     );
   };
   const userAdminBodyTemplate = (rowData) => {
     return (
-      <React.Fragment>
+      <>
         <span className="p-column-title">Usuario Admin</span>
         {rowData.nombreUserAdmin}
-      </React.Fragment>
+      </>
     );
   };
   const mensajeBodyTemplate = (rowData) => {
     return (
-      <React.Fragment>
+      <>
         <span className="p-column-title">Mensaje</span>
         {rowData.mensaje}
-      </React.Fragment>
+      </>
     );
   };
 

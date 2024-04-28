@@ -306,15 +306,16 @@ export default function UsersTable(option) {
         'vpnplus': 1,
         'vpn2mb': 1,
         'contandoProxy': 1,
-        'contandoVPN': 1
+        'contandoVPN': 1,
+        idtelegram: 1
       }
     });
     let a = [];
 
     Meteor.users.find(option.selector?option.selector:{}, {
-      sort: {megasGastadosinBytes: -1, 'profile.firstName': 1, 'profile.lastName': 1 }
-    }).map(
-      (data) =>
+      sort: { megasGastadosinBytes: -1, 'profile.firstName': 1, 'profile.lastName': 1 }
+    }).fetch().map(
+      (data) =>{
         data &&
         a.push({
           id: data._id,
@@ -358,8 +359,14 @@ export default function UsersTable(option) {
             true
           )) : 'N/A') : (data.megas ? `${data.megas} MB` : 'N/A')),
           vpntype: data.vpnplus ? "PLUS" : (data.vpn2mb ? "2MB" : "false"),
-          contandoProxy: data.contandoProxy
+          contandoProxy: data.contandoProxy,
+          servicios:(data.idtelegram!=null && data.idtelegram != '') ? [{type:'TELEGRAM'}] : [],
         })
+        if(data.username == 'carlosmbinf'){
+          console.log(data)
+        }
+      return a
+      }
     );
 
     return a;
@@ -411,14 +418,6 @@ export default function UsersTable(option) {
       </React.Fragment>
     );
   };
-  const limiteBodyTemplate = (rowData) => {
-    return (
-      <React.Fragment>
-        <span className="p-column-title">Tipo de Limite</span>
-        <Chip color="primary" label={rowData.limite} />
-      </React.Fragment>
-    );
-  };
   const nombreBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
@@ -432,30 +431,6 @@ export default function UsersTable(option) {
       <React.Fragment>
         <span className="p-column-title">Username</span>
         {rowData.username}
-      </React.Fragment>
-    );
-  };
-  const apellidoBodyTemplate = (rowData) => {
-    return (
-      <React.Fragment>
-        <span className="p-column-title">Apellido</span>
-        {rowData.lastName}
-      </React.Fragment>
-    );
-  };
-  const emailBodyTemplate = (rowData) => {
-    return (
-      <React.Fragment>
-        <span className="p-column-title">Email</span>
-        {rowData.email}
-      </React.Fragment>
-    );
-  };
-  const creadoPorTemplate = (rowData) => {
-    return (
-      <React.Fragment>
-        <span className="p-column-title">Creado por:</span>
-        {rowData.creadoPor}
       </React.Fragment>
     );
   };
@@ -512,13 +487,18 @@ export default function UsersTable(option) {
       </React.Fragment>
     );
   };
-  const megasGastadosinBytesGeneralTemplate = (rowData) => {
+
+  const serviciosBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
-        <span className="p-column-title">Megas Gastados en el Servidor</span>
-        {rowData.megasGastadosinBytesGeneral
-          ? Number.parseFloat(rowData.megasGastadosinBytesGeneral / 1024000).toFixed(2) + ' MB'
-          : "0"}
+        <span className="p-column-title">Servicios Vinculados</span>
+        {rowData.servicios.map((element) => {
+          return <Chip
+            color="primary"
+            label={element.type}
+          />
+}
+        )}
       </React.Fragment>
     );
   };
@@ -788,6 +768,16 @@ export default function UsersTable(option) {
                   filterPlaceholder="Search"
                   filterMatchMode="contains"
                 />
+                <Column
+                  field="servicios"
+                  header="Servicios Vinculados"
+                  body={serviciosBodyTemplate}
+                  reorderable={true}
+                  filter
+                  filterPlaceholder="Search"
+                  filterMatchMode="contains"
+                />
+                
                 <Column field="urlReal" header="" body={urlBodyTemplate} />
 
                 {Array(Meteor.settings.public.administradores)[0].includes(Meteor.user().username) && (
