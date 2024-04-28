@@ -43,6 +43,11 @@ if (Meteor.isServer) {
         .find(filter ? filter : {}, { sort: { vpnip: 1 } })
         .fetch();
     },
+    getusersAll: function (filter,option) {
+      return Meteor.users
+        .find(filter ? filter : {}, option ? option : {})
+        .fetch();
+    },
     setOnlineVPN: function (id, datachange) {
       return Meteor.users.update(id, { $set: datachange });
     },
