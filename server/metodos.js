@@ -48,6 +48,9 @@ if (Meteor.isServer) {
         .find(filter ? filter : {}, option ? option : {})
         .fetch();
     },
+    updateUsersAll: function (id, datachange) {
+      return Meteor.users.update(id, { $set: datachange });
+    },
     setOnlineVPN: function (id, datachange) {
       return Meteor.users.update(id, { $set: datachange });
     },
