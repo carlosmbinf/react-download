@@ -369,9 +369,9 @@ export default function VentasTable(option) {
             color={rowData.cobradoAlAdmin ? "primary" : "secondary"}
             onClick={() => {
               try {
-                rowData.cobradoAlAdmin ?
-                  Meteor.call("desabilitarProxyUserinVentas", rowData.userId, rowData.adminId) :
-                  Meteor.call("habilitarProxyUserinVentas", rowData.userId, rowData.adminId)
+                // rowData.cobradoAlAdmin ?
+                //   Meteor.call("desabilitarProxyUserinVentas", rowData.userId, rowData.adminId) :
+                //   Meteor.call("habilitarProxyUserinVentas", rowData.userId, rowData.adminId)
               VentasCollection.update(rowData.id, { $set: { cobradoAlAdmin: rowData.cobradoAlAdmin ? false : true } })
               } catch (error) {
                 console.log(error)
