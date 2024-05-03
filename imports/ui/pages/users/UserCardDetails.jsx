@@ -412,21 +412,15 @@ export default function UserCardDetails() {
 
   }
 
-  function handleLimiteManual(event) {
+ async function  handleLimiteManual(event) {
     event.preventDefault();
 
     // You should see email and password in console.
     // ..code to submit form to backend here...
     try {
       megas >= 0 ?
-        Meteor.users.update(users._id, { $set: { megas: megas } }) : console.log('no se inserto nada');
-      LogsCollection.insert({
-        type: 'Megas',
-        userAfectado: users._id,
-        userAdmin: Meteor.userId(),
-        message:
-          `Ha sido Cambiado el consumo de Datos a: ${megas}MB`
-      });
+      await  Meteor.users.update(users._id, { $set: { megas: megas } }) : console.log('no se inserto nada');
+     await Meteor.call('registrarLog', 'Megas', users._id, Meteor.userId(), `Ha sido Cambiado el consumo de Datos a: ${megas}MB`);
       // Meteor.call('sendemail', users,{text: `Ha sido Cambiado el consumo de Datos a: ${megas}MB`}, 'Megas')
 
     } catch (error) {
@@ -453,15 +447,10 @@ export default function UserCardDetails() {
     await Meteor.call("reiniciarConsumoDeDatosPROXY",users)
     await Meteor.call("desactivarUserProxy",users)
 
-    LogsCollection.insert({
-      type: 'Reinicio PROXY',
-      userAfectado: users._id,
-      userAdmin: Meteor.userId(),
-      message:
-        `Ha sido Reiniciado el consumo de Datos del PROXY de ${users.profile.firstName} ${users.profile.lastName} y desactivado el proxy`
-    });
+    await Meteor.call('registrarLog', 'Reinicio PROXY', users._id, Meteor.userId(), `Ha sido Reiniciado el consumo de Datos del PROXY de ${users.profile.firstName} ${users.profile.lastName} y desactivado el proxy`);
+
     // Meteor.call('sendemail', users, { text: `Ha sido Reiniciado el consumo de Datos del PROXY de ${users.profile.firstName} ${users.profile.lastName}` }, 'Reinicio ' + Meteor.user().username)
-    Meteor.call('sendMensaje', users, { text: `Ha sido Reiniciado el consumo de Datos del PROXY, y desactivado el proxy` }, 'Reinicio ' + Meteor.user().username)
+    await Meteor.call('sendMensaje', users, { text: `Ha sido Reiniciado el consumo de Datos del PROXY, y desactivado el proxy` }, 'Reinicio ' + Meteor.user().username)
 
     alert('Se reinicio los datos del PROXY de ' + users.profile.firstName)
   };
@@ -470,15 +459,9 @@ export default function UserCardDetails() {
     await Meteor.call("guardarDatosConsumidosByUserVPNHoras",users)
     await Meteor.call("reiniciarConsumoDeDatosVPN",users)
     await Meteor.call("desactivarUserVPN",users)
-    LogsCollection.insert({
-      type: 'Reinicio VPN',
-      userAfectado: users._id,
-      userAdmin: Meteor.userId(),
-      message:
-        `Ha sido Reiniciado el consumo de Datos de la VPN de ${users.profile.firstName} ${users.profile.lastName}`
-    });
+    await Meteor.call('registrarLog', 'Reinicio VPN', users._id, Meteor.userId(), `Ha sido Reiniciado el consumo de Datos de la VPN de ${users.profile.firstName} ${users.profile.lastName}`);
     // Meteor.call('sendemail', users, { text: `Ha sido Reiniciado el consumo de Datos de la VPN de ${users.profile.firstName} ${users.profile.lastName}` }, 'Reinicio ' + Meteor.user().username)
-    Meteor.call('sendMensaje', users, { text: `Ha sido Reiniciado el consumo de Datos de la VPN` }, 'Reinicio ' + Meteor.user().username)
+    await Meteor.call('sendMensaje', users, { text: `Ha sido Reiniciado el consumo de Datos de la VPN` }, 'Reinicio ' + Meteor.user().username)
 
     alert('Se reinicio los datos de la VPN de ' + users.profile.firstName)
   };
@@ -996,33 +979,8 @@ export default function UserCardDetails() {
                                               fechaSubscripcion: new Date((new Date(e.target.value).getTime())+(1000*60*60*4))
                                             },
                                           }),
-                                            LogsCollection.insert({
-                                              type: "Fecha Limite Proxy",
-                                              userAfectado: users._id,
-                                              userAdmin: Meteor.userId(),
-                                              message:
-                                                "La Fecha Limite del Proxy se cambió para: " +
-                                                dateFormat(e.target.value,
-                                                  "yyyy-mm-dd",
-                                                  true,
-                                                  true
-                                                ),
-                                            })
+                                          Meteor.call('registrarLog', 'Fecha Limite Proxy', users._id, Meteor.userId(), `La Fecha Limite del Proxy se cambió para: ${dateFormat(e.target.value, "yyyy-mm-dd", true, true)}`);
                                           e.target.value && !users.baneado && Meteor.call("desabilitarProxyUser", users._id, Meteor.userId())
-                                          // , Meteor.call('sendemail', users,{text: "La Fecha Limite del Proxy se cambió para: " +
-                                          // dateFormat(e.target.value,
-                                          //   "yyyy-mm-dd",
-                                          //   true,
-                                          //   true
-                                          // )}, "Fecha Limite Proxy");
-                                          // e.target.value &&
-                                          //   LogsCollection.insert({
-                                          //     type: "Desbloqueado",
-                                          //     userAfectado: users._id,
-                                          //     userAdmin: Meteor.userId(),
-                                          //     message:
-                                          //       "Ha sido Desbloqueado por un Admin",
-                                          //   }),Meteor.call('sendemail', users,{text:"Ha sido Desbloqueado por un Admin"}, "Desbloqueado");
                                         }}
                                       />
                                     </FormControl>
@@ -1139,31 +1097,20 @@ export default function UserCardDetails() {
                                               0))
                                           } :
                                           ""}
-                                          onChange={(event, newValue) => {
-                                            Meteor.users.update(users._id, {
+                                          onChange={async (event, newValue) => {
+                                            await Meteor.users.update(users._id, {
                                               $set: { megas: newValue.value },
                                             });
-                                            LogsCollection.insert({
-                                              type: 'Megas',
-                                              userAfectado: users._id,
-                                              userAdmin: Meteor.userId(),
-                                              message:
-                                                `Ha sido Cambiado el consumo de Datos a: ${newValue.value}MB`,
-                                            });
-                                            !users.baneado && LogsCollection.insert({
-                                              type: 'Desactivado',
-                                              userAfectado: users._id,
-                                              userAdmin: Meteor.userId(),
-                                              message:
-                                                `Se ${!users.baneado ? "Desactivó" : "Activo"} el PROXY porque estaba activo y cambio el  paquete de megas seleccionado`
-                                            })
-                                            // , Meteor.users.update(users._id, {
-                                            //     $set: {
-                                            //       baneado: !users.baneado
-                                            //     },
-                                            //   })
+                                            await Meteor.call('registrarLog', 'Megas', users._id, Meteor.userId(), `Ha sido Cambiado el consumo de Datos a: ${newValue.value}MB`);
+                                            !users.baneado && 
+                                            await Meteor.call('registrarLog','Proxy',users._id,Meteor.userId(),`Se ${!users.baneado ? "Desactivó" : "Activo"} el PROXY porque estaba activo y cambio el  paquete de megas seleccionado`)
+                                            , Meteor.users.update(users._id, {
+                                                $set: {
+                                                  baneado: true
+                                                },
+                                              })
                                             
-                                            // Meteor.call('sendemail', users,{text:`Ha sido Cambiado el consumo de Datos a: ${newValue.value}MB`}, "Megas")
+                                            await Meteor.call('sendemail', users,{text:`Ha sido Cambiado el consumo de Datos a: ${newValue.value}MB`}, "Megas")
                                             // setIP(newValue);
                                           }}
                                           inputValue={searchPrecio}
@@ -1286,19 +1233,14 @@ export default function UserCardDetails() {
                                     <Autocomplete
                                       fullWidth
                                       value={users.bloqueadoDesbloqueadoPor ? Meteor.users.findOne({ _id: users.bloqueadoDesbloqueadoPor }) && Meteor.users.findOne({ _id: users.bloqueadoDesbloqueadoPor }).username : ""}
-                                      onChange={(event, newValue) => {
-                                        let admin = (newValue != "" && Meteor.users.findOne({ username: newValue }))
+                                      onChange={async (event, newValue) => {
+                                        let admin = (newValue != "" && await Meteor.users.findOne({ username: newValue }))
                                         let valueId = newValue != "" && admin && admin._id
-                                        valueId && Meteor.users.update(users._id, {
+                                        valueId && await Meteor.users.update(users._id, {
                                           $set: { bloqueadoDesbloqueadoPor: valueId },
                                         });
-                                        valueId && LogsCollection.insert({
-                                          type: "cambio de Administrador",
-                                          userAfectado: users._id,
-                                          userAdmin: Meteor.userId(),
-                                          message:
-                                            "El usuario pasó a ser administrado por => " + admin.username
-                                        })
+                                        valueId && 
+                                       await  Meteor.call('registrarLog', 'Administrador', users._id, Meteor.userId(), `El usuario pasó a ser administrado por => ${admin.username}`)
                                         // Meteor.call('sendemail', users,{text:"El usuario pasó a ser administrado por => " + admin.profile.firstName + " " + admin.profile.lastName}, "cambio de Administrador")
 
                                         // setIP(newValue);
@@ -1447,28 +1389,13 @@ export default function UserCardDetails() {
                                             vpn2mb: true
                                           },
                                         }),
-                                          LogsCollection.insert({
-                                            type: "Fecha Limite VPN",
-                                            userAfectado: users._id,
-                                            userAdmin: Meteor.userId(),
-                                            message:
-                                              "La Fecha Limite de la VPN se cambió para: " +
-                                              dateFormat(e.target.value,
-                                                "yyyy-mm-dd",
-                                                true,
-                                                true
-                                              ),
-                                          })
-                                          e.target.value && users.vpn && (LogsCollection.insert({
-                                            type: 'VPN Bloqueado',
-                                            userAfectado: users._id,
-                                            userAdmin: Meteor.userId(),
-                                            message:
-                                              `Se Desactivó la VPN porque estaba activa y cambio la fecha Limite`
-                                          }),
+                                        Meteor.call('registrarLog', 'Fecha Limite VPN', users._id, Meteor.userId(), `La Fecha Limite de la VPN se cambió para: ${dateFormat(e.target.value, "yyyy-mm-dd", true, true)}`);
+
+                                          e.target.value && users.vpn && (
+                                            Meteor.call('registrarLog', 'VPN Bloqueado', users._id, Meteor.userId(), `Se Desactivó la VPN porque estaba activa y cambio la fecha Limite`),
                                           Meteor.users.update(users._id, {
                                             $set: {
-                                              vpn: !users.vpn
+                                              vpn: false
                                             },
                                           }))
                                         
@@ -1506,25 +1433,14 @@ export default function UserCardDetails() {
                                           $set: { vpnplus: false, vpn2mb: false, vpnmegas: Number.parseInt(newValue.value.split("/")[1]) },
                                         })
                                       )
-                                    LogsCollection.insert({
-                                      type: newValue.value.split("/")[0],
-                                      userAfectado: users._id,
-                                      userAdmin: Meteor.userId(),
-                                      message:
-                                        `Ha sido Seleccionada la VPN: ${newValue.label}`,
-                                    });
+                                      Meteor.call('registrarLog', 'VPN', users._id, Meteor.userId(), `Ha sido Seleccionada la VPN: ${newValue.label}`);
                                     // Meteor.call('sendemail', users,{text: `Ha sido Seleccionada la VPN: ${newValue.label}`}, newValue.value)
 
                                     users.vpn && Meteor.users.update(users._id, {
                                       $set: { vpn: false },
                                     })
-                                    users.vpn && LogsCollection.insert({
-                                      type: 'VPN',
-                                      userAfectado: users._id,
-                                      userAdmin: Meteor.userId(),
-                                      message:
-                                        `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN porque estaba activa y cambio la oferta`
-                                    });
+                                    users.vpn && 
+                                    Meteor.call('registrarLog', 'VPN Bloqueado', users._id, Meteor.userId(), `Se Desactivó la VPN porque estaba activa y cambio la oferta`);
                                     // Meteor.call('sendemail', users,{text: `Se ${!users.vpn ? "Activo" : "Desactivó"} la VPN porque estaba activa y cambio la oferta`}, "VPN");
                                     // setIP(newValue);
                                   }}

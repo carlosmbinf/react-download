@@ -129,14 +129,10 @@ if (Meteor.isServer) {
 
           async function bloquearUsuarioProxy(user, motivo) {
             if (!user) return; // Validación contra null
-            await Meteor.users.update(user._id, { $set: { baneado: true } });
-            LogsCollection.insert({
-              type: "Bloqueo Proxy",
-              userAfectado: user._id,
-              userAdmin: "server",
-              message: `El servidor ${process.env.ROOT_URL} bloqueó automáticamente el proxy ${motivo}`,
-            });
+
             try {
+              await Meteor.users.update(user._id, { $set: { baneado: true } });
+              await Meteor.call("registrarLog", "Bloqueo Proxy", user._id, "SERVER", `El servidor ${process.env.ROOT_URL} bloqueó automáticamente el proxy ${motivo}`);
               await Meteor.call("sendMensaje", user, {
                 text: `El servidor ${process.env.ROOT_URL} bloqueó automáticamente el proxy de ${user.profile.firstName} ${user.profile.lastName} ${motivo}`,
               }, 'VidKar Bloqueo de Proxy');
@@ -200,15 +196,11 @@ if (Meteor.isServer) {
     async function bloquearUsuarioVPN(user, motivo) {
       if (!user) return; // Validación contra null
       if (!user.vpn) return; // Si esta bloqueada la VPN que no actualice nada
-      Meteor.users.update(user._id, { $set: { vpn: false } });
-      LogsCollection.insert({
-        type: "Bloqueo VPN",
-        userAfectado: user._id,
-        userAdmin: "server",
-        message: `El servidor ${process.env.ROOT_URL} bloqueó automáticamente la VPN ${motivo}`,
-      });
+  
       try {
-        Meteor.call("sendMensaje", user, {
+        await Meteor.users.update(user._id, { $set: { vpn: false } });
+        Meteor.call("registrarLog", "Bloqueo VPN", user._id, "SERVER", `El servidor ${process.env.ROOT_URL} bloqueó automáticamente la VPN ${motivo}`);
+       await Meteor.call("sendMensaje", user, {
           text: `El servidor ${process.env.ROOT_URL} bloqueó automáticamente la VPN de ${user.profile.firstName} ${user.profile.lastName} ${motivo}`,
         }, 'VidKar Bloqueo de VPN');
       } catch (error) {

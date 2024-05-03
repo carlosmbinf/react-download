@@ -10,7 +10,7 @@ import "./publicaciones";
 import "./serverproxy3002";
 import "./tareas";
 import "./rutas";
-// import "./bot";
+import "./bot";
 
 var http = require("http");
 http.post = require("http-post");

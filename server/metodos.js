@@ -334,6 +334,9 @@ if (Meteor.isServer) {
           type:type
         })
 
+        Meteor.call('enviarMensajeTelegram',"VENTAS",userChangeid,`Se ha realizado una venta de ${type} a ${userChange.username} por un precio de ${precioOficial ? precioOficial.precio : compra.precio}CUP`)
+
+
         return compra ? compra.comentario : `No se encontro Precio a la oferta establecida en el usuario: ${userChange.username}`
       } catch (error) {
         return error.message
@@ -1102,15 +1105,20 @@ if (Meteor.isServer) {
     },
     registrarLog: async (type, userAfectado, userAdmin, message) => {
       try {
-       let id = await LogsCollection.insert({
+        let id = await LogsCollection.insert({
           type: type,
           userAfectado: userAfectado,
           userAdmin: userAdmin,
           message: message
         });
-        return "Log Registrado con Id: " + id;
+
+        "Log Registrado con Id: " + id;
+
+        Meteor.call('enviarMensajeTelegram',type,userAfectado, message)
+        
+       
       } catch (error) {
-        return error.message
+        console.log( error)
       }
     }
     
