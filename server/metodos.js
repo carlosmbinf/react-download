@@ -334,7 +334,8 @@ if (Meteor.isServer) {
           type:type
         })
 
-        Meteor.call('enviarMensajeTelegram',"VENTAS",userChangeid,`Se ha realizado una venta de ${type} a ${userChange.username} por un precio de ${precioOficial ? precioOficial.precio : compra.precio}CUP`)
+        Meteor.call('enviarMensajeTelegram',"VENTAS",userChangeid,`Se ha realizado una venta de ${type} a ${userChange.username} por un precio de ${precioOficial ? precioOficial.precio : compra.precio}CUP`,
+        compra.comentario)
 
 
         return compra ? compra.comentario : `No se encontro Precio a la oferta establecida en el usuario: ${userChange.username}`
