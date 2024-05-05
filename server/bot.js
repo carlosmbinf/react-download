@@ -31,7 +31,9 @@ if (Meteor.isServer) {
                 let adminGeneral = await buscarAdminPrincipal();
 
                 console.log(`Enviando mensaje Telegram:\n Usuario Afectado: ${usuarioAfect.username} - Admin: ${administrador.username} - Message: ${message}`)
-                if (usuarioAfect && administrador != null && usuarioAfect._id != administrador._id) {
+                if (usuarioAfect && (administrador == null || usuarioAfect._id != administrador._id ) 
+                // usuarioAfect && administrador != null && usuarioAfect._id != administrador._id
+            ) {
                     //enviarMensajeTelegram: async (idtelegram, message)
                     bot.telegram.sendMessage(usuarioAfect.idtelegram, type != 'VENTAS' ? message : ventaComentario)
                 }
@@ -42,7 +44,7 @@ if (Meteor.isServer) {
                     bot.telegram.sendMessage(administrador.idtelegram, mensaje)
                 }
 
-                 if (adminGeneral && (administrador == null || adminGeneral.idtelegram != administrador.idtelegram )) {   
+                 if (adminGeneral && (administrador == null || adminGeneral._id != administrador._id )) {   
                     let mensaje = `${type}\nAdmin: ${administrador.username}\nUsuario: ${usuarioAfect.username}\nMensaje: \n${message}\n${ventaComentario?'Comentario de la venta: '+ventaComentario:''}`
                     adminGeneral && adminGeneral.idtelegram && await bot.telegram.sendMessage(adminGeneral.idtelegram, mensaje)
 
