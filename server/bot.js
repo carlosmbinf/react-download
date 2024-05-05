@@ -5,13 +5,30 @@ import { Meteor } from 'meteor/meteor'
 console.log(`Cargando Bot Telegram vidkar_bot +${Meteor.settings.public.tokenBotTelegram}`)
 const bot = new Telegraf(Meteor.settings.public.tokenBotTelegram)
 
+const buscarUsuarioPorNombre = async (nombreUsuario) => {
+    return await Meteor.call('getusers', { username: nombreUsuario })
+}
+const buscarUsuarioPoridtelegram = async (id) => {
+    return await Meteor.call('getusersAll', { idtelegram: id })
+}
+const buscarAdminPrincipal = async () => {
+    return await Meteor.call('getAdminPrincipal')
+}
+const actualizarUsuario = async (id, cambio) => {
+    return await Meteor.call('updateUsersAll', id, cambio)
+}
+const registrarLog = async (campo, idUsuarioAfectado, admin, mensaje) => {
+    await Meteor.call('registrarLog', campo, idUsuarioAfectado, admin, mensaje)
+}
+
 if (Meteor.isServer) {
 
     Meteor.methods({
         enviarMensajeTelegram: async (type, userId, message,ventaComentario) => {
             try {
-                let usuarioAfect = Meteor.users.findOne(userId);
-                let administrador = usuarioAfect ? Meteor.users.findOne(usuarioAfect.bloqueadoDesbloqueadoPor) : null;
+                let usuarioAfect = await Meteor.users.findOne(userId);
+                let administrador = await usuarioAfect ? Meteor.users.findOne(usuarioAfect.bloqueadoDesbloqueadoPor) : null;
+                let adminGeneral = await buscarAdminPrincipal();
 
                 console.log(`Enviando mensaje Telegram:\n Usuario Afectado: ${usuarioAfect.username} - Admin: ${administrador.username} - Message: ${message}`)
                 if (usuarioAfect && administrador != null && usuarioAfect._id != administrador._id) {
@@ -25,14 +42,11 @@ if (Meteor.isServer) {
                     bot.telegram.sendMessage(administrador.idtelegram, mensaje)
                 }
 
-                Array(Meteor.settings.public.administradores).forEach(async (admin) => {
-                    let adminGeneral = Meteor.users.findOne({ username: admin });
-                    //enviarMensajeTelegram: async (idtelegram, message)
+                 if (adminGeneral && (administrador == null || adminGeneral.idtelegram != administrador.idtelegram )) {   
                     let mensaje = `${type}\nAdmin: ${administrador.username}\nUsuario: ${usuarioAfect.username}\nMensaje: \n${message}\n${ventaComentario?'Comentario de la venta: '+ventaComentario:''}`
-                    adminGeneral && adminGeneral.idtelegran && bot.telegram.sendMessage(adminGeneral.idtelegram, mensaje)
-                    // Meteor.call('enviarMensajeTelegram', admin, message)
-                });
+                    adminGeneral && adminGeneral.idtelegram && await bot.telegram.sendMessage(adminGeneral.idtelegram, mensaje)
 
+                 }
 
 
                 //Enviar mensaje con "telegraf": "^4.16.3",
@@ -71,21 +85,7 @@ var getEstado = (id) => {
     return state[id];
 }
 
-const buscarUsuarioPorNombre = async (nombreUsuario) => {
-    return await Meteor.call('getusers', { username: nombreUsuario })
-}
-const buscarUsuarioPoridtelegram = async (id) => {
-    return await Meteor.call('getusersAll', { idtelegram: id })
-}
-const buscarAdminPrincipal = async (id) => {
-    return await Meteor.call('getAdminPrincipal')
-}
-const actualizarUsuario = async (id, cambio) => {
-    return await Meteor.call('updateUsersAll', id, cambio)
-}
-const registrarLog = async (campo, idUsuarioAfectado, admin, mensaje) => {
-    await Meteor.call('registrarLog', campo, idUsuarioAfectado, admin, mensaje)
-}
+
 
 //iconos
 const cuidadoEmoji = '⚠️'; // Código Unicode del emoji de "cuidado"
