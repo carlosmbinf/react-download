@@ -165,9 +165,7 @@ bot.command('opciones', async (ctx) => {
             });
         } else {
             botones = [
-                { text: 'Registrarse', callback_data: property.registrarse },
-                { text: 'Consumo de VPN', callback_data: property.consumoVpn },
-                { text: 'Consumo de Proxy', callback_data: property.consumoProxy }
+                { text: 'Registrarse', callback_data: property.registrarse }
             ];
 
             // Send the message with the inline keyboard
