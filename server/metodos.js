@@ -19,14 +19,6 @@ import moment from "moment";
 
 if (Meteor.isServer) {
   console.log("Cargando Métodos...");
-  function streamToString(stream) {
-    const chunks = [];
-    return new Promise((resolve, reject) => {
-      stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
-      stream.on('error', (err) => reject(err));
-      stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
-    })
-  }
 
   Meteor.methods({
     execute: async function (command) {
@@ -38,30 +30,11 @@ if (Meteor.isServer) {
         return error.message
       }
     },
-    getusers: function (filter) {
-      return Meteor.users
-        .find(filter ? filter : {}, { sort: { vpnip: 1 } })
-        .fetch();
-    },
-    getusersAll: function (filter,option) {
-      return Meteor.users
-        .find(filter ? filter : {}, option ? option : {})
-        .fetch();
-    },
-    updateUsersAll: function (id, datachange) {
-      return Meteor.users.update(id, { $set: datachange });
-    },
+    
     setOnlineVPN: function (id, datachange) {
       return Meteor.users.update(id, { $set: datachange });
     },
-    addUser: function (user) {
-      try {
-        let id = Accounts.createUser(user);
-        return id ? "Usuario agregado correctamente!!!" : "";
-      } catch (error) {
-        return error;
-      }
-    },
+   
     sendemail: function (user, text, subject) {
       let admin = Meteor.users.findOne({
         _id: user.bloqueadoDesbloqueadoPor,
@@ -113,163 +86,6 @@ if (Meteor.isServer) {
       // console.log(text);
     },
 
-    insertPelis: async function (pelicula) {
-      // console.log(req)
-      // console.log(peli)
-      //  const insertPeli = async () => {
-      let exist = await PelisCollection.findOne({ urlPeli: pelicula.peli });
-      let id = exist
-        ? exist._id
-        : await PelisCollection.insert({
-          nombrePeli: pelicula.nombre,
-          urlPeli: pelicula.peli,
-          urlBackground: pelicula.poster,
-          descripcion: pelicula.nombre,
-          tamano: 797,
-          mostrar: true,
-          subtitulo: pelicula.subtitle,
-          year: pelicula.year,
-        });
-      let peli = await PelisCollection.findOne({ _id: id });
-      // console.log(peli);
-      try {
-        var srt2vtt = await require("srt-to-vtt");
-        var fs = await require("fs");
-        var appRoot = await require("app-root-path");
-        var subtituloFile =
-          appRoot.path + "/public/videos/subtitulo/" + id + ".vtt";
-        const https = await require("https");
-
-        // !fs.existsSync(appRoot.path + "/public/videos/subtitulo")
-        //   ? fs.mkdirSync(appRoot.path + "/public/videos/subtitulo/")
-        //   : "";
-
-        // const file = fs.createWriteStream(subtituloFile);
-        // /////////////////////////////////////////////
-        peli &&
-          peli.subtitulo &&
-          (await https.get(peli.subtitulo, async (response) => {
-            try {
-              var stream = response.pipe(srt2vtt());
-              // stream.on("finish", function () {});
-              await streamToString(stream).then( async (data) => {
-                data &&
-                  await PelisCollection.update(
-                    { _id: id },
-                    {
-                      $set: {
-                        textSubtitle: data.toString("utf8"),
-                      },
-                    },
-                    { multi: true }
-                  );
-                console.log(
-                  `Actualizado subtitulo de la Peli: ${peli.nombrePeli}`
-                );
-              });
-            } catch (error) {
-              console.log(error.message);
-            }
-          }));
-
-
-          var nameToImdb = require("name-to-imdb");
-          const IMDb = require('imdb-light');
-
-
-          console.log("Nombre Peli: " + peli.nombrePeli)
-          var idimdb;
-        await nameToImdb({ name: pelicula.nombre, year: pelicula.year }, async (err, res, inf) => {
-            err && console.log(`err IMDB de ${pelicula.nombre} =>  ${err}`)
-             await console.log(`id IMDB de ${pelicula.nombre} =>  ${res}`); // "tt0121955"
-              // inf contains info on where we matched that name - e.g. metadata, or on imdb
-              // and the meta object with all the available data
-              await console.log(`info IMDB de ${pelicula.nombre} =>  ${inf}`);
-              idimdb = res && res;
-          })
-
-        //////ACTUALIZANDO IDIMDB EN PELI
-        try {
-          console.log(`Update IDIMDB - Nombre Peli: ${peli.nombrePeli}`)
-          idimdb && await PelisCollection.update(
-            { _id: id },
-            {
-              $set: {
-                idimdb: idimdb,
-              },
-            },
-            { multi: true }
-          );
-        } catch (error) {
-          console.log(error.message);
-        }
-
-
-
-
-        /////////ACTUALIZANDO TRILERS
-        try {
-          console.log(`Update urlTrailer - Nombre Peli: ${peli.nombrePeli}`)
-          idimdb && await IMDb.trailer(idimdb, async (url) => {
-            // console.log(url)  // output is direct mp4 url (also have expiration timeout)
-
-           await PelisCollection.update(
-              { _id: id },
-              {
-                $set: {
-                  urlTrailer: url,
-                  // clasificacion: details.Genres.split(", ")
-                },
-              }
-            );
-          });
-        } catch (error) {
-          console.log(error.message);
-        }
-
-
-        //////ACTUALIZANDO CLASIFICACION
-        console.log(`Update descripcion y clasificacion - Nombre Peli: ${peli.nombrePeli}`)
-        try {
-          idimdb && await IMDb.fetch(idimdb,async (details) => {
-            // console.log(details)  // etc...
-            await PelisCollection.update(
-              { _id: id },
-              {
-                $set: {
-                  descripcion: details.Plot,
-                  clasificacion: details.Genres.split(", "),
-                },
-              },
-              { multi: true }
-            );
-          });
-        } catch (error) {
-          console.log(error.message);
-        }
-
-
-        return {
-          message: exist
-            ? `Actualizada la Pelicula: ${exist.nombrePeli}`
-            : "Se Insertó Correctamente la Película",
-        };
-      } catch (error) {
-        console.log("--------------------------------------");
-        // console.log("error.error :> " + error.error);
-        // console.log("error.reason :> " + error.reason);
-        console.log(`error.message :> ${error.message}\n
-              error.reason :> ${error.reason}`);
-        // console.log("error.errorType :> " + error.errorType);
-        console.log("--------------------------------------");
-
-        return {
-          reason: error.reason,
-          message: error.message,
-          errorType: error.type,
-        };
-      }
-    },
     getListadosPreciosOficiales: async () => {
 
       try {
@@ -279,22 +95,7 @@ if (Meteor.isServer) {
         console.log(error);
       }
     },
-    getAdminPrincipal: async () => {
-
-      ///////REVISAR EN ADDVENTASONLY  el descuento que se debe de hacer
-      // let admin = await Meteor.users.findOne(adminId)
-      // let precio = PreciosCollection.findOne(precioid)
-
-
-      try {
-        let adminPrincipal = await Meteor.users.findOne({ username: Meteor.settings.public.administradores[0] })
-        return adminPrincipal ? adminPrincipal : null
-      } catch (error) {
-        return error.message
-      }
-
-
-    },
+    
     getPrecioOficial: async (compra) => {
 
       try {
@@ -605,87 +406,14 @@ if (Meteor.isServer) {
       } catch (error) {
         return error.message
       }
-    }, getUrlTriller: (id) => {
-      let peli = PelisCollection.findOne(id)
-      return peli.urlTrailer ? peli.urlTrailer : null;
-    },
+    }, 
     ultimaCompraByUserId : async (userId, type) => {
       const venta = await VentasCollection.findOne({ userId, type }, { sort: { createdAt: -1 }, limit: 1 });
       return venta?venta:null;
     },
-    guardarDatosConsumidosByUserHoras : async (user) => {
-      console.log(`Consumo Horas - DATE: ${new Date()}, USER: ${user.username ? user.username : user._id}`);
-        
-      user.megasGastadosinBytes > 0 && await Meteor.call("guardarDatosConsumidosByUserPROXYHoras",user)
-      user.vpnMbGastados > 0 && await Meteor.call("guardarDatosConsumidosByUserVPNHoras",user)
-    },
-    guardarDatosConsumidosByUserDiario : async (user) => {
-    console.log(`Reiniciar Consumo Diario - DATE: ${new Date()}, USER: ${user.username ? user.username : user._id}`);
-      
-    user.megasGastadosinBytes > 0 && await Meteor.call("guardarDatosConsumidosByUserPROXYDiario",user)
-    user.vpnMbGastados > 0 && await Meteor.call("guardarDatosConsumidosByUserVPNDiario",user)
-      
-    },
-    guardarDatosConsumidosByUserMensual : async (user) => {
-    console.log(`Reiniciar Consumo Mensual - DATE: ${new Date()}, USER: ${user.username ? user.username : user._id}`);
-    user.megasGastadosinBytes > 0 && await Meteor.call("guardarDatosConsumidosByUserPROXYMensual",user)
-    user.vpnMbGastados > 0 && await Meteor.call("guardarDatosConsumidosByUserVPNMensual",user)
-    },
     
-    guardarDatosConsumidosByUserPROXYMensual: async (user) => {
-      console.log("guardarDatosConsumidosByUserPROXYMensual");
-
-      ////////////CONSUMOS PROXY/////////////   
     
-    try{
-      const ultimaCompraFecha = await Meteor.call("ultimaCompraByUserId",user._id, "PROXY");
-
-      if (ultimaCompraFecha ) {
-
-      // Encuentra todos los documentos que coincidan con los criterios de búsqueda
-      const registrosPROXY = await RegisterDataUsersCollection.find({
-        userId: user._id,
-        type: "proxy",
-        fecha: { $gt: ultimaCompraFecha.createdAt },
-        register:"mensual"
-      });
-
-      
-      // Inicializa una variable para almacenar la sumatoria de megasGastadosinBytes
-      let consumidosPROXY = 0;
     
-      // Itera sobre los resultados y suma los valores de megasGastadosinBytes
-      await registrosPROXY.forEachAsync(registro => {
-        consumidosPROXY += registro.megasGastadosinBytes;
-      });
-    
-      //REGISTRAR DATOS CONSUMIDOS EN PROXY
-      const proxyMbRestantes = user.megasGastadosinBytes - consumidosPROXY
-      
-      if (proxyMbRestantes > 0) {
-        console.log("Registro Proxy Mensual, megas: " + user.username + " con: " + proxyMbRestantes + "byte, -> " + (proxyMbRestantes / 1024 / 1024) + "MB")
-        await RegisterDataUsersCollection.insert({
-          userId: user._id,
-          type: "proxy",
-          megasGastadosinBytes: proxyMbRestantes,
-          register: "mensual"
-        });
-      }
-      }else{
-        console.log(`Revisar el usuario no tiene ultima compra Proxy Mensual, USER: ${user.username ? user.username : user._id}`)
-        await RegisterDataUsersCollection.insert({
-          userId: user._id,
-          type: "proxy",
-          megasGastadosinBytes: user.megasGastadosinBytes,
-          register:"mensual"
-        })
-        await Meteor.call("reiniciarConsumoDeDatosPROXY",user);
-        await Meteor.call("desactivarUserProxy",user)
-      }
-      } catch (error) {
-        console.log(error)
-      }
-    },
     guardarDatosConsumidosByUserVPNMensual : async (user) => {
       console.log("guardarDatosConsumidosByUserVPNMensual");
     
@@ -1118,3 +846,11 @@ if (Meteor.isServer) {
   });
 
 }
+
+//importar todos los .js de la carpeta metodos
+import "./metodos/logs.js"
+import "./metodos/peliculas.js"
+import "./metodos/proxy.js"
+import "./metodos/usuarios.js"
+import "./metodos/ventas"
+import "./metodos/vpn.js"
