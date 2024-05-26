@@ -119,7 +119,7 @@ if (Meteor.isServer) {
                 }
                 if (haceUnMes) {
                   motivo += motivo ? " y " : "";
-                  motivo += "hace más de un mes desde la última compra";
+                  motivo += `hace más de un mes desde la última compra.\nULTIMA COMPRA:\n${moment(ultimaVentaProxy.createdAt)}`;
                 }
                 await bloquearUsuarioProxy(user, motivo);
               }
@@ -187,7 +187,7 @@ if (Meteor.isServer) {
               if ((user.vpnMbGastados ? user.vpnMbGastados : 0) >= ((user.vpnmegas ? Number(user.vpnmegas) : 0) * 1024000)) {
                 await bloquearUsuarioVPN(user, `porque consumió ${user.vpnmegas} MB`);
               } else if (haceUnMes) {
-                await bloquearUsuarioVPN(user, "hace más de un mes desde la última compra");
+                await bloquearUsuarioVPN(user, ` porque hace más de un mes desde la última compra\nULTIMA COMPRA:\n${moment(ultimaVentaVPN.createdAt)}`);
               }
             }
           });
