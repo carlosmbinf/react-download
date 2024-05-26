@@ -107,15 +107,15 @@ export default function Main() {
           <div style={{ paddingBottom: "7em" }}>
           {useractual &&
               Array(Meteor.settings.public.administradores)[0].includes(useractual.username) ? (
-                <>
-                  <Grid container item xs={12} justify="space-evenly" alignItems="center" style={{ paddingTop: 50 }}>
+                <Grid container>
+                  <Grid container xs={12} xl={6} justify="space-evenly" alignItems="center" style={{ paddingTop: 50 }}>
                     <Chip style={{ width: "90%" }} color='primary' label="Consumo de Datos en VidKar Por Horas:" />
                     <div style={{ width: "100%", height: 300 }}>
                       <GraphicsLinealConsumoMegasXHoras />
                     </div>
                   </Grid>
-                  <Divider variant="middle" />
-                  <Grid container item xs={12} justify="space-evenly" alignItems="center" style={{ paddingTop: 50 }}>
+                  {/* <Divider variant="middle" /> */}
+                  <Grid container xs={12} xl={6} justify="space-evenly" alignItems="center" style={{ paddingTop: 50 }}>
                     <Chip style={{ width: "90%" }} color='primary' label="Consumo de Datos en VidKar Por Dias:" />
                     <div style={{ width: "100%", height: 300 }}>
                       <GraphicsLinealConsumoMegasXDias />
@@ -130,18 +130,18 @@ export default function Main() {
                   </Grid>
                   <Divider variant="middle" />
                   <DashboardInit />
-                </>
+                </Grid>
             ) : (
               Meteor.userId() && Meteor.user().profile.role == 'admin' ?
-              <>
-                <Grid container item xs={12} justify="space-evenly" alignItems="center" style={{ paddingTop: 50 }}>
+              <Grid container>
+                <Grid container item xs={12} xl={6} justify="space-evenly" alignItems="center" style={{ paddingTop: 50 }}>
                     <Chip style={{ width: "90%" }} color='primary' label="Consumo de Datos en VidKar Por Horas:" />
                     <div style={{ width: "100%", height: 300 }}>
                       <GraphicsLinealConsumoMegasXHoras />
                     </div>
                   </Grid>
-                  <Divider variant="middle" />
-                  <Grid container item xs={12} justify="space-evenly" alignItems="center" style={{ paddingTop: 50 }}>
+                  {/* <Divider variant="middle" /> */}
+                  <Grid container item xs={12} xl={6} justify="space-evenly" alignItems="center" style={{ paddingTop: 50 }}>
                     <Chip style={{ width: "90%" }} color='primary' label="Consumo de Datos en VidKar Por Dias:" />
                     <div style={{ width: "100%", height: 300 }}>
                       <GraphicsLinealConsumoMegasXDias />
@@ -160,7 +160,7 @@ export default function Main() {
                     <GraphicsLinealGananciasXMesesAdmin />
                   </div>
                 </Grid>
-              </>
+              </Grid>
               :
               <Zoom in={true}>
                 <Grid

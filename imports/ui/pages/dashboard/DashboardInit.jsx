@@ -337,8 +337,8 @@ export default function DashboardInit(option) {
             </Grid> */}
 
 
-          <>
-            <Grid container item xs={12} justify="space-evenly" alignItems="center" className={classes.paddingTop20}>
+          <Grid container>
+            <Grid container item xs={12} xl={6} justify="space-evenly" alignItems="center" className={classes.paddingTop20}>
               <Chip style={{ width: "90%" }} color='primary' label="Ventas y Deudas Mensual:" />
               <Grid container direction="row" justify="center" alignItems="center" item xs={12} spacing={1} style={{ padding: 20 }}>
                 <Grid item>
@@ -352,17 +352,8 @@ export default function DashboardInit(option) {
                 <GraphicsLinealMensualVentasyDeudas />
               </div>
             </Grid>
-
-            <Divider variant="middle" />
-            <Grid container item xs={12} justify="space-evenly" alignItems="center" className={classes.paddingTop20}>
-              <Chip style={{ width: "90%" }} color='primary' label="Ventas X Meses:" />
-              <div style={{ width: "100%", height: 300 }}>
-                <GraphicsLinealVentasXMeses />
-              </div>
-            </Grid>
-
-            <Divider variant="middle" />
-            <Grid container item xs={12} justify="space-evenly" alignItems="center" className={classes.paddingTop20}>
+{/* <Divider variant="middle" /> */}
+<Grid container item xs={12} xl={6} justify="space-evenly" alignItems="center" className={classes.paddingTop20}>
               <Chip style={{ width: "90%" }} color='primary' label="Ventas y Deudas General:" />
               <Grid container direction="row" justify="center" alignItems="center" item xs={12} spacing={1} style={{ padding: 20 }}>
                 <Grid item>
@@ -376,9 +367,18 @@ export default function DashboardInit(option) {
                 <GraphicsLinealTotalVentasyDeudas />
               </div>
             </Grid>
+            <Divider variant="middle" />
+            <Grid container item xs={12} justify="space-evenly" alignItems="center" className={classes.paddingTop20}>
+              <Chip style={{ width: "90%" }} color='primary' label="Ventas X Meses:" />
+              <div style={{ width: "100%", height: 300 }}>
+                <GraphicsLinealVentasXMeses />
+              </div>
+            </Grid>
+
+            
 
 
-          </>
+          </Grid>
 
           {/* <Divider variant="middle" />
           <Grid container item xs={12} justify="space-evenly" alignItems="center" className={classes.paddingTop20}>
