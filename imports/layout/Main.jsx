@@ -65,6 +65,7 @@ import StateUsers from "../ui/pages/users/StateUsers";
 import VentasTableSinCompra from "../ui/pages/compras/VentasTableSinCompra";
 import GraphicsLinealConsumoMegasXDias from "../ui/pages/dashboard/GraphicsLinealConsumoMegasXDias";
 import GraphicsLinealConsumoMegasXHoras from "../ui/pages/dashboard/GraphicsLinealConsumoMegasXHoras";
+import GraphicsLinealGananciasXMesesAdmin from "../ui/pages/dashboard/GraphicsLinealGananciasXMesesAdmin";
 
 const useStyles = makeStyles((theme) => ({
   // necessary for content to be below app bar
@@ -131,6 +132,36 @@ export default function Main() {
                   <DashboardInit />
                 </>
             ) : (
+              Meteor.userId() && Meteor.user().profile.role == 'admin' ?
+              <>
+                <Grid container item xs={12} justify="space-evenly" alignItems="center" style={{ paddingTop: 50 }}>
+                    <Chip style={{ width: "90%" }} color='primary' label="Consumo de Datos en VidKar Por Horas:" />
+                    <div style={{ width: "100%", height: 300 }}>
+                      <GraphicsLinealConsumoMegasXHoras />
+                    </div>
+                  </Grid>
+                  <Divider variant="middle" />
+                  <Grid container item xs={12} justify="space-evenly" alignItems="center" style={{ paddingTop: 50 }}>
+                    <Chip style={{ width: "90%" }} color='primary' label="Consumo de Datos en VidKar Por Dias:" />
+                    <div style={{ width: "100%", height: 300 }}>
+                      <GraphicsLinealConsumoMegasXDias />
+                    </div>
+                  </Grid>
+                  <Divider variant="middle" />
+                  <Grid container item xs={12} justify="space-evenly" alignItems="center" style={{ paddingTop: 50 }}>
+                    <Chip style={{ width: "90%" }} color='primary' label="Consumo de Datos en VidKar:" />
+                    <div style={{ width: "100%", height: 300 }}>
+                      <GraphicsLinealConsumoMegasXMeses />
+                    </div>
+                  </Grid>
+                  <Grid container item xs={12} justify="space-evenly" alignItems="center" style={{ paddingTop: 50 }}>
+                  <Chip style={{ width: "90%" }} color='primary' label="Ganancias:" />
+                  <div style={{ width: "100%", height: 300 }}>
+                    <GraphicsLinealGananciasXMesesAdmin />
+                  </div>
+                </Grid>
+              </>
+              :
               <Zoom in={true}>
                 <Grid
                   container
