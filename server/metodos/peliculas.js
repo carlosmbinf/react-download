@@ -94,17 +94,18 @@ if (Meteor.isServer) {
 
                 console.log("Nombre Peli: " + peli.nombrePeli)
                 var idimdb;
-                await nameToImdb({ name: pelicula.nombre, year: pelicula.year }, async (err, res, inf) => {
-                    err && console.log(`err IMDB de ${pelicula.nombre} =>  ${err}`)
-                    await console.log(`id IMDB de ${pelicula.nombre} =>  ${res}`); // "tt0121955"
-                    // inf contains info on where we matched that name - e.g. metadata, or on imdb
-                    // and the meta object with all the available data
-                    await console.log(`info IMDB de ${pelicula.nombre} =>  ${inf}`);
-                    idimdb = res && res;
-                })
-
-                //////ACTUALIZANDO IDIMDB EN PELI
-                try {
+                try{
+                    await nameToImdb({ name: pelicula.nombre, year: pelicula.year }, async (err, res, inf) => {
+                        err && console.log(`err IMDB de ${pelicula.nombre} =>  ${err}`)
+                        await console.log(`id IMDB de ${pelicula.nombre} =>  ${res}`); // "tt0121955"
+                        // inf contains info on where we matched that name - e.g. metadata, or on imdb
+                        // and the meta object with all the available data
+                        await console.log(`info IMDB de ${pelicula.nombre} =>  ${inf}`);
+                        if(res){
+                            idimdb = res;
+                        }
+                    })
+                    //////ACTUALIZANDO IDIMDB EN PELI
                     console.log(`Update IDIMDB - Nombre Peli: ${peli.nombrePeli}`)
                     idimdb && await PelisCollection.update(
                         { _id: id },
@@ -115,13 +116,12 @@ if (Meteor.isServer) {
                         },
                         { multi: true }
                     );
-                } catch (error) {
-                    console.log(error.message);
+                }catch(error){
+                    console.log('no se pudo actualizar en nameToImdb ' + pelicula.nombre);  
+                    console.log(error.message)
                 }
-
-
-
-
+                
+              
                 /////////ACTUALIZANDO TRILERS
                 try {
                     console.log(`Update urlTrailer - Nombre Peli: ${peli.nombrePeli}`)
@@ -174,7 +174,7 @@ if (Meteor.isServer) {
                 // console.log("error.error :> " + error.error);
                 // console.log("error.reason :> " + error.reason);
                 console.log(`error.message :> ${error.message}\n
-            error.reason :> ${error.reason}`);
+                error.reason :> ${error.reason}`);
                 // console.log("error.errorType :> " + error.errorType);
                 console.log("--------------------------------------");
 
