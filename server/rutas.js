@@ -83,7 +83,7 @@ if (Meteor.isServer) {
         var year = req.body.year;
         var pelis = [];
         (async () => {
-            const url = `https://visuales.uclv.cu/Peliculas/Extranjeras/${year}/`
+            const url = `http://vidkar.ddns.net:3005/Peliculas/Extranjeras/${year}/`
             if (!url) throw new TypeError('Need to provide an url as first argument.')
             const { body: html } = await got(url)
             const links = await htmlUrls({ html, url })
