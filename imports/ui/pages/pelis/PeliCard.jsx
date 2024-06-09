@@ -167,6 +167,7 @@ export default function PeliCard(options) {
         mostrar: 1,
         urlBackground: 1,
         nombrePeli: 1,
+        urlBackgroundHTTPS:1,
         // urlPeli: 1,
         // urlTrailer: 1,
         // idimdb:1
@@ -184,6 +185,7 @@ export default function PeliCard(options) {
           mostrar: 1,
           urlBackground: 1,
           nombrePeli: 1,
+          urlBackgroundHTTPS:1,
           // urlPeli: 1,
           // urlTrailer: 1,
           // idimdb:1

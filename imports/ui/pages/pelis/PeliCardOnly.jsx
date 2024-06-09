@@ -207,14 +207,14 @@ export default function PeliCardOnly(options) {
                   : classes.secundary
               }
               style={{
-                backgroundImage: "url(" + options.peliGeneral.urlBackground + ")",
+                backgroundImage: "url('" + options.peliGeneral.urlBackgroundHTTPS + "')",
               }}
             >
               <Grid >
               {mostrarTriler && triller ?
               <Grid className={classes.video} style={{ width: "100%", height:"100%", position: "absolute", bottom: 0, background: "black" }}>
                 {/* INSERTAR VIDEO */}
-                  <video autoPlay={true} width="100%" style={{ borderRadius: 20, width: "100%", height: "100%" }} poster={options.peliGeneral.urlBackground} preload="metadata">
+                  <video autoPlay={true} width="100%" style={{ borderRadius: 20, width: "100%", height: "100%" }} poster={options.peliGeneral.urlBackgroundHTTPS} preload="metadata">
                     <source src={triller} type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
                     {/* <track default kind="subtitles" label="Español" src={`/getsubtitle?idPeli=${options.peliGeneral._id}`} srcLang="es" /> */}
                     {/* <track default kind="descriptions" label="Español" src="https://visuales.uclv.cu/Peliculas/Extranjeras/2020/2020_Ava/sinopsis.txt" srcLang="es"/> */}

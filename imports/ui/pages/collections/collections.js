@@ -515,8 +515,68 @@ export const SchemaPelisCollection = new SimpleSchema({
   urlPeli: {
     type: String,
   },
+  urlPeliHTTPS: {
+    type: String,
+    optional: true,
+    autoValue: function() {
+      if (this.isInsert) {
+        const urlPeli = this.field('urlPeli');
+        if (urlPeli.isSet) {
+          return urlPeli.value.replace("http://vidkar.ddns.net:3005", "https://vidkar.ddns.net:3006");
+        }
+      } else if (this.isUpdate) {
+        const urlPeli = this.field('urlPeli');
+        if (urlPeli.isSet) {
+          return {
+            $set: urlPeli.value.replace("http://vidkar.ddns.net:3005", "https://vidkar.ddns.net:3006")
+          };
+        } else {
+          this.unset();  // Prevent user from supplying their own value
+        }
+      } else if (this.isUpsert) {
+        const urlPeli = this.field('urlPeli');
+        if (urlPeli.isSet) {
+          return {
+            $setOnInsert: urlPeli.value.replace("http://vidkar.ddns.net:3005", "https://vidkar.ddns.net:3006")
+          };
+        } else {
+          this.unset();  // Prevent user from supplying their own value
+        }
+      }
+    }
+  },
   urlBackground: {
     type: String,
+  },
+  urlBackgroundHTTPS: {
+    type: String,
+    optional: true,
+    autoValue: function() {
+      if (this.isInsert) {
+        const urlBackground = this.field('urlBackground');
+        if (urlBackground.isSet) {
+          return urlBackground.value.replace("http://vidkar.ddns.net:3005", "https://vidkar.ddns.net:3006");
+        }
+      } else if (this.isUpdate) {
+        const urlBackground = this.field('urlBackground');
+        if (urlBackground.isSet) {
+          return {
+            $set: urlBackground.value.replace("http://vidkar.ddns.net:3005", "https://vidkar.ddns.net:3006")
+          };
+        } else {
+          this.unset();  // Prevent user from supplying their own value
+        }
+      } else if (this.isUpsert) {
+        const urlBackground = this.field('urlBackground');
+        if (urlBackground.isSet) {
+          return {
+            $setOnInsert: urlBackground.value.replace("http://vidkar.ddns.net:3005", "https://vidkar.ddns.net:3006")
+          };
+        } else {
+          this.unset();  // Prevent user from supplying their own value
+        }
+      }
+    }
   },
   descripcion: {
     type: String,
