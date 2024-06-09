@@ -158,7 +158,7 @@ if (Meteor.isServer) {
         // /////////////////////////////////////////////
         try {
             peli &&
-          peli.subtitulo && peli.textSubtitle == null &&
+          peli.subtitulo && (peli.textSubtitle == null || peli.textSubtitle == "") &&
           (https.get(peli.subtitulo, async (response) => {
             try {
               var stream = response.pipe(srt2vtt());
