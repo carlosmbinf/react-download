@@ -98,7 +98,7 @@ if (Meteor.isServer) {
             peli: pelicula.urlPeli,
             subtitle: pelicula.subtitulo,
             poster:pelicula.urlBackground,
-            urlPadre: url,
+            urlPadre: links[i].url,
           };
           
         }else{
@@ -254,7 +254,7 @@ if (Meteor.isServer) {
 
             const imdba = require('imdb-api');  
 
-            (idimdb || (peli && peli.nombrePeli)) && (peli.clasificacion == null || peli.actors == null ) &&
+            (idimdb || (peli && peli.nombrePeli)) && (peli.clasificacion == null || peli.clasificacion.length == 0 || peli.actors == null || peli.actors.length == 0  ) &&
               (await imdba
                 .get(idimdb ? {id: idimdb} :{ name: peli.nombrePeli }, { apiKey: "99b0df89" })
                 .then(async (element) => {
