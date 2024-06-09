@@ -220,19 +220,19 @@ export default function CreateArchivo() {
 
     // You should see email and password in console.
     // ..code to submit form to backend here...
-    await Meteor.call("insertpelisbyyears", { year: anoInsertPeli })
-    .then(function (data) {
-      setMessage("TODO OK");
-      handleClick(TransitionUp);
-      setLoad(false);
-      setOpen(true);
-    })
-    .catch(function (data) {
-      setMessage("Ocurrió un Error");
-      handleClick(TransitionUp);
-      setLoad(false);
-      setOpen(true);
-    })
+     Meteor.call("insertpelisbyyears", { year: anoInsertPeli })
+    // .then(function (data) {
+    //   setMessage("TODO OK");
+    //   handleClick(TransitionUp);
+    //   setLoad(false);
+    //   setOpen(true);
+    // })
+    // .catch(function (data) {
+    //   setMessage("Ocurrió un Error");
+    //   handleClick(TransitionUp);
+    //   setLoad(false);
+    //   setOpen(true);
+    // })
     console.log("Termino de insertar las Pelis del " + anoInsertPeli)
     setmostrar(false);
     // makePostRequest();

@@ -139,7 +139,7 @@ export default function PelisTable() {
           fields: {
             _id: 1,
             nombrePeli: 1,
-            urlBackground: 1,
+            urlBackgroundHTTPS: 1,
             vistas: 1,
             mostrar: 1,
             clasificacion: 1,
@@ -155,7 +155,7 @@ export default function PelisTable() {
           fields: {
             _id: 1,
             nombrePeli: 1,
-            urlBackground: 1,
+            urlBackgroundHTTPS: 1,
             vistas: 1,
             mostrar: 1,
             clasificacion: 1,
@@ -168,7 +168,7 @@ export default function PelisTable() {
           a.push({
             id: pelicula._id,
             nombre: pelicula.nombrePeli,
-            img: pelicula.urlBackground,
+            img: pelicula.urlBackgroundHTTPS,
             vistas: pelicula.vistas,
             mostrar: pelicula.mostrar,
             clasificacion: pelicula.clasificacion.length
