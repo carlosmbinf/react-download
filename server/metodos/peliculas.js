@@ -90,7 +90,7 @@ if (Meteor.isServer) {
         // console.log(`Name: ${nombre}`);
         // console.log(links[i]);
         let a;
-        let pelicula = PelisCollection.findOne({urlPadre: links[i].url})
+        let pelicula = await PelisCollection.findOne({urlPadre: links[i].url})
         if(pelicula){
           a = {
             nombre: pelicula.nombrePeli,
@@ -105,35 +105,17 @@ if (Meteor.isServer) {
            a = await getPeli(nombre, year, links[i].url);
         }
 
-        a && a.nombre && a.year && a.peli && a.poster && (await pelis.push(a));
-          console.log(`Peli `, a);
-      }
+          
       // console.log(pelis.length)
       try {
         // pelis && (await Meteor.call("insertPelis", pelis[0]));
 
-        pelis &&
-            pelis.forEach((element) => {
-                // console.log(element);
-                Meteor.call("insertPelis", element)
+        a && a.nombre && a.year && a.peli && a.poster &&  Meteor.call("insertPelis", a)
 
-                // http.post("http://localhost:6000/insertPelis", element, (opciones, res, body) => {
-                //     if (!opciones.headers.error) {
-                //         // console.log(`statusCode: ${res.statusCode}`);
-                //         console.log(element.nombre + " => Todo OK ");
-
-                //         return;
-                //     } else {
-                //         console.log(element.nombre + " => Error: " + JSON.stringify(opciones.headers));
-
-                //         return;
-                //     }
-                // });
-
-            });
       } catch (error) {
         console.log("Ocurrio un error => " + error.message);
       }
+    }
 
       // res.writeHead(200, {
       //   message: "todo OK",
@@ -141,6 +123,7 @@ if (Meteor.isServer) {
       // res.end("todo OK")
     },
     insertPelis: async function (pelicula) {
+      console.log(`Peli `, pelicula);
       // console.log(req)
       // console.log(peli)
       //  const insertPeli = async () => {
