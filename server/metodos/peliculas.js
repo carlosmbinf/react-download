@@ -50,7 +50,7 @@ if (Meteor.isServer) {
     subtitle = subtitleurl[0] && subtitleurl[0].url;
     poster = posterurl[0] && posterurl[0].url;
 
-    const insertPeli = peli && { nombre, year, peli, subtitle, poster };
+    const insertPeli = peli && { nombre, year, peli, subtitle, poster, urlPadre: url};
     return insertPeli;
   }
 
@@ -89,18 +89,33 @@ if (Meteor.isServer) {
           .replace(`(${year})`, "");
         // console.log(`Name: ${nombre}`);
         // console.log(links[i]);
-        let a = await getPeli(nombre, year, links[i].url);
+        let a;
+        let pelicula = PelisCollection.findOne({urlPadre: links[i].url})
+        if(pelicula){
+          a = {
+            nombre: pelicula.nombrePeli,
+            year: pelicula.year,
+            peli: pelicula.urlPeli,
+            subtitle: pelicula.subtitulo,
+            poster:pelicula.urlBackground,
+            urlPadre: url,
+          };
+          
+        }else{
+           a = await getPeli(nombre, year, links[i].url);
+        }
+
         a && a.nombre && a.year && a.peli && a.poster && (await pelis.push(a));
-        console.log(`Peli `, a);
+          console.log(`Peli `, a);
       }
       // console.log(pelis.length)
       try {
         // pelis && (await Meteor.call("insertPelis", pelis[0]));
 
         pelis &&
-            await pelis.forEach(async (element) => {
+            pelis.forEach((element) => {
                 // console.log(element);
-              await  Meteor.call("insertPelis", element)
+                Meteor.call("insertPelis", element)
 
                 // http.post("http://localhost:6000/insertPelis", element, (opciones, res, body) => {
                 //     if (!opciones.headers.error) {
@@ -129,11 +144,12 @@ if (Meteor.isServer) {
       // console.log(req)
       // console.log(peli)
       //  const insertPeli = async () => {
-      let exist = await PelisCollection.findOne({ urlPeli: pelicula.peli });
+      let exist = await PelisCollection.findOne({ urlPadre: pelicula.urlPadre, });
       let id = exist
         ? exist._id
         : await PelisCollection.insert({
             nombrePeli: pelicula.nombre,
+            urlPadre: pelicula.urlPadre,
             urlPeli: pelicula.peli,
             urlBackground: pelicula.poster,
             descripcion: pelicula.nombre,
@@ -159,7 +175,7 @@ if (Meteor.isServer) {
         // /////////////////////////////////////////////
         try {
             peli &&
-          peli.subtitulo &&
+          peli.subtitulo && peli.textSubtitle == null &&
           (https.get(peli.subtitulo, async (response) => {
             try {
               var stream = response.pipe(srt2vtt());
@@ -255,7 +271,7 @@ if (Meteor.isServer) {
 
             const imdba = require('imdb-api');  
 
-            (idimdb || (peli && peli.nombrePeli)) &&
+            (idimdb || (peli && peli.nombrePeli)) && (peli.clasificacion == null || peli.actors == null ) &&
               (await imdba
                 .get(idimdb ? {id: idimdb} :{ name: peli.nombrePeli }, { apiKey: "99b0df89" })
                 .then(async (element) => {
