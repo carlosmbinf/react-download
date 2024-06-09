@@ -212,27 +212,28 @@ export default function CreateArchivo() {
     // makePostRequest();
   }
 
-  function insertPelishandleSubmit(event) {
+  async function insertPelishandleSubmit(event) {
     event.preventDefault();
     // console.log( 'Email:', email, 'Password: ', password, 'firstName: ', firstName);
+    setanoInsertPeli("");
+    console.log("insertPelishandleSubmit");
 
     // You should see email and password in console.
     // ..code to submit form to backend here...
-    $.post("/insertpelisbyyears", { year: anoInsertPeli })
-    .done(function (data) {
+    await Meteor.call("insertpelisbyyears", { year: anoInsertPeli })
+    .then(function (data) {
       setMessage("TODO OK");
       handleClick(TransitionUp);
       setLoad(false);
       setOpen(true);
     })
-    .fail(function (data) {
+    .catch(function (data) {
       setMessage("Ocurrió un Error");
       handleClick(TransitionUp);
       setLoad(false);
       setOpen(true);
     })
-    
-    setanoInsertPeli("");
+    console.log("Termino de insertar las Pelis del " + anoInsertPeli)
     setmostrar(false);
     // makePostRequest();
   }
@@ -532,14 +533,6 @@ export default function CreateArchivo() {
                       </Typography>
                     </Grid>
                     <Grid item xs={12}>
-                      <form
-                        // action="/hello"
-                        method="post"
-                        // className={classes.root}
-                        onSubmit={insertPelishandleSubmit}
-                        // noValidate
-                        autoComplete="true"
-                      >
                         <Grid container>
                           <Grid item xs={12} sm={4} lg={3}>
                             <FormControl required variant="outlined">
@@ -574,12 +567,12 @@ export default function CreateArchivo() {
                             variant="contained"
                             type="submit"
                             color="secondary"
+                            onClick={insertPelishandleSubmit}
                           >
                             <SendIcon />
                             Send
                           </Button>
                         </Grid>
-                      </form>
                     </Grid>
                   </Grid>
                 </Grid>

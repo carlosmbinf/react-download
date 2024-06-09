@@ -572,7 +572,14 @@ export const SchemaPelisCollection = new SimpleSchema({
       type: String,
       defaultValue: "",
       optional: true,
-  }
+  },
+  actors: {
+    type: Array,
+    defaultValue: [],
+    optional: true,
+  },
+  'actors.$': { type: String },
+  
 });
 
 PelisCollection.attachSchema(SchemaPelisCollection);

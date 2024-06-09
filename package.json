@@ -39,6 +39,7 @@
     "http": "0.0.1-security",
     "http-post": "^0.1.1",
     "http-proxy": "^1.18.1",
+    "imdb-api": "^4.4.1",
     "imdb-id": "^2.0.1",
     "imdb-light": "^1.1.5",
     "jquery": "^3.6.0",

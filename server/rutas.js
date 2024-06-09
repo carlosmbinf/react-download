@@ -28,8 +28,6 @@ import {
 import { Telegraf } from "telegraf";
 
 
-const got = require('got')
-const htmlUrls = require('html-urls')
 
 if (Meteor.isServer) {
 
@@ -44,32 +42,6 @@ if (Meteor.isServer) {
         })
     }
 
-    async function getPeli(nombre, year, url) {
-        let peli = ''
-        let subtitle = ''
-        let poster = ''
-        if (!url)
-            throw new TypeError("Need to provide an url as first argument.");
-        const { body: html } = await got(url);
-        const linksPeli = htmlUrls({ html, url });
-
-        // for (var j = 5; j < linksPeli.length-6; j++) {
-        //   // console.log(`Links de peliculas ${JSON.stringify(linksPeli[j])}`);
-        // }
-        var filter = require('simple-text-search')
-        var get = filter(linksPeli, 'url')
-        var peliurl = get('.mkv') ? get('.mkv') : get('.mp4')
-        var subtitleurl = get('.srt')
-        var posterurl = get('.jpg') ? get('.jpg') : get('.png')
-
-        peli = peliurl[0] && peliurl[0].url;
-        subtitle = subtitleurl[0] && subtitleurl[0].url;
-        poster = posterurl[0] && posterurl[0].url;
-
-        const insertPeli = peli && { nombre, year, peli, subtitle, poster }
-        return insertPeli
-    };
-    
     endpoint.get("/enviarmensaje", (req, res) => {
         const bot = new Telegraf(Meteor.settings.public.tokenBotTelegram)
         bot.telegram.sendMessage('00', 'Hola');
@@ -77,78 +49,7 @@ if (Meteor.isServer) {
         res.end("se fue el mensaje");
     });	
     ////////////////////////INSERTAR PELICUALAS PASANDOLE EL AÑO////////////
-    endpoint.post("/insertpelisbyyears", (req, res) => {
-        //console.log(req.body)
-
-        var year = req.body.year;
-        var pelis = [];
-        (async () => {
-            const url = `http://vidkar.ddns.net:3005/Peliculas/Extranjeras/${year}/`
-            if (!url) throw new TypeError('Need to provide an url as first argument.')
-            const { body: html } = await got(url)
-            const links = await htmlUrls({ html, url })
-
-            //   links.forEach(({ url }) => console.log(url))
-
-            //   // => [
-            //   //   'https://microlink.io/component---src-layouts-index-js-86b5f94dfa48cb04ae41.js',
-            //   //   'https://microlink.io/component---src-pages-index-js-a302027ab59365471b7d.js',
-            //   //   'https://microlink.io/path---index-709b6cf5b986a710cc3a.js',
-            //   //   'https://microlink.io/app-8b4269e1fadd08e6ea1e.js',
-            //   //   'https://microlink.io/commons-8b286eac293678e1c98c.js',
-            //   //   'https://microlink.io',
-            //   //   ...
-            //   // ]
-            // console.log(links)
-
-            for (var i = 5; i <= links.length - 4; i++) {
-                let nombre = links[i].value
-                    .replace(`${year}_`, "")
-                    .replace(/%20/g, ' ')
-                    .replace(/\./g, " ")
-                    .replace(`/`, "")
-                    .replace(`(${year})`, "");
-                // console.log(`Name: ${nombre}`);
-                // console.log(links[i]);
-                let a = await getPeli(nombre, year, links[i].url)
-                a && (a.nombre && a.year && a.peli && a.poster) && await pelis.push(a);
-                // console.log(`Name: ${nombre}`);
-
-
-            }
-            // console.log(pelis.length)
-            try {
-                pelis &&
-                    await pelis.forEach(async (element) => {
-                        // console.log(element);
-                      await  Meteor.call("insertPelis", element)
-
-                        // http.post("http://localhost:6000/insertPelis", element, (opciones, res, body) => {
-                        //     if (!opciones.headers.error) {
-                        //         // console.log(`statusCode: ${res.statusCode}`);
-                        //         console.log(element.nombre + " => Todo OK ");
-
-                        //         return;
-                        //     } else {
-                        //         console.log(element.nombre + " => Error: " + JSON.stringify(opciones.headers));
-
-                        //         return;
-                        //     }
-                        // });
-
-                    });
-            } catch (error) {
-                console.log("Ocurrio un error => " + error.message);
-            }
-        })()
-
-
-
-        // res.writeHead(200, {
-        //   message: "todo OK",
-        // });
-        // res.end("todo OK")
-    });
+    
     endpoint.get("/getsubtitle", (req, res) => {
         // console.log(req)
         // console.log(req.query.idPeli)
@@ -176,7 +77,7 @@ if (Meteor.isServer) {
             var appRoot = await require("app-root-path");
             var subtituloFile =
                 appRoot.path + "/public/videos/subtitulo/" + id + ".vtt";
-            const https = await require("https");
+            const https = await require("http");
             // !fs.existsSync(appRoot.path + "/public/videos/subtitulo")
             //   ? fs.mkdirSync(appRoot.path + "/public/videos/subtitulo/")
             //   : "";
@@ -232,168 +133,168 @@ if (Meteor.isServer) {
     });
 
 
-    endpoint.post("/insertPelis", async (req, res) => {
-        // console.log(req)
-        // console.log(req.body)
-        //  const insertPeli = async () => {
-        let exist = await PelisCollection.findOne({ urlPeli: req.body.peli })
-        let id = exist ? exist._id : await PelisCollection.insert({
-            nombrePeli: req.body.nombre,
-            urlPeli: req.body.peli,
-            urlBackground: req.body.poster,
-            descripcion: req.body.nombre,
-            tamano: 797,
-            mostrar: true,
-            subtitulo: req.body.subtitle,
-            year: req.body.year
-        });
-        let peli = await PelisCollection.findOne({ _id: id });
-        // console.log(peli);
-        try {
-            var srt2vtt = await require("srt-to-vtt");
-            var fs = await require("fs");
-            var appRoot = await require("app-root-path");
-            var subtituloFile =
-                appRoot.path + "/public/videos/subtitulo/" + id + ".vtt";
-            const https = await require("https");
+    // endpoint.post("/insertPelis", async (req, res) => {
+    //     // console.log(req)
+    //     // console.log(req.body)
+    //     //  const insertPeli = async () => {
+    //     let exist = await PelisCollection.findOne({ urlPeli: req.body.peli })
+    //     let id = exist ? exist._id : await PelisCollection.insert({
+    //         nombrePeli: req.body.nombre,
+    //         urlPeli: req.body.peli,
+    //         urlBackground: req.body.poster,
+    //         descripcion: req.body.nombre,
+    //         tamano: 797,
+    //         mostrar: true,
+    //         subtitulo: req.body.subtitle,
+    //         year: req.body.year
+    //     });
+    //     let peli = await PelisCollection.findOne({ _id: id });
+    //     // console.log(peli);
+    //     try {
+    //         var srt2vtt = await require("srt-to-vtt");
+    //         var fs = await require("fs");
+    //         var appRoot = await require("app-root-path");
+    //         var subtituloFile =
+    //             appRoot.path + "/public/videos/subtitulo/" + id + ".vtt";
+    //         const https = await require("https");
 
-            // !fs.existsSync(appRoot.path + "/public/videos/subtitulo")
-            //   ? fs.mkdirSync(appRoot.path + "/public/videos/subtitulo/")
-            //   : "";
-
-
-            // const file = fs.createWriteStream(subtituloFile);
-            // /////////////////////////////////////////////
-            peli && peli.subtitulo && await https.get(peli.subtitulo, async (response) => {
-                try {
-                    var stream = response.pipe(srt2vtt());
-                    // stream.on("finish", function () {});
-                    streamToString(stream).then(data => {
-                        data && PelisCollection.update(
-                            { _id: id },
-                            {
-                                $set: {
-                                    textSubtitle: data.toString("utf8"),
-                                },
-                            },
-                            { multi: true }
-                        );
-                        console.log(`Actualizado subtitulo de la Peli: ${peli.nombrePeli}`);
-                    }
-                    )
-                } catch (error) {
-                    console.log(error.message)
-                }
+    //         // !fs.existsSync(appRoot.path + "/public/videos/subtitulo")
+    //         //   ? fs.mkdirSync(appRoot.path + "/public/videos/subtitulo/")
+    //         //   : "";
 
 
-            });
+    //         // const file = fs.createWriteStream(subtituloFile);
+    //         // /////////////////////////////////////////////
+    //         peli && peli.subtitulo && await https.get(peli.subtitulo, async (response) => {
+    //             try {
+    //                 var stream = response.pipe(srt2vtt());
+    //                 // stream.on("finish", function () {});
+    //                 streamToString(stream).then(data => {
+    //                     data && PelisCollection.update(
+    //                         { _id: id },
+    //                         {
+    //                             $set: {
+    //                                 textSubtitle: data.toString("utf8"),
+    //                             },
+    //                         },
+    //                         { multi: true }
+    //                     );
+    //                     console.log(`Actualizado subtitulo de la Peli: ${peli.nombrePeli}`);
+    //                 }
+    //                 )
+    //             } catch (error) {
+    //                 console.log(error.message)
+    //             }
 
-            var nameToImdb = require("name-to-imdb");
-            const IMDb = require('imdb-light');
+
+    //         });
+
+    //         var nameToImdb = require("name-to-imdb");
+    //         const IMDb = require('imdb-light');
 
 
-            // console.log("ID de IMDB => " + idimdb)
-            var idimdb;
-            nameToImdb(peli.nombrePeli, function (err, res, inf) {
-                console.log(res); // "tt0121955"
-                // inf contains info on where we matched that name - e.g. metadata, or on imdb
-                // and the meta object with all the available data
-                console.log(inf);
-                idimdb = res && res
-            })
-                // try {
-                //     var result = await nameToImdb({ name: peli.nombrePeli, year: peli.year });
-                //     console.log(result.res); // "tt0133093"
-                //     console.log(result.inf); // {match: 'metadata', isCached: false, meta: {...}}    
-                //     idimdb = result.res && result.res
-                // } catch (error) {
-                //     console.log(error);
-                // }
+    //         // console.log("ID de IMDB => " + idimdb)
+    //         var idimdb;
+    //         nameToImdb(peli.nombrePeli, function (err, res, inf) {
+    //             console.log(res); // "tt0121955"
+    //             // inf contains info on where we matched that name - e.g. metadata, or on imdb
+    //             // and the meta object with all the available data
+    //             console.log(inf);
+    //             idimdb = res && res
+    //         })
+    //             // try {
+    //             //     var result = await nameToImdb({ name: peli.nombrePeli, year: peli.year });
+    //             //     console.log(result.res); // "tt0133093"
+    //             //     console.log(result.inf); // {match: 'metadata', isCached: false, meta: {...}}    
+    //             //     idimdb = result.res && result.res
+    //             // } catch (error) {
+    //             //     console.log(error);
+    //             // }
                 
 
-            //////ACTUALIZANDO IDIMDB EN PELI
-            try {
-                idimdb && PelisCollection.update(
-                    { _id: id },
-                    {
-                        $set: {
-                            idimdb: idimdb,
-                        },
-                    },
-                    { multi: true }
-                );
-            } catch (error) {
-                console.log(error.message);
-            }
+    //         //////ACTUALIZANDO IDIMDB EN PELI
+    //         try {
+    //             idimdb && PelisCollection.update(
+    //                 { _id: id },
+    //                 {
+    //                     $set: {
+    //                         idimdb: idimdb,
+    //                     },
+    //                 },
+    //                 { multi: true }
+    //             );
+    //         } catch (error) {
+    //             console.log(error.message);
+    //         }
 
 
 
 
-            /////////ACTUALIZANDO TRILERS
-            try {
-                idimdb && await IMDb.trailer(idimdb, (url) => {
-                    // console.log(url)  // output is direct mp4 url (also have expiration timeout)
+    //         /////////ACTUALIZANDO TRILERS
+    //         try {
+    //             idimdb && await IMDb.trailer(idimdb, (url) => {
+    //                 // console.log(url)  // output is direct mp4 url (also have expiration timeout)
 
-                    PelisCollection.update(
-                        { _id: id },
-                        {
-                            $set: {
-                                urlTrailer: url,
-                                // clasificacion: details.Genres.split(", ")
-                            },
-                        }
-                    );
-                });
-            } catch (error) {
-                console.log(error.message);
-            }
-
-
-            //////ACTUALIZANDO CLASIFICACION
-            try {
-                idimdb && await IMDb.fetch(idimdb, (details) => {
-                    // console.log(details)  // etc...
-                    PelisCollection.update(
-                        { _id: id },
-                        {
-                            $set: {
-                                descripcion: details.Plot,
-                                clasificacion: details.Genres.split(", "),
-                            },
-                        },
-                        { multi: true }
-                    );
-                });
-            } catch (error) {
-                console.log(error.message);
-            }
+    //                 PelisCollection.update(
+    //                     { _id: id },
+    //                     {
+    //                         $set: {
+    //                             urlTrailer: url,
+    //                             // clasificacion: details.Genres.split(", ")
+    //                         },
+    //                     }
+    //                 );
+    //             });
+    //         } catch (error) {
+    //             console.log(error.message);
+    //         }
 
 
-            res.writeHead(200, {
-                message: "todo OK",
-            });
-        } catch (error) {
-            console.log("--------------------------------------");
-            // console.log("error.error :> " + error.error);
-            // console.log("error.reason :> " + error.reason);
-            console.log(`error.message :> ${error.message}\n
-            error.reason :> ${error.reason}`);
-            // console.log("error.errorType :> " + error.errorType);
-            console.log("--------------------------------------");
+    //         //////ACTUALIZANDO CLASIFICACION
+    //         try {
+    //             idimdb && await IMDb.fetch(idimdb, (details) => {
+    //                 // console.log(details)  // etc...
+    //                 PelisCollection.update(
+    //                     { _id: id },
+    //                     {
+    //                         $set: {
+    //                             descripcion: details.Plot,
+    //                             clasificacion: details.Genres.split(", "),
+    //                         },
+    //                     },
+    //                     { multi: true }
+    //                 );
+    //             });
+    //         } catch (error) {
+    //             console.log(error.message);
+    //         }
 
-            res.writeHead(200, {
-                reason: error.reason,
-                message: error.message,
-                errorType: error.type,
-            });
-        }
 
-        res.end();
-        // }
+    //         res.writeHead(200, {
+    //             message: "todo OK",
+    //         });
+    //     } catch (error) {
+    //         console.log("--------------------------------------");
+    //         // console.log("error.error :> " + error.error);
+    //         // console.log("error.reason :> " + error.reason);
+    //         console.log(`error.message :> ${error.message}\n
+    //         error.reason :> ${error.reason}`);
+    //         // console.log("error.errorType :> " + error.errorType);
+    //         console.log("--------------------------------------");
 
-        // PelisCollection.find({urlPeli:req.body.peli}).count() == 0 && await insertPeli()
+    //         res.writeHead(200, {
+    //             reason: error.reason,
+    //             message: error.message,
+    //             errorType: error.type,
+    //         });
+    //     }
 
-    });
+    //     res.end();
+    //     // }
+
+    //     // PelisCollection.find({urlPeli:req.body.peli}).count() == 0 && await insertPeli()
+
+    // });
 
 
     endpoint.post("/getUsersVPN", async (req, res) => {
