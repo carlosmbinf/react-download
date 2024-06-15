@@ -185,7 +185,7 @@ const LoginForm = ({ className }: Props) => {
 
   const versionapkTV = useTracker(() => {
 
-    Meteor.subscribe("versions", { type: "apk" }).ready()
+    Meteor.subscribe("versions", { type: "apkapkTV" }).ready()
     let version = VersionsCollection.findOne({ type: "apkTV" })
     return version
   });
