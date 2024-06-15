@@ -22,6 +22,7 @@ import FacebookIcon from "@material-ui/icons/Facebook";
 import Tooltip from "@material-ui/core/Tooltip";
 import GoogleIcon from '@mui/icons-material/Google';
 import { VersionsCollection } from "../../../pages/collections/collections";
+import { Meteor } from "meteor/meteor";
 
 
 
@@ -185,7 +186,7 @@ const LoginForm = ({ className }: Props) => {
 
   const versionapkTV = useTracker(() => {
 
-    Meteor.subscribe("versions", { type: "apkapkTV" }).ready()
+    Meteor.subscribe("versions", { type: "apkTV" }).ready()
     let version = VersionsCollection.findOne({ type: "apkTV" })
     return version
   });
