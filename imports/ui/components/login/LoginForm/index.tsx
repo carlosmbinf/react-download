@@ -183,6 +183,13 @@ const LoginForm = ({ className }: Props) => {
     return version ? version.version : "";
   });
 
+  const versionapkTV = useTracker(() => {
+
+    Meteor.subscribe("versions", { type: "apk" }).ready()
+    let version = VersionsCollection.findOne({ type: "apkTV" })
+    return version
+  });
+
   return (
     <>
       <Dialog
@@ -414,6 +421,27 @@ const LoginForm = ({ className }: Props) => {
           </Tooltip>
         </Grid>
       </Grid>
+      <Divider/>
+      {versionapkTV && <Grid container direction="column" justify="center" alignContent="center">
+        <Grid item xs={10}>
+          <Tooltip
+            title={
+              "Puede descargar la aplicación para Android TV y asi tener ver Peliculas con su cuenta VidKar"
+            }
+          >
+            <Button
+              onClick={() => { window.open(versionapkTV.apkUrl).focus(); }}
+              variant="contained"
+              color="primary"
+              type="submit"
+              className={classes.button}
+            // startIcon={<FacebookIcon />}
+            >
+              Descargar APK Para TV {versionapkTV.version}
+            </Button>
+          </Tooltip>
+        </Grid>
+      </Grid>}
       <Divider />
       <Grid container justify="center" alignContent="center" >
         <Grid item container justify="center" alignContent="center" xs={12} sm={6} md={4}>
