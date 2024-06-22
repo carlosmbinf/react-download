@@ -701,45 +701,16 @@ export const SchemaSeriesCollection = new SimpleSchema({
   nombre: {
     type: String,
   },
-  url: {
-    type: String,
-  },
-  urlHttps: {
-    type: String,
-    optional: true,
-    autoValue: function () {
-      if (this.isInsert) {
-        const url = this.field("url");
-        if (url.isSet) {
-          return url.value.replace(
-            "http://vidkar.ddns.net:3005",
-            "https://vidkar.ddns.net:3006"
-          );
-        }
-      } else if (this.isUpdate) {
-        const url = this.field("url");
-        if (url.isSet) {
-          return {
-            $set: url.value.replace(
-              "http://vidkar.ddns.net:3005",
-              "https://vidkar.ddns.net:3006"
-            ),
-          };
-        } else {
-          this.unset(); // Prevent user from supplying their own value
-        }
-      }
-    }
-  },
   descripcion: {
     type: String,
+    optional: true,
   },
   urlTrailer: {
     type: String,
     defaultValue: "",
     optional: true,
   },
-  ano: {
+  anoLanzamiento: {
     type: Number,
     defaultValue: 1900,
     // min: 1900,
@@ -801,9 +772,43 @@ export const SchemaSeriesCollection = new SimpleSchema({
       }
     },
   },
+  clasificacion: {
+    type: Array,
+    defaultValue: [],
+  },
+  "clasificacion.$": { type: String },
+  idimdb: {
+    type: String,
+    defaultValue: "",
+    optional: true,
+  },
+  actors: {
+    type: Array,
+    defaultValue: [],
+    optional: true,
+  },
+  "actors.$": { type: String },
 });
 
 SeriesCollection.attachSchema(SchemaSeriesCollection);
+
+export const SchemaTemporadasCollection = new SimpleSchema({
+
+  url: {
+    type: String,
+    optional: false,
+  },
+  idSerie: {
+    type: String,
+    optional: false
+  },
+  numeroTemporada: {
+    type: Number,
+    optional: false,
+  },
+});
+
+TemporadasCollection.attachSchema(SchemaTemporadasCollection);
 
 
 export const SchemaCapitulosCollection = new SimpleSchema({
@@ -813,46 +818,9 @@ export const SchemaCapitulosCollection = new SimpleSchema({
   url: {
     type: String,
   },
-  urlPadre: {
+  idTemporada: {
     type: String,
-    optional: true,
-    autoValue: function () {
-      if (this.isInsert) {
-        const url = this.field("url");
-        if (url.isSet) {
-          let urlPadre = url.value.split("/");
-        urlPadre.pop();
-        urlPadre = urlPadre.join("/");
-          return urlPadre;
-        }
-      } else if (this.isUpdate) {
-        const url = this.field("url");
-        if (url.isSet) {
-          let urlPadre = url.value.split("/");
-          urlPadre.pop();
-          urlPadre = urlPadre.join("/");
-            
-          return {
-            $set: urlPadre,
-          };
-        } else {
-          this.unset(); // Prevent user from supplying their own value
-        }
-      } else if (this.isUpsert) {
-        const url = this.field("url");
-        if (url.isSet) {
-          let urlPadre = url.value.split("/");
-          urlPadre.pop();
-          urlPadre = urlPadre.join("/");
-            
-          return {
-            $setOnInsert: urlPadre,
-          };
-        } else {
-          this.unset(); // Prevent user from supplying their own value
-        }
-      }
-    },
+    optional: false
   },
   urlHTTPS: {
     type: String,
@@ -895,6 +863,7 @@ export const SchemaCapitulosCollection = new SimpleSchema({
   },
   urlBackground: {
     type: String,
+    optional: true,
   },
   urlBackgroundHTTPS: {
     type: String,
@@ -943,11 +912,10 @@ export const SchemaCapitulosCollection = new SimpleSchema({
     defaultValue: "",
     optional: true,
   },
-  tamano: {
-    type: String,
-  },
   mostrar: {
     type: String,
+    optional: true,
+    defaultValue: true,
   },
   createdAt: {
     type: Date,
@@ -979,26 +947,6 @@ export const SchemaCapitulosCollection = new SimpleSchema({
     type: String,
     defaultValue: "",
     optional: true,
-  },
-  clasificacion: {
-    type: Array,
-    defaultValue: [],
-  },
-  "clasificacion.$": { type: String },
-  idimdb: {
-    type: String,
-    defaultValue: "",
-    optional: true,
-  },
-  actors: {
-    type: Array,
-    defaultValue: [],
-    optional: true,
-  },
-  "actors.$": { type: String },
-  temporada: {
-    type: Number,
-    optional: false,
   },
   capitulo: {
     type: Number,

@@ -131,21 +131,24 @@ if (Meteor.isServer) {
         //picar la url para quitar el nombre de la peli, ejemplo https://vidkar.ddns.net:3005/Peliculas/Extranjeras/2021/2021_The_Father_(2021).mkv, quitar el 2021_The_Father_(2021).mkv
 
       let exist = await CapitulosCollection.findOne({ url: serieArg.url, });
-      let id = exist
-        ? exist._id
-        : await CapitulosCollection.insert({
-            nombre: serieArg.nombre,
-            url: serieArg.url,
-            urlBackground: serieArg.poster,
-            descripcion: serieArg.nombre,
-            tamano: 797,
-            mostrar: true,
-            subtitulo: serieArg.subtitle,
-            year: serieArg.year,
-            capitulo: serieArg.capitulo,
-            temporada: serieArg.temporada
-          });
-      let serie = await CapitulosCollection.findOne({ _id: id });
+      let id = null;
+      if(exist){
+        console.log(`La serie ${serieArg.nombre} ya existe`);
+        id = exist._id;
+      }else{
+        id = await CapitulosCollection.insert({
+          nombre: serieArg.nombre,
+          url: serieArg.url,
+          urlBackground: serieArg.poster,
+          descripcion: serieArg.nombre,
+          subtitulo: serieArg.subtitle,
+          year: serieArg.year,
+        });
+      }
+
+      let capitulo = await CapitulosCollection.findOne({ _id: id });
+      let temporada = capitulo && capitulo.idTemporada;
+      let serie = temporada && temporada.idSerie;
       // console.log(peli);
         var srt2vtt = await require("srt-to-vtt");
         var fs = await require("fs");
@@ -161,9 +164,9 @@ if (Meteor.isServer) {
         // const file = fs.createWriteStream(subtituloFile);
         // /////////////////////////////////////////////
         try {
-            serie &&
-          serie.subtitulo && (serie.textSubtitle == null || serie.textSubtitle == "") &&
-          (https.get(serie.subtitulo, async (response) => {
+            capitulo &&
+          capitulo.subtitulo && (capitulo.textSubtitle == null || capitulo.textSubtitle == "") &&
+          (https.get(capitulo.subtitulo, async (response) => {
             try {
               var stream = response.pipe(srt2vtt());
               // stream.on("finish", function () {});
@@ -181,10 +184,10 @@ if (Meteor.isServer) {
                 
               !data
                 ? console.log(
-                    "No se pudo obtener subtitulo de la Peli " + serie.nombre
+                    "No se pudo obtener subtitulo de la Peli " + capitulo.nombre
                   )
                 : console.log(
-                    `Actualizado subtitulo de la Peli: ${serie.nombre}`
+                    `Actualizado subtitulo de la Peli: ${capitulo.nombre}`
                   );
 
               });
