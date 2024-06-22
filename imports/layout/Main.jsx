@@ -66,6 +66,8 @@ import VentasTableSinCompra from "../ui/pages/compras/VentasTableSinCompra";
 import GraphicsLinealConsumoMegasXDias from "../ui/pages/dashboard/GraphicsLinealConsumoMegasXDias";
 import GraphicsLinealConsumoMegasXHoras from "../ui/pages/dashboard/GraphicsLinealConsumoMegasXHoras";
 import GraphicsLinealGananciasXMesesAdmin from "../ui/pages/dashboard/GraphicsLinealGananciasXMesesAdmin";
+import SeriesDetails from "../ui/pages/series/SeriesDetails";
+import CreateSerie from "../ui/pages/series/CreateSerie";
 
 const useStyles = makeStyles((theme) => ({
   // necessary for content to be below app bar
@@ -591,6 +593,35 @@ export default function Main() {
         <Route path="/videos/:id">
           <div style={{ paddingBottom: "7em" }}>
             <Video />
+          </div>
+
+          <Footer />
+        </Route>
+        <Route path="/series/:id">
+          <div style={{ paddingBottom: "7em" }}>
+            <SeriesDetails/>
+          </div>
+
+          <Footer />
+        </Route>
+        <Route path="/create-series">
+          <div style={{ paddingBottom: "7em" }}>
+            {useractual &&
+              useractual.profile &&
+              useractual.profile.role == "admin" ? (
+              <CreateSerie />
+            ) : (
+              <Zoom in={true}>
+                <Grid
+                  container
+                  direction="row"
+                  justify="center"
+                  alignItems="center"
+                >
+                  <h1>SIN ACCESO</h1>
+                </Grid>
+              </Zoom>
+            )}
           </div>
 
           <Footer />

@@ -326,6 +326,7 @@ const compras = useTracker(() => {
     // },
     { title: "Television en VIVO", icon: <LiveTvIcon />, url: "tv" },
     { title: "Peliculas", icon: <MovieFilterIcon />, url: "pelis" },
+    { title: "Series", icon: <MovieFilterIcon />, url: "series" },
     // {title: "create-pelis",
     //   icon: <InboxIcon />,
     // },

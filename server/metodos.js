@@ -229,6 +229,7 @@ if (Meteor.isServer) {
 //importar todos los .js de la carpeta metodos
 import "./metodos/logs.js";
 import "./metodos/peliculas.js";
+import "./metodos/series.js";
 import "./metodos/proxy.js";
 import "./metodos/usuarios.js";
 import "./metodos/ventas";

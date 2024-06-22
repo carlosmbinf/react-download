@@ -1,0 +1,650 @@
+import React, { useState } from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import Card from "@material-ui/core/Card";
+import CardActions from "@material-ui/core/CardActions";
+import CardContent from "@material-ui/core/CardContent";
+import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography";
+import {
+  Paper,
+  Box,
+  Grid,
+  Icon,
+  IconButton,
+  Zoom,
+  Dialog,
+  CircularProgress,
+  FormControlLabel,
+  Switch,
+} from "@material-ui/core";
+import { Meteor } from "meteor/meteor";
+import { useTracker } from "meteor/react-meteor-data";
+import Select from "@material-ui/core/Select";
+import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
+
+import Snackbar from "@material-ui/core/Snackbar";
+import Slide from "@material-ui/core/Slide";
+import { Link, useParams } from "react-router-dom";
+import Rotate from "react-reveal/Rotate";
+
+//Collections
+import { PelisCollection } from "../collections/collections";
+
+//icons
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
+import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
+import PermContactCalendarRoundedIcon from "@material-ui/icons/PermContactCalendarRounded";
+import { FormControl, TextField, InputAdornment } from "@material-ui/core";
+import MailIcon from "@material-ui/icons/Mail";
+import AccountCircle from "@material-ui/icons/AccountCircle";
+import SendIcon from "@material-ui/icons/Send";
+import CloseIcon from "@material-ui/icons/Close";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+
+const useStyles = makeStyles((theme) => ({
+  w100: {
+    width: "100%",
+  },
+  root: {
+    minWidth: 275,
+    // maxWidth: 275,
+    borderRadius: 20,
+    padding: "2em",
+    margin: 20
+  },
+  bullet: {
+    display: "inline-block",
+    margin: "0 2px",
+    transform: "scale(0.8)",
+  },
+  title: {
+    fontSize: 14,
+  },
+  pos: {
+    marginBottom: 12,
+  },
+  createUser: {
+    color: "#114c84",
+  },
+  margin: {
+    margin: theme.spacing(1),
+  },
+  flex: {
+    display: "flex",
+    justifyContent: "flex-end",
+  },
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(2),
+  },
+  drawerHeader: {
+    display: "flex",
+    alignItems: "center",
+    padding: theme.spacing(0, 1),
+    // necessary for content to be below app bar
+    ...theme.mixins.toolbar,
+    justifyContent: "flex-start",
+  },
+  load: {
+    width: 50,
+    height: 50,
+  },
+}));
+
+export default function CreateSerie() {
+  const [nombre, setnombre] = useState("");
+  const [url, seturl] = useState("");
+  const [urlBackground, seturlBackground] = useState("");
+  const [descripcion, setdescripcion] = useState("");
+  const [tamano, settamano] = useState("");
+  const [year, setyear] = useState("");
+  const [anoInsertSerie, setanoInsertSerie] = useState("");
+  const [subtitulo, setsubtitulo] = useState("");
+  const [mostrar, setmostrar] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
+  const [message, setMessage] = React.useState("");
+  const [transition, setTransition] = React.useState(undefined);
+  const [capitulo, setCapitulo] = React.useState("");
+  const [temporada, setTemporada] = React.useState("");
+  const [load, setLoad] = React.useState(false);
+
+  function TransitionUp(props) {
+    return <Slide {...props} direction="up" />;
+  }
+  const handleClick = (Transition) => () => {
+    setTransition(() => Transition);
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+    setMessage("");
+  };
+
+  async function createArch() {
+    // var http = require("http");
+    // http.post = require("http-post");
+
+    let serieData = {
+      nombre: nombre,
+      url: url,
+      poster: urlBackground,
+      tamano: tamano,
+      subtitle: subtitulo,
+      year: year,
+      temporada: temporada,
+      capitulo: capitulo,
+    };
+
+    await Meteor.call("insertSeries",serieData, (error, result) => { 
+      // !error ? console.log(result.message) : console.log(error); 
+      if(!error){
+      setMessage(result.message);
+      handleClick(TransitionUp);
+      setLoad(false);
+      setOpen(true);
+      }else{
+        setMessage(result.message);
+      handleClick(TransitionUp);
+      setLoad(false);
+      setOpen(true);
+        console.log(error)
+      }
+     })
+   
+
+    // await $.post("insertPelis", serieData)
+    // .done(function (data) {
+     
+    // })
+    // .fail(function (data) {
+    //   setMessage("Ocurrió un Error");
+    //   handleClick(TransitionUp);
+    //   setLoad(false);
+    //   setOpen(true);
+    // })
+
+      
+
+
+    // subtitulo
+    //   ? http.post(
+    //       "/convertsrttovtt",
+    //       { idPeli: idPeli },
+    //       (opciones, res, body) => {
+    //         if (!opciones.headers.error) {
+    //           // console.log(`statusCode: ${res.statusCode}`);
+    //           console.log("error " + JSON.stringify(opciones.headers));
+
+    //           setMessage(opciones.headers.message);
+    //           handleClick(TransitionUp);
+    //           setLoad(false);
+    //           setOpen(true);
+
+    //           return;
+    //         } else {
+    //           console.log(opciones.headers);
+    //           setMessage(opciones.headers.message);
+    //           handleClick(TransitionUp);
+    //           setLoad(false);
+    //           setOpen(true);
+    //           return;
+    //         }
+    //       }
+    //     )
+    //   : "";
+  }
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    // console.log( 'Email:', email, 'Password: ', password, 'firstName: ', firstName);
+
+    // You should see email and password in console.
+    // ..code to submit form to backend here...
+
+    createArch();
+    // seturl("");
+    // seturlBackground("");
+    // setdescripcion("");
+    // settamano("");
+    // setsubtitulo("");
+    // setyear("");
+    // setTemporada("");
+    // setCapitulo("");
+    // setmostrar(false);
+    // makePostRequest();
+  }
+
+  async function insertSerieshandleSubmit(event) {
+    event.preventDefault();
+    // console.log( 'Email:', email, 'Password: ', password, 'firstName: ', firstName);
+    setanoInsertSerie("");
+    console.log("insertSerieshandleSubmit");
+
+    // You should see email and password in console.
+    // ..code to submit form to backend here...
+    //  Meteor.call("insertseriesbyURL", { year: anoInsertSerie })
+    // .then(function (data) {
+    //   setMessage("TODO OK");
+    //   handleClick(TransitionUp);
+    //   setLoad(false);
+    //   setOpen(true);
+    // })
+    // .catch(function (data) {
+    //   setMessage("Ocurrió un Error");
+    //   handleClick(TransitionUp);
+    //   setLoad(false);
+    //   setOpen(true);
+    // })
+    console.log("Termino de insertar las Pelis del " + anoInsertSerie)
+    setmostrar(false);
+    // makePostRequest();
+  }
+
+  const handleChange = (event) => {
+    setmostrar(event.target.checked);
+  };
+
+  const classes = useStyles();
+
+  return (
+    <>
+      <div className={classes.drawerHeader}>
+        <IconButton
+          color="primary"
+          aria-label="delete"
+          className={classes.margin}
+        >
+          <Link to={"/series"}>
+            <ArrowBackIcon fontSize="large" color="secondary" />
+          </Link>
+        </IconButton>
+      </div>
+      <Dialog aria-labelledby="simple-dialog-title" open={load}>
+        <Grid className={classes.load}>
+          <CircularProgress />
+        </Grid>
+      </Dialog>
+      <Rotate top left>
+        <>
+          <Snackbar
+            autoHideDuration={3000}
+            open={open}
+            onClose={handleClose}
+            TransitionComponent={transition}
+            message={message}
+            key={transition ? transition.name : ""}
+          />
+          <Paper elevation={5} className={classes.root}>
+            {/* <Button onClick={handleClick(TransitionUp)}>Up</Button> */}
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <Grid
+                  container
+                  direction="column"
+                  justify="center"
+                  alignItems="center"
+                >
+                  <Grid container spacing={3}>
+                    <Grid item xs={12}>
+                      <Typography variant="h5" color="secondary" component="h2">
+                        Agregar Serie
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <form
+                        // action="/hello"
+                        method="post"
+                        // className={classes.root}
+                        onSubmit={handleSubmit}
+                        // noValidate
+                        autoComplete="true"
+                      >
+                        <Grid container className={classes.margin}>
+                          Datos de la Serie
+                        </Grid>
+                        <Grid container>
+                          <Grid item xs={12} sm={4} lg={3}>
+                            <FormControl required variant="outlined">
+                              <TextField
+                                required
+                                className={classes.margin}
+                                id="nombre"
+                                name="nombre"
+                                label="Nombre de la Serie"
+                                variant="outlined"
+                                color="secondary"
+                                type="text"
+                                value={nombre}
+                                onInput={(e) => setnombre(e.target.value)}
+                                InputProps={
+                                  {
+                                    // startAdornment: (
+                                    //   // <InputAdornment position="start">
+                                    //   //   <AccountCircle />
+                                    //   // </InputAdornment>
+                                    // ),
+                                  }
+                                }
+                              />
+                            </FormControl>
+                          </Grid>
+                          <Grid item xs={12} sm={4} lg={3}>
+                            <FormControl required variant="outlined">
+                              <TextField
+                                required
+                                className={classes.margin}
+                                id="url"
+                                name="url"
+                                label="URL de la Serie"
+                                variant="outlined"
+                                color="secondary"
+                                type="text"
+                                value={url}
+                                onInput={(e) => seturl(e.target.value)}
+                                InputProps={
+                                  {
+                                    // startAdornment: (
+                                    //   // <InputAdornment position="start">
+                                    //   //   <AccountCircle />
+                                    //   // </InputAdornment>
+                                    // ),
+                                  }
+                                }
+                              />
+                            </FormControl>
+                          </Grid>
+                          <Grid item xs={12} sm={4} lg={3}>
+                            <FormControl required variant="outlined">
+                              <TextField
+                                required
+                                className={classes.margin}
+                                id="urlBackground"
+                                name="URL de la Imagen"
+                                label="urlBackground"
+                                variant="outlined"
+                                color="secondary"
+                                type="text"
+                                value={urlBackground}
+                                onInput={(e) =>
+                                  seturlBackground(e.target.value)
+                                }
+                                InputProps={
+                                  {
+                                    // startAdornment: (
+                                    //   // <InputAdornment position="start">
+                                    //   //   <AccountCircle />
+                                    //   // </InputAdornment>
+                                    // ),
+                                  }
+                                }
+                              />
+                            </FormControl>
+                          </Grid>
+                          <Grid item xs={12} sm={4} lg={3}>
+                            <FormControl required variant="outlined">
+                              <TextField
+                                required
+                                className={classes.margin}
+                                id="year"
+                                name="Año"
+                                label="Año"
+                                variant="outlined"
+                                color="secondary"
+                                type="number"
+                                value={year}
+                                onInput={(e) => setyear(e.target.value)}
+                                InputProps={
+                                  {
+                                    // startAdornment: (
+                                    //   // <InputAdornment position="start">
+                                    //   //   <AccountCircle />
+                                    //   // </InputAdornment>
+                                    // ),
+                                  }
+                                }
+                              />
+                            </FormControl>
+                          </Grid>
+                          <Grid item xs={12} sm={4} lg={3}>
+                            <FormControl
+                              required
+                              className={classes.w100}
+                              variant="outlined"
+                            >
+                              <TextField
+                                required
+                                className={classes.margin}
+                                id="tamano"
+                                name="tamano"
+                                label="Tamaño"
+                                variant="outlined"
+                                color="secondary"
+                                type="number"
+                                value={tamano}
+                                onInput={(e) => settamano(e.target.value)}
+                                // InputProps={{
+                                //   startAdornment: (
+                                //     // <InputAdornment position="start">
+                                //     //   <AccountCircle />
+                                //     // </InputAdornment>
+                                //   ),
+                                // }}
+                              />
+                            </FormControl>
+                          </Grid>
+                          <Grid item xs={12} sm={4} lg={3}>
+                            <FormControl required variant="outlined">
+                              <TextField
+                                required
+                                className={classes.margin}
+                                id="descripcion"
+                                name="descripcion"
+                                label="Descripcion"
+                                variant="outlined"
+                                color="secondary"
+                                type="text"
+                                multiline
+                                rows={4}
+                                value={descripcion}
+                                onInput={(e) => setdescripcion(e.target.value)}
+                                InputProps={
+                                  {
+                                    // startAdornment: (
+                                    //   // <InputAdornment position="start">
+                                    //   //   <AccountCircle />
+                                    //   // </InputAdornment>
+                                    // ),
+                                  }
+                                }
+                              />
+                            </FormControl>
+                          </Grid>
+                          <Grid item xs={12} sm={4} lg={3}>
+                            <FormControl
+                              required
+                              className={classes.w100}
+                              variant="outlined"
+                            >
+                              <TextField
+                                className={classes.margin}
+                                id="subtitulo"
+                                name="subtitulo"
+                                label="Subtitulo"
+                                variant="outlined"
+                                color="secondary"
+                                type="text"
+                                value={subtitulo}
+                                onInput={(e) => setsubtitulo(e.target.value)}
+                                // InputProps={{
+                                //   startAdornment: (
+                                //     // <InputAdornment position="start">
+                                //     //   <AccountCircle />
+                                //     // </InputAdornment>
+                                //   ),
+                                // }}
+                              />
+                            </FormControl>
+                          </Grid>
+                          <Grid container item xs={12}>
+                            <Grid item xs={12} sm={4} lg={3}>
+                              <FormControl
+                                required
+                                className={classes.w100}
+                                variant="outlined"
+                              >
+                                <TextField
+                                  className={classes.margin}
+                                  id="capitulo"
+                                  name="capitulo"
+                                  label="Capitulo"
+                                  variant="outlined"
+                                  color="secondary"
+                                  type="number"
+                                  value={capitulo}
+                                  onInput={(e) => setCapitulo(e.target.value)}
+                                  // InputProps={{
+                                  //   startAdornment: (
+                                  //     // <InputAdornment position="start">
+                                  //     //   <AccountCircle />
+                                  //     // </InputAdornment>
+                                  //   ),
+                                  // }}
+                                />
+                              </FormControl>
+                            </Grid>
+                            <Grid item xs={12} sm={4} lg={3}>
+                              <FormControl
+                                required
+                                className={classes.w100}
+                                variant="outlined"
+                              >
+                                <TextField
+                                  className={classes.margin}
+                                  id="temporada"
+                                  name="temporada"
+                                  label="Temporada"
+                                  variant="outlined"
+                                  color="secondary"
+                                  type="number"
+                                  value={temporada}
+                                  onInput={(e) => setTemporada(e.target.value)}
+                                  // InputProps={{
+                                  //   startAdornment: (
+                                  //     // <InputAdornment position="start">
+                                  //     //   <AccountCircle />
+                                  //     // </InputAdornment>
+                                  //   ),
+                                  // }}
+                                />
+                              </FormControl>
+                            </Grid>
+                          </Grid>
+                          <Grid item xs={12} sm={12} lg={12}>
+                            <FormControlLabel
+                              control={
+                                <Switch
+                                  checked={mostrar}
+                                  onChange={handleChange}
+                                  name="checkedA"
+                                  color="primary"
+                                />
+                              }
+                              label="mostrar"
+                            />
+                          </Grid>
+                        </Grid>
+
+                        <Grid item xs={12} className={classes.flex}>
+                          <Button
+                            variant="contained"
+                            type="submit"
+                            color="secondary"
+                          >
+                            <SendIcon />
+                            Send
+                          </Button>
+                        </Grid>
+                      </form>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Paper>
+
+          <Paper
+            elevation={5}
+            className={classes.root}
+            style={{ marginTop: 20 }}
+          >
+            {/* <Button onClick={handleClick(TransitionUp)}>Up</Button> */}
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <Grid
+                  container
+                  direction="column"
+                  justify="center"
+                  alignItems="center"
+                >
+                  <Grid container spacing={3}>
+                    <Grid item xs={12}>
+                      <Typography variant="h5" color="secondary" component="h2">
+                        Agregar Serie por Años
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Grid container>
+                        <Grid item xs={12} sm={4} lg={3}>
+                          <FormControl required variant="outlined">
+                            <TextField
+                              w100
+                              required
+                              className={classes.margin}
+                              id="anoInsertSerie"
+                              name="anoInsertSerie"
+                              label="Año"
+                              variant="outlined"
+                              color="secondary"
+                              type="number"
+                              value={anoInsertSerie}
+                              onInput={(e) => setanoInsertSerie(e.target.value)}
+                              InputProps={
+                                {
+                                  // startAdornment: (
+                                  //   // <InputAdornment position="start">
+                                  //   //   <AccountCircle />
+                                  //   // </InputAdornment>
+                                  // ),
+                                }
+                              }
+                            />
+                          </FormControl>
+                        </Grid>
+                      </Grid>
+
+                      <Grid item xs={12} className={classes.flex}>
+                        <Button
+                          variant="contained"
+                          type="submit"
+                          color="secondary"
+                          onClick={insertSerieshandleSubmit}
+                        >
+                          <SendIcon />
+                          Send
+                        </Button>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Paper>
+        </>
+      </Rotate>
+    </>
+  );
+}

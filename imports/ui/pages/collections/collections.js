@@ -1,219 +1,254 @@
-import { Mongo } from 'meteor/mongo';
-import SimpleSchema from 'simpl-schema';
+import { Mongo } from "meteor/mongo";
+import SimpleSchema from "simpl-schema";
 import { Meteor } from "meteor/meteor";
+import { url } from "telegraf/typings/button";
 
+SimpleSchema.extendOptions(["autoform"]);
 
-SimpleSchema.extendOptions(['autoform']);
-
-export const PelisCollection = new Mongo.Collection('pelisRegister');
-export const DescargasCollection = new Mongo.Collection('descargasRegister');
-export const TVCollection = new Mongo.Collection('tvRegister');
-export const OnlineCollection = new Mongo.Collection('online');
-export const MensajesCollection = new Mongo.Collection('mensajes');
-export const RegisterDataUsersCollection = new Mongo.Collection('registerDataUsers');
-export const LogsCollection = new Mongo.Collection('Logs');
-export const ServersCollection = new Mongo.Collection('servers');
-export const PreciosCollection = new Mongo.Collection('precios');
-export const VentasCollection = new Mongo.Collection('ventas');
-export const FilesCollection = new Mongo.Collection('files');
-export const VersionsCollection = new Mongo.Collection('versions');
-
-
+export const PelisCollection = new Mongo.Collection("pelisRegister");
+export const CapitulosCollection = new Mongo.Collection("capitulosSeries");
+export const TemporadasCollection = new Mongo.Collection("temporadasSeries");
+export const SeriesCollection = new Mongo.Collection("series");
+export const DescargasCollection = new Mongo.Collection("descargasRegister");
+export const TVCollection = new Mongo.Collection("tvRegister");
+export const OnlineCollection = new Mongo.Collection("online");
+export const MensajesCollection = new Mongo.Collection("mensajes");
+export const RegisterDataUsersCollection = new Mongo.Collection(
+  "registerDataUsers"
+);
+export const LogsCollection = new Mongo.Collection("Logs");
+export const ServersCollection = new Mongo.Collection("servers");
+export const PreciosCollection = new Mongo.Collection("precios");
+export const VentasCollection = new Mongo.Collection("ventas");
+export const FilesCollection = new Mongo.Collection("files");
+export const VersionsCollection = new Mongo.Collection("versions");
 
 Meteor.methods({
- async exportDataTo(urlMongoDB) {
-  var mi = require("mongoimport");
-   try {
-    await mi({
-       fields: PelisCollection.find().fetch(), // {array} data to import
-       db: "meteor", // {string} name of db
-       collection: 'pelisRegister', // {string|function} name of collection, or use a function to
-       //  return a name, accept one param - [fields] the fields to import
-       host: urlMongoDB,
-       callback: (err, db) => {
-         err && console.error(err);
-       },
-     });
-   } catch (error) {
-     console.log(error);
-   }
-  
-   try {
-    await mi({
-      fields: DescargasCollection.find().fetch(), // {array} data to import
-      db: "meteor", // {string} name of db
-      collection: 'descargasRegister', // {string|function} name of collection, or use a function to
-      //  return a name, accept one param - [fields] the fields to import
-      host: urlMongoDB,
-      callback: (err, db) => {
-        err && console.error(err);
-      },
-    });
-  } catch (error) {
-    console.log(error);
-    
-  }
+  async exportDataTo(urlMongoDB) {
+    var mi = require("mongoimport");
+    try {
+      await mi({
+        fields: PelisCollection.find().fetch(), // {array} data to import
+        db: "meteor", // {string} name of db
+        collection: "pelisRegister", // {string|function} name of collection, or use a function to
+        //  return a name, accept one param - [fields] the fields to import
+        host: urlMongoDB,
+        callback: (err, db) => {
+          err && console.error(err);
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+    try {
+      await mi({
+        fields: SeriesCollection.find().fetch(), // {array} data to import
+        db: "meteor", // {string} name of db
+        collection: "series", // {string|function} name of collection, or use a function to
+        //  return a name, accept one param - [fields] the fields to import
+        host: urlMongoDB,
+        callback: (err, db) => {
+          err && console.error(err);
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+    try {
+      await mi({
+        fields: TemporadasCollection.find().fetch(), // {array} data to import
+        db: "meteor", // {string} name of db
+        collection: "temporadasSeries", // {string|function} name of collection, or use a function to
+        //  return a name, accept one param - [fields] the fields to import
+        host: urlMongoDB,
+        callback: (err, db) => {
+          err && console.error(err);
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
 
-  try {
-    await mi({
-      fields: TVCollection.find().fetch(), // {array} data to import
-      db: "meteor", // {string} name of db
-      collection: 'tvRegister', // {string|function} name of collection, or use a function to
-      //  return a name, accept one param - [fields] the fields to import
-      host: urlMongoDB,
-      callback: (err, db) => {
-        err && console.error(err);
-      },
-    });
-  } catch (error) {
-    console.log(error);
-    
-  }
+    try {
+      await mi({
+        fields: CapitulosCollection.find().fetch(), // {array} data to import
+        db: "meteor", // {string} name of db
+        collection: "capitulosSeries", // {string|function} name of collection, or use a function to
+        //  return a name, accept one param - [fields] the fields to import
+        host: urlMongoDB,
+        callback: (err, db) => {
+          err && console.error(err);
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
 
-  // try {
-  //   await mi({
-  //     fields: OnlineCollection.find().fetch(), // {array} data to import
-  //     db: "meteor", // {string} name of db
-  //     collection: 'online', // {string|function} name of collection, or use a function to
-  //     //  return a name, accept one param - [fields] the fields to import
-  //     host: urlMongoDB,
-  //     callback: (err, db) => {
-  //       err && console.error(err);
-  //     },
-  //   });
-  // } catch (error) {
-  //   console.log(error);
-    
-  // }
+    try {
+      await mi({
+        fields: DescargasCollection.find().fetch(), // {array} data to import
+        db: "meteor", // {string} name of db
+        collection: "descargasRegister", // {string|function} name of collection, or use a function to
+        //  return a name, accept one param - [fields] the fields to import
+        host: urlMongoDB,
+        callback: (err, db) => {
+          err && console.error(err);
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
 
-  try {
-    await mi({
-      fields: MensajesCollection.find().fetch(), // {array} data to import
-      db: "meteor", // {string} name of db
-      collection: 'mensajes', // {string|function} name of collection, or use a function to
-      //  return a name, accept one param - [fields] the fields to import
-      host: urlMongoDB,
-      callback: (err, db) => {
-        err && console.error(err);
-      },
-    });
-  } catch (error) {
-    console.log(error);
-    
-  }
+    try {
+      await mi({
+        fields: TVCollection.find().fetch(), // {array} data to import
+        db: "meteor", // {string} name of db
+        collection: "tvRegister", // {string|function} name of collection, or use a function to
+        //  return a name, accept one param - [fields] the fields to import
+        host: urlMongoDB,
+        callback: (err, db) => {
+          err && console.error(err);
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
 
-  try {
-    await mi({
-      fields: RegisterDataUsersCollection.find().fetch(), // {array} data to import
-      db: "meteor", // {string} name of db
-      collection: 'registerDataUsers', // {string|function} name of collection, or use a function to
-      //  return a name, accept one param - [fields] the fields to import
-      host: urlMongoDB,
-      callback: (err, db) => {
-        err && console.error(err);
-      },
-    });
-  } catch (error) {
-    console.log(error);
-    
-  }
+    // try {
+    //   await mi({
+    //     fields: OnlineCollection.find().fetch(), // {array} data to import
+    //     db: "meteor", // {string} name of db
+    //     collection: 'online', // {string|function} name of collection, or use a function to
+    //     //  return a name, accept one param - [fields] the fields to import
+    //     host: urlMongoDB,
+    //     callback: (err, db) => {
+    //       err && console.error(err);
+    //     },
+    //   });
+    // } catch (error) {
+    //   console.log(error);
 
-  try {
-    await mi({
-      fields: LogsCollection.find().fetch(), // {array} data to import
-      db: "meteor", // {string} name of db
-      collection: 'Logs', // {string|function} name of collection, or use a function to
-      //  return a name, accept one param - [fields] the fields to import
-      host: urlMongoDB,
-      callback: (err, db) => {
-        err && console.error(err);
-      },
-    });
-  } catch (error) {
-    console.log(error);
-    
-  }
+    // }
 
-  try {
-    await mi({
-      fields: ServersCollection.find().fetch(), // {array} data to import
-      db: "meteor", // {string} name of db
-      collection: 'servers', // {string|function} name of collection, or use a function to
-      //  return a name, accept one param - [fields] the fields to import
-      host: urlMongoDB,
-      callback: (err, db) => {
-        err && console.error(err);
-      },
-    });
-  } catch (error) {
-    console.log(error);
-    
-  }
+    try {
+      await mi({
+        fields: MensajesCollection.find().fetch(), // {array} data to import
+        db: "meteor", // {string} name of db
+        collection: "mensajes", // {string|function} name of collection, or use a function to
+        //  return a name, accept one param - [fields] the fields to import
+        host: urlMongoDB,
+        callback: (err, db) => {
+          err && console.error(err);
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
 
-  try {
-    await mi({
-      fields: PreciosCollection.find().fetch(), // {array} data to import
-      db: "meteor", // {string} name of db
-      collection: 'precios', // {string|function} name of collection, or use a function to
-      //  return a name, accept one param - [fields] the fields to import
-      host: urlMongoDB,
-      callback: (err, db) => {
-        err && console.error(err);
-      },
-    });
-  } catch (error) {
-    console.log(error);
-    
-  }
+    try {
+      await mi({
+        fields: RegisterDataUsersCollection.find().fetch(), // {array} data to import
+        db: "meteor", // {string} name of db
+        collection: "registerDataUsers", // {string|function} name of collection, or use a function to
+        //  return a name, accept one param - [fields] the fields to import
+        host: urlMongoDB,
+        callback: (err, db) => {
+          err && console.error(err);
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
 
-  try {
-    await mi({
-      fields: VentasCollection.find().fetch(), // {array} data to import
-      db: "meteor", // {string} name of db
-      collection: 'ventas', // {string|function} name of collection, or use a function to
-      //  return a name, accept one param - [fields] the fields to import
-      host: urlMongoDB,
-      callback: (err, db) => {
-        err && console.error(err);
-      },
-    });
-  } catch (error) {
-    console.log(error);
-    
-  }
+    try {
+      await mi({
+        fields: LogsCollection.find().fetch(), // {array} data to import
+        db: "meteor", // {string} name of db
+        collection: "Logs", // {string|function} name of collection, or use a function to
+        //  return a name, accept one param - [fields] the fields to import
+        host: urlMongoDB,
+        callback: (err, db) => {
+          err && console.error(err);
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
 
-  try {
-    await mi({
-      fields: Meteor.users.find().fetch(), // {array} data to import
-      db: "meteor", // {string} name of db
-      collection: 'users', // {string|function} name of collection, or use a function to
-      //  return a name, accept one param - [fields] the fields to import
-      host: urlMongoDB,
-      callback: (err, db) => {
-        err && console.error(err);
-      },
-    });
-  } catch (error) {
-    console.log(error);
-    
-  }
-    
-  try {
-    await mi({
-      fields: FilesCollection.find().fetch(), // {array} data to import
-      db: "meteor", // {string} name of db
-      collection: 'files', // {string|function} name of collection, or use a function to
-      //  return a name, accept one param - [fields] the fields to import
-      host: urlMongoDB,
-      callback: (err, db) => {
-        err && console.error(err);
-      },
-    });
-  } catch (error) {
-    console.log(error);
-    
-  }
+    try {
+      await mi({
+        fields: ServersCollection.find().fetch(), // {array} data to import
+        db: "meteor", // {string} name of db
+        collection: "servers", // {string|function} name of collection, or use a function to
+        //  return a name, accept one param - [fields] the fields to import
+        host: urlMongoDB,
+        callback: (err, db) => {
+          err && console.error(err);
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
 
+    try {
+      await mi({
+        fields: PreciosCollection.find().fetch(), // {array} data to import
+        db: "meteor", // {string} name of db
+        collection: "precios", // {string|function} name of collection, or use a function to
+        //  return a name, accept one param - [fields] the fields to import
+        host: urlMongoDB,
+        callback: (err, db) => {
+          err && console.error(err);
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+
+    try {
+      await mi({
+        fields: VentasCollection.find().fetch(), // {array} data to import
+        db: "meteor", // {string} name of db
+        collection: "ventas", // {string|function} name of collection, or use a function to
+        //  return a name, accept one param - [fields] the fields to import
+        host: urlMongoDB,
+        callback: (err, db) => {
+          err && console.error(err);
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+
+    try {
+      await mi({
+        fields: Meteor.users.find().fetch(), // {array} data to import
+        db: "meteor", // {string} name of db
+        collection: "users", // {string|function} name of collection, or use a function to
+        //  return a name, accept one param - [fields] the fields to import
+        host: urlMongoDB,
+        callback: (err, db) => {
+          err && console.error(err);
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+
+    try {
+      await mi({
+        fields: FilesCollection.find().fetch(), // {array} data to import
+        db: "meteor", // {string} name of db
+        collection: "files", // {string|function} name of collection, or use a function to
+        //  return a name, accept one param - [fields] the fields to import
+        host: urlMongoDB,
+        callback: (err, db) => {
+          err && console.error(err);
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
   },
 });
 export const SchemaRegisterDataUsersCollection = new SimpleSchema({
@@ -223,13 +258,13 @@ export const SchemaRegisterDataUsersCollection = new SimpleSchema({
   },
   fecha: {
     type: Date,
-    autoValue: function() {
+    autoValue: function () {
       if (this.isInsert) {
         return new Date();
       } else if (this.isUpsert) {
-        return {$setOnInsert: new Date()};
+        return { $setOnInsert: new Date() };
       } else {
-        this.unset();  // Prevent user from supplying their own value
+        this.unset(); // Prevent user from supplying their own value
       }
     },
     optional: true,
@@ -252,7 +287,7 @@ export const SchemaRegisterDataUsersCollection = new SimpleSchema({
   register: {
     type: String,
     optional: false,
-  }
+  },
 });
 
 RegisterDataUsersCollection.attachSchema(SchemaRegisterDataUsersCollection);
@@ -268,13 +303,13 @@ export const SchemaVentasCollection = new SimpleSchema({
   },
   createdAt: {
     type: Date,
-    autoValue: function() {
+    autoValue: function () {
       if (this.isInsert) {
         return new Date();
       } else if (this.isUpsert) {
-        return {$setOnInsert: new Date()};
+        return { $setOnInsert: new Date() };
       } else {
-        this.unset();  // Prevent user from supplying their own value
+        this.unset(); // Prevent user from supplying their own value
       }
     },
     optional: false,
@@ -298,16 +333,15 @@ export const SchemaVentasCollection = new SimpleSchema({
     type: String,
     optional: true,
   },
-  gananciasAdmin:{
+  gananciasAdmin: {
     type: Number,
     defaultValue: 0,
-    optional:true
+    optional: true,
   },
-  type:{
-     type: String,
-    optional: false
-  }
-
+  type: {
+    type: String,
+    optional: false,
+  },
 });
 
 VentasCollection.attachSchema(SchemaVentasCollection);
@@ -319,13 +353,13 @@ export const SchemaPreciosCollection = new SimpleSchema({
   },
   createdAt: {
     type: Date,
-    autoValue: function() {
+    autoValue: function () {
       if (this.isInsert) {
         return new Date();
       } else if (this.isUpsert) {
-        return {$setOnInsert: new Date()};
+        return { $setOnInsert: new Date() };
       } else {
-        this.unset();  // Prevent user from supplying their own value
+        this.unset(); // Prevent user from supplying their own value
       }
     },
     optional: false,
@@ -363,30 +397,29 @@ PreciosCollection.attachSchema(SchemaPreciosCollection);
 
 export const SchemaLogsCollection = new SimpleSchema({
   type: {
-    type: String
+    type: String,
   },
   userAdmin: {
-    type: String
+    type: String,
   },
   userAfectado: {
-    type: String
+    type: String,
   },
   message: {
-    type: String
+    type: String,
   },
   createdAt: {
     type: Date,
-    autoValue: function() {
+    autoValue: function () {
       if (this.isInsert) {
         return new Date();
       } else if (this.isUpsert) {
-        return {$setOnInsert: new Date()};
+        return { $setOnInsert: new Date() };
       } else {
-        this.unset();  // Prevent user from supplying their own value
+        this.unset(); // Prevent user from supplying their own value
       }
-    }
-  }
-  
+    },
+  },
 });
 
 LogsCollection.attachSchema(SchemaLogsCollection);
@@ -405,13 +438,13 @@ export const SchemaOnlineCollection = new SimpleSchema({
   },
   loginAt: {
     type: Date,
-    autoValue: function() {
+    autoValue: function () {
       if (this.isInsert) {
         return new Date();
       } else if (this.isUpsert) {
-        return {$setOnInsert: new Date()};
+        return { $setOnInsert: new Date() };
       } else {
-        this.unset();  // Prevent user from supplying their own value
+        this.unset(); // Prevent user from supplying their own value
       }
     },
     optional: true,
@@ -435,70 +468,70 @@ export const SchemaOnlineCollection = new SimpleSchema({
 OnlineCollection.attachSchema(SchemaOnlineCollection);
 
 export const SchemaMensajesCollection = new SimpleSchema({
-  from : {
+  from: {
     type: String,
   },
-  to : {
+  to: {
     type: String,
   },
-  mensaje : {
+  mensaje: {
     type: String,
     optional: true,
   },
-  leido : {
+  leido: {
     type: Boolean,
     defaultValue: false,
     optional: true,
   },
   createdAt: {
     type: Date,
-    autoValue: function() {
+    autoValue: function () {
       if (this.isInsert) {
         return new Date();
       } else if (this.isUpsert) {
-        return {$setOnInsert: new Date()};
+        return { $setOnInsert: new Date() };
       } else {
-        this.unset();  // Prevent user from supplying their own value
+        this.unset(); // Prevent user from supplying their own value
       }
-    }
+    },
   },
-  type:{
+  type: {
     type: String,
     defaultValue: "text",
     optional: true,
-  }
+  },
 });
 
 MensajesCollection.attachSchema(SchemaMensajesCollection);
 export const SchemaTVCollection = new SimpleSchema({
-  nombreTV:{
+  nombreTV: {
     type: String,
   },
   urlTV: {
     type: String,
   },
   urlBackground: {
-    type: String,    
+    type: String,
     defaultValue: "",
   },
   descripcion: {
     type: String,
     defaultValue: "",
   },
-  mostrar:{
+  mostrar: {
     type: String,
   },
   createdAt: {
     type: Date,
-    autoValue: function() {
+    autoValue: function () {
       if (this.isInsert) {
         return new Date();
       } else if (this.isUpsert) {
-        return {$setOnInsert: new Date()};
+        return { $setOnInsert: new Date() };
       } else {
-        this.unset();  // Prevent user from supplying their own value
+        this.unset(); // Prevent user from supplying their own value
       }
-    }
+    },
   },
   vistas: {
     type: Number,
@@ -509,7 +542,7 @@ export const SchemaTVCollection = new SimpleSchema({
 TVCollection.attachSchema(SchemaTVCollection);
 
 export const SchemaPelisCollection = new SimpleSchema({
-  nombrePeli:{
+  nombrePeli: {
     type: String,
   },
   urlPadre: {
@@ -521,32 +554,41 @@ export const SchemaPelisCollection = new SimpleSchema({
   urlPeliHTTPS: {
     type: String,
     optional: true,
-    autoValue: function() {
+    autoValue: function () {
       if (this.isInsert) {
-        const urlPeli = this.field('urlPeli');
+        const urlPeli = this.field("urlPeli");
         if (urlPeli.isSet) {
-          return urlPeli.value.replace("http://vidkar.ddns.net:3005", "https://vidkar.ddns.net:3006");
+          return urlPeli.value.replace(
+            "http://vidkar.ddns.net:3005",
+            "https://vidkar.ddns.net:3006"
+          );
         }
       } else if (this.isUpdate) {
-        const urlPeli = this.field('urlPeli');
+        const urlPeli = this.field("urlPeli");
         if (urlPeli.isSet) {
           return {
-            $set: urlPeli.value.replace("http://vidkar.ddns.net:3005", "https://vidkar.ddns.net:3006")
+            $set: urlPeli.value.replace(
+              "http://vidkar.ddns.net:3005",
+              "https://vidkar.ddns.net:3006"
+            ),
           };
         } else {
-          this.unset();  // Prevent user from supplying their own value
+          this.unset(); // Prevent user from supplying their own value
         }
       } else if (this.isUpsert) {
-        const urlPeli = this.field('urlPeli');
+        const urlPeli = this.field("urlPeli");
         if (urlPeli.isSet) {
           return {
-            $setOnInsert: urlPeli.value.replace("http://vidkar.ddns.net:3005", "https://vidkar.ddns.net:3006")
+            $setOnInsert: urlPeli.value.replace(
+              "http://vidkar.ddns.net:3005",
+              "https://vidkar.ddns.net:3006"
+            ),
           };
         } else {
-          this.unset();  // Prevent user from supplying their own value
+          this.unset(); // Prevent user from supplying their own value
         }
       }
-    }
+    },
   },
   urlBackground: {
     type: String,
@@ -554,32 +596,41 @@ export const SchemaPelisCollection = new SimpleSchema({
   urlBackgroundHTTPS: {
     type: String,
     optional: true,
-    autoValue: function() {
+    autoValue: function () {
       if (this.isInsert) {
-        const urlBackground = this.field('urlBackground');
+        const urlBackground = this.field("urlBackground");
         if (urlBackground.isSet) {
-          return urlBackground.value.replace("http://vidkar.ddns.net:3005", "https://vidkar.ddns.net:3006");
+          return urlBackground.value.replace(
+            "http://vidkar.ddns.net:3005",
+            "https://vidkar.ddns.net:3006"
+          );
         }
       } else if (this.isUpdate) {
-        const urlBackground = this.field('urlBackground');
+        const urlBackground = this.field("urlBackground");
         if (urlBackground.isSet) {
           return {
-            $set: urlBackground.value.replace("http://vidkar.ddns.net:3005", "https://vidkar.ddns.net:3006")
+            $set: urlBackground.value.replace(
+              "http://vidkar.ddns.net:3005",
+              "https://vidkar.ddns.net:3006"
+            ),
           };
         } else {
-          this.unset();  // Prevent user from supplying their own value
+          this.unset(); // Prevent user from supplying their own value
         }
       } else if (this.isUpsert) {
-        const urlBackground = this.field('urlBackground');
+        const urlBackground = this.field("urlBackground");
         if (urlBackground.isSet) {
           return {
-            $setOnInsert: urlBackground.value.replace("http://vidkar.ddns.net:3005", "https://vidkar.ddns.net:3006")
+            $setOnInsert: urlBackground.value.replace(
+              "http://vidkar.ddns.net:3005",
+              "https://vidkar.ddns.net:3006"
+            ),
           };
         } else {
-          this.unset();  // Prevent user from supplying their own value
+          this.unset(); // Prevent user from supplying their own value
         }
       }
-    }
+    },
   },
   descripcion: {
     type: String,
@@ -587,25 +638,25 @@ export const SchemaPelisCollection = new SimpleSchema({
   urlTrailer: {
     type: String,
     defaultValue: "",
-    optional: true
+    optional: true,
   },
-  tamano:{
+  tamano: {
     type: String,
   },
-  mostrar:{
+  mostrar: {
     type: String,
   },
   createdAt: {
     type: Date,
-    autoValue: function() {
+    autoValue: function () {
       if (this.isInsert) {
         return new Date();
       } else if (this.isUpsert) {
-        return {$setOnInsert: new Date()};
+        return { $setOnInsert: new Date() };
       } else {
-        this.unset();  // Prevent user from supplying their own value
+        this.unset(); // Prevent user from supplying their own value
       }
-    }
+    },
   },
   subtitulo: {
     type: String,
@@ -630,22 +681,332 @@ export const SchemaPelisCollection = new SimpleSchema({
     type: Array,
     defaultValue: [],
   },
-  'clasificacion.$': { type: String },
-  idimdb:{
-      type: String,
-      defaultValue: "",
-      optional: true,
+  "clasificacion.$": { type: String },
+  idimdb: {
+    type: String,
+    defaultValue: "",
+    optional: true,
   },
   actors: {
     type: Array,
     defaultValue: [],
     optional: true,
   },
-  'actors.$': { type: String },
-  
+  "actors.$": { type: String },
 });
 
 PelisCollection.attachSchema(SchemaPelisCollection);
+
+export const SchemaSeriesCollection = new SimpleSchema({
+  nombre: {
+    type: String,
+  },
+  url: {
+    type: String,
+  },
+  urlHttps: {
+    type: String,
+    optional: true,
+    autoValue: function () {
+      if (this.isInsert) {
+        const url = this.field("url");
+        if (url.isSet) {
+          return url.value.replace(
+            "http://vidkar.ddns.net:3005",
+            "https://vidkar.ddns.net:3006"
+          );
+        }
+      } else if (this.isUpdate) {
+        const url = this.field("url");
+        if (url.isSet) {
+          return {
+            $set: url.value.replace(
+              "http://vidkar.ddns.net:3005",
+              "https://vidkar.ddns.net:3006"
+            ),
+          };
+        } else {
+          this.unset(); // Prevent user from supplying their own value
+        }
+      }
+    }
+  },
+  descripcion: {
+    type: String,
+  },
+  urlTrailer: {
+    type: String,
+    defaultValue: "",
+    optional: true,
+  },
+  ano: {
+    type: Number,
+    defaultValue: 1900,
+    // min: 1900,
+  },
+  mostrar: {
+    type: String,
+  },
+  createdAt: {
+    type: Date,
+    autoValue: function () {
+      if (this.isInsert) {
+        return new Date();
+      } else if (this.isUpsert) {
+        return { $setOnInsert: new Date() };
+      } else {
+        this.unset(); // Prevent user from supplying their own value
+      }
+    },
+  },
+  urlBackground: {
+    type: String,
+  },
+  urlBackgroundHTTPS: {
+    type: String,
+    optional: true,
+    autoValue: function () {
+      if (this.isInsert) {
+        const urlBackground = this.field("urlBackground");
+        if (urlBackground.isSet) {
+          return urlBackground.value.replace(
+            "http://vidkar.ddns.net:3005",
+            "https://vidkar.ddns.net:3006"
+          );
+        }
+      } else if (this.isUpdate) {
+        const urlBackground = this.field("urlBackground");
+        if (urlBackground.isSet) {
+          return {
+            $set: urlBackground.value.replace(
+              "http://vidkar.ddns.net:3005",
+              "https://vidkar.ddns.net:3006"
+            ),
+          };
+        } else {
+          this.unset(); // Prevent user from supplying their own value
+        }
+      } else if (this.isUpsert) {
+        const urlBackground = this.field("urlBackground");
+        if (urlBackground.isSet) {
+          return {
+            $setOnInsert: urlBackground.value.replace(
+              "http://vidkar.ddns.net:3005",
+              "https://vidkar.ddns.net:3006"
+            ),
+          };
+        } else {
+          this.unset(); // Prevent user from supplying their own value
+        }
+      }
+    },
+  },
+});
+
+SeriesCollection.attachSchema(SchemaSeriesCollection);
+
+
+export const SchemaCapitulosCollection = new SimpleSchema({
+  nombre: {
+    type: String,
+  },
+  url: {
+    type: String,
+  },
+  urlPadre: {
+    type: String,
+    optional: true,
+    autoValue: function () {
+      if (this.isInsert) {
+        const url = this.field("url");
+        if (url.isSet) {
+          let urlPadre = url.value.split("/");
+        urlPadre.pop();
+        urlPadre = urlPadre.join("/");
+          return urlPadre;
+        }
+      } else if (this.isUpdate) {
+        const url = this.field("url");
+        if (url.isSet) {
+          let urlPadre = url.value.split("/");
+          urlPadre.pop();
+          urlPadre = urlPadre.join("/");
+            
+          return {
+            $set: urlPadre,
+          };
+        } else {
+          this.unset(); // Prevent user from supplying their own value
+        }
+      } else if (this.isUpsert) {
+        const url = this.field("url");
+        if (url.isSet) {
+          let urlPadre = url.value.split("/");
+          urlPadre.pop();
+          urlPadre = urlPadre.join("/");
+            
+          return {
+            $setOnInsert: urlPadre,
+          };
+        } else {
+          this.unset(); // Prevent user from supplying their own value
+        }
+      }
+    },
+  },
+  urlHTTPS: {
+    type: String,
+    optional: true,
+    autoValue: function () {
+      if (this.isInsert) {
+        const url = this.field("url");
+        if (url.isSet) {
+          return url.value.replace(
+            "http://vidkar.ddns.net:3005",
+            "https://vidkar.ddns.net:3006"
+          );
+        }
+      } else if (this.isUpdate) {
+        const url = this.field("url");
+        if (url.isSet) {
+          return {
+            $set: url.value.replace(
+              "http://vidkar.ddns.net:3005",
+              "https://vidkar.ddns.net:3006"
+            ),
+          };
+        } else {
+          this.unset(); // Prevent user from supplying their own value
+        }
+      } else if (this.isUpsert) {
+        const url = this.field("url");
+        if (url.isSet) {
+          return {
+            $setOnInsert: url.value.replace(
+              "http://vidkar.ddns.net:3005",
+              "https://vidkar.ddns.net:3006"
+            ),
+          };
+        } else {
+          this.unset(); // Prevent user from supplying their own value
+        }
+      }
+    },
+  },
+  urlBackground: {
+    type: String,
+  },
+  urlBackgroundHTTPS: {
+    type: String,
+    optional: true,
+    autoValue: function () {
+      if (this.isInsert) {
+        const urlBackground = this.field("urlBackground");
+        if (urlBackground.isSet) {
+          return urlBackground.value.replace(
+            "http://vidkar.ddns.net:3005",
+            "https://vidkar.ddns.net:3006"
+          );
+        }
+      } else if (this.isUpdate) {
+        const urlBackground = this.field("urlBackground");
+        if (urlBackground.isSet) {
+          return {
+            $set: urlBackground.value.replace(
+              "http://vidkar.ddns.net:3005",
+              "https://vidkar.ddns.net:3006"
+            ),
+          };
+        } else {
+          this.unset(); // Prevent user from supplying their own value
+        }
+      } else if (this.isUpsert) {
+        const urlBackground = this.field("urlBackground");
+        if (urlBackground.isSet) {
+          return {
+            $setOnInsert: urlBackground.value.replace(
+              "http://vidkar.ddns.net:3005",
+              "https://vidkar.ddns.net:3006"
+            ),
+          };
+        } else {
+          this.unset(); // Prevent user from supplying their own value
+        }
+      }
+    },
+  },
+  descripcion: {
+    type: String,
+  },
+  urlTrailer: {
+    type: String,
+    defaultValue: "",
+    optional: true,
+  },
+  tamano: {
+    type: String,
+  },
+  mostrar: {
+    type: String,
+  },
+  createdAt: {
+    type: Date,
+    autoValue: function () {
+      if (this.isInsert) {
+        return new Date();
+      } else if (this.isUpsert) {
+        return { $setOnInsert: new Date() };
+      } else {
+        this.unset(); // Prevent user from supplying their own value
+      }
+    },
+  },
+  subtitulo: {
+    type: String,
+    defaultValue: "",
+    optional: true,
+  },
+  vistas: {
+    type: Number,
+    defaultValue: 0,
+  },
+  year: {
+    type: Number,
+    defaultValue: 1900,
+    // min: 1900,
+  },
+  textSubtitle: {
+    type: String,
+    defaultValue: "",
+    optional: true,
+  },
+  clasificacion: {
+    type: Array,
+    defaultValue: [],
+  },
+  "clasificacion.$": { type: String },
+  idimdb: {
+    type: String,
+    defaultValue: "",
+    optional: true,
+  },
+  actors: {
+    type: Array,
+    defaultValue: [],
+    optional: true,
+  },
+  "actors.$": { type: String },
+  temporada: {
+    type: Number,
+    optional: false,
+  },
+  capitulo: {
+    type: Number,
+    optional: false,
+  },
+});
+
+CapitulosCollection.attachSchema(SchemaCapitulosCollection);
 
 export const SchemaDescargaCollection = new SimpleSchema({
   idFile: {
@@ -666,26 +1027,26 @@ export const SchemaDescargaCollection = new SimpleSchema({
   },
   createdAt: {
     type: Date,
-    autoValue: function() {
+    autoValue: function () {
       if (this.isInsert) {
         return new Date();
       } else if (this.isUpsert) {
-        return {$setOnInsert: new Date()};
+        return { $setOnInsert: new Date() };
       } else {
-        this.unset();  // Prevent user from supplying their own value
+        this.unset(); // Prevent user from supplying their own value
       }
-    }
+    },
   },
-  descargadoPor:{
+  descargadoPor: {
     type: String,
   },
-  thumbnail:{
+  thumbnail: {
     type: String,
   },
-  urlReal:{
+  urlReal: {
     type: String,
   },
-  url:{
+  url: {
     type: String,
     defaultValue: "",
     optional: true,
@@ -696,7 +1057,7 @@ export const SchemaDescargaCollection = new SimpleSchema({
   },
 });
 
-DescargasCollection.attachSchema(SchemaDescargaCollection)
+DescargasCollection.attachSchema(SchemaDescargaCollection);
 
 export const SchemaServersCollection = new SimpleSchema({
   domain: {
@@ -705,62 +1066,61 @@ export const SchemaServersCollection = new SimpleSchema({
   ip: {
     type: String,
   },
-  active:{
+  active: {
     type: Boolean,
     defaultValue: true,
     optional: true,
   },
-  details:{
+  details: {
     type: String,
     defaultValue: "",
-    optional:true
+    optional: true,
   },
   createdAt: {
     type: Date,
-    autoValue: function() {
+    autoValue: function () {
       if (this.isInsert) {
         return new Date();
       } else if (this.isUpsert) {
-        return {$setOnInsert: new Date()};
+        return { $setOnInsert: new Date() };
       } else {
-        this.unset();  // Prevent user from supplying their own value
+        this.unset(); // Prevent user from supplying their own value
       }
-    }
+    },
   },
 });
 
-ServersCollection.attachSchema(SchemaServersCollection)
+ServersCollection.attachSchema(SchemaServersCollection);
 
 export const SchemaFilesCollection = new SimpleSchema({
   nombre: {
     type: String,
-    optional:false
-
+    optional: false,
   },
   url: {
     type: String,
-    optional:false
+    optional: false,
   },
-  details:{
+  details: {
     type: String,
     defaultValue: "",
-    optional:true
+    optional: true,
   },
   createdAt: {
     type: Date,
-    autoValue: function() {
+    autoValue: function () {
       if (this.isInsert) {
         return new Date();
       } else if (this.isUpsert) {
-        return {$setOnInsert: new Date()};
+        return { $setOnInsert: new Date() };
       } else {
-        this.unset();  // Prevent user from supplying their own value
+        this.unset(); // Prevent user from supplying their own value
       }
-    }
-  }
+    },
+  },
 });
 
-FilesCollection.attachSchema(SchemaFilesCollection)
+FilesCollection.attachSchema(SchemaFilesCollection);
 
 FilesCollection.allow({
   insert(doc) {
@@ -798,132 +1158,148 @@ LogsCollection.allow({
 
 RegisterDataUsersCollection.allow({
   insert(doc) {
-      // The user must be logged in and the document must be owned by the user.
-      return true;
-    },
-  
-    update() {
-      // Can only change your own documents.
-      return true;
-    },
-  
-    remove(userId, doc) {
-      // Can only remove your own documents.
-      return Meteor.users.findOne({ _id: userId }).profile.role == "admin";
-    },
-})
+    // The user must be logged in and the document must be owned by the user.
+    return true;
+  },
+
+  update() {
+    // Can only change your own documents.
+    return true;
+  },
+
+  remove(userId, doc) {
+    // Can only remove your own documents.
+    return Meteor.users.findOne({ _id: userId }).profile.role == "admin";
+  },
+});
 OnlineCollection.allow({
   insert(doc) {
-      // The user must be logged in and the document must be owned by the user.
-      return true;
-    },
-  
-    update() {
-      // Can only change your own documents.
-      return true;
-    },
-  
-    remove(userId, doc) {
-      // Can only remove your own documents.
-      return true;
-    },
-})
+    // The user must be logged in and the document must be owned by the user.
+    return true;
+  },
+
+  update() {
+    // Can only change your own documents.
+    return true;
+  },
+
+  remove(userId, doc) {
+    // Can only remove your own documents.
+    return true;
+  },
+});
 TVCollection.allow({
   insert(doc) {
-      // The user must be logged in and the document must be owned by the user.
-      return true;
-    },
-  
-    update() {
-      // Can only change your own documents.
-      return true;
-    },
-  
-    remove(userId, doc) {
-      // Can only remove your own documents.
-      return Meteor.users.findOne({ _id: userId }).profile.role == "admin";
-    },
-})
+    // The user must be logged in and the document must be owned by the user.
+    return true;
+  },
+
+  update() {
+    // Can only change your own documents.
+    return true;
+  },
+
+  remove(userId, doc) {
+    // Can only remove your own documents.
+    return Meteor.users.findOne({ _id: userId }).profile.role == "admin";
+  },
+});
 PelisCollection.allow({
-    insert(doc) {
-        // The user must be logged in and the document must be owned by the user.
-        return true;
-      },
-    
-      update() {
-        // Can only change your own documents.
-        return true;
-      },
-    
-      remove(userId, doc) {
-        // Can only remove your own documents.
-        return Meteor.users.findOne({ _id: userId }).profile.role == "admin";
-      },
-})
+  insert(doc) {
+    // The user must be logged in and the document must be owned by the user.
+    return true;
+  },
+
+  update() {
+    // Can only change your own documents.
+    return true;
+  },
+
+  remove(userId, doc) {
+    // Can only remove your own documents.
+    return Meteor.users.findOne({ _id: userId }).profile.role == "admin";
+  },
+});
+CapitulosCollection.allow({
+  insert(doc) {
+    // The user must be logged in and the document must be owned by the user.
+    return true;
+  },
+
+  update() {
+    // Can only change your own documents.
+    return true;
+  },
+
+  remove(userId, doc) {
+    // Can only remove your own documents.
+    return Meteor.users.findOne({ _id: userId }).profile.role == "admin";
+  },
+});
 DescargasCollection.allow({
   insert(doc) {
-      // The user must be logged in and the document must be owned by the user.
-      return true;
-    },
-  
-    update(userId, doc, fields, modifier) {
-      // Can only change your own documents.
-      return true;
-    },
-  
-    remove(userId, doc) {
-      // Can only remove your own documents.
-      return Meteor.users.findOne({ _id: userId }).profile.role == "admin";
-    },
-})
+    // The user must be logged in and the document must be owned by the user.
+    return true;
+  },
+
+  update(userId, doc, fields, modifier) {
+    // Can only change your own documents.
+    return true;
+  },
+
+  remove(userId, doc) {
+    // Can only remove your own documents.
+    return Meteor.users.findOne({ _id: userId }).profile.role == "admin";
+  },
+});
 Meteor.users.allow({
   insert(doc) {
-      // The user must be logged in and the document must be owned by the user.
-      return true;
-    },
-  
-    update(userId, doc, fields, modifier) {
-      // Can only change your own documents.
-      return true;
-    },
-  
-    remove(userId, doc) {
-      // Can only remove your own documents.
-      return Meteor.users.findOne({ _id: userId }).profile.role == "admin";
-    },
-})
+    // The user must be logged in and the document must be owned by the user.
+    return true;
+  },
+
+  update(userId, doc, fields, modifier) {
+    // Can only change your own documents.
+    return true;
+  },
+
+  remove(userId, doc) {
+    // Can only remove your own documents.
+    return Meteor.users.findOne({ _id: userId }).profile.role == "admin";
+  },
+});
 VentasCollection.allow({
   insert(doc) {
-      // The user must be logged in and the document must be owned by the user.
-      return true;
-    },
-  
-    update(userId, doc, fields, modifier) {
-      // Can only change your own documents.
-      return true;
-    },
-  
-    remove(userId, doc) {
-      // Can only remove your own documents.
-      return Meteor.users.findOne({ _id: userId }).profile.role == "admin";
-    },
-})
+    // The user must be logged in and the document must be owned by the user.
+    return true;
+  },
+
+  update(userId, doc, fields, modifier) {
+    // Can only change your own documents.
+    return true;
+  },
+
+  remove(userId, doc) {
+    // Can only remove your own documents.
+    return Meteor.users.findOne({ _id: userId }).profile.role == "admin";
+  },
+});
 MensajesCollection.allow({
   insert(doc) {
-      // The user must be logged in and the document must be owned by the user.
-      return true;
-    },
-  
-    update(userId, doc, fields, modifier) {
-      // Can only change your own documents.
-      return true;
-    },
-  
-    remove(userId, doc) {
-      // Can only remove your own documents.
-      return true;
-    },
-})
+    // The user must be logged in and the document must be owned by the user.
+    return true;
+  },
+
+  update(userId, doc, fields, modifier) {
+    // Can only change your own documents.
+    return true;
+  },
+
+  remove(userId, doc) {
+    // Can only remove your own documents.
+    return true;
+  },
+});
 ServersCollection.allow({
   insert(doc) {
     // The user must be logged in and the document must be owned by the user.
@@ -942,7 +1318,7 @@ ServersCollection.allow({
 });
 
 PreciosCollection.allow({
-  insert(userId,doc) {
+  insert(userId, doc) {
     // The user must be logged in and the document must be owned by the user.
     return true;
   },

@@ -11,7 +11,8 @@ import {
     LogsCollection,
     DescargasCollection,
     TVCollection,
-    RegisterDataUsersCollection
+    RegisterDataUsersCollection,
+    CapitulosCollection
   } from "../imports/ui/pages/collections/collections";
 
 if (Meteor.isServer) {
@@ -35,6 +36,12 @@ if (Meteor.isServer) {
       });
       Meteor.publish("peli", function (id) {
         return PelisCollection.find({ _id: id });
+      });
+      Meteor.publish("series", function (selector,option) {
+        return CapitulosCollection.find(selector?selector:{},option?option:{});
+      });
+      Meteor.publish("serie", function (selector,option) {
+        return CapitulosCollection.find(selector?selector:{},option?option:{});
       });
       Meteor.publish("tvs", function (selector,option) {
         return TVCollection.find(selector?selector:{},option?option:{});
