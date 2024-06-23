@@ -254,12 +254,12 @@ function groupFilesByEpisode(fileList) {
       let id = null;
       if (exist) {
         console.log(
-          `El Capitulo ${serieArg.nombre} ${serieArg.capitulo} ya existe`
+          `El Capitulo ${serieArg.nombre} - ${serieArg.capitulo} ya existe`
         );
         id = exist._id;
       } else {
         console.log(
-          `El Capitulo ${serieArg.nombre} ${serieArg.capitulo} no existe, agregandola...`
+          `El Capitulo ${serieArg.nombre} - ${serieArg.capitulo} no existe, agregandola...`
         );
 
         serie = SeriesCollection.findOne({ nombre: serieArg.nombre });

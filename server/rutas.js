@@ -23,7 +23,8 @@ import {
     LogsCollection,
     DescargasCollection,
     TVCollection,
-    RegisterDataUsersCollection
+    RegisterDataUsersCollection,
+    CapitulosCollection
 } from "../imports/ui/pages/collections/collections";
 import { Telegraf } from "telegraf";
 
@@ -51,17 +52,15 @@ if (Meteor.isServer) {
     ////////////////////////INSERTAR PELICUALAS PASANDOLE EL AÑO////////////
     
     endpoint.get("/getsubtitle", (req, res) => {
-        // console.log(req)
-        // console.log(req.query.idPeli)
-        // res.setHeader('Content-Type', 'text/plain; charset=utf-8')
-
-        //   res.end(req.query.idPeli);
-
-        let id = req.query.idPeli;
         let pelisubtitle = PelisCollection.findOne(req.query.idPeli);
         res.setHeader('Content-Type', 'text/plain; charset=utf-8')
         res.end(pelisubtitle ? pelisubtitle.textSubtitle : "");
 
+    });
+    endpoint.get("/getsubtitleSeries", (req, res) => {
+        let serieSubtitle = CapitulosCollection.findOne(req.query.idSeries);
+        res.setHeader('Content-Type', 'text/plain; charset=utf-8')
+        res.end(serieSubtitle ? serieSubtitle.textSubtitle : "");
     });
 
 

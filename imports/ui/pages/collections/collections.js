@@ -1197,6 +1197,38 @@ CapitulosCollection.allow({
     return Meteor.users.findOne({ _id: userId }).profile.role == "admin";
   },
 });
+TemporadasCollection.allow({
+  insert(doc) {
+    // The user must be logged in and the document must be owned by the user.
+    return true;
+  },
+
+  update() {
+    // Can only change your own documents.
+    return true;
+  },
+
+  remove(userId, doc) {
+    // Can only remove your own documents.
+    return Meteor.users.findOne({ _id: userId }).profile.role == "admin";
+  },
+});
+SeriesCollection.allow({
+  insert(doc) {
+    // The user must be logged in and the document must be owned by the user.
+    return true;
+  },
+
+  update() {
+    // Can only change your own documents.
+    return true;
+  },
+
+  remove(userId, doc) {
+    // Can only remove your own documents.
+    return Meteor.users.findOne({ _id: userId }).profile.role == "admin";
+  },
+});
 DescargasCollection.allow({
   insert(doc) {
     // The user must be logged in and the document must be owned by the user.

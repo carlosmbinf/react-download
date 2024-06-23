@@ -134,7 +134,6 @@ export default function CreateSerie() {
       nombreCapitulo: nombre,
       url: url,
       poster: urlBackground,
-      tamano: tamano,
       subtitle: subtitulo,
       year: year,
       temporada: temporada,
