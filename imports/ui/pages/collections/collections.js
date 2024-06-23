@@ -1,7 +1,6 @@
 import { Mongo } from "meteor/mongo";
 import SimpleSchema from "simpl-schema";
 import { Meteor } from "meteor/meteor";
-import { url } from "telegraf/typings/button";
 
 SimpleSchema.extendOptions(["autoform"]);
 
