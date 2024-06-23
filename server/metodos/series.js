@@ -18,6 +18,7 @@ import {
   TemporadasCollection,
 } from "/imports/ui/pages/collections/collections";
 import moment from "moment";
+import { log } from "console";
 
 if (Meteor.isServer) {
   const got = require("got");
@@ -107,7 +108,6 @@ function groupFilesByEpisode(fileList) {
       delete groupedFiles[key];
     }
   }
-  console.log("groupedFiles", groupedFiles);
 
   // if (!groupedFiles[key].video) {
   //   delete groupedFiles[key];
@@ -240,7 +240,6 @@ function groupFilesByEpisode(fileList) {
       // res.end("todo OK")
     },
     insertSeries: async function (serieArg) {
-      console.log(`Serie `, serieArg);
       // console.log(req)
       // console.log(peli)
       //  const insertPeli = async () => {
@@ -293,6 +292,14 @@ function groupFilesByEpisode(fileList) {
           idTemporada: idTemporada,
           capitulo: serieArg.capitulo,
         });
+
+        // try {
+          log("Se ha registrado un nuevo capitulo de la serie: " + serieArg.nombre);
+          let message = `Serie:${serieArg.nombre}\nTemporada: ${serieArg.temporada}\nCapitulo: ${serieArg.capitulo}`;
+          await Meteor.call("enviarMensajeTelegram", "Capitulo Nuevo Registrado", "", message,null);
+        // } catch (error) {
+        //   console.log("Error al enviar mensaje a telegram para notificar que se inserto un capitulo nuevo de la serie: " + serieArg.nombre);
+        // }
       }
 
       capitulo = await CapitulosCollection.findOne({ _id: id });
@@ -462,5 +469,8 @@ function groupFilesByEpisode(fileList) {
       let serie = CapitulosCollection.findOne(id);
       return serie.urlTrailer ? serie.urlTrailer : null;
     },
+    addVistasSeries: (id) => {
+      CapitulosCollection.update(id, { $inc: { vistas: 1 } })
+    }
   });
 }

@@ -68,6 +68,7 @@ import GraphicsLinealConsumoMegasXHoras from "../ui/pages/dashboard/GraphicsLine
 import GraphicsLinealGananciasXMesesAdmin from "../ui/pages/dashboard/GraphicsLinealGananciasXMesesAdmin";
 import SeriesDetails from "../ui/pages/series/SeriesDetails";
 import CreateSerie from "../ui/pages/series/CreateSerie";
+import SeriesCard from "../ui/pages/series/SeriesCard";
 
 const useStyles = makeStyles((theme) => ({
   // necessary for content to be below app bar
@@ -600,6 +601,39 @@ export default function Main() {
         <Route path="/series/:id">
           <div style={{ paddingBottom: "7em" }}>
             <SeriesDetails/>
+          </div>
+
+          <Footer />
+        </Route>
+        <Route path="/series">
+          <div style={{ paddingBottom: "7em" }}>
+            <Grid container direction="row" justify="center" alignItems="center">
+              {/* <Grid item xs={12}>
+                {useractual &&
+                  useractual.profile &&
+                  useractual.profile.role == "admin" ? (
+                    <>
+                      <PelisCard withCreate="true" />
+                      <PelisTable />
+                    </>
+                ) : (
+                  ""
+                )}
+              </Grid> */}
+              <Grid item xs={12}>
+                {/*<PelisCard clasificacion="All" />*/}
+                <SeriesCard clasificacion="Sci-Fi" />
+                <SeriesCard clasificacion="Action" />
+                <SeriesCard clasificacion="Adventure" />
+                <SeriesCard clasificacion="Thriller" />
+                <SeriesCard clasificacion="Crime" />
+                <SeriesCard clasificacion="Mystery" />
+                <SeriesCard clasificacion="Horror" />
+                <SeriesCard clasificacion="Comedy" />
+                <SeriesCard clasificacion="Drama" />
+                <SeriesCard clasificacion="Romance" />
+              </Grid>
+            </Grid>
           </div>
 
           <Footer />

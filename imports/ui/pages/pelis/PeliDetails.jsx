@@ -194,7 +194,7 @@ export default function PeliDetails() {
   }
 
   function addVistas() {
-    PelisCollection.update(peliDetails._id, { $inc: { vistas: 1 } })
+    Meteor.call("addVistas", peliDetails._id)
   }
 
   function handleEdit(event) {

@@ -1,5 +1,5 @@
 import { Meteor } from "meteor/meteor";
-import { LogsCollection, PelisCollection, RegisterDataUsersCollection, VentasCollection } from "../imports/ui/pages/collections/collections";
+import { LogsCollection, PelisCollection, RegisterDataUsersCollection, SeriesCollection, TemporadasCollection, VentasCollection } from "../imports/ui/pages/collections/collections";
 import moment from 'moment';
 
 var cron = require("node-cron");
@@ -42,10 +42,55 @@ const guardarDatosConsumidosAllMensual = async () => {
 }
 
 
+const actualizarSeries = async () => {
+//ACTUALIZANDO LAS SERIES Y LOS CAPITULOS
+TemporadasCollection.find({actualizar:true}).forEach(async (temporada) => {
+
+  let serie = SeriesCollection.findOne({ _id: temporada.idSerie })
+
+   Meteor.call(
+     "insertSeriesByTemporadasURL",
+     { urlSerie: temporada.url, year: serie.anoLanzamiento },
+     (error, result) => {
+       error && console.log(error);
+       !error &&
+         console.log(
+           "Se Actualizo la Serie: " +
+             serie.nombre +
+             " Temporada: " +
+             temporada.numeroTemporada
+         );
+     }
+   );
+
+});
+
+}
+
+
 ////////////////CRONES////////////
 
 if (Meteor.isServer) {
   console.log("Cargando Tareas...");
+
+
+  try {
+    cron
+      .schedule(
+        // "1-59 * * * *",
+        "00 */5 * 1-12 *", // cambio para que actualice segun la fecha de uruguay 11:55 de montevideo
+        actualizarSeries,
+        {
+          scheduled: true,
+          // timezone: "America/Havana",
+        }
+      )
+      .start();
+
+
+  } catch (error) {
+    console.log(error);
+  }
 
   try {
     cron

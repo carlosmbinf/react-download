@@ -13,6 +13,7 @@ import {
   DescargasCollection,
   TVCollection,
   RegisterDataUsersCollection,
+  SeriesCollection,
 } from "/imports/ui/pages/collections/collections";
 import moment from "moment";
 
@@ -287,5 +288,8 @@ if (Meteor.isServer) {
       let peli = PelisCollection.findOne(id);
       return peli.urlTrailer ? peli.urlTrailer : null;
     },
+    addVistas: (id) => {
+      PelisCollection.update(id, { $inc: { vistas: 1 } })
+    }
   });
 }

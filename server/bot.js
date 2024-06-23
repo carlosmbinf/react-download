@@ -83,27 +83,28 @@ if (Meteor.isServer) {
           : null;
         let adminGeneral = await buscarAdminPrincipal();
 
-        console.log(
-          `Enviando mensaje Telegram:\n Usuario Afectado: ${
-            usuarioAfect.username
-          } - Admin: ${
-            administrador ? administrador.username : "N/A"
-          } - Message: ${message}`
-        );
+       
+        //ENVIAR MENSAJE A USUARIO AFECTADO
         if (
           usuarioAfect && usuarioAfect.idtelegram &&
           (administrador == null || usuarioAfect._id != administrador._id)
-          // usuarioAfect && administrador != null && usuarioAfect._id != administrador._id
         ) {
-          //enviarMensajeTelegram: async (idtelegram, message)
+          console.log(
+            `Enviando mensaje Telegram:\n Usuario Afectado: ${
+              usuarioAfect.username
+            } - Admin: ${
+              administrador ? administrador.username : "N/A"
+            } - Message: ${message}`
+          );
           bot.telegram.sendMessage(
             usuarioAfect.idtelegram,
             type != "VENTAS" ? message : ventaComentario
           );
         }
 
+
+        //ENVIAR MENSAJE A ADMINISTRADOR DEL USUARIO AFECTADO
         if (administrador && administrador.idtelegram && usuarioAfect) {
-          //enviarMensajeTelegram: async (idtelegram, message)
           let mensaje = `${type}\nAdmin: ${administrador.username}\nUsuario: ${
             usuarioAfect.username
           }\nMensaje: \n${message}\n${
@@ -112,19 +113,37 @@ if (Meteor.isServer) {
           bot.telegram.sendMessage(administrador.idtelegram, mensaje);
         }
 
+        //ENVIAR MENSAJE A ADMINISTRADOR GENERAL
         if (
           adminGeneral && adminGeneral.idtelegram && usuarioAfect &&
           (administrador == null || adminGeneral._id != administrador._id)
         ) {
+
           let mensaje = `${type}\nAdmin: ${administrador.username}\nUsuario: ${
             usuarioAfect.username
           }\nMensaje: \n${message}\n${
             ventaComentario ? "Comentario de la venta: " + ventaComentario : ""
           }`;
+
             await bot.telegram.sendMessage(adminGeneral.idtelegram, mensaje);
         }
 
-        //Enviar mensaje con "telegraf": "^4.16.3",
+
+         //ENVIAR MENSAJE SOLO A ADMINISTRADOR para - Capitulo Nuevo Registrado
+         if (type == "Capitulo Nuevo Registrado") {
+           //id Telegram  no null
+           Meteor.users
+             .find({ 'profile.role': "admin", idtelegram: { $ne: null, $ne: '' } })
+             .forEach((admin) => {
+               let mensaje = `${type}\n${message}\n${
+                 ventaComentario
+                   ? "Comentario de la venta: " + ventaComentario
+                   : ""
+               }`;
+               bot.telegram.sendMessage(admin.idtelegram, mensaje);
+             });
+         }
+
       } catch (error) {
         console.error(error);
       }

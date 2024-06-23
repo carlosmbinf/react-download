@@ -41,8 +41,8 @@ export default function SeriesDetails() {
   const [temporada, settemporada] = useState("");
   const [capitulo, setcapitulo] = useState("");
   const [urlVideoHttps, seturlVideoHttps] = useState("");
-  const [temporadaSelected, settemporadaSelected] = useState()
-  const [capituloSelected, setcapituloSelected] = useState()
+  const [temporadaSelected, settemporadaSelected] = useState("")
+  const [capituloSelected, setcapituloSelected] = useState("")
   const classes = useStyles();
   const bull = <span className={classes.bullet}>•</span>;
 
@@ -54,7 +54,6 @@ export default function SeriesDetails() {
   });
   
   const temporadasList = useTracker(() => {
-    console.log("serieDetails", id);
     let ready = Meteor.subscribe("temporadas", {idSerie: id}).ready();
     if(ready){
       return TemporadasCollection.find({
@@ -67,9 +66,23 @@ export default function SeriesDetails() {
   
   const capituloList = useTracker(() => {
     
-    Meteor.subscribe("capitulos", {
-      idTemporada: temporadaSelected ,
-    });
+    Meteor.subscribe(
+      "capitulos",
+      {
+        idTemporada: temporadaSelected,
+      },
+      {
+        sort: { capitulo: 1 },
+        fields: {
+          _id: 1,
+          capitulo: 1,
+          idTemporada: 1,
+          urlHTTPS: 1,
+          urlBackgroundHTTPS: 1,
+          vista: 1,
+        },
+      }
+    );
     return CapitulosCollection.find(
       {
         idTemporada: temporadaSelected,
@@ -87,15 +100,16 @@ export default function SeriesDetails() {
     }
   }, [temporadasList])
 
-  useEffect(() => {
-    if (capituloList && capituloList.length > 0 && !capituloSelected) {
-      setcapituloSelected(capituloList && capituloList[0]._id)
-    }
-  }, [capituloList])
+  // useEffect(() => {
+  //   if (capituloList && capituloList.length > 0 && !capituloSelected) {
+  //     setcapituloSelected(capituloList && capituloList[0]._id)
+  //   }
+  // }, [capituloList])
   
 
   useEffect(() => {
-    setcapituloSelected(null)
+    setcapituloSelected("")
+    console.log("temporadaSelected", capituloSelected);
   }, [temporadaSelected])
 
   const temporadaSeleccionada = useTracker(() => {
@@ -106,10 +120,21 @@ export default function SeriesDetails() {
   });
 
   const capituloSeleccionado = useTracker(() => {
-    Meteor.subscribe("capitulos", {
-      idSeries: temporadaSelected ,
+    Meteor.subscribe(
+      "capitulos",
+      {
+        idTemporada: temporadaSelected,
+        _id: capituloSelected,
+      },
+      {
+        sort: { capitulo: 1 },
+        fields: { _id: 1,idTemporada:1,url:1, urlHTTPS: 1, urlBackgroundHTTPS: 1,vistas:1 },
+      }
+    );
+    return CapitulosCollection.findOne({
+      idTemporada: temporadaSelected,
+      _id: capituloSelected,
     });
-    return CapitulosCollection.findOne(capituloSelected);
   });
 
   const handleChange = (event) => {
@@ -140,14 +165,7 @@ export default function SeriesDetails() {
 
   function addVistas() {
     capituloSeleccionado &&
-      Meteor.call("addVistas", capituloSeleccionado._id, (err, res) => {
-        if (err) {
-          alert("Error al actualizar las vistas");
-          console.log(err);
-        } else {
-          console.log("Vistas Actualizadas");
-        }
-      });
+      Meteor.call("addVistasSeries", capituloSeleccionado._id);
     // CapitulosCollection.update(capituloDetails._id, { $inc: { vistas: 1 } })
   }
 
@@ -409,7 +427,7 @@ export default function SeriesDetails() {
                   <StyledToggleButtonGroup
                     size="small"
                     value={
-                      capituloSeleccionado && capituloSeleccionado.clasificacion
+                      serieDetails && serieDetails.clasificacion
                     }
                     onChange={handleFormat}
                     aria-label="text alignment"
@@ -434,7 +452,7 @@ export default function SeriesDetails() {
                   <StyledToggleButtonGroup
                     size="small"
                     value={
-                      capituloSeleccionado && capituloSeleccionado.clasificacion
+                      serieDetails && serieDetails.clasificacion
                     }
                     onChange={handleFormat}
                     aria-label="text alignment"
@@ -478,6 +496,10 @@ export default function SeriesDetails() {
                     >
                       <source
                         src={capituloSeleccionado.urlHTTPS}
+                        type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'
+                      />
+                      <source
+                        src={capituloSeleccionado.url}
                         type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'
                       />
                       <track
@@ -560,7 +582,7 @@ export default function SeriesDetails() {
                         <Typography color="textPrimary">
                           <RemoveRedEyeIcon />{" "}
                           <strong>
-                            {capituloSeleccionado &&
+                            {capituloSeleccionado && capituloSeleccionado.vistas &&
                               capituloSeleccionado.vistas.toFixed()}
                           </strong>
                         </Typography>
@@ -616,10 +638,11 @@ export default function SeriesDetails() {
                 </Grid>
                 <Grid item xs={3}>
                   <FormControl variant="filled" className={classes.formControl}>
-                    <InputLabel id="demo-simple-select-filled-label">
+                    <InputLabel id="demo-simple-select-filled-label" color="secondary">
                       Capitulos
                     </InputLabel>
                     <Select
+                      color="secondary"
                       labelId="demo-simple-select-filled-label"
                       id="demo-simple-select-filled"
                       value={capituloSelected}

@@ -327,6 +327,8 @@ const compras = useTracker(() => {
     { title: "Television en VIVO", icon: <LiveTvIcon />, url: "tv" },
     { title: "Peliculas", icon: <MovieFilterIcon />, url: "pelis" },
     { title: "Series", icon: <MovieFilterIcon />, url: "series" },
+    { title: "Agregar Series", icon: <MovieFilterIcon />, url: "create-series" },
+
     // {title: "create-pelis",
     //   icon: <InboxIcon />,
     // },
@@ -551,7 +553,7 @@ const compras = useTracker(() => {
                 </Typography>
                   </ListItem>
                 </Link>
-              ) : text.url !== "vpn" && text.url !== "execute" && text.url !== "files" && text.url !== "dashboard" && text.url !== "chat" && text.url !== "ventas" && text.url !== "precios" && text.url !== "users" && text.url !== "logs" && text.url !== "connections" && text.url !== "exportdata" && text.url !== "register-data" && text.url !== "servers" ? (
+              ) : text.url !== "create-series" && text.url !== "vpn" && text.url !== "execute" && text.url !== "files" && text.url !== "dashboard" && text.url !== "chat" && text.url !== "ventas" && text.url !== "precios" && text.url !== "users" && text.url !== "logs" && text.url !== "connections" && text.url !== "exportdata" && text.url !== "register-data" && text.url !== "servers" ? (
                 <Link key={index} to={"/" + text.url} className={classes.link}>
                   <ListItem button className={classes.item}>
                     <ListItemIcon color="primary">
