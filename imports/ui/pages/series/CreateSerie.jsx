@@ -111,6 +111,7 @@ export default function CreateSerie() {
   const [capitulo, setCapitulo] = React.useState("");
   const [temporada, setTemporada] = React.useState("");
   const [load, setLoad] = React.useState(false);
+  const [urlTemporada, setUrlTemporada] = React.useState("");
 
   function TransitionUp(props) {
     return <Slide {...props} direction="up" />;
@@ -130,6 +131,7 @@ export default function CreateSerie() {
 
     let serieData = {
       nombre: nombre,
+      nombreCapitulo: nombre,
       url: url,
       poster: urlBackground,
       tamano: tamano,
@@ -137,6 +139,7 @@ export default function CreateSerie() {
       year: year,
       temporada: temporada,
       capitulo: capitulo,
+      mostrar: mostrar      
     };
 
     await Meteor.call("insertSeries",serieData, (error, result) => { 
@@ -155,47 +158,6 @@ export default function CreateSerie() {
       }
      })
    
-
-    // await $.post("insertPelis", serieData)
-    // .done(function (data) {
-     
-    // })
-    // .fail(function (data) {
-    //   setMessage("Ocurrió un Error");
-    //   handleClick(TransitionUp);
-    //   setLoad(false);
-    //   setOpen(true);
-    // })
-
-      
-
-
-    // subtitulo
-    //   ? http.post(
-    //       "/convertsrttovtt",
-    //       { idPeli: idPeli },
-    //       (opciones, res, body) => {
-    //         if (!opciones.headers.error) {
-    //           // console.log(`statusCode: ${res.statusCode}`);
-    //           console.log("error " + JSON.stringify(opciones.headers));
-
-    //           setMessage(opciones.headers.message);
-    //           handleClick(TransitionUp);
-    //           setLoad(false);
-    //           setOpen(true);
-
-    //           return;
-    //         } else {
-    //           console.log(opciones.headers);
-    //           setMessage(opciones.headers.message);
-    //           handleClick(TransitionUp);
-    //           setLoad(false);
-    //           setOpen(true);
-    //           return;
-    //         }
-    //       }
-    //     )
-    //   : "";
   }
 
   function handleSubmit(event) {
@@ -221,12 +183,27 @@ export default function CreateSerie() {
   async function insertSerieshandleSubmit(event) {
     event.preventDefault();
     // console.log( 'Email:', email, 'Password: ', password, 'firstName: ', firstName);
-    setanoInsertSerie("");
+    
     console.log("insertSerieshandleSubmit");
+    if(urlTemporada === ""){
+      setMessage("URL no puede estar vacio");
+      handleClick(TransitionUp);
+      setLoad(false);
+      setOpen(true);
+      return;
+    }
+    if (anoInsertSerie === "") {
+      setMessage("Año no puede estar vacio");
+      handleClick(TransitionUp);
+      setLoad(false);
+      setOpen(true);
+      return;
+    }
+    setUrlTemporada("");
 
     // You should see email and password in console.
     // ..code to submit form to backend here...
-    //  Meteor.call("insertseriesbyURL", { year: anoInsertSerie })
+     Meteor.call("insertSeriesByTemporadasURL", { urlSerie: urlTemporada, year: anoInsertSerie })
     // .then(function (data) {
     //   setMessage("TODO OK");
     //   handleClick(TransitionUp);
@@ -598,6 +575,32 @@ export default function CreateSerie() {
                     </Grid>
                     <Grid item xs={12}>
                       <Grid container>
+                        <Grid item xs={12} sm={4} lg={3}>
+                          <FormControl required variant="outlined">
+                            <TextField
+                              w100
+                              required
+                              className={classes.margin}
+                              id="urlInsertSerie"
+                              name="urlInsertSerie"
+                              label="URL de la Serie"
+                              variant="outlined"
+                              color="secondary"
+                              type="text"
+                              value={urlTemporada}
+                              onInput={(e) => setUrlTemporada(e.target.value)}
+                              InputProps={
+                                {
+                                  // startAdornment: (
+                                  //   // <InputAdornment position="start">
+                                  //   //   <AccountCircle />
+                                  //   // </InputAdornment>
+                                  // ),
+                                }
+                              }
+                            />
+                          </FormControl>
+                        </Grid>
                         <Grid item xs={12} sm={4} lg={3}>
                           <FormControl required variant="outlined">
                             <TextField

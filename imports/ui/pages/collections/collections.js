@@ -5,9 +5,7 @@ import { Meteor } from "meteor/meteor";
 SimpleSchema.extendOptions(["autoform"]);
 
 export const PelisCollection = new Mongo.Collection("pelisRegister");
-export const CapitulosCollection = new Mongo.Collection("capitulosSeries");
-export const TemporadasCollection = new Mongo.Collection("temporadasSeries");
-export const SeriesCollection = new Mongo.Collection("series");
+
 export const DescargasCollection = new Mongo.Collection("descargasRegister");
 export const TVCollection = new Mongo.Collection("tvRegister");
 export const OnlineCollection = new Mongo.Collection("online");
@@ -21,6 +19,10 @@ export const PreciosCollection = new Mongo.Collection("precios");
 export const VentasCollection = new Mongo.Collection("ventas");
 export const FilesCollection = new Mongo.Collection("files");
 export const VersionsCollection = new Mongo.Collection("versions");
+
+export const CapitulosCollection = new Mongo.Collection("seriesCapitulos");
+export const TemporadasCollection = new Mongo.Collection("seriesTemporadas");
+export const SeriesCollection = new Mongo.Collection("series");
 
 Meteor.methods({
   async exportDataTo(urlMongoDB) {
@@ -715,7 +717,9 @@ export const SchemaSeriesCollection = new SimpleSchema({
     // min: 1900,
   },
   mostrar: {
-    type: String,
+    type: Boolean,
+    optional: true,
+    defaultValue: true,
   },
   createdAt: {
     type: Date,
@@ -731,6 +735,7 @@ export const SchemaSeriesCollection = new SimpleSchema({
   },
   urlBackground: {
     type: String,
+    optional: true,
   },
   urlBackgroundHTTPS: {
     type: String,
@@ -739,19 +744,21 @@ export const SchemaSeriesCollection = new SimpleSchema({
       if (this.isInsert) {
         const urlBackground = this.field("urlBackground");
         if (urlBackground.isSet) {
-          return urlBackground.value.replace(
+          return urlBackground.value ? urlBackground.value.replace(
             "http://vidkar.ddns.net:3005",
             "https://vidkar.ddns.net:3006"
-          );
+          ):null;
         }
       } else if (this.isUpdate) {
         const urlBackground = this.field("urlBackground");
         if (urlBackground.isSet) {
           return {
-            $set: urlBackground.value.replace(
-              "http://vidkar.ddns.net:3005",
-              "https://vidkar.ddns.net:3006"
-            ),
+            $set: urlBackground.value
+              ? urlBackground.value.replace(
+                  "http://vidkar.ddns.net:3005",
+                  "https://vidkar.ddns.net:3006"
+                )
+              : null,
           };
         } else {
           this.unset(); // Prevent user from supplying their own value
@@ -760,10 +767,12 @@ export const SchemaSeriesCollection = new SimpleSchema({
         const urlBackground = this.field("urlBackground");
         if (urlBackground.isSet) {
           return {
-            $setOnInsert: urlBackground.value.replace(
-              "http://vidkar.ddns.net:3005",
-              "https://vidkar.ddns.net:3006"
-            ),
+            $setOnInsert: urlBackground.value
+              ? urlBackground.value.replace(
+                  "http://vidkar.ddns.net:3005",
+                  "https://vidkar.ddns.net:3006"
+                )
+              : null,
           };
         } else {
           this.unset(); // Prevent user from supplying their own value
@@ -792,11 +801,6 @@ export const SchemaSeriesCollection = new SimpleSchema({
 SeriesCollection.attachSchema(SchemaSeriesCollection);
 
 export const SchemaTemporadasCollection = new SimpleSchema({
-
-  url: {
-    type: String,
-    optional: false,
-  },
   idSerie: {
     type: String,
     optional: false
@@ -804,6 +808,15 @@ export const SchemaTemporadasCollection = new SimpleSchema({
   numeroTemporada: {
     type: Number,
     optional: false,
+  },
+  url: {
+    type: String,
+    optional: true,
+  },
+  actualizar: {
+    type: Boolean,
+    optional: true,
+    defaultValue: true,
   },
 });
 
@@ -871,19 +884,23 @@ export const SchemaCapitulosCollection = new SimpleSchema({
       if (this.isInsert) {
         const urlBackground = this.field("urlBackground");
         if (urlBackground.isSet) {
-          return urlBackground.value.replace(
-            "http://vidkar.ddns.net:3005",
-            "https://vidkar.ddns.net:3006"
-          );
+          return urlBackground.value
+            ? urlBackground.value.replace(
+                "http://vidkar.ddns.net:3005",
+                "https://vidkar.ddns.net:3006"
+              )
+            : null;
         }
       } else if (this.isUpdate) {
         const urlBackground = this.field("urlBackground");
         if (urlBackground.isSet) {
           return {
-            $set: urlBackground.value.replace(
-              "http://vidkar.ddns.net:3005",
-              "https://vidkar.ddns.net:3006"
-            ),
+            $set: urlBackground.value
+              ? urlBackground.value.replace(
+                  "http://vidkar.ddns.net:3005",
+                  "https://vidkar.ddns.net:3006"
+                )
+              : null,
           };
         } else {
           this.unset(); // Prevent user from supplying their own value
@@ -892,10 +909,12 @@ export const SchemaCapitulosCollection = new SimpleSchema({
         const urlBackground = this.field("urlBackground");
         if (urlBackground.isSet) {
           return {
-            $setOnInsert: urlBackground.value.replace(
-              "http://vidkar.ddns.net:3005",
-              "https://vidkar.ddns.net:3006"
-            ),
+            $setOnInsert: urlBackground.value
+              ? urlBackground.value.replace(
+                  "http://vidkar.ddns.net:3005",
+                  "https://vidkar.ddns.net:3006"
+                )
+              : null,
           };
         } else {
           this.unset(); // Prevent user from supplying their own value
@@ -912,7 +931,7 @@ export const SchemaCapitulosCollection = new SimpleSchema({
     optional: true,
   },
   mostrar: {
-    type: String,
+    type: Boolean,
     optional: true,
     defaultValue: true,
   },
@@ -936,11 +955,6 @@ export const SchemaCapitulosCollection = new SimpleSchema({
   vistas: {
     type: Number,
     defaultValue: 0,
-  },
-  year: {
-    type: Number,
-    defaultValue: 1900,
-    // min: 1900,
   },
   textSubtitle: {
     type: String,
