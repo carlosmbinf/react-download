@@ -487,6 +487,7 @@ export default function SeriesDetails() {
                   {/* INSERTAR VIDEO */}
                   {capituloSeleccionado && (
                     <video
+                      key={capituloSeleccionado.urlHTTPS || capituloSeleccionado.url} // Usar la URL como key para forzar la recreación del componente
                       onLoadedMetadata={addVistas}
                       controls
                       width="100%"
