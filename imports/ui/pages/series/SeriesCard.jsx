@@ -172,7 +172,7 @@ export default function SeriesCard(options) {
         // urlPeli: 1,
         // urlTrailer: 1,
         // idimdb:1
-        year:1,
+        anoLanzamiento:1,
         urlTrailer:1
 
       }
@@ -191,7 +191,7 @@ export default function SeriesCard(options) {
           // urlPeli: 1,
           // urlTrailer: 1,
           // idimdb:1
-          year: 1
+          anoLanzamiento: 1
         }, sort: { vistas: -1,nombre: 1 }
       }).fetch();
     }

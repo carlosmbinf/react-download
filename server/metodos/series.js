@@ -466,7 +466,7 @@ function groupFilesByEpisode(fileList) {
       }
     },
     getUrlTrillerSeries: (id) => {
-      let serie = CapitulosCollection.findOne(id);
+      let serie = SeriesCollection.findOne(id);
       return serie.urlTrailer ? serie.urlTrailer : null;
     },
     addVistasSeries: (id) => {

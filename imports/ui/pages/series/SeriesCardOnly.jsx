@@ -161,7 +161,7 @@ export default function SeriesCardOnly(options) {
  
   const classes = useStyles();
 
-
+console.log(options)
   // Similar to componentDidMount and componentDidUpdate:
   // useEffect(async () => {
     
@@ -243,7 +243,7 @@ export default function SeriesCardOnly(options) {
                             fontSize: 14,
                           }}
                         >
-                          <strong>{options.serieGeneral.nombrePeli}</strong>
+                          <strong>{options.serieGeneral.nombre}</strong>
                         </Typography>
                         <Grid
                           container
@@ -257,7 +257,7 @@ export default function SeriesCardOnly(options) {
                         >
                           
                           <Typography>
-                            <strong> {options.serieGeneral.year}</strong>
+                            <strong> {options.serieGeneral.anoLanzamiento}</strong>
                           </Typography>
                         </Grid>
                       </Grid>

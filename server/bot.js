@@ -119,7 +119,7 @@ if (Meteor.isServer) {
           (administrador == null || adminGeneral._id != administrador._id)
         ) {
 
-          let mensaje = `${type}\nAdmin: ${administrador.username}\nUsuario: ${
+          let mensaje = `${type}\nAdmin: ${administrador ? administrador.username: "N/A"}\nUsuario: ${
             usuarioAfect.username
           }\nMensaje: \n${message}\n${
             ventaComentario ? "Comentario de la venta: " + ventaComentario : ""
