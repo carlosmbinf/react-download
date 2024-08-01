@@ -471,6 +471,22 @@ function groupFilesByEpisode(fileList) {
     },
     addVistasSeries: (id) => {
       CapitulosCollection.update(id, { $inc: { vistas: 1 } })
-    }
+    },
+    changeStatusSubscripcion: (userId,AdminId) => {
+      let user = Meteor.users.findOne(userId);
+      let admin = Meteor.users.findOne(AdminId);
+      if(user && admin){
+        Meteor.users.update(userId, { $set: { subscipcionPelis: !user.subscipcionPelis } });
+        Meteor.call(
+          "registrarLog",
+          "Servicio de Películas",
+          userId,
+          AdminId,
+          `Cambio de estado de suscripción de Películas y Series de ${user.subscipcionPelis ? "ACTIVO" : "INACTIVO"} a ${!user.subscipcionPelis ? "ACTIVO" : "INACTIVO"}`,
+        );
+        return true;
+      }
+      return false;
+    }, 
   });
 }

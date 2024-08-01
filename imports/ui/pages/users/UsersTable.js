@@ -307,7 +307,8 @@ export default function UsersTable(option) {
         'vpn2mb': 1,
         'contandoProxy': 1,
         'contandoVPN': 1,
-        idtelegram: 1
+        'idtelegram': 1,
+        'subscipcionPelis': 1
       }
     });
     let a = [];
@@ -361,6 +362,7 @@ export default function UsersTable(option) {
           vpntype: data.vpnplus ? "PLUS" : (data.vpn2mb ? "2MB" : "false"),
           contandoProxy: data.contandoProxy,
           servicios:(data.idtelegram!=null && data.idtelegram != '') ? [{type:'TELEGRAM'}] : [],
+          subscipcionPelis: data.subscipcionPelis ? "SI" : "NO",
         })
         if(data.username == 'carlosmbinf'){
           console.log(data)
@@ -447,6 +449,14 @@ export default function UsersTable(option) {
       <React.Fragment>
         <span className="p-column-title">Rol</span>
         <Chip color="primary" label={rowData.role} />
+      </React.Fragment>
+    );
+  };
+  const subscipcionPelisBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">Subcripcion Peliculas</span>
+        <Chip color="primary" label={rowData.subscipcionPelis} />
       </React.Fragment>
     );
   };
@@ -772,6 +782,15 @@ export default function UsersTable(option) {
                   field="servicios"
                   header="Servicios Vinculados"
                   body={serviciosBodyTemplate}
+                  reorderable={true}
+                  filter
+                  filterPlaceholder="Search"
+                  filterMatchMode="contains"
+                />
+                <Column
+                  field="subscipcionPelis"
+                  header="Subscipcion Peliculas"
+                  body={subscipcionPelisBodyTemplate}
                   reorderable={true}
                   filter
                   filterPlaceholder="Search"
