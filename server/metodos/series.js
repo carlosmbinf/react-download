@@ -44,10 +44,8 @@ if (Meteor.isServer) {
       const episode = parseInt(match[4] || match[6] || match[8] || match[10] || match[12] || match[14] || match[16], 10);
 
       if(Number.isNaN(season)){
-        log("match fallito: ", match);
-      }else{
-        log("parsed: ", season);
-        log("parsed: ", episode);
+        log("match fallido: ", match);
+        log("filename fallido: ", filename);
       }
 
       return { season, episode };
