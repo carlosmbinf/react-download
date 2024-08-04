@@ -446,5 +446,17 @@ function groupFilesByEpisode(fileList,seriesName) {
       }
       return false;
     }, 
+    getSeriesClasificacion: () => {
+      let series = SeriesCollection.find({},{fields:{clasificacion:1}}).fetch();
+      let clasificacion = [];
+      series.forEach((serie) => {
+        serie.clasificacion.forEach((clas) => {
+          if (!clasificacion.includes(clas)) {
+            clasificacion.push(clas);
+          }
+        });
+      });
+      return clasificacion;
+    }
   });
 }

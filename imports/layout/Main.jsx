@@ -106,65 +106,144 @@ export default function Main() {
 
       <Switch>
         <Route path="/dashboard">
-
           <div style={{ paddingBottom: "7em" }}>
-          {useractual &&
-              Array(Meteor.settings.public.administradores)[0].includes(useractual.username) ? (
-                <Grid container>
-                  <Grid container xs={12} xl={6} justify="space-evenly" alignItems="center" style={{ paddingTop: 50 }}>
-                    <Chip style={{ width: "90%" }} color='primary' label="Consumo de Datos en VidKar Por Horas:" />
-                    <div style={{ width: "100%", height: 300 }}>
-                      <GraphicsLinealConsumoMegasXHoras />
-                    </div>
-                  </Grid>
-                  {/* <Divider variant="middle" /> */}
-                  <Grid container xs={12} xl={6} justify="space-evenly" alignItems="center" style={{ paddingTop: 50 }}>
-                    <Chip style={{ width: "90%" }} color='primary' label="Consumo de Datos en VidKar Por Dias:" />
-                    <div style={{ width: "100%", height: 300 }}>
-                      <GraphicsLinealConsumoMegasXDias />
-                    </div>
-                  </Grid>
-                  <Divider variant="middle" />
-                  <Grid container item xs={12} justify="space-evenly" alignItems="center" style={{ paddingTop: 50 }}>
-                    <Chip style={{ width: "90%" }} color='primary' label="Consumo de Datos en VidKar:" />
-                    <div style={{ width: "100%", height: 300 }}>
-                      <GraphicsLinealConsumoMegasXMeses />
-                    </div>
-                  </Grid>
-                  <Divider variant="middle" />
-                  <DashboardInit />
-                </Grid>
-            ) : (
-              Meteor.userId() && Meteor.user().profile.role == 'admin' ?
+            {useractual &&
+            Array(Meteor.settings.public.administradores)[0].includes(
+              useractual.username
+            ) ? (
               <Grid container>
-                <Grid container item xs={12} xl={6} justify="space-evenly" alignItems="center" style={{ paddingTop: 50 }}>
-                    <Chip style={{ width: "90%" }} color='primary' label="Consumo de Datos en VidKar Por Horas:" />
-                    <div style={{ width: "100%", height: 300 }}>
-                      <GraphicsLinealConsumoMegasXHoras />
-                    </div>
-                  </Grid>
-                  {/* <Divider variant="middle" /> */}
-                  <Grid container item xs={12} xl={6} justify="space-evenly" alignItems="center" style={{ paddingTop: 50 }}>
-                    <Chip style={{ width: "90%" }} color='primary' label="Consumo de Datos en VidKar Por Dias:" />
-                    <div style={{ width: "100%", height: 300 }}>
-                      <GraphicsLinealConsumoMegasXDias />
-                    </div>
-                  </Grid>
-                  <Divider variant="middle" />
-                  <Grid container item xs={12} justify="space-evenly" alignItems="center" style={{ paddingTop: 50 }}>
-                    <Chip style={{ width: "90%" }} color='primary' label="Consumo de Datos en VidKar:" />
-                    <div style={{ width: "100%", height: 300 }}>
-                      <GraphicsLinealConsumoMegasXMeses />
-                    </div>
-                  </Grid>
-                  <Grid container item xs={12} justify="space-evenly" alignItems="center" style={{ paddingTop: 50 }}>
-                  <Chip style={{ width: "90%" }} color='primary' label="Ganancias:" />
+                <Grid
+                  container
+                  xs={12}
+                  xl={6}
+                  justify="space-evenly"
+                  alignItems="center"
+                  style={{ paddingTop: 50 }}
+                >
+                  <Chip
+                    style={{ width: "90%" }}
+                    color="primary"
+                    label="Consumo de Datos en VidKar Por Horas:"
+                  />
+                  <div style={{ width: "100%", height: 300 }}>
+                    <GraphicsLinealConsumoMegasXHoras />
+                  </div>
+                </Grid>
+                {/* <Divider variant="middle" /> */}
+                <Grid
+                  container
+                  xs={12}
+                  xl={6}
+                  justify="space-evenly"
+                  alignItems="center"
+                  style={{ paddingTop: 50 }}
+                >
+                  <Chip
+                    style={{ width: "90%" }}
+                    color="primary"
+                    label="Consumo de Datos en VidKar Por Dias:"
+                  />
+                  <div style={{ width: "100%", height: 300 }}>
+                    <GraphicsLinealConsumoMegasXDias />
+                  </div>
+                </Grid>
+                <Divider variant="middle" />
+                <Grid
+                  container
+                  item
+                  xs={12}
+                  justify="space-evenly"
+                  alignItems="center"
+                  style={{ paddingTop: 50 }}
+                >
+                  <Chip
+                    style={{ width: "90%" }}
+                    color="primary"
+                    label="Consumo de Datos en VidKar:"
+                  />
+                  <div style={{ width: "100%", height: 300 }}>
+                    <GraphicsLinealConsumoMegasXMeses />
+                  </div>
+                </Grid>
+                <Divider variant="middle" />
+                <DashboardInit />
+              </Grid>
+            ) : Meteor.userId() && Meteor.user().profile.role == "admin" ? (
+              <Grid container>
+                <Grid
+                  container
+                  item
+                  xs={12}
+                  xl={6}
+                  justify="space-evenly"
+                  alignItems="center"
+                  style={{ paddingTop: 50 }}
+                >
+                  <Chip
+                    style={{ width: "90%" }}
+                    color="primary"
+                    label="Consumo de Datos en VidKar Por Horas:"
+                  />
+                  <div style={{ width: "100%", height: 300 }}>
+                    <GraphicsLinealConsumoMegasXHoras />
+                  </div>
+                </Grid>
+                {/* <Divider variant="middle" /> */}
+                <Grid
+                  container
+                  item
+                  xs={12}
+                  xl={6}
+                  justify="space-evenly"
+                  alignItems="center"
+                  style={{ paddingTop: 50 }}
+                >
+                  <Chip
+                    style={{ width: "90%" }}
+                    color="primary"
+                    label="Consumo de Datos en VidKar Por Dias:"
+                  />
+                  <div style={{ width: "100%", height: 300 }}>
+                    <GraphicsLinealConsumoMegasXDias />
+                  </div>
+                </Grid>
+                <Divider variant="middle" />
+                <Grid
+                  container
+                  item
+                  xs={12}
+                  justify="space-evenly"
+                  alignItems="center"
+                  style={{ paddingTop: 50 }}
+                >
+                  <Chip
+                    style={{ width: "90%" }}
+                    color="primary"
+                    label="Consumo de Datos en VidKar:"
+                  />
+                  <div style={{ width: "100%", height: 300 }}>
+                    <GraphicsLinealConsumoMegasXMeses />
+                  </div>
+                </Grid>
+                <Grid
+                  container
+                  item
+                  xs={12}
+                  justify="space-evenly"
+                  alignItems="center"
+                  style={{ paddingTop: 50 }}
+                >
+                  <Chip
+                    style={{ width: "90%" }}
+                    color="primary"
+                    label="Ganancias:"
+                  />
                   <div style={{ width: "100%", height: 300 }}>
                     <GraphicsLinealGananciasXMesesAdmin />
                   </div>
                 </Grid>
               </Grid>
-              :
+            ) : (
               <Zoom in={true}>
                 <Grid
                   container
@@ -176,7 +255,6 @@ export default function Main() {
                 </Grid>
               </Zoom>
             )}
-            
           </div>
 
           <Footer />
@@ -184,8 +262,8 @@ export default function Main() {
         <Route path="/downloads">
           <div style={{ paddingBottom: "7em" }}>
             {useractual &&
-              useractual.profile &&
-              useractual.profile.role == "admin" ? (
+            useractual.profile &&
+            useractual.profile.role == "admin" ? (
               <AddDescargas />
             ) : (
               ""
@@ -198,17 +276,17 @@ export default function Main() {
         <Route path="/compras/:id">
           <div style={{ paddingBottom: "7em" }}>
             {/* {Meteor.settings.public.mostrarCompras == true && */}
-            <CompraCard type="megas"/>
+            <CompraCard type="megas" />
             {/* <CompraCard type="fecha-proxy"/> */}
-            <CompraCard type="vpnplus"/>
+            <CompraCard type="vpnplus" />
             {/* <CompraCard type="fecha-vpn"/> */}
-            <VentasTableSinCompra/>
-             {/* } */}
+            <VentasTableSinCompra />
+            {/* } */}
           </div>
 
           <Footer />
         </Route>
-        
+
         <Route path="/users/:id">
           <div style={{ paddingBottom: "7em" }}>
             <UserCardDetails />
@@ -229,7 +307,6 @@ export default function Main() {
                   </Grid>
                 </Zoom>
               )}
-
           </div>
 
           <Footer />
@@ -237,29 +314,43 @@ export default function Main() {
         <Route path="/users">
           <div style={{ paddingBottom: "7em" }}>
             {useractual &&
-              useractual.profile &&
-              useractual.profile.role == "admin" ? (
+            useractual.profile &&
+            useractual.profile.role == "admin" ? (
               <Grid
                 container
                 direction="row"
                 justify="center"
                 alignItems="center"
               >
-                  <Grid item xs={12}>
-                    {Array(Meteor.settings.public.administradores)[0].includes(Meteor.user().username) &&
-                      <StateUsers />
-                    }
-                  </Grid>
-                
+                <Grid item xs={12}>
+                  {Array(Meteor.settings.public.administradores)[0].includes(
+                    Meteor.user().username
+                  ) && <StateUsers />}
+                </Grid>
+
                 <Grid item xs={12} className={classes.root}>
                   <UserCard withCreate="true" />
                 </Grid>
                 <Grid item xs={12}>
                   <UserCard />
                   {useractual &&
-                    useractual.profile &&
-                    useractual.profile.role == "admin" ? (
-                    Array(Meteor.settings.public.administradores)[0].includes(useractual.username) ? <UsersTable /> : <UsersTable selector={{ $or: [{ "bloqueadoDesbloqueadoPor": Meteor.userId() }, { "bloqueadoDesbloqueadoPor": { $exists: false } }, { "bloqueadoDesbloqueadoPor": { $in: [""] } }] }} />
+                  useractual.profile &&
+                  useractual.profile.role == "admin" ? (
+                    Array(Meteor.settings.public.administradores)[0].includes(
+                      useractual.username
+                    ) ? (
+                      <UsersTable />
+                    ) : (
+                      <UsersTable
+                        selector={{
+                          $or: [
+                            { bloqueadoDesbloqueadoPor: Meteor.userId() },
+                            { bloqueadoDesbloqueadoPor: { $exists: false } },
+                            { bloqueadoDesbloqueadoPor: { $in: [""] } },
+                          ],
+                        }}
+                      />
+                    )
                   ) : (
                     <Zoom in={true}>
                       <Grid
@@ -272,7 +363,6 @@ export default function Main() {
                       </Grid>
                     </Zoom>
                   )}
-
                 </Grid>
               </Grid>
             ) : (
@@ -297,8 +387,8 @@ export default function Main() {
         <Route path="/create-user">
           <div style={{ paddingBottom: "7em" }}>
             {useractual &&
-              useractual.profile &&
-              useractual.profile.role == "admin" ? (
+            useractual.profile &&
+            useractual.profile.role == "admin" ? (
               <CreateUsers />
             ) : (
               <Zoom in={true}>
@@ -320,7 +410,9 @@ export default function Main() {
         <Route path="/servers/:id">
           <div style={{ paddingBottom: "7em" }}>
             {useractual &&
-              Array(Meteor.settings.public.administradores)[0].includes(useractual.username) ? (
+            Array(Meteor.settings.public.administradores)[0].includes(
+              useractual.username
+            ) ? (
               <ServersDetails />
             ) : (
               <Zoom in={true}>
@@ -336,13 +428,14 @@ export default function Main() {
             )}
           </div>
 
-
           <Footer />
         </Route>
         <Route path="/servers">
           <div style={{ paddingBottom: "7em" }}>
             {useractual &&
-              Array(Meteor.settings.public.administradores)[0].includes(useractual.username) ? (
+            Array(Meteor.settings.public.administradores)[0].includes(
+              useractual.username
+            ) ? (
               <CreateServers />
             ) : (
               <Zoom in={true}>
@@ -358,14 +451,15 @@ export default function Main() {
             )}
           </div>
 
-
           <Footer />
         </Route>
 
         <Route path="/precios/:id">
           <div style={{ paddingBottom: "7em" }}>
             {useractual &&
-              Array(Meteor.settings.public.administradores)[0].includes(useractual.username) ? (
+            Array(Meteor.settings.public.administradores)[0].includes(
+              useractual.username
+            ) ? (
               <CreatePrecios />
             ) : (
               <Zoom in={true}>
@@ -410,10 +504,12 @@ export default function Main() {
         <Route path="/files/:id">
           <div style={{ paddingBottom: "7em" }}>
             {useractual &&
-              Array(Meteor.settings.public.administradores)[0].includes(useractual.username) ? (
-                <>
-                  <FileDetails />
-                </>
+            Array(Meteor.settings.public.administradores)[0].includes(
+              useractual.username
+            ) ? (
+              <>
+                <FileDetails />
+              </>
             ) : (
               <Zoom in={true}>
                 <Grid
@@ -433,7 +529,9 @@ export default function Main() {
         <Route path="/files">
           <div style={{ paddingBottom: "7em" }}>
             {useractual &&
-              Array(Meteor.settings.public.administradores)[0].includes(useractual.username) ? (
+            Array(Meteor.settings.public.administradores)[0].includes(
+              useractual.username
+            ) ? (
               <>
                 <InsertFiles />
                 <InsertFilesTable />
@@ -457,22 +555,28 @@ export default function Main() {
         <Route path="/vpn">
           <div style={{ paddingBottom: "7em" }}>
             {useractual &&
-              useractual.profile&&
-              useractual.profile.role == "admin" ? (
+            useractual.profile &&
+            useractual.profile.role == "admin" ? (
               <>
-                  <UsersTableVPN selector={
-                    Array(Meteor.settings.public.administradores)[0].includes(Meteor.user().username) ? 
-                    { vpn: true } 
-                    : { 
-                        $or: [
-                          {
-                            bloqueadoDesbloqueadoPor: Meteor.userId()
-                          },
-                          {
-                            _id: Meteor.userId()
-                          }
-                        ], vpn: true
-                      }} />
+                <UsersTableVPN
+                  selector={
+                    Array(Meteor.settings.public.administradores)[0].includes(
+                      Meteor.user().username
+                    )
+                      ? { vpn: true }
+                      : {
+                          $or: [
+                            {
+                              bloqueadoDesbloqueadoPor: Meteor.userId(),
+                            },
+                            {
+                              _id: Meteor.userId(),
+                            },
+                          ],
+                          vpn: true,
+                        }
+                  }
+                />
               </>
             ) : (
               <Zoom in={true}>
@@ -494,7 +598,9 @@ export default function Main() {
         <Route path="/ventas/:id">
           <div style={{ paddingBottom: "7em" }}>
             {useractual &&
-              Array(Meteor.settings.public.administradores)[0].includes(useractual.username) ? (
+            Array(Meteor.settings.public.administradores)[0].includes(
+              useractual.username
+            ) ? (
               <VentasTable />
             ) : (
               <Zoom in={true}>
@@ -514,8 +620,7 @@ export default function Main() {
         </Route>
         <Route path="/ventas">
           <div style={{ paddingBottom: "7em" }}>
-            {useractual &&
-             useractual.profile.role == "admin" ? (
+            {useractual && useractual.profile.role == "admin" ? (
               <>
                 {/* <CreatePrecios /> */}
                 <VentasTable />
@@ -545,11 +650,16 @@ export default function Main() {
         </Route>
         <Route path="/tv">
           <div style={{ paddingBottom: "7em" }}>
-            <Grid container direction="row" justify="center" alignItems="center">
-              <Grid item xs={12} >
+            <Grid
+              container
+              direction="row"
+              justify="center"
+              alignItems="center"
+            >
+              <Grid item xs={12}>
                 {useractual &&
-                  useractual.profile &&
-                  useractual.profile.role == "admin" ? (
+                useractual.profile &&
+                useractual.profile.role == "admin" ? (
                   <TVonline withCreate="true" />
                 ) : (
                   ""
@@ -557,8 +667,8 @@ export default function Main() {
               </Grid>
               <Grid item xs={12}>
                 {useractual &&
-                  useractual.profile &&
-                  useractual.profile.role == "admin" ? (
+                useractual.profile &&
+                useractual.profile.role == "admin" ? (
                   <TVonline admin />
                 ) : (
                   <TVonline />
@@ -570,10 +680,14 @@ export default function Main() {
           <Footer />
         </Route>
         <Route path="/create-tv">
-          <div style={{ paddingBottom: "7em" }} justify="center" alignItems="center">
+          <div
+            style={{ paddingBottom: "7em" }}
+            justify="center"
+            alignItems="center"
+          >
             {useractual &&
-              useractual.profile &&
-              useractual.profile.role == "admin" ? (
+            useractual.profile &&
+            useractual.profile.role == "admin" ? (
               <CreateTV />
             ) : (
               <Zoom in={true}>
@@ -600,14 +714,19 @@ export default function Main() {
         </Route>
         <Route path="/series/:id">
           <div style={{ paddingBottom: "7em" }}>
-            <SeriesDetails/>
+            <SeriesDetails />
           </div>
 
           <Footer />
         </Route>
         <Route path="/series">
           <div style={{ paddingBottom: "7em" }}>
-            <Grid container direction="row" justify="center" alignItems="center">
+            <Grid
+              container
+              direction="row"
+              justify="center"
+              alignItems="center"
+            >
               {/* <Grid item xs={12}>
                 {useractual &&
                   useractual.profile &&
@@ -622,17 +741,16 @@ export default function Main() {
               </Grid> */}
               <Grid item xs={12}>
                 {/*<PelisCard clasificacion="All" />*/}
-                <SeriesCard clasificacion="Sci-Fi" />
-                <SeriesCard clasificacion="Action" />
-                <SeriesCard clasificacion="Adventure" />
-                <SeriesCard clasificacion="Thriller" />
-                <SeriesCard clasificacion="Crime" />
-                <SeriesCard clasificacion="Mystery" />
-                <SeriesCard clasificacion="Horror" />
-                <SeriesCard clasificacion="Comedy" />
-                <SeriesCard clasificacion="Drama" />
-                <SeriesCard clasificacion="Romance" />
-                <SeriesCard clasificacion="Reality-TV" />
+                {Meteor.call("getSeriesClasificacion", (err, res) => {
+                  if (err) {
+                    console.log(err);
+                  } else {
+                    console.log(res);
+                    res.map((clasificacion) => (
+                      <SeriesCard clasificacion={clasificacion} />
+                    ));
+                  }
+                })}
               </Grid>
             </Grid>
           </div>
@@ -642,8 +760,8 @@ export default function Main() {
         <Route path="/create-series">
           <div style={{ paddingBottom: "7em" }}>
             {useractual &&
-              useractual.profile &&
-              useractual.profile.role == "admin" ? (
+            useractual.profile &&
+            useractual.profile.role == "admin" ? (
               <CreateSerie />
             ) : (
               <Zoom in={true}>
@@ -670,15 +788,20 @@ export default function Main() {
         </Route>
         <Route path="/pelis">
           <div style={{ paddingBottom: "7em" }}>
-            <Grid container direction="row" justify="center" alignItems="center">
+            <Grid
+              container
+              direction="row"
+              justify="center"
+              alignItems="center"
+            >
               <Grid item xs={12}>
                 {useractual &&
-                  useractual.profile &&
-                  useractual.profile.role == "admin" ? (
-                    <>
-                      <PelisCard withCreate="true" />
-                      <PelisTable />
-                    </>
+                useractual.profile &&
+                useractual.profile.role == "admin" ? (
+                  <>
+                    <PelisCard withCreate="true" />
+                    <PelisTable />
+                  </>
                 ) : (
                   ""
                 )}
@@ -704,8 +827,8 @@ export default function Main() {
         <Route path="/create-pelis">
           <div style={{ paddingBottom: "7em" }}>
             {useractual &&
-              useractual.profile &&
-              useractual.profile.role == "admin" ? (
+            useractual.profile &&
+            useractual.profile.role == "admin" ? (
               <CreateArchivo />
             ) : (
               <Zoom in={true}>
@@ -728,17 +851,17 @@ export default function Main() {
         </Route>
         <Route path="/chat">
           <div style={{ paddingBottom: "7em" }}>
-              <Zoom in={true}>
-                <Chats />
-              </Zoom>
+            <Zoom in={true}>
+              <Chats />
+            </Zoom>
           </div>
           <Footer />
         </Route>
         <Route path="/logs">
           <div style={{ paddingBottom: "7em" }}>
             {useractual &&
-              useractual.profile &&
-              useractual.profile.role == "admin" ? (
+            useractual.profile &&
+            useractual.profile.role == "admin" ? (
               <Zoom in={true}>
                 <LogsTable />
               </Zoom>
@@ -761,14 +884,14 @@ export default function Main() {
         <Route path="/register-data">
           <div style={{ paddingBottom: "7em" }}>
             {useractual &&
-              useractual.profile &&
-              useractual.profile.role == "admin" ? (
-                <Zoom in={true}>
-                  <>
-                    <RegisterDataUserTable type="proxy" />
-                    <RegisterDataUserTable type="vpn" />
-                  </>
-                </Zoom>
+            useractual.profile &&
+            useractual.profile.role == "admin" ? (
+              <Zoom in={true}>
+                <>
+                  <RegisterDataUserTable type="proxy" />
+                  <RegisterDataUserTable type="vpn" />
+                </>
+              </Zoom>
             ) : (
               <Zoom in={true}>
                 <Grid
@@ -788,8 +911,10 @@ export default function Main() {
         <Route path="/connections">
           <div style={{ paddingBottom: "7em" }}>
             {useractual &&
-              useractual.profile &&
-              Array(Meteor.settings.public.administradores)[0].includes(useractual.username) ? (
+            useractual.profile &&
+            Array(Meteor.settings.public.administradores)[0].includes(
+              useractual.username
+            ) ? (
               <Zoom in={true}>
                 <RegisterConnectionsUser />
               </Zoom>
@@ -812,11 +937,13 @@ export default function Main() {
         <Route path="/exportdata">
           <div style={{ paddingBottom: "7em" }}>
             {useractual &&
-              Array(Meteor.settings.public.administradores)[0].includes(useractual.username) ? (
-                // <Zoom in={true}>
-                <ExportDataToMongoDB />
-                // </Zoom>
+            Array(Meteor.settings.public.administradores)[0].includes(
+              useractual.username
+            ) ? (
+              // <Zoom in={true}>
+              <ExportDataToMongoDB />
             ) : (
+              // </Zoom>
               <Zoom in={true}>
                 <Grid
                   container
@@ -835,11 +962,13 @@ export default function Main() {
         <Route path="/execute">
           <div style={{ paddingBottom: "7em" }}>
             {useractual &&
-              Array(Meteor.settings.public.administradores)[0].includes(useractual.username) ? (
+            Array(Meteor.settings.public.administradores)[0].includes(
+              useractual.username
+            ) ? (
               // <Zoom in={true}>
               <Execute />
-              // </Zoom>
             ) : (
+              // </Zoom>
               <Zoom in={true}>
                 <Grid
                   container
@@ -857,17 +986,17 @@ export default function Main() {
         </Route>
         <Route path="/">
           <div style={{ paddingBottom: "7em" }}>
-                {/*<PelisCard clasificacion="All" />*/}
-                <PelisCard clasificacion="Sci-Fi" />
-                <PelisCard clasificacion="Action" />
-                <PelisCard clasificacion="Adventure" />
-                <PelisCard clasificacion="Thriller" />
-                <PelisCard clasificacion="Crime" />
-                <PelisCard clasificacion="Mystery" />
-                <PelisCard clasificacion="Horror" />
-                <PelisCard clasificacion="Comedy" />
-                <PelisCard clasificacion="Drama" />
-                <PelisCard clasificacion="Romance" />
+            {/*<PelisCard clasificacion="All" />*/}
+            <PelisCard clasificacion="Sci-Fi" />
+            <PelisCard clasificacion="Action" />
+            <PelisCard clasificacion="Adventure" />
+            <PelisCard clasificacion="Thriller" />
+            <PelisCard clasificacion="Crime" />
+            <PelisCard clasificacion="Mystery" />
+            <PelisCard clasificacion="Horror" />
+            <PelisCard clasificacion="Comedy" />
+            <PelisCard clasificacion="Drama" />
+            <PelisCard clasificacion="Romance" />
           </div>
 
           <Footer />
