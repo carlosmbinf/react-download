@@ -112,7 +112,7 @@ export default function CreateSerie() {
   const [temporada, setTemporada] = React.useState("");
   const [load, setLoad] = React.useState(false);
   const [urlTemporada, setUrlTemporada] = React.useState("");
-
+  const [seriesName, setSeriesName] = React.useState("");
   function TransitionUp(props) {
     return <Slide {...props} direction="up" />;
   }
@@ -191,18 +191,29 @@ export default function CreateSerie() {
       setOpen(true);
       return;
     }
-    if (anoInsertSerie === "") {
-      setMessage("Año no puede estar vacio");
+    // if (anoInsertSerie === "") {
+    //   setMessage("Año no puede estar vacio");
+    //   handleClick(TransitionUp);
+    //   setLoad(false);
+    //   setOpen(true);
+    //   return;
+    // }
+    if (seriesName === "") {
+      setMessage("Nombre de la Serie no puede estar vacio");
       handleClick(TransitionUp);
       setLoad(false);
       setOpen(true);
       return;
     }
-    setUrlTemporada("");
+    
 
     // You should see email and password in console.
     // ..code to submit form to backend here...
-     Meteor.call("insertSeriesByTemporadasURL", { urlSerie: urlTemporada, year: anoInsertSerie })
+     Meteor.call("insertSeriesByTemporadasURL", {
+       urlSerie: urlTemporada,
+       year: anoInsertSerie,
+       seriesName: seriesName,
+     });
     // .then(function (data) {
     //   setMessage("TODO OK");
     //   handleClick(TransitionUp);
@@ -215,6 +226,7 @@ export default function CreateSerie() {
     //   setLoad(false);
     //   setOpen(true);
     // })
+    setUrlTemporada("");
     console.log("Termino de insertar las Pelis del " + anoInsertSerie)
     setmostrar(false);
     // makePostRequest();
@@ -606,6 +618,32 @@ export default function CreateSerie() {
                               w100
                               required
                               className={classes.margin}
+                              id="seriesName"
+                              name="seriesName"
+                              label="Nombre de la Serie"
+                              variant="outlined"
+                              color="secondary"
+                              type="text"
+                              value={seriesName}
+                              onInput={(e) => setSeriesName(e.target.value)}
+                              InputProps={
+                                {
+                                  // startAdornment: (
+                                  //   // <InputAdornment position="start">
+                                  //   //   <AccountCircle />
+                                  //   // </InputAdornment>
+                                  // ),
+                                }
+                              }
+                            />
+                          </FormControl>
+                        </Grid>
+                        {/* <Grid item xs={12} sm={4} lg={3}>
+                          <FormControl required variant="outlined">
+                            <TextField
+                              w100
+                              required
+                              className={classes.margin}
                               id="anoInsertSerie"
                               name="anoInsertSerie"
                               label="Año"
@@ -625,7 +663,7 @@ export default function CreateSerie() {
                               }
                             />
                           </FormControl>
-                        </Grid>
+                        </Grid> */}
                       </Grid>
 
                       <Grid item xs={12} className={classes.flex}>

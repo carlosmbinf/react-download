@@ -34,14 +34,29 @@ if (Meteor.isServer) {
   };
 
   function parseFilename(filename) {
-    const match = filename.match(/[sS](\d{2})[eE](\d{2})/);
+    // console.log("parseFilename: ", filename);
+    // Expresión regular para detectar S01E01, [S01.E01], S01.E01
+    const match = filename.match(/(?:[sS](\d{2})[eE](\d{3}))|(?:[sS](\d{2})[eE](\d{2}))|(?:sS(\d{2})[.\-Ee](\d{2}))|(?:\S(\d{2})E(\d{2}))|(?:\S(\d{2}).E(\d{2}))|(?:(\d{2})[xX](\d{2}))|(?:(\d{1})[xX](\d{2}))|(?:(\d{1})[xX](\d{1}))/);
+    
+
     if (match) {
-        const season = parseInt(match[1], 10);
-        const episode = parseInt(match[2], 10);
-        return { season, episode };
+      const season = parseInt(match[3] || match[5] || match[7] || match[9] || match[11] || match[13] || match[15], 10);
+      const episode = parseInt(match[4] || match[6] || match[8] || match[10] || match[12] || match[14] || match[16], 10);
+
+      if(Number.isNaN(season)){
+        log("match fallito: ", match);
+      }else{
+        log("parsed: ", season);
+        log("parsed: ", episode);
+      }
+
+      return { season, episode };
+    }else{
+      log("match fallido para: ", filename);
     }
+  
     return null;
-}
+  }
 
 function extractSeriesName(filename) {
     const match = filename.match(/.*\/(.*?)[sS]\d{2}[eE]\d{2}/);
@@ -61,47 +76,52 @@ function formatSeriesName(name) {
     return name.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
 }
 
-function groupFilesByEpisode(fileList) {
+function groupFilesByEpisode(fileList,seriesName) {
   const groupedFiles = {};
 
-  fileList.forEach(file => {
-      let filename = file.url;
-      const parsed = parseFilename(filename);
-      if (parsed) {
-        const { season, episode } = parsed;
-        const key = `S${season.toString().padStart(2, "0")}E${episode
-          .toString()
-          .padStart(2, "0")}`;
-        const seriesName = formatSeriesName(
-          extractSeriesName(filename).toLowerCase()
-        );
-
-        if (!groupedFiles[key]) {
-          groupedFiles[key] = {
-            seriesName: seriesName,
-            thumb: null,
-            video: null,
-            nfo: null,
-            srt: null,
-            capitulo: episode,
-            temporada: season,
-          };
-        }
-
-        if (filename.endsWith(".jpg")) {
-          groupedFiles[key].thumb = filename;
-        } else if (filename.endsWith(".mkv") || filename.endsWith(".mp4")) {
-          groupedFiles[key].video = filename;
-        } else if (filename.endsWith(".nfo")) {
-          groupedFiles[key].nfo = filename;
-        } else if (filename.endsWith(".srt")) {
-          groupedFiles[key].srt = filename;
-        }
-
-        
+  fileList.forEach((file) => {
+    let filename = file.url;
+    const parsed = parseFilename(filename);
+    if (parsed) {
+      const { season, episode } = parsed;
+      const key = `S${season.toString().padStart(2, "0")}E${episode
+        .toString()
+        .padStart(2, "0")}`;
+      // const seriesName = formatSeriesName(
+      //   extractSeriesName(filename).toLowerCase()
+      // );
+      // console.log("seriesName: ", seriesName);
+      if (!groupedFiles[key]) {
+        groupedFiles[key] = {
+          seriesName: seriesName,
+          thumb: null,
+          video: null,
+          nfo: null,
+          srt: null,
+          capitulo: episode,
+          temporada: season,
+          extension: null,	
+        };
       }
-  });
 
+      if (filename.endsWith(".jpg")) {
+        groupedFiles[key].thumb = filename;
+      } else if (
+        filename.endsWith(".mkv") ||
+        filename.endsWith(".mp4") ||
+        filename.endsWith(".avi")
+      ) {
+        groupedFiles[key].video = filename;
+
+        //especificar la extencion del video  
+        groupedFiles[key].extension = filename.split('.').pop();
+      } else if (filename.endsWith(".nfo")) {
+        groupedFiles[key].nfo = filename;
+      } else if (filename.endsWith(".srt")) {
+        groupedFiles[key].srt = filename;
+      }
+    }
+  });
 
   for (let key in groupedFiles) {
     if (!groupedFiles[key].video) {
@@ -109,10 +129,7 @@ function groupFilesByEpisode(fileList) {
     }
   }
 
-  // if (!groupedFiles[key].video) {
-  //   delete groupedFiles[key];
-  // }
-
+  // log("groupFilesByEpisode: ", groupedFiles);
 
 
   return groupedFiles;
@@ -135,16 +152,15 @@ function groupFilesByEpisode(fileList) {
 
   console.log("Cargando Métodos de series...");
   Meteor.methods({
-    insertSeriesByTemporadasURL: async function ({ urlSerie, year }) {
+    insertSeriesByTemporadasURL: async function ({ urlSerie, year, seriesName }) {
       console.log("insertSeriesByTemporadasURL " + urlSerie);
 
-      var pelis = [];
       if (!urlSerie)
         throw new TypeError("Need to provide an url as first argument.");
       const { body: html } = await got(urlSerie);
       const links = await htmlUrls({ html, url: urlSerie });
 
-      let series = await groupFilesByEpisode(links);
+      let series = await groupFilesByEpisode(links,seriesName);
 
       if (typeof series !== "object" || series === null) {
         console.error("El parámetro series no es un objeto válido:", series);
@@ -174,70 +190,10 @@ function groupFilesByEpisode(fileList) {
           year: year,
           temporada: element.temporada,
           capitulo: element.capitulo,
+          extension: element.extension,
         };
         Meteor.call("insertSeries", serieData);
       });
-
-      //   links.forEach(({ url }) => console.log(url))
-
-      //   // => [
-      //   //   'https://microlink.io/component---src-layouts-index-js-86b5f94dfa48cb04ae41.js',
-      //   //   'https://microlink.io/component---src-pages-index-js-a302027ab59365471b7d.js',
-      //   //   'https://microlink.io/path---index-709b6cf5b986a710cc3a.js',
-      //   //   'https://microlink.io/app-8b4269e1fadd08e6ea1e.js',
-      //   //   'https://microlink.io/commons-8b286eac293678e1c98c.js',
-      //   //   'https://microlink.io',
-      //   //   ...
-      //   // ]
-      // console.log(links)
-
-      // for (var i = 5; i <= links.length - 4; i++) {
-      //   // console.log("links lista" , links[i]);
-      //   let nombre = links[i].value
-      //     .replace(`${year}_`, "")
-      //     .replace(/%20/g, " ")
-      //     .replace(/\./g, " ")
-      //     .replace(`/`, "")
-      //     .replace(`(${year})`, "");
-      //   // console.log(`Name: ${nombre}`);
-      //   // console.log(links[i]);
-      //   let a;
-      //   let pelicula = await CapitulosCollection.findOne({
-      //     urlPadre: links[i].url,
-      //   });
-
-      //   if (pelicula) {
-      //     a = {
-      //       nombre: pelicula.nombrePeli,
-      //       year: pelicula.year,
-      //       peli: pelicula.urlPeli,
-      //       subtitle: pelicula.subtitulo,
-      //       poster: pelicula.urlBackground,
-      //       urlPadre: links[i].url,
-      //     };
-      //   } else {
-      //     a = await getSeries(nombre, year, links[i].url);
-      //   }
-
-      //   // console.log(pelis.length)
-      //   try {
-      //     // pelis && (await Meteor.call("insertPelis", pelis[0]));
-
-      //     a &&
-      //       a.nombre &&
-      //       a.year &&
-      //       a.peli &&
-      //       a.poster &&
-      //       Meteor.call("insertSeries", a);
-      //   } catch (error) {
-      //     console.log("Ocurrio un error => " + error.message);
-      //   }
-      // }
-
-      // res.writeHead(200, {
-      //   message: "todo OK",
-      // });
-      // res.end("todo OK")
     },
     insertSeries: async function (serieArg) {
       // console.log(req)
@@ -291,6 +247,7 @@ function groupFilesByEpisode(fileList) {
           subtitulo: serieArg.subtitle,
           idTemporada: idTemporada,
           capitulo: serieArg.capitulo,
+          extension: serieArg.extension,
         });
 
         // try {
@@ -334,6 +291,7 @@ function groupFilesByEpisode(fileList) {
                     { _id: id },
                     {
                       $set: {
+                        extension: serieArg.extension,
                         textSubtitle: data.toString("utf8"),
                       },
                     },
@@ -441,6 +399,7 @@ function groupFilesByEpisode(fileList) {
                   { _id: capitulo._id },
                   {
                     $set: {
+                      extension: serieArg.extension,
                       descripcion: element.plot,
                     },
                   },
@@ -455,6 +414,7 @@ function groupFilesByEpisode(fileList) {
                       clasificacion: element.genres.split(", "),
                       actors: element.actors.split(", "),
                       idimdb: element.imdbid,
+                      year: element.start_year,
                     },
                   },
                   { multi: true }

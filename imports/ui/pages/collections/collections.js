@@ -694,6 +694,10 @@ export const SchemaPelisCollection = new SimpleSchema({
     optional: true,
   },
   "actors.$": { type: String },
+  extension: {
+    type: String,
+    optional: true,
+  },
 });
 
 PelisCollection.attachSchema(SchemaPelisCollection);
@@ -964,6 +968,10 @@ export const SchemaCapitulosCollection = new SimpleSchema({
   capitulo: {
     type: Number,
     optional: false,
+  },
+  extension: {
+    type: String,
+    optional: true,
   },
 });
 

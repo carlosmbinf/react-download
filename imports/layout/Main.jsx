@@ -632,6 +632,7 @@ export default function Main() {
                 <SeriesCard clasificacion="Comedy" />
                 <SeriesCard clasificacion="Drama" />
                 <SeriesCard clasificacion="Romance" />
+                <SeriesCard clasificacion="Reality-TV" />
               </Grid>
             </Grid>
           </div>
