@@ -158,9 +158,9 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SeriesCard(options) {
   // const [mostrarTriler, setMostrarTriler] = useState([]);
-
+  
   const serie = useTracker(() => {
-    Meteor.subscribe("series", { mostrar: true }, {
+    Meteor.subscribe("series", { mostrar: true, clasificacion: options.clasificacion }, {
       fields: {
         _id: 1,
         clasificacion: 1,
@@ -199,8 +199,7 @@ export default function SeriesCard(options) {
 
   const classes = useStyles();
 
-  const items = useTracker(() => {
-   
+  const items = useTracker(() => {   
     let a = serie.map( (serieGeneral) => {
               return   <SeriesCardOnly serieGeneral={serieGeneral} />
             })

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Meteor } from "meteor/meteor";
 import { makeStyles } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
@@ -92,10 +92,23 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Main() {
+  const [clasificacionSeries, setClasificacionSeries] = React.useState([]);
   const classes = useStyles();
   const useractual = useTracker(() => {
     return Meteor.user();
   });
+  
+
+  useEffect(() => {
+    Meteor.call("getSeriesClasificacion", (err, res) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log("getSeriesClasificacion " , res);
+        setClasificacionSeries(res);
+      }
+    });
+  }, []);
   
   return (
     <>
@@ -741,16 +754,11 @@ export default function Main() {
               </Grid> */}
               <Grid item xs={12}>
                 {/*<PelisCard clasificacion="All" />*/}
-                {Meteor.call("getSeriesClasificacion", (err, res) => {
-                  if (err) {
-                    console.log(err);
-                  } else {
-                    console.log(res);
-                    res.map((clasificacion) => (
-                      <SeriesCard clasificacion={clasificacion} />
-                    ));
-                  }
-                })}
+                {clasificacionSeries &&
+                  clasificacionSeries.length > 0 &&
+                  clasificacionSeries.map((a) => (
+                    <SeriesCard clasificacion={a} />
+                  ))}
               </Grid>
             </Grid>
           </div>

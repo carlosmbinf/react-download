@@ -109,7 +109,6 @@ export default function SeriesDetails() {
 
   useEffect(() => {
     setcapituloSelected("")
-    console.log("temporadaSelected", capituloSelected);
   }, [temporadaSelected])
 
   const temporadaSeleccionada = useTracker(() => {

@@ -161,19 +161,6 @@ export default function SeriesCardOnly(options) {
  
   const classes = useStyles();
 
-console.log(options)
-  // Similar to componentDidMount and componentDidUpdate:
-  // useEffect(async () => {
-    
-  //   // Update the document title using the browser API
-  //   // console.log(options)
-  
-
-  // });
-  // let mostrar = []
-  // mostrar[peli._id] = false
-  // const bull = <span className={classes.bullet}>•</span>;
-  
   return <Link key={options.serieGeneral._id} to={"/series/" + options.serieGeneral._id} className={classes.link}>
           <Button color="inherit" className={classes.boton}
           onMouseEnter={async () => {
