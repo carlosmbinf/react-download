@@ -43,11 +43,26 @@ if (Meteor.isServer) {
         })
     }
 
-    endpoint.get("/enviarmensaje", (req, res) => {
-        const bot = new Telegraf(Meteor.settings.public.tokenBotTelegram)
-        bot.telegram.sendMessage('00', 'Hola');
+    endpoint.post("/enviaraudio", (req, res) => {
+        //imprimir audio
+        console.log(req._readableState.buffer.head.data);
+        //create file con el audio
+        var fs = require("fs");
+        var appRoot = require("app-root-path");
+        var audioFile = appRoot.path + "/public/audios/" + Date.now() + ".ogg";
+
+        //si no existe audioFile lo crea
+        !fs.existsSync(appRoot.path + "/public/audios") &&
+            fs.mkdirSync(appRoot.path + "/public/audios/");
+        //escribe el audio en el archivo
+        fs.writeFileSync(audioFile,
+            req._readableState.buffer.head.data
+        );
+
+        console.log("Audio Guardado en: " + audioFile);
+
         res.setHeader('Content-Type', 'text/plain; charset=utf-8')
-        res.end("se fue el mensaje");
+        res.end("ok");
     });	
     ////////////////////////INSERTAR PELICUALAS PASANDOLE EL AÑO////////////
     
