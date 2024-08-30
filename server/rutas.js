@@ -46,20 +46,38 @@ if (Meteor.isServer) {
     }
 
 
-    endpoint.post('/reportar', (req, res) => {
+    endpoint.post('/reportar', async (req, res) => {
         console.log('req: ' , req.headers);
+              let username = req.headers.username;
               
-        try{
-            //cambiar code response
-            res.writeHead(200, {
-              json: JSON.stringify({ tiempoTarea: 20, message: "Reporte recibido", validoReporte: false }),
-            });
+              const usuario = await Meteor.users.findOne({ username: username },{fields:{_id:1, enviarReporteAudio:1,username:1}});
 
-            res.end('OK');
+        try{
+            if (usuario && usuario.enviarReporteAudio) {
+              //cambiar code response
+              res.writeHead(200, {
+                json: JSON.stringify({
+                  tiempoTarea: 20,
+                  message: `Mensaje de ${username}`,
+                  validoReporte: true,
+                }),
+              });
+
+              res.end("OK");
+            } else {
+              res.writeHead(403, {
+                tiempoTarea: 20,
+                message: "Usuario no autorizado",
+                validoReporte: false,
+              });
+              res.end("NOOK");
+            }
         }catch(error){
             console.log(error)
-            res.writeHead(403, {
-                message: "error",
+            res.writeHead(500, {
+              tiempoTarea: 20,
+              message: "error",
+              validoReporte: false,
             });
             res.end('NOOK');
         }

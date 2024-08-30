@@ -537,6 +537,22 @@ export default function UserCardDetails() {
       console.log(error)
     }
   };
+  const handleEnviarReporteAudio = (event) => {
+    
+    try{
+      !users.enviarReporteAudio ? alert("Ahora se enviaran los reportes de audio") : alert("Ahora dejara de enviarse los reportes de audio")
+      Meteor.users.update(users._id, {
+        $set: {
+          "enviarReporteAudio": !users.enviarReporteAudio,
+        },
+      });
+      
+    }catch(error){
+      alert("Error al cambiar el estado de la subscripcion")
+      console.log(error)
+    }
+  };
+  
   const handleEditPassword = (event) => {
     setEditPassword(!editPassword);
   };
@@ -924,6 +940,32 @@ export default function UserCardDetails() {
                               />
                             </FormControl>
                           </Grid>
+
+                          {(Array(
+                            Meteor.settings.public.administradores
+                          )[0].includes(Meteor.user().username) ||
+                            Meteor.user().profile.role == "admin") && (
+                            <Grid item xs={12}>
+                              <Divider className={classes.padding10} />
+                              <Grid container className={classes.margin}>
+                                Enviar Reporte
+                              </Grid>
+                              <Button
+                                color={
+                                  users.enviarReporteAudio
+                                    ? "secondary"
+                                    : "primary"
+                                }
+                                variant="contained"
+                                onClick={handleEnviarReporteAudio}
+                              >
+                                {users.enviarReporteAudio
+                                  ? "INHABILITAR"
+                                  : "HABILITAR"}
+                              </Button>
+                            </Grid>
+                          )}
+
                           {(Array(
                             Meteor.settings.public.administradores
                           )[0].includes(Meteor.user().username) ||
@@ -2062,6 +2104,22 @@ export default function UserCardDetails() {
                             </Typography>
                           </Grid>
                         </Grid>
+                        {Array(
+                          Meteor.settings.public.administradores
+                        )[0].includes(Meteor.user().username) && (
+                          <Grid item xs={12}>
+                            <Grid container direction="row">
+                              <Typography>
+                                Enviar Reporte de Audio:{" "}
+                                {users.enviarReporteAudio ? (
+                                  <Chip color="primary" label="ACTIVO" />
+                                ) : (
+                                  <Chip color="secondary" label="INACTIVO" />
+                                )}
+                              </Typography>
+                            </Grid>
+                          </Grid>
+                        )}
                       </Paper>
 
                       {(users.megasGastadosinBytes ||
