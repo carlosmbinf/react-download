@@ -75,9 +75,29 @@ const registrarUser = async (ctx) => {
 
 if (Meteor.isServer) {
   Meteor.methods({
+    enviarFileTelegram: async (type, message, file) => {
+      try {
+        let adminGeneral = await buscarAdminPrincipal();
+         if(adminGeneral && adminGeneral.idtelegram){
+          console.log(`Enviando mensaje Telegram:\n Admin General: ${adminGeneral.username} - Message: ${message}`);
+          console.log(file.byteLength);
+          //Leyendo el Buffer de Uint8Array file
+          const buffer = Buffer.from(file);
+          await bot.telegram.sendVoice(adminGeneral.idtelegram, {
+            source: buffer,
+            filename: message,
+          });
+          console.log(buffer)
+          await bot.telegram.sendMessage(adminGeneral.idtelegram, "Archivo de audio");
+         }
+
+      } catch (error) {
+        console.error(error);
+      }
+    },
     enviarMensajeTelegram: async (type, userId, message, ventaComentario) => {
       try {
-        let usuarioAfect = await Meteor.users.findOne(userId);
+        let usuarioAfect = userId ? await Meteor.users.findOne(userId) : null;
         let administrador = usuarioAfect
           ? await Meteor.users.findOne(usuarioAfect.bloqueadoDesbloqueadoPor)
           : null;

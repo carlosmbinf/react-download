@@ -4,6 +4,8 @@ import { Accounts } from 'meteor/accounts-base'
 import bodyParser from "body-parser";
 import { WebApp } from "meteor/webapp";
 import router from "router";
+import fs from 'fs';
+
 const endpoint = router();
 
 // import youtubeDownload from "./downloader";
@@ -43,27 +45,83 @@ if (Meteor.isServer) {
         })
     }
 
-    endpoint.post("/enviaraudio", (req, res) => {
-        //imprimir audio
-        console.log(req._readableState.buffer.head.data);
-        //create file con el audio
-        var fs = require("fs");
-        var appRoot = require("app-root-path");
-        var audioFile = appRoot.path + "/public/audios/" + Date.now() + ".ogg";
 
-        //si no existe audioFile lo crea
-        !fs.existsSync(appRoot.path + "/public/audios") &&
-            fs.mkdirSync(appRoot.path + "/public/audios/");
-        //escribe el audio en el archivo
-        fs.writeFileSync(audioFile,
-            req._readableState.buffer.head.data
-        );
+    endpoint.post('/reportar', (req, res) => {
+        console.log('req: ' , req.headers);
+              
+        try{
+            //cambiar code response
+            res.writeHead(200, {
+              json: JSON.stringify({ tiempoTarea: 20, message: "Reporte recibido", validoReporte: false }),
+            });
 
-        console.log("Audio Guardado en: " + audioFile);
+            res.end('OK');
+        }catch(error){
+            console.log(error)
+            res.writeHead(403, {
+                message: "error",
+            });
+            res.end('NOOK');
+        }
+        // req.on('end',async  () => {
+           
+        // });
+      });
+      
+    endpoint.post('/enviaraudio', (req, res) => {
+        console.log('req: ' , req.headers);
+        const boundary = req.headers['content-type'].split('; boundary=')[1];
+        const boundaryBytes = Buffer.from('\r\n--' + boundary);
+        let body = Buffer.alloc(0);
+        let fileData = Buffer.alloc(0);
+        let isFilePart = false;
 
-        res.setHeader('Content-Type', 'text/plain; charset=utf-8')
-        res.end("ok");
-    });	
+        req.on('data', (chunk) => {
+          body = Buffer.concat([body, chunk]);
+          if (!isFilePart) {
+            const boundaryIndex = body.indexOf(boundaryBytes);
+            if (boundaryIndex !== -1) {
+              const headersEndIndex = body.indexOf('\r\n\r\n', boundaryIndex);
+              if (headersEndIndex !== -1) {
+                isFilePart = true;
+                fileData = body.slice(headersEndIndex + 4);
+                body = body.slice(0, boundaryIndex);
+              }
+            }
+          } else {
+            const boundaryIndex = body.indexOf(boundaryBytes);
+            if (boundaryIndex !== -1) {
+              fileData = Buffer.concat([fileData, body.slice(0, boundaryIndex - 2)]); // -2 para eliminar \r\n antes del boundary
+              body = body.slice(boundaryIndex);
+              isFilePart = false;
+      
+            //   const audioFile = 'public/audios/' + Date.now() + '.ogg';
+            //   fs.writeFileSync(audioFile, fileData);
+            //   console.log('Audio Guardado en: ' + audioFile);
+      
+              fileData = Buffer.alloc(0);
+            }
+          }
+        });
+      
+        req.on('end',async  () => {
+            try{
+                switch (req.headers['type-data']) {
+                    case 'MENSAJE_VOZ':
+                        console.log('Audio recibido');
+                        await Meteor.call('enviarFileTelegram', "MENSAJE_VOZ", "Audio de Prueba", body);
+                        break;
+                    default:
+                        console.log('Tipo de archivo no soportado');
+                        break;
+                }
+                res.end('OK');
+            }catch(error){
+                console.log(error)
+                res.end('NOOK');
+            }
+        });
+      });
     ////////////////////////INSERTAR PELICUALAS PASANDOLE EL AÑO////////////
     
     endpoint.get("/getsubtitle", (req, res) => {
