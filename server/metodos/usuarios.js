@@ -434,5 +434,16 @@ if (Meteor.isServer) {
       user.vpnMbGastados > 0 &&
         (await Meteor.call("guardarDatosConsumidosByUserVPNMensual", user));
     },
+    //changeNotificacionTelegram -- se le pasa el id del usuario a cambiar notificación de telegram
+    changeNotificacionTelegram: function (id) {
+      let usuario = Meteor.users.findOne(id);
+      try {
+         Meteor.users.update(id, { $set: {notificarByTelegram: !usuario.notificarByTelegram} });
+         console.log("Notificación de Telegram actualizada para el usuario: " + (usuario ? usuario.username : ""));
+         return "Notificación de Telegram actualizada";
+      } catch (error) {
+        return error.message;
+      }
+    },
   });
 }

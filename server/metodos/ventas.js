@@ -135,6 +135,30 @@ if (Meteor.isServer) {
   
   
       },
+      //eliminarVenta -- se le pasa el id de la venta
+      eliminarVenta: async (id) => {
+        try {
+          await VentasCollection.remove(id)
+          return "Venta Eliminada"
+        } catch (error) {
+          return error.message
+        }
+
+      },
+      //changeStatusVenta -- cambia el estado de la venta, se le pasa ID de la venta
+      changeStatusVenta: async (id) => {
+        let venta = await VentasCollection.findOne(id)
+        try {
+          await VentasCollection.update(id, {
+            $set: {
+              cobradoAlAdmin: true,
+              cobrado: !venta.cobrado
+            }
+          })
+          return "Venta Actualizada"
+        } catch (error) {
+          return error.message
+        }
 
     });
 }
