@@ -106,7 +106,7 @@ if (Meteor.isServer) {
        
         //ENVIAR MENSAJE A USUARIO AFECTADO
         if (
-          usuarioAfect && usuarioAfect.idtelegram &&
+          usuarioAfect && usuarioAfect.idtelegram &&  usuarioAfect.notificarByTelegram && 
           (administrador == null || usuarioAfect._id != administrador._id)
         ) {
           console.log(
@@ -124,7 +124,7 @@ if (Meteor.isServer) {
 
 
         //ENVIAR MENSAJE A ADMINISTRADOR DEL USUARIO AFECTADO
-        if (administrador && administrador.idtelegram && usuarioAfect) {
+        if (administrador && administrador.idtelegram && administrador.notificarByTelegram && usuarioAfect) {
           let mensaje = `${type}\nAdmin: ${administrador.username}\nUsuario: ${
             usuarioAfect.username
           }\nMensaje: \n${message}\n${
@@ -135,7 +135,7 @@ if (Meteor.isServer) {
 
         //ENVIAR MENSAJE A ADMINISTRADOR GENERAL
         if (
-          adminGeneral && adminGeneral.idtelegram && usuarioAfect &&
+          adminGeneral && adminGeneral.idtelegram && adminGeneral.notificarByTelegram && usuarioAfect &&
           (administrador == null || adminGeneral._id != administrador._id)
         ) {
 
@@ -153,7 +153,7 @@ if (Meteor.isServer) {
          if (type == "Capitulo Nuevo Registrado") {
            //id Telegram  no null
            Meteor.users
-             .find({ 'profile.role': "admin", idtelegram: { $ne: null, $ne: '' } })
+             .find({ 'profile.role': "admin", idtelegram: { $ne: null, $ne: '' }, notificarByTelegram : true})
              .forEach((admin) => {
                let mensaje = `${type}\n${message}\n${
                  ventaComentario
