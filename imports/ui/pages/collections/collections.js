@@ -548,6 +548,7 @@ export const SchemaPelisCollection = new SimpleSchema({
   },
   urlPadre: {
     type: String,
+    optional: true
   },
   urlPeli: {
     type: String,
