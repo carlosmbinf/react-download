@@ -128,7 +128,7 @@ if (Meteor.isServer) {
       // console.log(req)
       // console.log(peli)
       //  const insertPeli = async () => {
-      let exist = await PelisCollection.findOne({ urlPadre: pelicula.urlPadre, });
+      let exist = await PelisCollection.findOne({ urlPeli: pelicula.peli, });
       let id = exist
         ? exist._id
         : await PelisCollection.insert({
