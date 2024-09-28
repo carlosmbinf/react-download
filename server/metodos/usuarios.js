@@ -445,5 +445,15 @@ if (Meteor.isServer) {
         return error.message;
       }
     },
+    changePassword: function (id,userCambioId, password) {
+      try {
+        Accounts.setPassword(id, password);
+        Meteor.users.update(id, { $set: { "passvpn": password } });
+        Meteor.call("registrarLog","Cambio de contraseña", id,userCambioId, "Cambio de contraseña");
+        return "Contraseña actualizada";
+      } catch (error) {
+        return error.message;
+      }
+    },
   });
 }
