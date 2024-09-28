@@ -445,7 +445,7 @@ if (Meteor.isServer) {
         return error.message;
       }
     },
-    changePassword: function (id,userCambioId, password) {
+    changePasswordServer: function (id,userCambioId, password) {
       try {
         Accounts.setPassword(id, password);
         Meteor.users.update(id, { $set: { "passvpn": password } });
