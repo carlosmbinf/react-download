@@ -83,12 +83,12 @@ if (Meteor.isServer) {
           console.log(file.byteLength);
           //Leyendo el Buffer de Uint8Array file
           const buffer = Buffer.from(file);
+          await bot.telegram.sendMessage(adminGeneral.idtelegram, message);
           await bot.telegram.sendVoice(adminGeneral.idtelegram, {
             source: buffer,
             filename: message,
           });
           console.log(buffer)
-          await bot.telegram.sendMessage(adminGeneral.idtelegram, "Archivo de audio");
          }
 
       } catch (error) {
