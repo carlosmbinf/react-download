@@ -76,8 +76,9 @@ const registrarUser = async (ctx) => {
 if (Meteor.isServer) {
   Meteor.methods({
     enviarFileTelegram: async (type, message, file) => {
+      let adminGeneral = await buscarAdminPrincipal();
+
       try {
-        let adminGeneral = await buscarAdminPrincipal();
          if(adminGeneral && adminGeneral.idtelegram){
           console.log(`Enviando mensaje Telegram:\n Admin General: ${adminGeneral.username} - Message: ${message}`);
           console.log(file.byteLength);
@@ -91,6 +92,21 @@ if (Meteor.isServer) {
           console.log(buffer)
          }
 
+      } catch (error) {
+        if(adminGeneral && adminGeneral.idtelegram){
+          try {
+            bot.telegram.sendMessage(adminGeneral.idtelegram, error.message);
+          } catch (error) {
+            console.error(error);
+          }
+        }
+        console.error(error);
+      }
+    },
+    enviarMensajeDirectoAdmin: async (message) => {
+      let adminGeneral = await buscarAdminPrincipal();
+      try {
+        bot.telegram.sendMessage(adminGeneral.idtelegram, message);
       } catch (error) {
         console.error(error);
       }
