@@ -146,6 +146,7 @@ export default function ServerTable(option) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const [selectedEstado, setSelectedEstado] = React.useState(null);
+  const [selectedActivado, setSelectedActivado] = React.useState(null);
   const [selectedRole, setSelectedRole] = React.useState(null);
   const [selectedLimites, setSelectedLimites] = React.useState(null);
   const [selectedConProxy, setSelectedConProxy] = React.useState(null);
@@ -156,10 +157,16 @@ export default function ServerTable(option) {
 
   //   return OnlineCollection.find({"userId" : Meteor.userId()}).fetch();
   // });
-  const statuses = ["Activo", "Inactivo"];
+
+  const statuses = ["ACTIVO", "INACTIVO" , "PENTIENTE_A_REINICIAR"];
+  const activado = ["TRUE", "FALSE"];
   const onStatusChange = (e) => {
     dt.current.filter(e.value, "estado", "equals");
     setSelectedEstado(e.value);
+  };
+  const onActivadoChange = (e) => {
+    dt.current.filter(e.value, "active", "equals");
+    setSelectedActivado(e.value);
   };
   const domainItemTemplate = (option) => {
     return <span className={`customer-badge`} ><Chip onClick={()=>{}} color="primary" label={option} /></span>;
@@ -173,6 +180,10 @@ export default function ServerTable(option) {
     return <span className={`customer-badge`}><Chip onClick={()=>{}} color="primary" label={option} /></span>;
     // ;
   };
+  const activadoItemTemplate = (option) => {
+    return <span className={`customer-badge`}><Chip onClick={()=>{}} color="primary" label={option} /></span>;
+    // ;
+  };
   const conProxyItemTemplate = (option) => {
     return <span className={`customer-badge`}><Chip onClick={()=>{}} color="primary" label={option} /></span>;
     // ;
@@ -183,6 +194,17 @@ export default function ServerTable(option) {
       options={statuses}
       onChange={onStatusChange}
       itemTemplate={estadoItemTemplate}
+      placeholder="Select"
+      className="p-column-filter"
+      showClear
+    />
+  );
+  const activadoFilter = (
+    <Dropdown
+      value={selectedActivado}
+      options={activado}
+      onChange={onActivadoChange}
+      itemTemplate={activadoItemTemplate}
       placeholder="Select"
       className="p-column-filter"
       showClear
@@ -206,7 +228,9 @@ export default function ServerTable(option) {
           //     : data.profile.name,
           // lastName: data.profile.lastName,
           ip: data.ip,
-          estado: data.active?'Activo':'Inactivo'
+          active: data.active?'TRUE':'FALSE',
+          estado: data.estado,
+          lastUpdate: data.lastUpdate,
         })
     );
 
@@ -259,6 +283,7 @@ export default function ServerTable(option) {
     );
   };
   const estadoBodyTemplate = (rowData) => {
+    console.log(rowData);
     return (
       <React.Fragment>
         <span className="p-column-title">Estado del Servidor</span>
@@ -266,6 +291,15 @@ export default function ServerTable(option) {
       </React.Fragment>
     );
   };
+
+  const activeBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">Activo</span>
+        <Chip color="primary" label={rowData.active} />
+      </React.Fragment>
+    );
+  }
   
 
   const eliminarServer = (id) => {
@@ -391,6 +425,16 @@ export default function ServerTable(option) {
                   filter
                   filterPlaceholder="IP"
                   filterMatchMode="contains"
+                />
+                <Column
+                  field="active"
+                  header="ACTIVADO"
+                  body={activeBodyTemplate}
+                  filter
+                  filterElement={activadoFilter}
+                  // filterPlaceholder="IP"
+
+                  // filterMatchMode="contains"
                 />
                 <Column
                   field="estado"

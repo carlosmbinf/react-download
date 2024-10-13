@@ -299,21 +299,21 @@ export default function ServersDetails() {
                             
                           >
                             <InputLabel id="demo-simple-select-outlined-label">
-                              Estado
+                              ACTIVADO
                             </InputLabel>
                             <Select
                               labelId="demo-simple-select-outlined-label"
                               id="demo-simple-select-outlined"
                               value={active}
                               onChange={(e) => setActive(e.target.value)}
-                              label="Estado"
+                              label="ACTIVADO"
                               defaultValue={server.active}
                             >
                               {/* <MenuItem value="">
                               <em>None</em>
                             </MenuItem> */}
-                              <MenuItem value={true}>Activo</MenuItem>
-                              <MenuItem value={false}>Inactivo</MenuItem>
+                              <MenuItem value={true}>TRUE</MenuItem>
+                              <MenuItem value={false}>FALSE</MenuItem>
                             </Select>
                           </FormControl>
                         </Grid>

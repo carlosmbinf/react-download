@@ -83,7 +83,7 @@ if (Meteor.isServer) {
       });
       // console.log(text);
     },
-    
+
     getDatosDashboardByUser: async (tipoDeDashboard, idUser) => {
       //tipoDeDashboard = "DIARIO" || "MENSUAL" || "HORA"
 
@@ -221,8 +221,15 @@ if (Meteor.isServer) {
 
       return data01;
     },
-    
-    
+    actualizarEstadoServer: function (serverId, state) {
+      ServersCollection.update(serverId, {
+        $set: { estado: state ? state : "ACTIVO" },
+      });
+    },
+    getServer: function (ip) {
+      return ServersCollection.findOne({ ip: ip });
+    },
+
   });
 }
 

@@ -264,21 +264,21 @@ export default function CreateServers() {
                             required
                           >
                             <InputLabel id="demo-simple-select-outlined-label">
-                              Estado
+                              ACTIVO
                             </InputLabel>
                             <Select
                               labelId="demo-simple-select-outlined-label"
                               id="demo-simple-select-outlined"
                               value={active}
                               onChange={(e) => setActive(e.target.value)}
-                              label="Estado"
+                              label="ACTIVO"
                               defaultValue={true}
                             >
                               {/* <MenuItem value="">
                               <em>None</em>
                             </MenuItem> */}
-                              <MenuItem value={true}>Activo</MenuItem>
-                              <MenuItem value={false}>Inactivo</MenuItem>
+                              <MenuItem value={true}>TRUE</MenuItem>
+                              <MenuItem value={false}>FALSE</MenuItem>
                             </Select>
                           </FormControl>
                         </Grid>

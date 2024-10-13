@@ -1058,6 +1058,22 @@ export const SchemaServersCollection = new SimpleSchema({
       }
     },
   },
+  estado:{
+    type: String,
+    defaultValue: "ACTIVO", //ACTIVO, INACTIVO, PENTIENTE_A_REINICIAR
+    optional: true,
+  },
+  lastUpdate: {
+    type: Date,
+    optional: true,
+    autoValue: function () {
+      //si inserta o actualiza que se actualice la fecha
+      if (this.isInsert || this.isModifier) {
+        return new Date();
+      }
+      
+    },
+  },
 });
 
 ServersCollection.attachSchema(SchemaServersCollection);
