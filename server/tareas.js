@@ -244,7 +244,7 @@ if (Meteor.isServer) {
   
       try {
         await Meteor.users.update(user._id, { $set: { vpn: false } });
-        Meteor.call("registrarLog", "Bloqueo VPN", user._id, "SERVER", `El servidor ${process.env.ROOT_URL} bloqueó automáticamente la VPN ${motivo}`);
+        await Meteor.call("registrarLog", "Bloqueo VPN", user._id, "SERVER", `El servidor ${process.env.ROOT_URL} bloqueó automáticamente la VPN ${motivo}`);
        await Meteor.call("sendMensaje", user, {
           text: `El servidor ${process.env.ROOT_URL} bloqueó automáticamente la VPN de ${user.profile.firstName} ${user.profile.lastName} ${motivo}`,
         }, 'VidKar Bloqueo de VPN');
