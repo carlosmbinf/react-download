@@ -221,9 +221,9 @@ if (Meteor.isServer) {
 
       return data01;
     },
-    actualizarEstadoServer: function (serverId, state) {
+    actualizarEstadoServer: function (serverId, data) {
       ServersCollection.update(serverId, {
-        $set: { estado: state ? state : "ACTIVO" },
+        $set: data ? data : { idUserSolicitandoReinicio: null, estado: 'ACTIVO' },
       });
     },
     getServer: function (ip) {

@@ -1046,6 +1046,10 @@ export const SchemaServersCollection = new SimpleSchema({
     defaultValue: "",
     optional: true,
   },
+  idUserSolicitandoReinicio: {
+    type: String,
+    optional: true,
+  },
   createdAt: {
     type: Date,
     autoValue: function () {
@@ -1060,7 +1064,7 @@ export const SchemaServersCollection = new SimpleSchema({
   },
   estado:{
     type: String,
-    defaultValue: "ACTIVO", //ACTIVO, INACTIVO, PENTIENTE_A_REINICIAR
+    defaultValue: "ACTIVO", //ACTIVO, INACTIVO, PENDIENTE_A_REINICIAR
     optional: true,
   },
   lastUpdate: {

@@ -158,7 +158,7 @@ export default function ServerTable(option) {
   //   return OnlineCollection.find({"userId" : Meteor.userId()}).fetch();
   // });
 
-  const statuses = ["ACTIVO", "INACTIVO" , "PENTIENTE_A_REINICIAR"];
+  const statuses = ["ACTIVO", "INACTIVO" , "PENDIENTE_A_REINICIAR"];
   const activado = ["TRUE", "FALSE"];
   const onStatusChange = (e) => {
     dt.current.filter(e.value, "estado", "equals");
