@@ -1,12 +1,9 @@
-[
-  {
-    "relation": ["delegate_permission/common.handle_all_urls"],
-    "target": {
-      "namespace": "android_app",
-      "package_name": "com.vidkar",
-      "sha256_cert_fingerprints": [
-        "87:53:10:DB:11:16:E0:0E:BC:C4:9F:82:66:3B:62:59:7B:E7:71:92:6B:9A:E5:4A:4A:C6:99:21:C8:CE:10:98"
-      ]
-    }
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.vidkar",
+    "sha256_cert_fingerprints":
+    ["FA:C6:17:45:DC:09:03:78:6F:B9:ED:E6:2A:96:2B:39:9F:73:48:F0:BB:6F:89:9B:83:32:66:75:91:03:3B:9C"]
   }
-]
+}]
