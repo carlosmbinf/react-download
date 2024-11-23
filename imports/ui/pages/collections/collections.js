@@ -592,6 +592,24 @@ export const SchemaPelisCollection = new SimpleSchema({
       }
     },
   },
+  extension: {
+    type: String,
+    optional: true,
+    autoValue: function () {
+      if (this.isInsert || this.isUpdate || this.isUpsert) {
+        const urlPeli = this.field("urlPeli");
+        if (urlPeli.isSet) {
+          const extensionMatch = urlPeli.value.match(/\.(\w+)$/); // Extrae la extensión usando una expresión regular
+          if (extensionMatch) {
+            return extensionMatch[1]; // Devuelve solo la extensión (ej., "jpg", "mp4")
+          }
+          return null; // Si no hay extensión, asigna null
+        } else {
+          this.unset(); // Evita que se asigne un valor incorrecto
+        }
+      }
+    },
+  },  
   urlBackground: {
     type: String,
   },
@@ -695,10 +713,6 @@ export const SchemaPelisCollection = new SimpleSchema({
     optional: true,
   },
   "actors.$": { type: String },
-  extension: {
-    type: String,
-    optional: true,
-  },
 });
 
 PelisCollection.attachSchema(SchemaPelisCollection);
@@ -973,7 +987,21 @@ export const SchemaCapitulosCollection = new SimpleSchema({
   extension: {
     type: String,
     optional: true,
-  },
+    autoValue: function () {
+      if (this.isInsert || this.isUpdate || this.isUpsert) {
+        const urlPeli = this.field("url");
+        if (urlPeli.isSet) {
+          const extensionMatch = urlPeli.value.match(/\.(\w+)$/); // Extrae la extensión usando una expresión regular
+          if (extensionMatch) {
+            return extensionMatch[1]; // Devuelve solo la extensión (ej., "jpg", "mp4")
+          }
+          return null; // Si no hay extensión, asigna null
+        } else {
+          this.unset(); // Evita que se asigne un valor incorrecto
+        }
+      }
+    },
+  },  
 });
 
 CapitulosCollection.attachSchema(SchemaCapitulosCollection);
