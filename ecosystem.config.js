@@ -4,7 +4,7 @@ module.exports = {
     script: "npm start",
     env: {
       NODE_ENV: "development",
-      "ROOT_URL": "https://vidkar.ddns.net/",
+      "ROOT_URL": "https://www.vidkar.com/",
       "PORT": 3000,
     },
     env_production: {

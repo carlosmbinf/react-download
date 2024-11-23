@@ -561,8 +561,8 @@ export const SchemaPelisCollection = new SimpleSchema({
         const urlPeli = this.field("urlPeli");
         if (urlPeli.isSet) {
           return urlPeli.value.replace(
-            "http://vidkar.ddns.net:3005",
-            "https://vidkar.ddns.net:3006"
+            "http://www.vidkar.com:3005",
+            "https://www.vidkar.com:3006"
           );
         }
       } else if (this.isUpdate) {
@@ -570,8 +570,8 @@ export const SchemaPelisCollection = new SimpleSchema({
         if (urlPeli.isSet) {
           return {
             $set: urlPeli.value.replace(
-              "http://vidkar.ddns.net:3005",
-              "https://vidkar.ddns.net:3006"
+              "http://www.vidkar.com:3005",
+              "https://www.vidkar.com:3006"
             ),
           };
         } else {
@@ -582,8 +582,8 @@ export const SchemaPelisCollection = new SimpleSchema({
         if (urlPeli.isSet) {
           return {
             $setOnInsert: urlPeli.value.replace(
-              "http://vidkar.ddns.net:3005",
-              "https://vidkar.ddns.net:3006"
+              "http://www.vidkar.com:3005",
+              "https://www.vidkar.com:3006"
             ),
           };
         } else {
@@ -603,8 +603,8 @@ export const SchemaPelisCollection = new SimpleSchema({
         const urlBackground = this.field("urlBackground");
         if (urlBackground.isSet) {
           return urlBackground.value.replace(
-            "http://vidkar.ddns.net:3005",
-            "https://vidkar.ddns.net:3006"
+            "http://www.vidkar.com:3005",
+            "https://www.vidkar.com:3006"
           );
         }
       } else if (this.isUpdate) {
@@ -612,8 +612,8 @@ export const SchemaPelisCollection = new SimpleSchema({
         if (urlBackground.isSet) {
           return {
             $set: urlBackground.value.replace(
-              "http://vidkar.ddns.net:3005",
-              "https://vidkar.ddns.net:3006"
+              "http://www.vidkar.com:3005",
+              "https://www.vidkar.com:3006"
             ),
           };
         } else {
@@ -624,8 +624,8 @@ export const SchemaPelisCollection = new SimpleSchema({
         if (urlBackground.isSet) {
           return {
             $setOnInsert: urlBackground.value.replace(
-              "http://vidkar.ddns.net:3005",
-              "https://vidkar.ddns.net:3006"
+              "http://www.vidkar.com:3005",
+              "https://www.vidkar.com:3006"
             ),
           };
         } else {
@@ -750,8 +750,8 @@ export const SchemaSeriesCollection = new SimpleSchema({
         const urlBackground = this.field("urlBackground");
         if (urlBackground.isSet) {
           return urlBackground.value ? urlBackground.value.replace(
-            "http://vidkar.ddns.net:3005",
-            "https://vidkar.ddns.net:3006"
+            "http://www.vidkar.com:3005",
+            "https://www.vidkar.com:3006"
           ):null;
         }
       } else if (this.isUpdate) {
@@ -760,8 +760,8 @@ export const SchemaSeriesCollection = new SimpleSchema({
           return {
             $set: urlBackground.value
               ? urlBackground.value.replace(
-                  "http://vidkar.ddns.net:3005",
-                  "https://vidkar.ddns.net:3006"
+                  "http://www.vidkar.com:3005",
+                  "https://www.vidkar.com:3006"
                 )
               : null,
           };
@@ -774,8 +774,8 @@ export const SchemaSeriesCollection = new SimpleSchema({
           return {
             $setOnInsert: urlBackground.value
               ? urlBackground.value.replace(
-                  "http://vidkar.ddns.net:3005",
-                  "https://vidkar.ddns.net:3006"
+                  "http://www.vidkar.com:3005",
+                  "https://www.vidkar.com:3006"
                 )
               : null,
           };
@@ -847,8 +847,8 @@ export const SchemaCapitulosCollection = new SimpleSchema({
         const url = this.field("url");
         if (url.isSet) {
           return url.value.replace(
-            "http://vidkar.ddns.net:3005",
-            "https://vidkar.ddns.net:3006"
+            "http://www.vidkar.com:3005",
+            "https://www.vidkar.com:3006"
           );
         }
       } else if (this.isUpdate) {
@@ -856,8 +856,8 @@ export const SchemaCapitulosCollection = new SimpleSchema({
         if (url.isSet) {
           return {
             $set: url.value.replace(
-              "http://vidkar.ddns.net:3005",
-              "https://vidkar.ddns.net:3006"
+              "http://www.vidkar.com:3005",
+              "https://www.vidkar.com:3006"
             ),
           };
         } else {
@@ -868,8 +868,8 @@ export const SchemaCapitulosCollection = new SimpleSchema({
         if (url.isSet) {
           return {
             $setOnInsert: url.value.replace(
-              "http://vidkar.ddns.net:3005",
-              "https://vidkar.ddns.net:3006"
+              "http://www.vidkar.com:3005",
+              "https://www.vidkar.com:3006"
             ),
           };
         } else {
@@ -891,8 +891,8 @@ export const SchemaCapitulosCollection = new SimpleSchema({
         if (urlBackground.isSet) {
           return urlBackground.value
             ? urlBackground.value.replace(
-                "http://vidkar.ddns.net:3005",
-                "https://vidkar.ddns.net:3006"
+                "http://www.vidkar.com:3005",
+                "https://www.vidkar.com:3006"
               )
             : null;
         }
@@ -902,8 +902,8 @@ export const SchemaCapitulosCollection = new SimpleSchema({
           return {
             $set: urlBackground.value
               ? urlBackground.value.replace(
-                  "http://vidkar.ddns.net:3005",
-                  "https://vidkar.ddns.net:3006"
+                  "http://www.vidkar.com:3005",
+                  "https://www.vidkar.com:3006"
                 )
               : null,
           };
@@ -916,8 +916,8 @@ export const SchemaCapitulosCollection = new SimpleSchema({
           return {
             $setOnInsert: urlBackground.value
               ? urlBackground.value.replace(
-                  "http://vidkar.ddns.net:3005",
-                  "https://vidkar.ddns.net:3006"
+                  "http://www.vidkar.com:3005",
+                  "https://www.vidkar.com:3006"
                 )
               : null,
           };

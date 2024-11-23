@@ -61,7 +61,7 @@ if (Meteor.isServer) {
       console.log("insertpelisbyyears" + year);
 
       var pelis = [];
-      const url = `http://vidkar.ddns.net:3005/Peliculas/Extranjeras/${year}/`;
+      const url = `http://www.vidkar.com:3005/Peliculas/Extranjeras/${year}/`;
       if (!url)
         throw new TypeError("Need to provide an url as first argument.");
       const { body: html } = await got(url);

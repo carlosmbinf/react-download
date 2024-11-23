@@ -197,7 +197,7 @@ function groupFilesByEpisode(fileList,seriesName) {
       // console.log(req)
       // console.log(peli)
       //  const insertPeli = async () => {
-      //picar la url para quitar el nombre de la peli, ejemplo https://vidkar.ddns.net:3005/Peliculas/Extranjeras/2021/2021_The_Father_(2021).mkv, quitar el 2021_The_Father_(2021).mkv
+      //picar la url para quitar el nombre de la peli, ejemplo https://www.vidkar.com:3005/Peliculas/Extranjeras/2021/2021_The_Father_(2021).mkv, quitar el 2021_The_Father_(2021).mkv
 
       let capitulo = null;
       let temporada = null;

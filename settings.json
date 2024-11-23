@@ -2,11 +2,11 @@
 	"public": {
 		"baseUrl": "http://localhost:5500/",
 		"MONGO_URL":"mongodb://127.0.0.1:27017/meteor",
-		"ROOT_URL": "https://vidkar.ddns.net",
+		"ROOT_URL": "https://www.vidkar.com",
 		"IP": "152.206.118.158",
 		"administradores":["carlosmbinf"],
 		"mostrarCompras":true,
-		"tokenBotTelegram":"6896013579:AAHBUolmlfY6bWVBqn_oh9ToSEwQEpNtFAk",
+		"tokenBotTelegram":"7069900112:AAGkznNP_vh2NvqWQEI3YY1gcZ0IlRYY57I",
 		"imdbApiKey": "99b0df89"
 	 },
 	 "private":{

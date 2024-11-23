@@ -246,7 +246,7 @@ const LoginForm = ({ className }: Props) => {
             VidKar y el Usuario asumen la obligación de mantener el principio de confidencialidad de dicha información, así como de utilizar ésta exclusivamente en los términos pactados en el correspondiente contrato.
           </DialogContentText>
           <DialogContentText>
-            El tratamiento a la información y los datos personales que se realiza en el sitio https://vidkar.ddns.net de VidKar, se rige por las siguientes reglas:
+            El tratamiento a la información y los datos personales que se realiza en el sitio https://www.vidkar.com de VidKar, se rige por las siguientes reglas:
 
             <li>Los datos personales de los Usuarios serán utilizados para el cumplimiento de los fines indicados en el formulario correspondiente y siempre dentro de la competencia y atribuciones de VidKar.</li>
             <li>VidKar asegurará la confidencialidad de los datos personales de los usuarios, requeridos para su registro en el sitio web de VidKar.</li>
