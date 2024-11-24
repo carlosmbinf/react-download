@@ -34,23 +34,25 @@ if (Meteor.isServer) {
     let peli = "";
     let subtitle = "";
     let poster = "";
-    if (!url) throw new TypeError("Need to provide an url as first argument.");
-    const { body: html } = await got(url);
-    const linksPeli = htmlUrls({ html, url });
+    if (!url || !nombre) throw new TypeError("Need to provide an url as first argument.");
+    const { body: html } = await await got(url);
+    const linksPeli = await htmlUrls({ html, url });
 
     // for (var j = 5; j < linksPeli.length-6; j++) {
     //   // console.log(`Links de peliculas ${JSON.stringify(linksPeli[j])}`);
     // }
     var filter = require("simple-text-search");
-    var get = filter(linksPeli, "url");
-    var peliurl = get(".mkv") || get(".mp4") ;
-    var subtitleurl = get(".srt");
-    var posterurl = get(".jpg") || get(".png");
+    var get = await  filter(linksPeli, "url");
+    var peliurlmp4 = await (get(".mp4")) ;
+    var peliurlmkv = await (get(".mkv")) ;
+    var peliurlavi = await (get(".avi")) ;
+    var subtitleurl = await get(".srt");
+    var posterurl = await get(".jpg") || await get(".png");
 
-    peli = peliurl[0] && peliurl[0].url;
+    var peliurl = peliurlmp4[0] || peliurlmkv[0] || peliurlavi[0];
+    peli = peliurl && peliurl.url;
     subtitle = subtitleurl[0] && subtitleurl[0].url;
     poster = posterurl[0] && posterurl[0].url;
-
     const insertPeli = peli && { nombre, year, peli, subtitle, poster, urlPadre: url};
     return insertPeli;
   }
@@ -88,8 +90,8 @@ if (Meteor.isServer) {
           .replace(/\./g, " ")
           .replace(`/`, "")
           .replace(`(${year})`, "");
-        // console.log(`Name: ${nombre}`);
-        // console.log(links[i]);
+        console.log(`Name: ${nombre}`);
+        console.log(links[i].value);
         let a;
         let pelicula = await PelisCollection.findOne({urlPadre: links[i].url})
         if(pelicula){
@@ -110,8 +112,9 @@ if (Meteor.isServer) {
       // console.log(pelis.length)
       try {
         // pelis && (await Meteor.call("insertPelis", pelis[0]));
-
-        a && a.nombre && a.year && a.peli && a.poster &&  Meteor.call("insertPelis", a)
+        ! pelicula && console.log(`Pelicula ${a.nombre} no existe en la base de datos`);
+        pelicula && console.log(`Pelicula ${a.nombre} ya existe en la base de datos`);
+       a && a.nombre && a.year && a.peli && a.poster &&  await Meteor.call("insertPelis", a)
 
       } catch (error) {
         console.log("Ocurrio un error => " + error.message);
@@ -122,6 +125,7 @@ if (Meteor.isServer) {
       //   message: "todo OK",
       // });
       // res.end("todo OK")
+
     },
     insertPelis: async function (pelicula) {
       console.log(`Peli `, pelicula);
@@ -159,8 +163,8 @@ if (Meteor.isServer) {
         // /////////////////////////////////////////////
         try {
             peli &&
-          peli.subtitulo && (peli.textSubtitle == null || peli.textSubtitle == "") &&
-          (https.get(peli.subtitulo, async (response) => {
+          peli.subtitulo && (peli.textSubtitle == null || peli.textSubtitle == "") && !peli.textSubtitle &&
+          (await https.get(peli.subtitulo, async (response) => {
             try {
               var stream = response.pipe(srt2vtt());
               // stream.on("finish", function () {});
@@ -259,11 +263,11 @@ if (Meteor.isServer) {
               (await imdba
                 .get(idimdb ? {id: idimdb} :{ name: peli.nombrePeli }, { apiKey: "99b0df89" })
                 .then(async (element) => {
-                  
-                      console.log(
-                        "Detalles de " + idimdb + " Detalles: \n",
-                        element
-                      ); // etc...
+                  console.log("Se encontro en imdb la peli " + peli.nombrePeli);
+                      // console.log(
+                      //   "Detalles de " + idimdb + " Detalles: \n",
+                      //   element
+                      // ); // etc...
                       element &&
                         (await PelisCollection.update(
                           { _id: id },

@@ -143,6 +143,7 @@ export default function PelisTable() {
             vistas: 1,
             mostrar: 1,
             clasificacion: 1,
+            extension: 1
           }
         }
       ); 
@@ -159,6 +160,7 @@ export default function PelisTable() {
             vistas: 1,
             mostrar: 1,
             clasificacion: 1,
+            extension: 1
           },
           sort: { nombrePeli: 1 },
         }
@@ -174,6 +176,7 @@ export default function PelisTable() {
             clasificacion: pelicula.clasificacion.length
               ? pelicula.clasificacion
               : "Sin Clasificación",
+            extension : pelicula.extension
           });
       });
     } catch (error) { }
@@ -251,27 +254,25 @@ export default function PelisTable() {
       </React.Fragment>
     );
   };
+  const extensionBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">Extension</span>
+        <Chip color="primary" label={rowData.extension} />
+      </React.Fragment>
+    );
+  };
   const urlBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
         <span className="p-column-title"></span>
-        <Tooltip
-          title={
-            "Ver Detalles de " + rowData.nombre
-          }
-        >
-          <IconButton
-            aria-label="delete"
-            color="primary"
-            onClick={() => {
-              history.push("/pelis/" + rowData.id);
-            }}
-          >
-            <ListAltIcon fontSize="large" />
-          </IconButton>
+        <Tooltip title={"Ver Detalles de " + rowData.nombre}>
+          <Link to={"/pelis/" + rowData.id}>
+            <ListAltIcon color="primary" fontSize="large" />
+          </Link>
         </Tooltip>
       </React.Fragment>
-    )
+    );
   };
   return (
     <>
@@ -332,6 +333,14 @@ export default function PelisTable() {
                   field="clasificacion"
                   header="Clasificacion"
                   body={clasificacionBodyTemplate}
+                  filter
+                  filterPlaceholder="Search"
+                  filterMatchMode="contains"
+                />
+                <Column
+                  field="extension"
+                  header="Extension"
+                  body={extensionBodyTemplate}
                   filter
                   filterPlaceholder="Search"
                   filterMatchMode="contains"

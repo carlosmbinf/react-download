@@ -391,13 +391,14 @@ function groupFilesByEpisode(fileList,seriesName) {
               apiKey: Meteor.settings.public.imdbApiKey,
             })
             .then(async (element) => {
+              console.log("Se encontro el imdba de " + capitulo._id  ); // etc...
               console.log("Detalles de ", capitulo, " Detalles: \n", element); // etc...
               element &&
                 (await CapitulosCollection.update(
                   { _id: capitulo._id },
                   {
                     $set: {
-                      extension: serieArg.extension,
+                      // extension: serieArg.extension,
                       descripcion: element.plot,
                     },
                   },

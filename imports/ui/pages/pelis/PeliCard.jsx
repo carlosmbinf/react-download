@@ -159,7 +159,7 @@ export default function PeliCard(options) {
   // const [mostrarTriler, setMostrarTriler] = useState([]);
 
   const peli = useTracker(() => {
-    Meteor.subscribe("pelis", { mostrar: "true" }, {
+    Meteor.subscribe("pelis", { mostrar: "true", extension: { $in: ["mkv","mp4"] }  }, {
       fields: {
         _id: 1,
         clasificacion: 1,
@@ -171,13 +171,14 @@ export default function PeliCard(options) {
         // urlPeli: 1,
         // urlTrailer: 1,
         // idimdb:1
-        year:1
+        year:1,
+        extension:1
       }
     });
     if (options.clasificacion == "All") {
-      return PelisCollection.find({ mostrar: "true" }).fetch();
+      return PelisCollection.find({ mostrar: "true",extension: { $in: ["mkv","mp4"] } }).fetch();
     } else {
-      return PelisCollection.find({ mostrar: "true", clasificacion: options.clasificacion }, {
+      return PelisCollection.find({ mostrar: "true", clasificacion: options.clasificacion, extension: { $in: ["mkv","mp4"] } }, {
         fields: {
           _id: 1,
           clasificacion: 1,
@@ -189,7 +190,8 @@ export default function PeliCard(options) {
           // urlPeli: 1,
           // urlTrailer: 1,
           // idimdb:1
-          year: 1
+          year: 1,
+          extension:1
         }, sort: { vistas: -1,nombrePeli: 1 }
       }).fetch();
     }
