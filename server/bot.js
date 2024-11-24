@@ -1,6 +1,7 @@
 import { Telegraf } from "telegraf";
 import { message } from "telegraf/filters";
 import { Meteor } from "meteor/meteor";
+import axios from "axios";
 
 console.log(
   `Cargando Bot Telegram vidkar_bot +${Meteor.settings.public.tokenBotTelegram}`
@@ -15,6 +16,9 @@ const buscarUsuarioPoridtelegram = async (id) => {
 };
 const buscarAdminPrincipal = async () => {
   return await Meteor.call("getAdminPrincipal");
+};
+const buscarUsuariosConidTelegramYPermiteNotificacion = async () => {
+  return await Meteor.users.find({ idtelegram: { $ne: null }, notificarByTelegram: true }).fetch();
 };
 const actualizarUsuario = async (id, cambio) => {
   return await Meteor.call("updateUsersAll", id, cambio);
@@ -106,10 +110,45 @@ if (Meteor.isServer) {
     enviarMensajeDirectoAdmin: async (message) => {
       let adminGeneral = await buscarAdminPrincipal();
       try {
-        bot.telegram.sendMessage(adminGeneral.idtelegram, message);
+        adminGeneral.idtelegram && bot.telegram.sendMessage(adminGeneral.idtelegram, message);
       } catch (error) {
         console.error(error);
       }
+    },
+    enviarMensajeDirectoaAdministradores: async (message,imagen) => {
+      let administradores = await buscarUsuariosConidTelegramYPermiteNotificacion();
+
+      administradores && administradores.forEach(async (admin) => {
+        try {
+
+          if(imagen == null || imagen == ""){
+            admin.idtelegram &&
+              bot.telegram.sendMessage(admin.idtelegram, message);
+          }else{
+            const photoUrl =await encodeURI("https://www.dzoom.org.es/wp-content/uploads/2010/09/mirada-ojos-encuadre-primer-plano-sexy.jpg");
+
+
+            // Descargar la imagen como buffer
+            const response = await axios.get(imagen, { responseType: 'arraybuffer' });
+            const buffer = await Buffer.from(response.data);
+
+
+            // Enviar la imagen a Telegram
+          bot.telegram.sendPhoto(admin.idtelegram, { source: buffer }, { caption: message })
+          .then(() => {
+            console.log('Foto enviada con éxito a:', admin.username);
+          })
+          .catch((error) => {
+            console.error('Error al enviar la foto:', error);
+          });
+
+        }
+
+        } catch (error) {
+          console.error(error);
+        }
+      });
+     
     },
     enviarMensajeTelegram: async (type, userId, message, ventaComentario) => {
       try {

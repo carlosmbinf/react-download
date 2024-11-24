@@ -114,7 +114,7 @@ if (Meteor.isServer) {
         // pelis && (await Meteor.call("insertPelis", pelis[0]));
         ! pelicula && console.log(`Pelicula ${a.nombre} no existe en la base de datos`);
         pelicula && console.log(`Pelicula ${a.nombre} ya existe en la base de datos`);
-       a && a.nombre && a.year && a.peli && a.poster &&  await Meteor.call("insertPelis", a)
+        ! pelicula && a && a.nombre && a.year && a.peli && a.poster &&  await Meteor.call("insertPelis", a)
 
       } catch (error) {
         console.log("Ocurrio un error => " + error.message);
@@ -147,6 +147,9 @@ if (Meteor.isServer) {
             year: pelicula.year,
           });
       let peli = await PelisCollection.findOne({ _id: id });
+          
+      
+
       // console.log(peli);
         var srt2vtt = await require("srt-to-vtt");
         var fs = await require("fs");
@@ -287,6 +290,14 @@ if (Meteor.isServer) {
             console.log("no se pudo actualizar en IMDb.fetch " + pelicula.nombre);
           console.log(error.message);
         }
+
+        !exist &&
+          peli &&
+          Meteor.call(
+            "enviarMensajeDirectoaAdministradores",
+            `Nueva Peli en Vidkar:\nNombre: ${peli.nombrePeli}\nAño: ${peli.year}`,
+            peli.urlBackground
+          );
     },
     getUrlTriller: (id) => {
       let peli = PelisCollection.findOne(id);
