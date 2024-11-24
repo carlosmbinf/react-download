@@ -117,24 +117,25 @@ if (Meteor.isServer) {
     },
     enviarMensajeDirectoaAdministradores: async (message,imagen) => {
       let administradores = await buscarUsuariosConidTelegramYPermiteNotificacion();
-
+      var response;
+      var buffer;
+                  
+      if(imagen){
+        // Descargar la imagen como buffer
+        response = await axios.get(imagen, { responseType: 'arraybuffer' });
+        buffer = response ? await Buffer.from(response.data) : null;
+}
       administradores && administradores.forEach(async (admin) => {
         try {
+
 
           if(imagen == null || imagen == ""){
             admin.idtelegram &&
               bot.telegram.sendMessage(admin.idtelegram, message);
           }else{
-            const photoUrl =await encodeURI("https://www.dzoom.org.es/wp-content/uploads/2010/09/mirada-ojos-encuadre-primer-plano-sexy.jpg");
-
-
-            // Descargar la imagen como buffer
-            const response = await axios.get(imagen, { responseType: 'arraybuffer' });
-            const buffer = await Buffer.from(response.data);
-
 
             // Enviar la imagen a Telegram
-          bot.telegram.sendPhoto(admin.idtelegram, { source: buffer }, { caption: message })
+            buffer && bot.telegram.sendPhoto(admin.idtelegram, { source: buffer }, { caption: message })
           .then(() => {
             console.log('Foto enviada con éxito a:', admin.username);
           })
