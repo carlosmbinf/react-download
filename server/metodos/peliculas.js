@@ -34,7 +34,8 @@ if (Meteor.isServer) {
     let peli = "";
     let subtitle = "";
     let poster = "";
-    if (!url || !nombre) throw new TypeError("Need to provide an url as first argument.");
+    if (!url || !nombre)
+      throw new TypeError("Need to provide an url as first argument.");
     const { body: html } = await await got(url);
     const linksPeli = await htmlUrls({ html, url });
 
@@ -42,24 +43,31 @@ if (Meteor.isServer) {
     //   // console.log(`Links de peliculas ${JSON.stringify(linksPeli[j])}`);
     // }
     var filter = require("simple-text-search");
-    var get = await  filter(linksPeli, "url");
-    var peliurlmp4 = await (get(".mp4")) ;
-    var peliurlmkv = await (get(".mkv")) ;
-    var peliurlavi = await (get(".avi")) ;
+    var get = await filter(linksPeli, "url");
+    var peliurlmp4 = await get(".mp4");
+    var peliurlmkv = await get(".mkv");
+    var peliurlavi = await get(".avi");
     var subtitleurl = await get(".srt");
-    var posterurl = await get(".jpg") || await get(".png");
+    var posterurl = (await get(".jpg")) || (await get(".png"));
 
     var peliurl = peliurlmp4[0] || peliurlmkv[0] || peliurlavi[0];
     peli = peliurl && peliurl.url;
     subtitle = subtitleurl[0] && subtitleurl[0].url;
     poster = posterurl[0] && posterurl[0].url;
-    const insertPeli = peli && { nombre, year, peli, subtitle, poster, urlPadre: url};
+    const insertPeli = peli && {
+      nombre,
+      year,
+      peli,
+      subtitle,
+      poster,
+      urlPadre: url,
+    };
     return insertPeli;
   }
 
   console.log("Cargando Métodos de peliculas...");
   Meteor.methods({
-    insertpelisbyyears: async function ({year}) {
+    insertpelisbyyears: async function ({ year }) {
       console.log("insertpelisbyyears" + year);
 
       var pelis = [];
@@ -93,46 +101,68 @@ if (Meteor.isServer) {
         console.log(`Name: ${nombre}`);
         console.log(links[i].value);
         let a;
-        let pelicula = await PelisCollection.findOne({urlPadre: links[i].url})
-        if(pelicula){
+        let pelicula = await PelisCollection.findOne({
+          urlPadre: links[i].url,
+        });
+        let existe = pelicula ? true : false;
+        if (pelicula) {
           a = {
             nombre: pelicula.nombrePeli,
             year: pelicula.year,
             peli: pelicula.urlPeli,
             subtitle: pelicula.subtitulo,
-            poster:pelicula.urlBackground,
+            poster: pelicula.urlBackground,
             urlPadre: links[i].url,
           };
-          
-        }else{
-           a = await getPeli(nombre, year, links[i].url);
+        } else {
+          a = await getPeli(nombre, year, links[i].url);
         }
 
-          
-      // console.log(pelis.length)
-      try {
-        // pelis && (await Meteor.call("insertPelis", pelis[0]));
-        ! pelicula && console.log(`Pelicula ${a.nombre} no existe en la base de datos`);
-        pelicula && console.log(`Pelicula ${a.nombre} ya existe en la base de datos`);
-        ! pelicula && a && a.nombre && a.year && a.peli && a.poster &&  await Meteor.call("insertPelis", a)
+        // console.log(pelis.length)
+        try {
+          // pelis && (await Meteor.call("insertPelis", pelis[0]));
+          !pelicula &&
+            console.log(`Pelicula ${a.nombre} no existe en la base de datos`);
+          pelicula &&
+            console.log(`Pelicula ${a.nombre} ya existe en la base de datos`);
+          !pelicula &&
+            a &&
+            a.nombre &&
+            a.year &&
+            a.peli &&
+            a.poster &&
+            (await Meteor.call("insertPelis", a));
 
-      } catch (error) {
-        console.log("Ocurrio un error => " + error.message);
+          let peli = await PelisCollection.findOne({ urlPadre: links[i].url });
+          peli && !existe && pelis.push(peli);
+        } catch (error) {
+          console.log("Ocurrio un error => " + error.message);
+        }
       }
-    }
 
+      pelis.length > 0 &&
+        pelis.forEach(async (peli) => {
+          console.log(`Peli ${peli.nombrePeli} insertada`);
+          console.log(
+            `Peli ${peli.urlPeli} se va a notificar a los administradores`
+          );
+          await Meteor.call(
+            "enviarMensajeDirectoaAdministradores",
+            `Nueva Peli en Vidkar:\nNombre: ${peli.nombrePeli}\nClasificacion: ${peli.clasificacion}\nActores: ${peli.actors}\nAño: ${peli.year}`,
+            peli.urlBackground
+          );
+        });
       // res.writeHead(200, {
       //   message: "todo OK",
       // });
       // res.end("todo OK")
-
     },
     insertPelis: async function (pelicula) {
       console.log(`Peli `, pelicula);
       // console.log(req)
       // console.log(peli)
       //  const insertPeli = async () => {
-      let exist = await PelisCollection.findOne({ urlPeli: pelicula.peli, });
+      let exist = await PelisCollection.findOne({ urlPeli: pelicula.peli });
       let id = exist
         ? exist._id
         : await PelisCollection.insert({
@@ -147,26 +177,26 @@ if (Meteor.isServer) {
             year: pelicula.year,
           });
       let peli = await PelisCollection.findOne({ _id: id });
-          
-      
 
       // console.log(peli);
-        var srt2vtt = await require("srt-to-vtt");
-        var fs = await require("fs");
-        var appRoot = await require("app-root-path");
-        var subtituloFile =
-          appRoot.path + "/public/videos/subtitulo/" + id + ".vtt";
-        const https = await require("http");
+      var srt2vtt = await require("srt-to-vtt");
+      var fs = await require("fs");
+      var appRoot = await require("app-root-path");
+      var subtituloFile =
+        appRoot.path + "/public/videos/subtitulo/" + id + ".vtt";
+      const https = await require("http");
 
-        // !fs.existsSync(appRoot.path + "/public/videos/subtitulo")
-        //   ? fs.mkdirSync(appRoot.path + "/public/videos/subtitulo/")
-        //   : "";
+      // !fs.existsSync(appRoot.path + "/public/videos/subtitulo")
+      //   ? fs.mkdirSync(appRoot.path + "/public/videos/subtitulo/")
+      //   : "";
 
-        // const file = fs.createWriteStream(subtituloFile);
-        // /////////////////////////////////////////////
-        try {
-            peli &&
-          peli.subtitulo && (peli.textSubtitle == null || peli.textSubtitle == "") && !peli.textSubtitle &&
+      // const file = fs.createWriteStream(subtituloFile);
+      // /////////////////////////////////////////////
+      try {
+        peli &&
+          peli.subtitulo &&
+          (peli.textSubtitle == null || peli.textSubtitle == "") &&
+          !peli.textSubtitle &&
           (await https.get(peli.subtitulo, async (response) => {
             try {
               var stream = response.pipe(srt2vtt());
@@ -190,121 +220,118 @@ if (Meteor.isServer) {
               console.log(error.message);
             }
           }));
-        } catch (error) {
-            console.log("no se pudo Actualizado subtitulo de la Peli " + pelicula.nombre);
-          console.log(error.message);
-        }
-        
-
-        var nameToImdb = require("name-to-imdb");
-        const IMDb = require("imdb-light");
-
-        console.log("Nombre Peli: " + peli.nombrePeli);
-        var idimdb = peli.idimdb;
-        // try {
-        //   await nameToImdb(
-        //     { name: pelicula.nombre, year: pelicula.year },
-        //     async (err, res, inf) => {
-        //       err && console.log(`err IMDB de ${pelicula.nombre} =>  `,err);
-        //       await console.log(`id IMDB de ${pelicula.nombre} =>  `,res); // "tt0121955"
-        //       // inf contains info on where we matched that name - e.g. metadata, or on imdb
-        //       // and the meta object with all the available data
-        //       await console.log(`info IMDB de ${pelicula.nombre} =>  `,inf);
-        //       if (res) {
-        //         idimdb = res;
-        //       }
-        //     }
-        //   );
-        //   //////ACTUALIZANDO IDIMDB EN PELI
-        //   console.log(`Update IDIMDB - Nombre Peli: ${peli.nombrePeli}`);
-        //   idimdb &&
-        //     (await PelisCollection.update(
-        //       { _id: id },
-        //       {
-        //         $set: {
-        //           idimdb: idimdb,
-        //         },
-        //       },
-        //       { multi: true }
-        //     ));
-        // } catch (error) {
-        //   console.log("no se pudo actualizar en nameToImdb " + pelicula.nombre);
-        //   console.log(error.message);
-        // }
-
-        /////////ACTUALIZANDO TRILERS
-        // try {
-        //   console.log(`Update urlTrailer - Nombre Peli: ${peli.nombrePeli}`);
-        //   idimdb &&
-        //     (await IMDb.trailer(idimdb, async (url) => {
-        //     //   console.log(url)  // output is direct mp4 url (also have expiration timeout)
-        //         console.log("URL Trailer de " + idimdb +" URL: \n",url)  // etc...
-        //       await PelisCollection.update(
-        //         { _id: id },
-        //         {
-        //           $set: {
-        //             urlTrailer: url,
-        //             // clasificacion: details.Genres.split(", ")
-        //           },
-        //         }
-        //       );
-        //     }));
-        // } catch (error) {
-        //     console.log("no se pudo actualizar en IMDb.trailer " + pelicula.nombre);
-        //   console.log(error.message);
-        // }
-
-        //////ACTUALIZANDO CLASIFICACION
+      } catch (error) {
         console.log(
-          `Update descripcion y clasificacion - Nombre Peli: ${peli.nombrePeli}`
+          "no se pudo Actualizado subtitulo de la Peli " + pelicula.nombre
         );
-        try {
+        console.log(error.message);
+      }
 
-            const imdba = require('imdb-api');  
+      var nameToImdb = require("name-to-imdb");
+      const IMDb = require("imdb-light");
 
-            (idimdb || (peli && peli.nombrePeli)) && (peli.clasificacion == null || peli.clasificacion.length == 0 || peli.actors == null || peli.actors.length == 0  ) &&
-              (await imdba
-                .get(idimdb ? {id: idimdb} :{ name: peli.nombrePeli }, { apiKey: "99b0df89" })
-                .then(async (element) => {
-                  console.log("Se encontro en imdb la peli " + peli.nombrePeli);
-                      // console.log(
-                      //   "Detalles de " + idimdb + " Detalles: \n",
-                      //   element
-                      // ); // etc...
-                      element &&
-                        (await PelisCollection.update(
-                          { _id: id },
-                          {
-                            $set: {
-                              descripcion: element.plot,
-                              clasificacion: element.genres.split(", "),
-                              actors: element.actors.split(", "),
-                              idimdb: element.imdbid,
-                            },
-                          },
-                          { multi: true }
-                        ));
-                }));
+      console.log("Nombre Peli: " + peli.nombrePeli);
+      var idimdb = peli.idimdb;
+      // try {
+      //   await nameToImdb(
+      //     { name: pelicula.nombre, year: pelicula.year },
+      //     async (err, res, inf) => {
+      //       err && console.log(`err IMDB de ${pelicula.nombre} =>  `,err);
+      //       await console.log(`id IMDB de ${pelicula.nombre} =>  `,res); // "tt0121955"
+      //       // inf contains info on where we matched that name - e.g. metadata, or on imdb
+      //       // and the meta object with all the available data
+      //       await console.log(`info IMDB de ${pelicula.nombre} =>  `,inf);
+      //       if (res) {
+      //         idimdb = res;
+      //       }
+      //     }
+      //   );
+      //   //////ACTUALIZANDO IDIMDB EN PELI
+      //   console.log(`Update IDIMDB - Nombre Peli: ${peli.nombrePeli}`);
+      //   idimdb &&
+      //     (await PelisCollection.update(
+      //       { _id: id },
+      //       {
+      //         $set: {
+      //           idimdb: idimdb,
+      //         },
+      //       },
+      //       { multi: true }
+      //     ));
+      // } catch (error) {
+      //   console.log("no se pudo actualizar en nameToImdb " + pelicula.nombre);
+      //   console.log(error.message);
+      // }
 
-        } catch (error) {
-            console.log("no se pudo actualizar en IMDb.fetch " + pelicula.nombre);
-          console.log(error.message);
-        }
+      /////////ACTUALIZANDO TRILERS
+      // try {
+      //   console.log(`Update urlTrailer - Nombre Peli: ${peli.nombrePeli}`);
+      //   idimdb &&
+      //     (await IMDb.trailer(idimdb, async (url) => {
+      //     //   console.log(url)  // output is direct mp4 url (also have expiration timeout)
+      //         console.log("URL Trailer de " + idimdb +" URL: \n",url)  // etc...
+      //       await PelisCollection.update(
+      //         { _id: id },
+      //         {
+      //           $set: {
+      //             urlTrailer: url,
+      //             // clasificacion: details.Genres.split(", ")
+      //           },
+      //         }
+      //       );
+      //     }));
+      // } catch (error) {
+      //     console.log("no se pudo actualizar en IMDb.trailer " + pelicula.nombre);
+      //   console.log(error.message);
+      // }
 
-        !exist &&
-          peli &&
-          Meteor.call(
-            "enviarMensajeDirectoaAdministradores",
-            `Nueva Peli en Vidkar:\nNombre: ${peli.nombrePeli}\nAño: ${peli.year}`,
-            peli.urlBackground
-          );
+      //////ACTUALIZANDO CLASIFICACION
+      console.log(
+        `Update descripcion y clasificacion - Nombre Peli: ${peli.nombrePeli}`
+      );
+      try {
+        const imdba = require("imdb-api");
+
+        (idimdb || (peli && peli.nombrePeli)) &&
+          (peli.clasificacion == null ||
+            peli.clasificacion.length == 0 ||
+            peli.actors == null ||
+            peli.actors.length == 0) &&
+          (await imdba
+            .get(idimdb ? { id: idimdb } : { name: peli.nombrePeli }, {
+              apiKey: "99b0df89",
+            })
+            .then(async (element) => {
+              console.log("Se encontro en imdb la peli " + peli.nombrePeli);
+              // console.log(
+              //   "Detalles de " + idimdb + " Detalles: \n",
+              //   element
+              // ); // etc...
+              element &&
+                (await PelisCollection.update(
+                  { _id: id },
+                  {
+                    $set: {
+                      descripcion: element.plot,
+                      clasificacion: element.genres.split(", "),
+                      actors: element.actors.split(", "),
+                      idimdb: element.imdbid,
+                    },
+                  },
+                  { multi: true }
+                ));
+            }));
+      } catch (error) {
+        console.log("no se pudo actualizar en IMDb.fetch " + pelicula.nombre);
+        console.log(error.message);
+      }
     },
     getUrlTriller: (id) => {
       let peli = PelisCollection.findOne(id);
       return peli.urlTrailer ? peli.urlTrailer : null;
     },
     addVistas: (id) => {
-      PelisCollection.update(id, { $inc: { vistas: 1 } })
-    }
+      PelisCollection.update(id, { $inc: { vistas: 1 } });
+    },
   });
 }

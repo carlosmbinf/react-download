@@ -121,15 +121,22 @@ if (Meteor.isServer) {
       var buffer;
                   
       if(imagen){
+        try{
         // Descargar la imagen como buffer
         response = await axios.get(imagen, { responseType: 'arraybuffer' });
         buffer = response ? await Buffer.from(response.data) : null;
-}
+        }catch(error){
+          response = null;
+          buffer = null;
+          console.error('Error al descargar la imagen de la pelicula:', message);
+        }
+        
+      }
       administradores && administradores.forEach(async (admin) => {
         try {
 
 
-          if(imagen == null || imagen == ""){
+          if(buffer == null){
             admin.idtelegram &&
               bot.telegram.sendMessage(admin.idtelegram, message);
           }else{
