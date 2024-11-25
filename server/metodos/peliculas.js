@@ -299,7 +299,7 @@ if (Meteor.isServer) {
             peli.actors.length == 0) &&
           (await imdba
             .get(idimdb ? { id: idimdb } : { name: peli.nombrePeli }, {
-              apiKey: "99b0df89",
+              apiKey: "95b342ae", //esta sirve 99b0df89
             })
             .then(async (element) => {
               console.log("Se encontro en imdb la peli " + peli.nombrePeli);
