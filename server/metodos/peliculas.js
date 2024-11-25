@@ -125,7 +125,7 @@ if (Meteor.isServer) {
             console.log(`Pelicula ${a.nombre} no existe en la base de datos`);
           pelicula &&
             console.log(`Pelicula ${a.nombre} ya existe en la base de datos`);
-          !pelicula &&
+            
             a &&
             a.nombre &&
             a.year &&
