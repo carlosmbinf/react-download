@@ -61,7 +61,7 @@ if (Meteor.isServer) {
         const idPeli = req.query.idPeli; // URL de la imagen
         //Aqui se busca la url de la imagen de la pelicula para trabajarla
         //la url seria asi
-        ///process-image?calidad=low
+        ///imagenesPeliculas?calidad=low
         //calidad - low||mid||hig
         const {calidad} = req.query.width
         let width = parseInt(req.query.width) || 900; // Ancho máximo
