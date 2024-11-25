@@ -9,9 +9,16 @@ import fs from 'fs';
 const endpoint = router();
 
 // import youtubeDownload from "./downloader";
-
+const axios = require('axios');
+const sharp = require('sharp');
+const { createClient } = require('redis');
 var http = require("http");
 http.post = require("http-post");
+
+// Configuración de Redis
+const redisClient = createClient();
+redisClient.connect().catch(console.error);
+
 
 import {
     OnlineCollection,
@@ -44,6 +51,90 @@ if (Meteor.isServer) {
             stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
         })
     }
+
+
+
+    //imagenes
+    endpoint.post('/imagenesPeliculas', async (req, res) => {
+        const imageUrl = "https://www.vidkar.com:3006/Peliculas/Extranjeras/2024/Your.Monster.2024/fanart.jpg"
+        
+        const idPeli = req.query.idPeli; // URL de la imagen
+        //Aqui se busca la url de la imagen de la pelicula para trabajarla
+        //la url seria asi
+        ///process-image?calidad=low
+        //calidad - low||mid||hig
+        const {calidad} = req.query.width
+        let width = parseInt(req.query.width) || 900; // Ancho máximo
+        let height = parseInt(req.query.height) || 900; // Alto máximo
+
+        switch (calidad) {
+            case "low":
+                width = 400;
+                height = 400;
+                break;
+
+            case "mid":
+                width = 700;
+                height = 700;
+                break;
+
+            case "hig":
+                width = 1000;
+                height = 1000;
+                break;
+
+        
+            default:
+                width = 1000;
+                height = 1000;
+                break;
+        }
+        const cacheKey = `${imageUrl}-${width}x${height}`; // Clave única para la imagen
+
+        if (!imageUrl) {
+            return res.status(400).send('Por favor proporciona una URL de imagen.');
+        }
+
+        try {
+            // Verificar si la imagen ya está en caché
+            const cachedImage = await redisClient.get(cacheKey);
+
+            if (cachedImage) {
+            console.log('Imagen servida desde caché');
+            res.set('Content-Type', 'image/jpeg');
+            return res.send(Buffer.from(cachedImage, 'base64')); // Decodificar desde base64
+            }
+
+            // Descargar la imagen desde la URL
+            const response = await axios({
+                url: imageUrl,
+                method: 'GET',
+                responseType: 'arraybuffer',
+                httpsAgent: new (require('https').Agent)({ rejectUnauthorized: false }),
+            });
+
+            // Procesar la imagen con Sharp
+            const compressedImage = await sharp(response.data)
+            .resize(width, height, { fit: 'inside' })
+            .jpeg({ quality: 70 })
+            .toBuffer();
+
+            // Guardar la imagen comprimida en Redis (como base64 para almacenamiento eficiente)
+            await redisClient.set(cacheKey, compressedImage.toString('base64'), {
+            EX: 3600, // Tiempo de expiración en segundos (1 hora)
+            });
+
+            console.log('Imagen procesada y guardada en caché');
+
+            // Enviar la imagen comprimida al cliente
+            res.set('Content-Type', 'image/jpeg');
+            res.send(compressedImage);
+        } catch (error) {
+            console.error('Error al procesar la imagen:', error.message);
+            res.status(500).send('Error al procesar la imagen.');
+        }
+      });
+
 
 
     endpoint.post('/reportar', async (req, res) => {
