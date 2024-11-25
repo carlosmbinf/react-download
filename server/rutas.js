@@ -55,7 +55,7 @@ if (Meteor.isServer) {
 
 
     //imagenes
-    endpoint.post('/imagenesPeliculas', async (req, res) => {
+    endpoint.get('/imagenesPeliculas', async (req, res) => {
         const imageUrl = "https://www.vidkar.com:3006/Peliculas/Extranjeras/2024/Your.Monster.2024/fanart.jpg"
         
         const idPeli = req.query.idPeli; // URL de la imagen
