@@ -143,7 +143,8 @@ export default function PelisTable() {
             vistas: 1,
             mostrar: 1,
             clasificacion: 1,
-            extension: 1
+            extension: 1,
+            year:1
           }
         }
       ); 
@@ -160,7 +161,8 @@ export default function PelisTable() {
             vistas: 1,
             mostrar: 1,
             clasificacion: 1,
-            extension: 1
+            extension: 1,
+            year: 1
           },
           sort: { nombrePeli: 1 },
         }
@@ -176,7 +178,8 @@ export default function PelisTable() {
             clasificacion: pelicula.clasificacion.length
               ? pelicula.clasificacion
               : "Sin Clasificación",
-            extension : pelicula.extension
+            extension : pelicula.extension,
+            year: pelicula.year
           });
       });
     } catch (error) { }
@@ -262,6 +265,14 @@ export default function PelisTable() {
       </React.Fragment>
     );
   };
+  const yearBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">Año</span>
+        <Chip color="primary" label={rowData.year} />
+      </React.Fragment>
+    );
+  };
   const urlBodyTemplate = (rowData) => {
     return (
       <React.Fragment>
@@ -341,6 +352,14 @@ export default function PelisTable() {
                   field="extension"
                   header="Extension"
                   body={extensionBodyTemplate}
+                  filter
+                  filterPlaceholder="Search"
+                  filterMatchMode="contains"
+                />
+                <Column
+                  field="year"
+                  header="Año"
+                  body={yearBodyTemplate}
                   filter
                   filterPlaceholder="Search"
                   filterMatchMode="contains"
