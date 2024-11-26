@@ -208,7 +208,8 @@ export default function PelisTable() {
           <Avatar
             className={classes.avatar}
             alt={rowData.nombre}
-            src={rowData.img}
+            src={"/imagenesPeliculas?calidad=low&&idPeli=" +
+              rowData.id }
           />
         {/* <img
           src={rowData.services.facebook.picture.data.url}

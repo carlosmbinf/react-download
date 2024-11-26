@@ -56,14 +56,22 @@ if (Meteor.isServer) {
 
     //imagenes
     endpoint.get('/imagenesPeliculas', async (req, res) => {
-        const imageUrl = "https://www.vidkar.com:3006/Peliculas/Extranjeras/2024/Your.Monster.2024/fanart.jpg"
+        let imageUrl = "https://www.vidkar.com:3006/Peliculas/Extranjeras/2024/Your.Monster.2024/fanart.jpg"
         
         const idPeli = req.query.idPeli; // URL de la imagen
+        // console.log("idPeli("+idPeli+")")
+        let pelicula = await PelisCollection.findOne({ _id: idPeli});
+        // console.log("pelicula", pelicula)
+        if (!pelicula || !pelicula.urlBackground) {
+            res.statusCode = 400
+            return res.end('La Pelicula no tiene imagen');
+        }
+        imageUrl = pelicula.urlBackground
         //Aqui se busca la url de la imagen de la pelicula para trabajarla
         //la url seria asi
-        ///imagenesPeliculas?calidad=low
+        ///https://www.vidkar.com/imagenesPeliculas?calidad=hig&&idPeli=Sdx3Rgd9MHeDfhPBj
         //calidad - low||mid||hig
-        const {calidad} = req.query.width
+        const {calidad} = req.query;
         let width = parseInt(req.query.width) || 900; // Ancho máximo
         let height = parseInt(req.query.height) || 900; // Alto máximo
 
@@ -92,7 +100,8 @@ if (Meteor.isServer) {
         const cacheKey = `${imageUrl}-${width}x${height}`; // Clave única para la imagen
 
         if (!imageUrl) {
-            return res.status(400).send('Por favor proporciona una URL de imagen.');
+            res.statusCode = 400
+            return res.end('La Pelicula no tiene imagen');
         }
 
         try {
@@ -100,9 +109,9 @@ if (Meteor.isServer) {
             const cachedImage = await redisClient.get(cacheKey);
 
             if (cachedImage) {
-            console.log('Imagen servida desde caché');
-            res.set('Content-Type', 'image/jpeg');
-            return res.send(Buffer.from(cachedImage, 'base64')); // Decodificar desde base64
+            // console.log('Imagen servida desde caché');
+            res.setHeader('Content-Type', 'image/jpeg')
+            return res.end(Buffer.from(cachedImage, 'base64'))// Decodificar desde base64
             }
 
             // Descargar la imagen desde la URL
@@ -124,14 +133,15 @@ if (Meteor.isServer) {
             EX: 3600, // Tiempo de expiración en segundos (1 hora)
             });
 
-            console.log('Imagen procesada y guardada en caché');
+            // console.log('Imagen procesada y guardada en caché');
 
             // Enviar la imagen comprimida al cliente
-            res.set('Content-Type', 'image/jpeg');
-            res.send(compressedImage);
+            res.setHeader('Content-Type', 'image/jpeg')
+            res.end(compressedImage)
         } catch (error) {
             console.error('Error al procesar la imagen:', error.message);
-            res.status(500).send('Error al procesar la imagen.');
+            res.statusCode = 400
+            res.end('Error al procesar la imagen')
         }
       });
 

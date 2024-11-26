@@ -174,102 +174,128 @@ export default function PeliCardOnly(options) {
   // mostrar[peli._id] = false
   // const bull = <span className={classes.bullet}>•</span>;
   
-  return <Link key={options.peliGeneral._id} to={"/pelis/" + options.peliGeneral._id} className={classes.link}>
-          <Button color="inherit" className={classes.boton}
-          onMouseEnter={async () => {
-            // console.log("Probando - " + mostrarTriler[options.peliGeneral._id]);
-            try {
-
-              Meteor.call("getUrlTriller",options.peliGeneral._id,(error,result)=>{
-                error && console.log(error.message)
-                result && setTriller(result)
-              })
-            setMostrarTriler(true)
-              
-
-            } catch (error) {
-              console.log(error)
-            }
-          }}
-          onMouseLeave={() => {
-
-            setMostrarTriler(false)
-            // mostrarTriler[options.peliGeneral._id] = false
-            // console.log("Probando - " + mostrarTriler[options.peliGeneral._id]);
-
-          }}
-          >
-            <Paper
-              elevation={5}
-              className={
-                options.peliGeneral.mostrar !== "true"
-                  ? classes.primary
-                  : classes.secundary
+  return (
+    <Link
+      key={options.peliGeneral._id}
+      to={"/pelis/" + options.peliGeneral._id}
+      className={classes.link}
+    >
+      <Button
+        color="inherit"
+        className={classes.boton}
+        onMouseEnter={async () => {
+          // console.log("Probando - " + mostrarTriler[options.peliGeneral._id]);
+          try {
+            Meteor.call(
+              "getUrlTriller",
+              options.peliGeneral._id,
+              (error, result) => {
+                error && console.log(error.message);
+                result && setTriller(result);
               }
-              style={{
-                backgroundImage: "url('" + options.peliGeneral.urlBackgroundHTTPS + "')",
-              }}
-            >
-              <Grid >
-              {mostrarTriler && triller ?
-              <Grid className={classes.video} style={{ width: "100%", height:"100%", position: "absolute", bottom: 0, background: "black" }}>
+            );
+            setMostrarTriler(true);
+          } catch (error) {
+            console.log(error);
+          }
+        }}
+        onMouseLeave={() => {
+          setMostrarTriler(false);
+          // mostrarTriler[options.peliGeneral._id] = false
+          // console.log("Probando - " + mostrarTriler[options.peliGeneral._id]);
+        }}
+      >
+        <Paper
+          elevation={5}
+          className={
+            options.peliGeneral.mostrar !== "true"
+              ? classes.primary
+              : classes.secundary
+          }
+          style={{
+            // backgroundImage: "url('" + options.peliGeneral.urlBackgroundHTTPS + "')",
+            backgroundImage:
+              "url('" +
+              "/imagenesPeliculas?calidad=low&&idPeli=" +
+              options.peliGeneral._id +
+              "')",
+          }}
+        >
+          <Grid>
+            {mostrarTriler && triller ? (
+              <Grid
+                className={classes.video}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  position: "absolute",
+                  bottom: 0,
+                  background: "black",
+                }}
+              >
                 {/* INSERTAR VIDEO */}
-                  <video autoPlay={true} width="100%" style={{ borderRadius: 20, width: "100%", height: "100%" }} poster={options.peliGeneral.urlBackgroundHTTPS} preload="metadata">
-                    <source src={triller} type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"' />
-                    {/* <track default kind="subtitles" label="Español" src={`/getsubtitle?idPeli=${options.peliGeneral._id}`} srcLang="es" /> */}
-                    {/* <track default kind="descriptions" label="Español" src="https://visuales.uclv.cu/Peliculas/Extranjeras/2020/2020_Ava/sinopsis.txt" srcLang="es"/> */}
-                  </video>
-               
-                
+                <video
+                  autoPlay={true}
+                  width="100%"
+                  style={{ borderRadius: 20, width: "100%", height: "100%" }}
+                  poster={options.peliGeneral.urlBackgroundHTTPS}
+                  preload="metadata"
+                >
+                  <source
+                    src={triller}
+                    type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'
+                  />
+                  {/* <track default kind="subtitles" label="Español" src={`/getsubtitle?idPeli=${options.peliGeneral._id}`} srcLang="es" /> */}
+                  {/* <track default kind="descriptions" label="Español" src="https://visuales.uclv.cu/Peliculas/Extranjeras/2020/2020_Ava/sinopsis.txt" srcLang="es"/> */}
+                </video>
               </Grid>
-               :
-               <Grid container >
-                  {/* <Divider className={classes.padding10} /> */}
+            ) : (
+              <Grid container>
+                {/* <Divider className={classes.padding10} /> */}
+                <Grid
+                  item
+                  style={{ position: "absolute", bottom: 0, width: "100%" }}
+                >
                   <Grid
-                    item
-                    style={{ position: "absolute", bottom: 0, width: "100%"}}
+                    container
+                    className={classes.elementosBotom}
+                    direction="row"
+                    justify="center"
+                    alignItems="center"
                   >
-                    <Grid
-                      container
-                      className={classes.elementosBotom}
-                      direction="row"
-                      justify="center"
-                      alignItems="center"
-                    >
-                      <Grid item xs={10}>
-                        <Typography
-                          style={{
-                            color: "white",
-                            fontSize: 14,
-                          }}
-                        >
-                          <strong>{options.peliGeneral.nombrePeli}</strong>
+                    <Grid item xs={10}>
+                      <Typography
+                        style={{
+                          color: "white",
+                          fontSize: 14,
+                        }}
+                      >
+                        <strong>{options.peliGeneral.nombrePeli}</strong>
+                      </Typography>
+                      <Grid
+                        container
+                        direction="row"
+                        justify="flex-end"
+                        alignItems="center"
+                        style={{
+                          color: "white",
+                          fontSize: 14,
+                        }}
+                      >
+                        <Typography>
+                          <strong> {options.peliGeneral.year}</strong>
                         </Typography>
-                        <Grid
-                          container
-                          direction="row"
-                          justify="flex-end"
-                          alignItems="center"
-                          style={{
-                            color: "white",
-                            fontSize: 14,
-                          }}
-                        >
-                          
-                          <Typography>
-                            <strong> {options.peliGeneral.year}</strong>
-                          </Typography>
-                        </Grid>
                       </Grid>
                     </Grid>
                   </Grid>
                 </Grid>
-               }
-                
               </Grid>
-            </Paper>
-          </Button>
-        </Link>
+            )}
+          </Grid>
+        </Paper>
+      </Button>
+    </Link>
+  );
     
 
 }

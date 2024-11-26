@@ -67,6 +67,9 @@ if (Meteor.isServer) {
 
   console.log("Cargando Métodos de peliculas...");
   Meteor.methods({
+    getPelicula: async function (id) {
+      return await PelisCollection.findOne(id);
+    },
     insertpelisbyyears: async function ({ year }) {
       console.log("insertpelisbyyears" + year);
 
