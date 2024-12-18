@@ -36,7 +36,9 @@ if (Meteor.isServer) {
     let poster = "";
     if (!url || !nombre)
       throw new TypeError("Need to provide an url as first argument.");
-    const { body: html } = await await got(url);
+    
+    try {
+      const { body: html } = await await got(url);
     const linksPeli = await htmlUrls({ html, url });
 
     // for (var j = 5; j < linksPeli.length-6; j++) {
@@ -62,7 +64,13 @@ if (Meteor.isServer) {
       poster,
       urlPadre: url,
     };
+    
     return insertPeli;
+
+    } catch (error) {
+    return null;      
+    }
+    
   }
 
   console.log("Cargando Métodos de peliculas...");
