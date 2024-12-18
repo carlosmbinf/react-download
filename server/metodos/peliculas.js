@@ -64,7 +64,7 @@ if (Meteor.isServer) {
       poster,
       urlPadre: url,
     };
-    
+
     return insertPeli;
 
     } catch (error) {
@@ -85,71 +85,78 @@ if (Meteor.isServer) {
       const url = `http://www.vidkar.com:3005/Peliculas/Extranjeras/${year}/`;
       if (!url)
         throw new TypeError("Need to provide an url as first argument.");
-      const { body: html } = await got(url);
-      const links = await htmlUrls({ html, url });
-
-      //   links.forEach(({ url }) => console.log(url))
-
-      //   // => [
-      //   //   'https://microlink.io/component---src-layouts-index-js-86b5f94dfa48cb04ae41.js',
-      //   //   'https://microlink.io/component---src-pages-index-js-a302027ab59365471b7d.js',
-      //   //   'https://microlink.io/path---index-709b6cf5b986a710cc3a.js',
-      //   //   'https://microlink.io/app-8b4269e1fadd08e6ea1e.js',
-      //   //   'https://microlink.io/commons-8b286eac293678e1c98c.js',
-      //   //   'https://microlink.io',
-      //   //   ...
-      //   // ]
-      // console.log(links)
-
-      for (var i = 5; i <= links.length - 4; i++) {
-        // console.log("links lista" , links[i]);
-        let nombre = links[i].value
-          .replace(`${year}_`, "")
-          .replace(/%20/g, " ")
-          .replace(/\./g, " ")
-          .replace(`/`, "")
-          .replace(`(${year})`, "");
-        console.log(`Name: ${nombre}`);
-        console.log(links[i].value);
-        let a;
-        let pelicula = await PelisCollection.findOne({
-          urlPadre: links[i].url,
-        });
-        let existe = pelicula ? true : false;
-        if (pelicula) {
-          a = {
-            nombre: pelicula.nombrePeli,
-            year: pelicula.year,
-            peli: pelicula.urlPeli,
-            subtitle: pelicula.subtitulo,
-            poster: pelicula.urlBackground,
+      
+      try {
+        const { body: html } = await got(url);
+        const links = await htmlUrls({ html, url });
+  
+        //   links.forEach(({ url }) => console.log(url))
+  
+        //   // => [
+        //   //   'https://microlink.io/component---src-layouts-index-js-86b5f94dfa48cb04ae41.js',
+        //   //   'https://microlink.io/component---src-pages-index-js-a302027ab59365471b7d.js',
+        //   //   'https://microlink.io/path---index-709b6cf5b986a710cc3a.js',
+        //   //   'https://microlink.io/app-8b4269e1fadd08e6ea1e.js',
+        //   //   'https://microlink.io/commons-8b286eac293678e1c98c.js',
+        //   //   'https://microlink.io',
+        //   //   ...
+        //   // ]
+        // console.log(links)
+  
+        for (var i = 5; i <= links.length - 4; i++) {
+          // console.log("links lista" , links[i]);
+          let nombre = links[i].value
+            .replace(`${year}_`, "")
+            .replace(/%20/g, " ")
+            .replace(/\./g, " ")
+            .replace(`/`, "")
+            .replace(`(${year})`, "");
+          console.log(`Name: ${nombre}`);
+          console.log(links[i].value);
+          let a;
+          let pelicula = await PelisCollection.findOne({
             urlPadre: links[i].url,
-          };
-        } else {
-          a = await getPeli(nombre, year, links[i].url);
+          });
+          let existe = pelicula ? true : false;
+          if (pelicula) {
+            a = {
+              nombre: pelicula.nombrePeli,
+              year: pelicula.year,
+              peli: pelicula.urlPeli,
+              subtitle: pelicula.subtitulo,
+              poster: pelicula.urlBackground,
+              urlPadre: links[i].url,
+            };
+          } else {
+            a = await getPeli(nombre, year, links[i].url);
+          }
+  
+          // console.log(pelis.length)
+          try {
+            // pelis && (await Meteor.call("insertPelis", pelis[0]));
+            !pelicula &&
+              console.log(`Pelicula ${a.nombre} no existe en la base de datos`);
+            pelicula &&
+              console.log(`Pelicula ${a.nombre} ya existe en la base de datos`);
+              
+              a &&
+              a.nombre &&
+              a.year &&
+              a.peli &&
+              a.poster &&
+              (await Meteor.call("insertPelis", a));
+  
+            let peli = await PelisCollection.findOne({ urlPadre: links[i].url });
+            peli && !existe && pelis.push(peli);
+          } catch (error) {
+            console.log("Ocurrio un error => " + error.message);
+          }
         }
-
-        // console.log(pelis.length)
-        try {
-          // pelis && (await Meteor.call("insertPelis", pelis[0]));
-          !pelicula &&
-            console.log(`Pelicula ${a.nombre} no existe en la base de datos`);
-          pelicula &&
-            console.log(`Pelicula ${a.nombre} ya existe en la base de datos`);
-            
-            a &&
-            a.nombre &&
-            a.year &&
-            a.peli &&
-            a.poster &&
-            (await Meteor.call("insertPelis", a));
-
-          let peli = await PelisCollection.findOne({ urlPadre: links[i].url });
-          peli && !existe && pelis.push(peli);
-        } catch (error) {
-          console.log("Ocurrio un error => " + error.message);
-        }
+      } catch (error) {
+        console.log(error)
       }
+        
+     
 
       pelis.length > 0 &&
         pelis.forEach(async (peli) => {
