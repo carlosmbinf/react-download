@@ -38,7 +38,7 @@ if (Meteor.isServer) {
       throw new TypeError("Need to provide an url as first argument.");
     
     try {
-      const { body: html } = await await got(url);
+      const { body: html } = await got(url);
     const linksPeli = await htmlUrls({ html, url });
 
     // for (var j = 5; j < linksPeli.length-6; j++) {
