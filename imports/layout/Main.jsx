@@ -36,7 +36,7 @@ import CreateArchivo from "../ui/pages/pelis/CreatePeli";
 import AddDescargas from "../ui/pages/download/AddDescargas";
 import TableDescarga from "../ui/pages/download/TableDescarga";
 import CompraCard from "../ui/pages/compras/CompraCard";
-import { Chip, Grid, Zoom } from "@material-ui/core";
+import { Chip, Container, Grid, TextField, Zoom } from "@material-ui/core";
 import CreateTV from "../ui/pages/tv/CreateTV";
 import TVonline from "../ui/pages/tv/TVCard";
 import TV from "../ui/pages/tv/TVDetails";
@@ -89,15 +89,27 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: 0,
     height: "100%",
   },
+  filterInput: {
+    margin: theme.spacing(2, 0),
+    width: "100%",
+  },
+  container: {
+    padding: theme.spacing(2),
+  },
+
 }));
 
 export default function Main() {
   const [clasificacionSeries, setClasificacionSeries] = React.useState([]);
+  const [filter, setFilter] = React.useState("");
   const classes = useStyles();
   const useractual = useTracker(() => {
     return Meteor.user();
   });
   
+  const handleFilterChange = (event) => {
+    setFilter(event.target.value);
+  };
 
   useEffect(() => {
     Meteor.call("getSeriesClasificacion", (err, res) => {
@@ -807,7 +819,7 @@ export default function Main() {
                 useractual.profile &&
                 useractual.profile.role == "admin" ? (
                   <>
-                    <PelisCard withCreate="true" />
+                    <PelisCard withCreate="true"/>
                     <PelisTable />
                   </>
                 ) : (
@@ -815,17 +827,34 @@ export default function Main() {
                 )}
               </Grid>
               <Grid item xs={12}>
-                {/*<PelisCard clasificacion="All" />*/}
-                <PelisCard clasificacion="Sci-Fi" />
-                <PelisCard clasificacion="Action" />
-                <PelisCard clasificacion="Adventure" />
-                <PelisCard clasificacion="Thriller" />
-                <PelisCard clasificacion="Crime" />
-                <PelisCard clasificacion="Mystery" />
-                <PelisCard clasificacion="Horror" />
-                <PelisCard clasificacion="Comedy" />
-                <PelisCard clasificacion="Drama" />
-                <PelisCard clasificacion="Romance" />
+                <Container className={classes.container}>
+                  {/* Campo de filtro */}
+                  <TextField
+                    className={classes.filterInput}
+                    variant="outlined"
+                    label="Busca por nombre o año"
+                    placeholder="Ejemplo: Inception o 2023"
+                    value={filter}
+                    onChange={handleFilterChange}
+                    helperText="Escribe el nombre de la película o el año para filtrar"
+                  />
+
+                  {/* Películas filtradas */}
+                  <div style={{ paddingBottom: "7em" }}>
+                    <PelisCard clasificacion="All" filter={filter} />
+                    <PelisCard clasificacion="Sci-Fi" filter={filter} />
+                    <PelisCard clasificacion="Action" filter={filter} />
+                    <PelisCard clasificacion="Adventure" filter={filter} />
+                    <PelisCard clasificacion="Thriller" filter={filter} />
+                    <PelisCard clasificacion="Crime" filter={filter} />
+                    <PelisCard clasificacion="Mystery" filter={filter} />
+                    <PelisCard clasificacion="Horror" filter={filter} />
+                    <PelisCard clasificacion="Comedy" filter={filter} />
+                    <PelisCard clasificacion="Drama" filter={filter} />
+                    <PelisCard clasificacion="Romance" filter={filter} />
+                  </div>
+
+                </Container>
               </Grid>
             </Grid>
           </div>
@@ -993,21 +1022,35 @@ export default function Main() {
           <Footer />
         </Route>
         <Route path="/">
-          <div style={{ paddingBottom: "7em" }}>
-            {/*<PelisCard clasificacion="All" />*/}
-            <PelisCard clasificacion="Sci-Fi" />
-            <PelisCard clasificacion="Action" />
-            <PelisCard clasificacion="Adventure" />
-            <PelisCard clasificacion="Thriller" />
-            <PelisCard clasificacion="Crime" />
-            <PelisCard clasificacion="Mystery" />
-            <PelisCard clasificacion="Horror" />
-            <PelisCard clasificacion="Comedy" />
-            <PelisCard clasificacion="Drama" />
-            <PelisCard clasificacion="Romance" />
-          </div>
+          <Container className={classes.container}>
+            {/* Campo de filtro */}
+            <TextField
+              className={classes.filterInput}
+              variant="outlined"
+              label="Busca por nombre o año"
+              placeholder="Ejemplo: Inception o 2023"
+              value={filter}
+              onChange={handleFilterChange}
+              helperText="Escribe el nombre de la película o el año para filtrar"
+            />
 
-          <Footer />
+            {/* Películas filtradas */}
+            <div style={{ paddingBottom: "7em" }}>
+              <PelisCard clasificacion="All" filter={filter} />
+              <PelisCard clasificacion="Sci-Fi" filter={filter} />
+              <PelisCard clasificacion="Action" filter={filter} />
+              <PelisCard clasificacion="Adventure" filter={filter} />
+              <PelisCard clasificacion="Thriller" filter={filter} />
+              <PelisCard clasificacion="Crime" filter={filter} />
+              <PelisCard clasificacion="Mystery" filter={filter} />
+              <PelisCard clasificacion="Horror" filter={filter} />
+              <PelisCard clasificacion="Comedy" filter={filter} />
+              <PelisCard clasificacion="Drama" filter={filter} />
+              <PelisCard clasificacion="Romance" filter={filter} />
+            </div>
+
+            <Footer />
+          </Container>
         </Route>
       </Switch>
     </>
