@@ -94,7 +94,7 @@ export default function Carousel({ items }: Props) {
         autoPlayInterval={2000}
         autoWidth
         // autoHeight
-        // infinite
+        infinite
         // disableButtonsControls={true}
         mouseTracking
         controlsStrategy="responsive"
