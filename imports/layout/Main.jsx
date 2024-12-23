@@ -92,10 +92,7 @@ const useStyles = makeStyles((theme) => ({
   filterInput: {
     margin: theme.spacing(2, 0),
     width: "100%",
-  },
-  container: {
-    padding: theme.spacing(2),
-  },
+  }
 
 }));
 
@@ -827,9 +824,9 @@ export default function Main() {
                 )}
               </Grid>
               <Grid item xs={12}>
-                <Container className={classes.container}>
                   {/* Campo de filtro */}
-                  <TextField
+                  <Container>
+                    <TextField
                     className={classes.filterInput}
                     variant="outlined"
                     label="Busca por nombre o año"
@@ -838,7 +835,8 @@ export default function Main() {
                     onChange={handleFilterChange}
                     helperText="Escribe el nombre de la película o el año para filtrar"
                   />
-
+                  </Container>
+                  
                   {/* Películas filtradas */}
                   <div style={{ paddingBottom: "7em" }}>
                     <PelisCard clasificacion="All" filter={filter} />
@@ -854,7 +852,6 @@ export default function Main() {
                     <PelisCard clasificacion="Romance" filter={filter} />
                   </div>
 
-                </Container>
               </Grid>
             </Grid>
           </div>
@@ -1022,17 +1019,18 @@ export default function Main() {
           <Footer />
         </Route>
         <Route path="/">
-          <Container className={classes.container}>
             {/* Campo de filtro */}
-            <TextField
-              className={classes.filterInput}
-              variant="outlined"
-              label="Busca por nombre o año"
-              placeholder="Ejemplo: Inception o 2023"
-              value={filter}
-              onChange={handleFilterChange}
-              helperText="Escribe el nombre de la película o el año para filtrar"
-            />
+             <Container>
+                    <TextField
+                    className={classes.filterInput}
+                    variant="outlined"
+                    label="Busca por nombre o año"
+                    placeholder="Ejemplo: Inception o 2023"
+                    value={filter}
+                    onChange={handleFilterChange}
+                    helperText="Escribe el nombre de la película o el año para filtrar"
+                  />
+                  </Container>
 
             {/* Películas filtradas */}
             <div style={{ paddingBottom: "7em" }}>
@@ -1050,7 +1048,6 @@ export default function Main() {
             </div>
 
             <Footer />
-          </Container>
         </Route>
       </Switch>
     </>

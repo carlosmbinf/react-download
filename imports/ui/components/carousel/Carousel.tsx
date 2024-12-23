@@ -90,6 +90,8 @@ export default function Carousel({ items }: Props) {
   return (
     <Wrapper>
       <AliceCarousel
+        autoPlay
+        autoPlayInterval={2000}
         autoWidth
         // autoHeight
         // infinite
@@ -99,6 +101,8 @@ export default function Carousel({ items }: Props) {
         responsive={responsive}
         disableDotsControls={true}
         onResizeEvent={() => true}
+        paddingLeft={0}
+        paddingRight={0}
         // onResized={resizing}
         items={items}
       />
