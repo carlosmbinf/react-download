@@ -78,7 +78,7 @@ if (Meteor.isServer) {
     cron
       .schedule(
         // "1-59 * * * *",
-        "00 */5 * 1-12 *", // cambio para que actualice segun la fecha de uruguay 11:55 de montevideo
+        "00 * * 1-12 *", // cambio para que actualice segun la fecha de uruguay 11:55 de montevideo
         actualizarSeries,
         {
           scheduled: true,
