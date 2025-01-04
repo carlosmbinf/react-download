@@ -90,11 +90,11 @@ export default function Carousel({ items }: Props) {
   return (
     <Wrapper>
       <AliceCarousel
-        autoPlay
-        autoPlayInterval={2000}
+        // autoPlay
+        // autoPlayInterval={2000}
         autoWidth
         // autoHeight
-        infinite
+        // infinite
         // disableButtonsControls={true}
         mouseTracking
         controlsStrategy="responsive"
