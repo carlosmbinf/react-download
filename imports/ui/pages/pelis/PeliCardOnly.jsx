@@ -276,12 +276,18 @@ export default function PeliCardOnly(options) {
                     alignItems="center"
                   >
                     <Grid item xs={10}>
-                      <Typography
-                        style={{
-                          color: "white",
-                          fontSize: 14,
-                        }}
-                      >
+                        <Typography
+                          variant="body1"
+                          style={{
+                            color: "white",
+                            fontSize: 14,
+                            display: '-webkit-box',
+                            WebkitLineClamp: 2, // Limita el texto a 2 líneas
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis', // Agrega puntos suspensivos
+                          }}
+                        >
                         <strong>{options.peliGeneral.nombrePeli}</strong>
                       </Typography>
                       <Grid
