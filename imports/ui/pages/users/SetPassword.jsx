@@ -161,7 +161,7 @@ const DialogActions = withStyles((theme) => ({
   return (
     <Dialog
       aria-labelledby="customized-dialog-title"
-      open={open}>
+      open={!usernameexist || !passwordexist || !emailexist || !movilexist}>
       <DialogTitle id="customized-dialog-title">Actualizar datos.</DialogTitle>
       <DialogContent dividers>
         <Typography gutterBottom>
