@@ -370,7 +370,7 @@ const compras = useTracker(() => {
 
   return (
     <>
-    
+            <SetPassword/>   
       <div
         className={classes.root}
         // style={{ background: "rgb(29 47 62)" }}
@@ -602,7 +602,6 @@ const compras = useTracker(() => {
         </main>
         
       </div>
-            <SetPassword/>      
     </>
   );
 }
