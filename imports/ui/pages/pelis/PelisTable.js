@@ -172,7 +172,7 @@ export default function PelisTable() {
           a.push({
             id: pelicula._id,
             nombre: pelicula.nombrePeli,
-            img: pelicula.urlBackgroundHTTPS,
+            img: "/imagenesPeliculas?calidad=low&&idPeli="+ pelicula._id,
             vistas: pelicula.vistas,
             mostrar: pelicula.mostrar,
             clasificacion: pelicula.clasificacion.length
