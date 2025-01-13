@@ -84,7 +84,7 @@ const DialogActions = withStyles((theme) => ({
   useTracker(() => {
     setTimeout(() => {
       setOpen(!usernameexist || !passwordexist || !emailexist || !movilexist)
-    }, 3000);
+    }, 5000);
     
    });
 
@@ -161,7 +161,7 @@ const DialogActions = withStyles((theme) => ({
   return (
     <Dialog
       aria-labelledby="customized-dialog-title"
-      open={!usernameexist || !passwordexist || !emailexist || !movilexist}>
+      open={open}>
       <DialogTitle id="customized-dialog-title">Actualizar datos.</DialogTitle>
       <DialogContent dividers>
         <Typography gutterBottom>
