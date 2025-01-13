@@ -157,9 +157,9 @@ const useStyles = makeStyles((theme) => ({
 
 export default function PeliCard(options) {
   // const [mostrarTriler, setMostrarTriler] = useState([]);
-
+  const { filter } = options;
   const peli = useTracker(() => {
-    Meteor.subscribe("pelis", { mostrar: "true", extension: { $in: ["mkv","mp4"] }  }, {
+    Meteor.subscribe("pelis", options.clasificacion == "All" ? { mostrar: "true", extension: { $in: ["mkv","mp4"] }  }:{clasificacion: options.clasificacion,mostrar: "true", extension: { $in: ["mkv","mp4"] }}, {
       fields: {
         _id: 1,
         clasificacion: 1,
@@ -176,9 +176,35 @@ export default function PeliCard(options) {
       }
     });
     if (options.clasificacion == "All") {
-      return PelisCollection.find({ mostrar: "true",extension: { $in: ["mkv","mp4"] } }).fetch();
+      return PelisCollection.find(filter?{ mostrar: "true", extension: { $in: ["mkv","mp4"] },
+        $or: [
+        { nombrePeli: { $regex: filter, $options: "i" } }, // Contiene en nombre (case-insensitive)
+        { year: !isNaN(filter) ? parseInt(filter, 10)  : "" }       // Contiene en año
+      ]
+     }:{ mostrar: "true", extension: { $in: ["mkv","mp4"] }}, {
+          fields: {
+            _id: 1,
+            clasificacion: 1,
+            vistas: 1,
+            mostrar: 1,
+            urlBackground: 1,
+            nombrePeli: 1,
+            urlBackgroundHTTPS:1,
+            // urlPeli: 1,
+            // urlTrailer: 1,
+            // idimdb:1
+            year: 1,
+            extension:1
+          }, sort: { vistas: -1,nombrePeli: 1 },
+          limit: 50 // Limitar a 100 resultados
+        }).fetch();
     } else {
-      return PelisCollection.find({ mostrar: "true", clasificacion: options.clasificacion, extension: { $in: ["mkv","mp4"] } }, {
+      return PelisCollection.find(filter?{ mostrar: "true", clasificacion: options.clasificacion, extension: { $in: ["mkv","mp4"] },
+      $or: [
+      { nombrePeli: { $regex: filter, $options: "i" } }, // Contiene en nombre (case-insensitive)
+      { year: !isNaN(filter) ? parseInt(filter, 10)  : "" }       // Contiene en año
+    ]
+   }:{ mostrar: "true", clasificacion: options.clasificacion, extension: { $in: ["mkv","mp4"] }}, {
         fields: {
           _id: 1,
           clasificacion: 1,
@@ -192,7 +218,8 @@ export default function PeliCard(options) {
           // idimdb:1
           year: 1,
           extension:1
-        }, sort: { vistas: -1,nombrePeli: 1 }
+        }, sort: { vistas: -1,nombrePeli: 1 },
+        limit: 50 // Limitar a 100 resultados
       }).fetch();
     }
   });

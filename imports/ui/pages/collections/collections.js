@@ -943,6 +943,7 @@ export const SchemaCapitulosCollection = new SimpleSchema({
   },
   descripcion: {
     type: String,
+    optional: true,
   },
   urlTrailer: {
     type: String,

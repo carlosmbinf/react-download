@@ -36,7 +36,7 @@ if (Meteor.isServer) {
   function parseFilename(filename) {
     // console.log("parseFilename: ", filename);
     // Expresión regular para detectar S01E01, [S01.E01], S01.E01
-    const match = filename.split("/").pop().match(/(?:[sS](\d{2})[eE](\d{3}))|(?:[sS](\d{2})[eE](\d{2}))|(?:sS(\d{2})[.\-Ee](\d{2}))|(?:\S(\d{2})E(\d{2}))|(?:\S(\d{2}).E(\d{2}))|(?:(\d{2})[xX](\d{2}))|(?:(\d{1})[xX](\d{2}))|(?:(\d{1})[xX](\d{1}))/);
+    const match = filename.split("/").pop().match(/(?:[sS](\d{2})[eE](\d{3}))|(?:[sS](\d{2})[eE](\d{2}))|(?:sS(\d{2})[.\-Ee](\d{2}))|(?:\S(\d{2})E(\d{2}))|(?:\S(\d{2}).E(\d{2}))|(?:(\d{2})[xX](\d{2}))|(?:(\d{2})[xX](\d{1}))|(?:(\d{1})[xX](\d{2}))|(?:(\d{1})[xX](\d{1}))/);
     
 
     if (match) {

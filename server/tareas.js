@@ -46,11 +46,11 @@ const actualizarSeries = async () => {
 //ACTUALIZANDO LAS SERIES Y LOS CAPITULOS
 TemporadasCollection.find({actualizar:true}).forEach(async (temporada) => {
 
-  let serie = SeriesCollection.findOne({ _id: temporada.idSerie })
+  let serie = await SeriesCollection.findOne({ _id: temporada.idSerie })
 
    Meteor.call(
      "insertSeriesByTemporadasURL",
-     { urlSerie: temporada.url, year: serie.anoLanzamiento },
+     { urlSerie: temporada.url, year: serie.anoLanzamiento, seriesName: serie.nombre },
      (error, result) => {
        error && console.log(error);
        !error &&
@@ -78,7 +78,7 @@ if (Meteor.isServer) {
     cron
       .schedule(
         // "1-59 * * * *",
-        "00 */5 * 1-12 *", // cambio para que actualice segun la fecha de uruguay 11:55 de montevideo
+        "35 * * 1-12 *", // cambio para que actualice segun la fecha de uruguay 11:55 de montevideo
         actualizarSeries,
         {
           scheduled: true,

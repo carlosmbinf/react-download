@@ -46,20 +46,20 @@ if (Meteor.isServer) {
       //   : ['carlosmbinf9405@icloud.com'])
       let emails =
         admin &&
-        admin.emails[0] &&
-        admin.emails[0].address != "carlosmbinf@gmail.com"
+          admin.emails[0] &&
+          admin.emails[0].address != "carlosmbinf@gmail.com"
           ? user.emails[0] && user.emails[0].address
             ? [
-                "carlosmbinf@gmail.com",
-                admin.emails[0].address,
-                user.emails[0].address,
-              ]
+              "carlosmbinf@gmail.com",
+              admin.emails[0].address,
+              user.emails[0].address,
+            ]
             : ["carlosmbinf@gmail.com", admin.emails[0].address]
           : user.emails[0] &&
             user.emails[0].address &&
             user.emails[0].address != "carlosmbinf@gmail.com"
-          ? ["carlosmbinf@gmail.com", user.emails[0].address]
-          : ["carlosmbinf@gmail.com"];
+            ? ["carlosmbinf@gmail.com", user.emails[0].address]
+            : ["carlosmbinf@gmail.com"];
       require("gmail-send")({
         user: "carlosmbinf@gmail.com",
         pass: "Lastunas@123",
@@ -76,8 +76,8 @@ if (Meteor.isServer) {
         from: user.bloqueadoDesbloqueadoPor
           ? user.bloqueadoDesbloqueadoPor
           : Meteor.users.findOne({
-              username: Array(Meteor.settings.public.administradores)[0][0],
-            })._id,
+            username: Array(Meteor.settings.public.administradores)[0][0],
+          })._id,
         to: user._id,
         mensaje: text.text,
       });
@@ -86,62 +86,95 @@ if (Meteor.isServer) {
 
     getDatosDashboardByUser: async (tipoDeDashboard, idUser) => {
       //tipoDeDashboard = "DIARIO" || "MENSUAL" || "HORA"
+      const aporte = async (type, fechaStart, fechaEnd) => {
+        // console.log("tipoDeDashboard: " + tipoDeDashboard);
 
-      const aporte = (type, fechaStart, fechaEnd) => {
         let totalConsumo = 0;
         let fechaInicial = new Date(fechaStart);
         let fechaFinal = new Date(fechaEnd);
 
-        const consumo = RegisterDataUsersCollection.find(
-          idUser
-            ? {
-                userId: idUser,
-                fecha: {
-                  $gte: fechaInicial,
-                  $lt: fechaFinal,
+        await RegisterDataUsersCollection.rawCollection()
+          .aggregate([
+            {
+              $match: idUser
+                ? {
+                  userId: idUser,
+                  fecha: {
+                    $gte: new Date(fechaInicial),
+                    $lte: new Date(fechaFinal),
+                  },
+                }
+                : {
+                  fecha: {
+                    $gte: new Date(fechaInicial),
+                    $lte: new Date(fechaFinal),
+                  },
                 },
-              }
-            : {
-                fecha: {
-                  $gte: fechaInicial,
-                  $lt: fechaFinal,
-                },
-              },
-          {
-            fields: {
-              userId: 1,
-              megasGastadosinBytes: 1,
-              fecha: 1,
-              type: 1,
-              vpnMbGastados: 1,
             },
-          }
-        ).fetch();
+            {
+              $group: {
+                _id: "$userId", // Agrupar por userId
+                totalBytesVPN: { $sum: "$vpnMbGastados" }, // Sumar los valores de vpnMbGastados
+                totalBytesPROXY: { $sum: "$megasGastadosinBytes" }, // Sumar los valores de vpnMbGastados
+              },
+            },
+            {
+              $lookup: {
+                from: "users", // Nombre de la colección users
+                localField: "_id", // userId en registerDataUsers
+                foreignField: "_id", // Campo _id en users
+                as: "userInfo", // Nombre del campo que contendrá los datos relacionados
+              },
+            },
+            {
+              $unwind: "$userInfo", // Descomponer el array userInfo
+            },
+            {
+              $project: {
+                _id: 0,
+                username: "$userInfo.username", // Proyectar username desde users
+                totalBytesVPN: {
+                  $round: [
+                    { $divide: ["$totalBytesVPN", 1024000000] }, // Convertir de bytes a gigabytes
+                    2, // Limitar a 2 decimales
+                  ],
+                },
+                totalBytesPROXY: {
+                  $round: [
+                    { $divide: ["$totalBytesPROXY", 1024000000] }, // Convertir de bytes a gigabytes
+                    2, // Limitar a 2 decimales
+                  ],
+                },
+                fecha: fechaFinal
+              },
+            },
+          ])
+          .forEach((element) => {
+            // console.log("element", element)
+            let fechaElement = new Date(element.fecha);
 
-        consumo.forEach((element) => {
-          let fechaElement = new Date(element.fecha);
-
-          if (element.type == type) {
+            // if (element.type == type) {
             let suma;
-            switch (element.type) {
+            switch (type) {
               case "proxy":
-                suma = element.megasGastadosinBytes
-                  ? element.megasGastadosinBytes
+                suma = element.totalBytesPROXY
+                  ? element.totalBytesPROXY
                   : 0;
                 break;
               case "vpn":
-                suma = element.vpnMbGastados ? element.vpnMbGastados : 0;
+                suma = element.totalBytesVPN ? element.totalBytesVPN : 0;
               default:
                 break;
             }
 
-            fechaElement >= fechaInicial &&
-              fechaElement < fechaFinal &&
-              (totalConsumo += suma);
-          }
-        });
+            fechaElement > fechaInicial &&
+              fechaElement <= fechaFinal &&
+            (totalConsumo += suma);
+            // }
+          });
+          // console.log("SUMA " + type + ": ", totalConsumo, "FECHA INICIAL: ", fechaInicial, "FECHA FINAL: ", fechaFinal);
 
-        return Number((totalConsumo / 1024000000).toFixed(2));
+        return Number(( totalConsumo).toFixed(2));
       };
 
       let data01 = [];
@@ -155,12 +188,12 @@ if (Meteor.isServer) {
 
           let hourlyData = {
             name: dateStartHour.format("HH:mm"),
-            PROXY: aporte(
+            PROXY: await aporte(
               "proxy",
               dateStartHour.toISOString(),
               dateEndHour.toISOString()
             ),
-            VPN: aporte(
+            VPN: await aporte(
               "vpn",
               dateStartHour.toISOString(),
               dateEndHour.toISOString()
@@ -179,12 +212,12 @@ if (Meteor.isServer) {
 
           let dailyData = {
             name: dateStartDay.format("DD"),
-            PROXY: aporte(
+            PROXY: await aporte(
               "proxy",
               dateStartDay.toISOString(),
               dateEndDay.toISOString()
             ),
-            VPN: aporte(
+            VPN: await aporte(
               "vpn",
               dateStartDay.toISOString(),
               dateEndDay.toISOString()
@@ -203,12 +236,12 @@ if (Meteor.isServer) {
 
           let monthlyData = {
             name: dateStartMonth.format("MM/YYYY"),
-            PROXY: aporte(
+            PROXY: await aporte(
               "proxy",
               dateStartMonth.toISOString(),
               moment(dateStartMonth).endOf("month").add(1, "days").toISOString()
             ),
-            VPN: aporte(
+            VPN: await aporte(
               "vpn",
               dateStartMonth.toISOString(),
               moment(dateStartMonth).endOf("month").add(1, "days").toISOString()

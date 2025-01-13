@@ -234,7 +234,7 @@ export default function PeliCardOnly(options) {
                 }}
               >
                 {/* INSERTAR VIDEO */}
-                <video
+                {/* <video
                   autoPlay={true}
                   width="100%"
                   style={{ borderRadius: 20, width: "100%", height: "100%" }}
@@ -245,9 +245,21 @@ export default function PeliCardOnly(options) {
                     src={triller}
                     type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'
                   />
-                  {/* <track default kind="subtitles" label="Español" src={`/getsubtitle?idPeli=${options.peliGeneral._id}`} srcLang="es" /> */}
-                  {/* <track default kind="descriptions" label="Español" src="https://visuales.uclv.cu/Peliculas/Extranjeras/2020/2020_Ava/sinopsis.txt" srcLang="es"/> */}
-                </video>
+                  <track default kind="subtitles" label="Español" src={`/getsubtitle?idPeli=${options.peliGeneral._id}`} srcLang="es" />
+                
+                </video> */}
+
+                <iframe
+                  width="100%"
+                  height="100%"
+                  style={{ borderRadius: 20 }}
+                  src={`https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0&modestbranding=1`}
+                  title="YouTube video player"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+
               </Grid>
             ) : (
               <Grid container>
@@ -264,12 +276,18 @@ export default function PeliCardOnly(options) {
                     alignItems="center"
                   >
                     <Grid item xs={10}>
-                      <Typography
-                        style={{
-                          color: "white",
-                          fontSize: 14,
-                        }}
-                      >
+                        <Typography
+                          variant="body1"
+                          style={{
+                            color: "white",
+                            fontSize: 14,
+                            display: '-webkit-box',
+                            WebkitLineClamp: 2, // Limita el texto a 2 líneas
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis', // Agrega puntos suspensivos
+                          }}
+                        >
                         <strong>{options.peliGeneral.nombrePeli}</strong>
                       </Typography>
                       <Grid
