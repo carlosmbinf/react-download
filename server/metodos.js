@@ -76,8 +76,8 @@ if (Meteor.isServer) {
         from: user.bloqueadoDesbloqueadoPor
           ? user.bloqueadoDesbloqueadoPor
           : Meteor.users.findOne({
-            username: Array(Meteor.settings.public.administradores)[0][0],
-          })._id,
+              username: Array(Meteor.settings.public.administradores)[0][0],
+            })._id,
         to: user._id,
         mensaje: text.text,
       });
@@ -86,95 +86,62 @@ if (Meteor.isServer) {
 
     getDatosDashboardByUser: async (tipoDeDashboard, idUser) => {
       //tipoDeDashboard = "DIARIO" || "MENSUAL" || "HORA"
-      const aporte = async (type, fechaStart, fechaEnd) => {
-        // console.log("tipoDeDashboard: " + tipoDeDashboard);
 
+      const aporte = (type, fechaStart, fechaEnd) => {
         let totalConsumo = 0;
         let fechaInicial = new Date(fechaStart);
         let fechaFinal = new Date(fechaEnd);
 
-        await RegisterDataUsersCollection.rawCollection()
-          .aggregate([
-            {
-              $match: idUser
-                ? {
-                  userId: idUser,
-                  fecha: {
-                    $gte: new Date(fechaInicial),
-                    $lte: new Date(fechaFinal),
-                  },
-                }
-                : {
-                  fecha: {
-                    $gte: new Date(fechaInicial),
-                    $lte: new Date(fechaFinal),
-                  },
+        const consumo = RegisterDataUsersCollection.find(
+          idUser
+            ? {
+                userId: idUser,
+                fecha: {
+                  $gte: fechaInicial,
+                  $lt: fechaFinal,
                 },
-            },
-            {
-              $group: {
-                _id: "$userId", // Agrupar por userId
-                totalBytesVPN: { $sum: "$vpnMbGastados" }, // Sumar los valores de vpnMbGastados
-                totalBytesPROXY: { $sum: "$megasGastadosinBytes" }, // Sumar los valores de vpnMbGastados
-              },
-            },
-            {
-              $lookup: {
-                from: "users", // Nombre de la colección users
-                localField: "_id", // userId en registerDataUsers
-                foreignField: "_id", // Campo _id en users
-                as: "userInfo", // Nombre del campo que contendrá los datos relacionados
-              },
-            },
-            {
-              $unwind: "$userInfo", // Descomponer el array userInfo
-            },
-            {
-              $project: {
-                _id: 0,
-                username: "$userInfo.username", // Proyectar username desde users
-                totalBytesVPN: {
-                  $round: [
-                    { $divide: ["$totalBytesVPN", 1024000000] }, // Convertir de bytes a gigabytes
-                    2, // Limitar a 2 decimales
-                  ],
+              }
+            : {
+                fecha: {
+                  $gte: fechaInicial,
+                  $lt: fechaFinal,
                 },
-                totalBytesPROXY: {
-                  $round: [
-                    { $divide: ["$totalBytesPROXY", 1024000000] }, // Convertir de bytes a gigabytes
-                    2, // Limitar a 2 decimales
-                  ],
-                },
-                fecha: fechaFinal
               },
+          {
+            fields: {
+              userId: 1,
+              megasGastadosinBytes: 1,
+              fecha: 1,
+              type: 1,
+              vpnMbGastados: 1,
             },
-          ])
-          .forEach((element) => {
-            // console.log("element", element)
-            let fechaElement = new Date(element.fecha);
+          }
+        ).fetch();
 
-            // if (element.type == type) {
+        consumo.forEach((element) => {
+          let fechaElement = new Date(element.fecha);
+
+          if (element.type == type) {
             let suma;
-            switch (type) {
+            switch (element.type) {
               case "proxy":
-                suma = element.totalBytesPROXY
-                  ? element.totalBytesPROXY
+                suma = element.megasGastadosinBytes
+                  ? element.megasGastadosinBytes
                   : 0;
                 break;
               case "vpn":
-                suma = element.totalBytesVPN ? element.totalBytesVPN : 0;
+                suma = element.vpnMbGastados ? element.vpnMbGastados : 0;
               default:
                 break;
             }
 
-            fechaElement > fechaInicial &&
-              fechaElement <= fechaFinal &&
-            (totalConsumo += suma);
-            // }
-          });
-          // console.log("SUMA " + type + ": ", totalConsumo, "FECHA INICIAL: ", fechaInicial, "FECHA FINAL: ", fechaFinal);
+            fechaElement >= fechaInicial &&
+              fechaElement < fechaFinal &&
+              (totalConsumo += suma);
+          }
+        });
 
-        return Number(( totalConsumo).toFixed(2));
+        return Number((totalConsumo / 1024000000).toFixed(2));
       };
 
       let data01 = [];
