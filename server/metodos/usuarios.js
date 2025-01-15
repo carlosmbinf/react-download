@@ -372,9 +372,9 @@ if (Meteor.isServer) {
         return error;
       }
     },
-    getusers: function (filter) {
+    getusers: function (filter,options) {
       return Meteor.users
-        .find(filter ? filter : {}, { sort: { vpnip: 1 } })
+        .find(filter ? filter : {}, options ? options : { sort: { vpnip: 1 } })
         .fetch();
     },
     getusersAll: function (filter, option) {
