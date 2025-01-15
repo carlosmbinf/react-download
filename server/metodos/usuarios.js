@@ -72,7 +72,7 @@ if (Meteor.isServer) {
                 " con: " +
                 vpnMbRestantes +
                 "byte, -> " +
-                vpnMbRestantes / 1024 / 1024 +
+                vpnMbRestantes / 1024000 +
                 "MB"
             );
             await RegisterDataUsersCollection.insert({
@@ -137,7 +137,7 @@ if (Meteor.isServer) {
                 " con: " +
                 proxyMbRestantes +
                 "byte, -> " +
-                proxyMbRestantes / 1024 / 1024 +
+                proxyMbRestantes / 1024000 +
                 "MB"
             );
             await RegisterDataUsersCollection.insert({
@@ -201,7 +201,7 @@ if (Meteor.isServer) {
                 " con: " +
                 vpnMbRestantes +
                 "byte, -> " +
-                vpnMbRestantes / 1024 / 1024 +
+                vpnMbRestantes / 1024000 +
                 "MB"
             );
             await RegisterDataUsersCollection.insert({
@@ -267,7 +267,7 @@ if (Meteor.isServer) {
                 " con: " +
                 proxyMbRestantes +
                 "byte, -> " +
-                proxyMbRestantes / 1024 / 1024 +
+                proxyMbRestantes / 1024000 +
                 "MB"
             );
             await RegisterDataUsersCollection.insert({
@@ -332,7 +332,7 @@ if (Meteor.isServer) {
                 " con: " +
                 vpnMbRestantes +
                 "byte, -> " +
-                vpnMbRestantes / 1024 / 1024 +
+                vpnMbRestantes / 1024000 +
                 "MB"
             );
             await RegisterDataUsersCollection.insert({

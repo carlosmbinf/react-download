@@ -188,7 +188,7 @@ guardarDatosConsumidosByUserPROXYMensual: async (user) => {
     const proxyMbRestantes = user.megasGastadosinBytes - consumidosPROXY
     
     if (proxyMbRestantes > 0) {
-      console.log("Registro Proxy Mensual, megas: " + user.username + " con: " + proxyMbRestantes + "byte, -> " + (proxyMbRestantes / 1024 / 1024) + "MB")
+      console.log("Registro Proxy Mensual, megas: " + user.username + " con: " + proxyMbRestantes + "byte, -> " + (proxyMbRestantes / 1024000) + "MB")
       await RegisterDataUsersCollection.insert({
         userId: user._id,
         type: "proxy",
