@@ -131,7 +131,7 @@ if (Meteor.isServer) {
     //////////////////Banear proxy ///////////////////
     cron
       .schedule(
-        "0-59 * * * *",
+        "*/10 * * * *",
         async () => {
           let users = await Meteor.users.find({ baneado: false }, {
             fields: {
@@ -205,7 +205,7 @@ if (Meteor.isServer) {
     //////////Banear VPN //////////////
     cron
       .schedule(
-        "0-59 * * * *",
+        "*/10 * * * *",
         async () => {
           let users = await Meteor.users.find({ vpn: true }, {
             fields: {
