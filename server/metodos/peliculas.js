@@ -101,9 +101,9 @@ if (Meteor.isServer) {
         //   //   'https://microlink.io',
         //   //   ...
         //   // ]
-        // console.log(links)
+        console.log(links)
   
-        for (var i = 5; i <= links.length - 4; i++) {
+        for (var i = 9; i <= links.length - 4; i++) {
           // console.log("links lista" , links[i]);
           let nombre = links[i].value
             .replace(`${year}_`, "")
@@ -112,7 +112,7 @@ if (Meteor.isServer) {
             .replace(`/`, "")
             .replace(`(${year})`, "")
             .replace(`%28${year}%29`, "");
-            
+
           console.log(`Name: ${nombre}`);
           console.log(links[i].value);
           let a;
