@@ -27,6 +27,7 @@ import DoneIcon from '@material-ui/icons/Done';
 import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
 import SendIcon from '@material-ui/icons/Send';
 import RemoveRedEyeIcon from '@material-ui/icons/RemoveRedEye';
+import { Alert } from "@mui/material";
 
 const StyledBadge = withStyles((theme) => ({
   badge: {
@@ -223,18 +224,37 @@ export default function PeliDetails() {
       tamano: tamano,
       subtitulo:subtitulo,
     }
-    PelisCollection.update(peliDetails._id, { $set: peli })
 
-    peliDetails._id && subtitulo != "" &&
-    $.post("/convertsrttovtt", { idPeli: peliDetails._id })
-    .done(function (data) {
-      alert(`Actualizado el subtitulo de la Película -> ${nombrePeli}`)
-      console.log(data)
-    })
-    .fail(function (data) {
-      alert(`Ocurrio un Error inesperado`)
-      console.log(data)
-    })
+    let peliData = {
+      nombre: nombrePeli,
+      peli: urlPeli,
+      poster: urlBackground,
+      descripcion: descripcion,
+      tamano: tamano,
+      subtitle: subtitulo
+    };
+
+        PelisCollection.update(peliDetails._id, { $set: peli })
+
+        Meteor.call("insertPelis",peliData, true, (error, result) => { 
+          // !error ? console.log(result.message) : console.log(error); 
+          if(!error){
+            alert("Pelicula Actualizando Peli")
+          }else{
+            alert(result.message);
+          }
+         })
+
+    // peliDetails._id && subtitulo != "" &&
+    // $.post("/convertsrttovtt", { idPeli: peliDetails._id })
+    // .done(function (data) {
+    //   alert(`Actualizado el subtitulo de la Película -> ${nombrePeli}`)
+    //   console.log(data)
+    // })
+    // .fail(function (data) {
+    //   alert(`Ocurrio un Error inesperado`)
+    //   console.log(data)
+    // })
 
     // makePostRequest();
   }
