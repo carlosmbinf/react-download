@@ -135,7 +135,7 @@ export default function CreateArchivo() {
       year: year,
     };
 
-    await Meteor.call("insertPelis",peliData, (error, result) => { 
+    await Meteor.call("insertPelis",peliData, true, (error, result) => { 
       // !error ? console.log(result.message) : console.log(error); 
       if(!error){
       setMessage(result.message);

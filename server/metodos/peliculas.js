@@ -76,7 +76,30 @@ if (Meteor.isServer) {
   console.log("Cargando Métodos de peliculas...");
   Meteor.methods({
     getPelicula: async function (id) {
-      return await PelisCollection.findOne(id);
+      return await PelisCollection.findOne(id,{fields:
+        {
+          "_id" : 1,
+          "nombrePeli" : 1,
+          "urlPadre" : 1,
+          "urlPeli" : 1,
+          "urlBackground" : 1,
+          "descripcion" : 1,
+          "tamano" : 1,
+          "mostrar" : 1,
+          "subtitulo" : 1,
+          "year" : 1,
+          "urlPeliHTTPS" : 1,
+          "extension" : 1,
+          "urlBackgroundHTTPS" : 1,
+          "urlTrailer" : 1,
+          "createdAt" : 1,
+          "vistas" : 1,
+          "textSubtitle" : 1,
+          "clasificacion" : 1,
+          "idimdb" :1,
+          "actors" : 1
+      }
+      });
     },
     insertpelisbyyears: async function ({ year }) {
       console.log("insertpelisbyyears" + year);
@@ -113,11 +136,20 @@ if (Meteor.isServer) {
             .replace(`(${year})`, "")
             .replace(`%28${year}%29`, "");
 
-          console.log(`Name: ${nombre}`);
+          console.log(`Comenzando INSERCION de la Pelicula: ${nombre}`);
           console.log(links[i].value);
           let a;
           let pelicula = await PelisCollection.findOne({
             urlPadre: links[i].url,
+          },{fields:
+            {
+              "_id" : 1,
+              "nombrePeli" : 1,
+              "urlPeli" : 1,
+              "urlBackground" : 1,
+              "subtitulo" : 1,
+              "year" : 1
+          }
           });
           let existe = pelicula ? true : false;
           if (pelicula) {
@@ -146,9 +178,13 @@ if (Meteor.isServer) {
               a.year &&
               a.peli &&
               a.poster &&
-              (await Meteor.call("insertPelis", a));
+              (await Meteor.call("insertPelis", a, false));
   
-            let peli = await PelisCollection.findOne({ urlPadre: links[i].url });
+            let peli = await PelisCollection.findOne({ urlPadre: links[i].url },{fields:
+              {
+                "_id" : 1
+            }
+            });
             peli && !existe && pelis.push(peli);
           } catch (error) {
             console.log("Ocurrio un error => " + error.message);
@@ -171,18 +207,24 @@ if (Meteor.isServer) {
             `Nueva Peli en Vidkar:\nNombre: ${peli.nombrePeli}\nClasificacion: ${peli.clasificacion}\nActores: ${peli.actors}\nAño: ${peli.year}`,
             peli.urlBackground
           );
+          await Meteor.call("actualizarSubtitulos", peli._id)
+           
         });
       // res.writeHead(200, {
       //   message: "todo OK",
       // });
       // res.end("todo OK")
     },
-    insertPelis: async function (pelicula) {
+    insertPelis: async function (pelicula, actualizarSubtitulos) {
       console.log(`Peli `, pelicula);
       // console.log(req)
       // console.log(peli)
       //  const insertPeli = async () => {
-      let exist = await PelisCollection.findOne({ urlPeli: pelicula.peli });
+      let exist = await PelisCollection.findOne({ urlPeli: pelicula.peli },{fields:
+        {
+          "_id" : 1
+      }
+      });
       let id = exist
         ? exist._id
         : await PelisCollection.insert({
@@ -196,15 +238,31 @@ if (Meteor.isServer) {
             subtitulo: pelicula.subtitle,
             year: pelicula.year,
           });
-      let peli = await PelisCollection.findOne({ _id: id });
+      let peli = await PelisCollection.findOne({ _id: id },{fields:
+        {
+          "_id" : 1,
+          "nombrePeli" : 1,
+          "urlPadre" : 1,
+          "urlPeli" : 1,
+          "urlBackground" : 1,
+          "descripcion" : 1,
+          "tamano" : 1,
+          "mostrar" : 1,
+          "subtitulo" : 1,
+          "year" : 1,
+          "urlPeliHTTPS" : 1,
+          "extension" : 1,
+          "urlBackgroundHTTPS" : 1,
+          "urlTrailer" : 1,
+          "createdAt" : 1,
+          "vistas" : 1,
+          "clasificacion" : 1,
+          "idimdb" :1,
+          "actors" : 1
+      }
+      });
 
-      // console.log(peli);
-      var srt2vtt = await require("srt-to-vtt");
-      var fs = await require("fs");
-      var appRoot = await require("app-root-path");
-      var subtituloFile =
-        appRoot.path + "/public/videos/subtitulo/" + id + ".vtt";
-      const https = await require("http");
+      
 
       // !fs.existsSync(appRoot.path + "/public/videos/subtitulo")
       //   ? fs.mkdirSync(appRoot.path + "/public/videos/subtitulo/")
@@ -212,40 +270,7 @@ if (Meteor.isServer) {
 
       // const file = fs.createWriteStream(subtituloFile);
       // /////////////////////////////////////////////
-      try {
-        peli &&
-          peli.subtitulo &&
-          (peli.textSubtitle == null || peli.textSubtitle == "") &&
-          !peli.textSubtitle &&
-          (await https.get(peli.subtitulo, async (response) => {
-            try {
-              var stream = response.pipe(srt2vtt());
-              // stream.on("finish", function () {});
-              await streamToString(stream).then(async (data) => {
-                data &&
-                  (await PelisCollection.update(
-                    { _id: id },
-                    {
-                      $set: {
-                        textSubtitle: data.toString("utf8"),
-                      },
-                    },
-                    { multi: true }
-                  ));
-                console.log(
-                  `Actualizado subtitulo de la Peli: ${peli.nombrePeli}`
-                );
-              });
-            } catch (error) {
-              console.log(error.message);
-            }
-          }));
-      } catch (error) {
-        console.log(
-          "no se pudo Actualizado subtitulo de la Peli " + pelicula.nombre
-        );
-        console.log(error.message);
-      }
+      
 
       var nameToImdb = require("name-to-imdb");
       const IMDb = require("imdb-light");
@@ -305,6 +330,9 @@ if (Meteor.isServer) {
       //   console.log(error.message);
       // }
 
+      /////////ACTUALIZANDO SUBTITULOS
+      actualizarSubtitulos && (await Meteor.call("actualizarSubtitulos", id));
+
       //////ACTUALIZANDO CLASIFICACION
       console.log(
         `Update descripcion y clasificacion - Nombre Peli: ${peli.nombrePeli}`
@@ -346,8 +374,64 @@ if (Meteor.isServer) {
         console.log(error.message);
       }
     },
+    actualizarSubtitulos: async function (id) {
+      let peli = await PelisCollection.findOne(id,{fields:
+        {
+          "_id" : 1,
+          "nombrePeli" : 1,
+          "subtitulo" : 1,
+          "textSubtitle" : 1,
+      }
+      });
+
+      try {
+// console.log(peli);
+        var srt2vtt = await require("srt-to-vtt");
+        var fs = await require("fs");
+        var appRoot = await require("app-root-path");
+        var subtituloFile =
+          appRoot.path + "/public/videos/subtitulo/" + id + ".vtt";
+        const https = await require("http");
+        peli &&
+          peli.subtitulo &&
+          (peli.textSubtitle == null || peli.textSubtitle == "") &&
+          
+          (await https.get(peli.subtitulo, async (response) => {
+            try {
+              var stream = response.pipe(srt2vtt());
+              // stream.on("finish", function () {});
+              await streamToString(stream).then(async (data) => {
+                data &&
+                  (await PelisCollection.update(
+                    { _id: id },
+                    {
+                      $set: {
+                        textSubtitle: data.toString("utf8"),
+                      },
+                    },
+                    { multi: true }
+                  ));
+                console.log(
+                  `Actualizado subtitulo de la Peli: ${peli.nombrePeli}`
+                );
+              });
+            } catch (error) {
+              console.log(error.message);
+            }
+          }));
+      } catch (error) {
+        console.log(
+          "no se pudo Actualizado subtitulo de la Peli " + peli ? peli.nombrePeli : ""
+        );
+        console.log(error.message);
+      }
+    },
     getUrlTriller: (id) => {
-      let peli = PelisCollection.findOne(id);
+      let peli = PelisCollection.findOne(id,{fields:
+        {
+          "urlTrailer" : 1,
+      }
+      });
       return peli.urlTrailer ? peli.urlTrailer : null;
     },
     addVistas: (id) => {
