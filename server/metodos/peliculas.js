@@ -373,8 +373,12 @@ if (Meteor.isServer) {
         console.log("no se pudo actualizar en IMDb.fetch " + pelicula.nombre);
         console.log(error.message);
       }
+
+
+      console.log("---------------------------------------------------------------------");
     },
     actualizarSubtitulos: async function (id) {
+      
       let peli = await PelisCollection.findOne(id,{fields:
         {
           "_id" : 1,
@@ -392,9 +396,12 @@ if (Meteor.isServer) {
         var subtituloFile =
           appRoot.path + "/public/videos/subtitulo/" + id + ".vtt";
         const https = await require("http");
+
+        peli && console.log(`Verificando actualizacion del subtitulo de la Peli: ${peli && peli.nombrePeli}`);
+
         peli &&
           peli.subtitulo &&
-          (peli.textSubtitle == null || peli.textSubtitle == "") &&
+          (peli.textSubtitle == null || peli.textSubtitle == "") ?
           
           (await https.get(peli.subtitulo, async (response) => {
             try {
@@ -418,7 +425,7 @@ if (Meteor.isServer) {
             } catch (error) {
               console.log(error.message);
             }
-          }));
+          })) : (console.log("No se Actualizo el subtitulo de la Peli " + peli ? peli.nombrePeli : ""))
       } catch (error) {
         console.log(
           "no se pudo Actualizado subtitulo de la Peli " + peli ? peli.nombrePeli : ""
