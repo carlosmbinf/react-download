@@ -137,7 +137,7 @@ if (Meteor.isServer) {
             .replace(`%28${year}%29`, "");
 
           console.log(`Comenzando INSERCION de la Pelicula: ${nombre}`);
-          console.log(links[i].value);
+          // console.log(links[i].value);
           let a;
           let pelicula = await PelisCollection.findOne({
             urlPadre: links[i].url,
