@@ -314,27 +314,7 @@ if (Meteor.isServer) {
       //   console.log(error.message);
       // }
 
-      /////////ACTUALIZANDO TRILERS
-      // try {
-      //   console.log(`Update urlTrailer - Nombre Peli: ${peli.nombrePeli}`);
-      //   idimdb &&
-      //     (await IMDb.trailer(idimdb, async (url) => {
-      //     //   console.log(url)  // output is direct mp4 url (also have expiration timeout)
-      //         console.log("URL Trailer de " + idimdb +" URL: \n",url)  // etc...
-      //       await PelisCollection.update(
-      //         { _id: id },
-      //         {
-      //           $set: {
-      //             urlTrailer: url,
-      //             // clasificacion: details.Genres.split(", ")
-      //           },
-      //         }
-      //       );
-      //     }));
-      // } catch (error) {
-      //     console.log("no se pudo actualizar en IMDb.trailer " + pelicula.nombre);
-      //   console.log(error.message);
-      // }
+     
 
       /////////ACTUALIZANDO SUBTITULOS
       actualizarSubtitulos && (await Meteor.call("actualizarSubtitulos", id));
@@ -374,6 +354,35 @@ if (Meteor.isServer) {
                   },
                   { multi: true }
                 ));
+
+                if(element.imdbid){
+                  try {
+                    console.log(`Update urlTrailer - Nombre Peli: ${peli.nombrePeli}`);
+                    element.imdbid &&
+                      (await IMDb.trailer(element.imdbid, async (url) => {
+                      //   console.log(url)  // output is direct mp4 url (also have expiration timeout)
+                          console.log("URL Trailer de " + element.imdbid +" URL: \n",url)  // etc...
+                        await PelisCollection.update(
+                          { _id: id },
+                          {
+                            $set: {
+                              urlTrailer: url,
+                              // clasificacion: details.Genres.split(", ")
+                            },
+                          }
+                        );
+                      }));
+                  } catch (error) {
+                      console.log("no se pudo actualizar en IMDb.trailer " + pelicula.nombre);
+                    console.log(error.message);
+                  }
+                }
+                  
+                
+
+                 ///////ACTUALIZANDO TRILERS
+      
+
             }));
       } catch (error) {
         console.log("no se pudo actualizar en IMDb.fetch " + pelicula.nombre);
