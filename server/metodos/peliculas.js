@@ -182,7 +182,13 @@ if (Meteor.isServer) {
   
             let peli = await PelisCollection.findOne({ urlPadre: links[i].url },{fields:
               {
-                "_id" : 1
+                "_id" : 1,
+                nombrePeli:1,
+                clasificacion:1,
+                actors:1,
+                year:1,
+                urlBackground:1,
+                urlPeli:1
             }
             });
             peli && !existe && pelis.push(peli);
