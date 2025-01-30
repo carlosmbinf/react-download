@@ -17,6 +17,8 @@ import {
 } from "/imports/ui/pages/collections/collections";
 import moment from "moment";
 
+import movieTrailer from 'movie-trailer' // or import movieTrailer from 'movie-trailer'
+
 if (Meteor.isServer) {
   const got = require("got");
   const htmlUrls = require("html-urls");
@@ -350,38 +352,17 @@ if (Meteor.isServer) {
                       clasificacion: element.genres.split(", "),
                       actors: element.actors.split(", "),
                       idimdb: element.imdbid,
+                      ...element
                     },
                   },
                   { multi: true }
                 ));
+ ///////ACTUALIZANDO TRILERS
 
-                if(element.imdbid){
-                  try {
-                    console.log(`Update urlTrailer - Nombre Peli: ${peli.nombrePeli}`);
-                    element.imdbid &&
-                      (await IMDb.trailer(element.imdbid, async (url) => {
-                      //   console.log(url)  // output is direct mp4 url (also have expiration timeout)
-                          console.log("URL Trailer de " + element.imdbid +" URL: \n",url)  // etc...
-                        await PelisCollection.update(
-                          { _id: id },
-                          {
-                            $set: {
-                              urlTrailer: url,
-                              // clasificacion: details.Genres.split(", ")
-                            },
-                          }
-                        );
-                      }));
-                  } catch (error) {
-                      console.log("no se pudo actualizar en IMDb.trailer " + pelicula.nombre);
-                    console.log(error.message);
-                  }
-                }
-                  
+                !peli.urlTrailer && await Meteor.call("movieTrailer", element.imdbid, id);
                 
-
-                 ///////ACTUALIZANDO TRILERS
-      
+                 /////// FIN ACTUALIZANDO TRILERS
+                      
 
             }));
       } catch (error) {
@@ -459,5 +440,24 @@ if (Meteor.isServer) {
     addVistas: (id) => {
       PelisCollection.update(id, { $inc: { vistas: 1 } });
     },
+    movieTrailer: (tmdbId,idPelis) => {
+      ///////ACTUALIZANDO TRILERS
+
+      tmdbId && idPelis && movieTrailer( null, { tmdbId: tmdbId } )  
+      .then( async (url) => {
+        //   console.log(url)  // output is direct mp4 url (also have expiration timeout)
+            console.log("URL Trailer de " + tmdbId +" URL: \n",url)  // etc...
+          await PelisCollection.update(
+            { _id: idPelis },
+            {
+              $set: {
+                urlTrailer: url,
+                // clasificacion: details.Genres.split(", ")
+              },
+            }
+          );
+        } )        
+       /////// FIN ACTUALIZANDO TRILERS
+    }
   });
 }

@@ -32,6 +32,7 @@ import AddCircleRoundedIcon from "@material-ui/icons/AddCircleRounded";
 import PermContactCalendarRoundedIcon from "@material-ui/icons/PermContactCalendarRounded";
 import MailIcon from "@material-ui/icons/Mail";
 import RemoveRedEyeIcon from '@material-ui/icons/RemoveRedEye';
+import YouTubePlayer from "../videos/YouTubePlayer";
 const StyledBadge = withStyles((theme) => ({
   badge: {
     backgroundColor: "#44b700",
@@ -224,7 +225,7 @@ export default function PeliCardOnly(options) {
           <Grid>
             {mostrarTriler && triller ? (
               <Grid
-                className={classes.video}
+                // className={classes.video}
                 style={{
                   width: "100%",
                   height: "100%",
@@ -249,12 +250,14 @@ export default function PeliCardOnly(options) {
                 
                 </video> */}
 
+                  
+                {/* <YouTubePlayer triller={triller} /> */}
                 <iframe
                   width="100%"
                   height="100%"
                   style={{ borderRadius: 20 }}
-                  src={`https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0&modestbranding=1`}
-                  title="YouTube video player"
+                  src={`https://www.youtube.com/embed/${new URL(triller).searchParams.get("v")}?autoplay=1&rel=0&modestbranding=1&controls=0&disablekb=1&showinfo=0&enablejsapi=1`} //
+                  // title="YouTube video player"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen

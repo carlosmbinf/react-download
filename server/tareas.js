@@ -268,51 +268,38 @@ if (Meteor.isServer) {
   console.log(error);
 }
 
-  // try {
-  //   //////////ACTUALIZAR TRAILERS //////////////
-  //   cron
-  //     .schedule(
-  //       "0 * * * *",
-  //       async () => {
-  //         try {
-  //           const IMDb = await require('imdb-light');
+  try {
+    //////////ACTUALIZAR TRAILERS //////////////
+    cron
+      .schedule(
+        "35 * * * *",
+        async () => {
+          try {
+            const IMDb = await require('imdb-light');
 
-  //           await PelisCollection.find({}, { fields: { _id: 1, nombrePeli: 1, idimdb: 1 } }).forEach(async (peli) => {
+            await PelisCollection.find({}, { fields: { _id: 1, nombrePeli: 1, idimdb: 1 } }).forEach(async (peli) => {
 
-  //             await console.log(`Actualizando a ${peli.nombrePeli}`)
+              await console.log(`Actualizando a ${peli.nombrePeli}`)
+              !peli.urlTrailer && Meteor.call("movieTrailer", peli.idimdb, peli._id,)
 
-  //             peli.idimdb && await IMDb.trailer(peli.idimdb, (url) => {
-  //               console.log(peli.nombrePeli + " => Actualizando URL Pelicula")  // output is direct mp4 url (also have expiration timeout)
+            })
 
-  //               url && PelisCollection.update(
-  //                 { _id: peli._id },
-  //                 {
-  //                   $set: {
-  //                     urlTrailer: url
-  //                     // clasificacion: details.Genres.split(", ")
-  //                   },
-  //                 }
-  //               );
-  //             })
+          } catch (error) {
 
-  //           })
+          }
 
-  //         } catch (error) {
-
-  //         }
-
-  //       },
-  //       {
-  //         scheduled: true,
-  //         timezone: "America/Havana",
-  //       }
-  //     )
-  //     // .start();
+        },
+        {
+          scheduled: true,
+          timezone: "America/Havana",
+        }
+      )
+      // .start();
 
 
-  // } catch (error) {
-  //   console.log(error);
-  // }
+  } catch (error) {
+    console.log(error);
+  }
 
   try {
     //////////Cerrar proxys a las 12 y 00 //////////////
