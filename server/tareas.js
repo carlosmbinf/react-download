@@ -280,7 +280,7 @@ if (Meteor.isServer) {
             await PelisCollection.find({}, { fields: { _id: 1, nombrePeli: 1, idimdb: 1 } }).forEach(async (peli) => {
 
               await console.log(`Actualizando a ${peli.nombrePeli}`)
-              !peli.urlTrailer && Meteor.call("movieTrailer", peli.idimdb, peli._id,)
+              !peli.urlTrailer && await Meteor.call("movieTrailer", peli.idimdb, peli._id,)
 
             })
 
