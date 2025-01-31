@@ -9,7 +9,7 @@ const endpoint = router();
 
 async function conect(server, connectionId, userId, hostname) {
   try {
-    await OnlineCollection.insert({
+    await OnlineCollection.insertAsync({
       connectionId: `${server}${connectionId.toString()}`,
       address: "proxy: " + Meteor.settings.public.IP,
       userId: userId,
@@ -19,7 +19,7 @@ async function conect(server, connectionId, userId, hostname) {
     console.log(error);
   }
 
-  // await Meteor.users.update(userId, {
+  // await Meteor.users.updateAsync(userId, {
   //   $set: {
   //     online: true,
   //   },
@@ -29,11 +29,11 @@ async function conect(server, connectionId, userId, hostname) {
 async function disconect(server, connectionId, stats) {
   try {
     // await console.log('remove ' + connectionId);
-    const conn = await OnlineCollection.findOne({
+    const conn = await OnlineCollection.findOneAsync({
       connectionId: `${server}${connectionId.toString()}`,
       // server: process.env.ROOT_URL
     });
-    const user = conn && conn.userId && Meteor.users.findOne(conn.userId);
+    const user = conn && conn.userId && Meteor.users.findOneAsync(conn.userId);
     let bytesGastados = Number(stats.srcTxBytes) + Number(stats.srcRxBytes);
     // + Number(stats.trgTxBytes) + Number(stats. trgRxBytes)
     let bytesGastadosGeneral =
@@ -44,18 +44,18 @@ async function disconect(server, connectionId, stats) {
     user &&
       user._id &&
       user.contandoProxy &&
-      (await Meteor.users.update(user._id, {
+      (await Meteor.users.updateAsync(user._id, {
         $inc: { megasGastadosinBytes: bytesGastados },
       }));
     user &&
       user._id &&
       user.contandoProxy &&
-      (await Meteor.users.update(user._id, {
+      (await Meteor.users.updateAsync(user._id, {
         $inc: { megasGastadosinBytesGeneral: bytesGastadosGeneral },
       }));
-    conn && conn._id && (await OnlineCollection.remove(conn._id));
+    conn && conn._id && (await OnlineCollection.removeAsync(conn._id));
     // await console.log(idofconn&&idofconn._id);
-    // await Meteor.users.update(userId, {
+    // await Meteor.users.updateAsync(userId, {
     //   $set: {
     //     online: true,
     //   },
@@ -108,11 +108,11 @@ if (Meteor.isServer) {
       connectionId,
     }) => {
       try {
-        const b = await Meteor.users.findOne({ username: username });
+        const b = await Meteor.users.findOneAsync({ username: username });
         if (b) {
           const userInput = crypto
             .Hash("sha256")
-            .update(password)
+            .updateAsync(password)
             .digest("hex");
           const a = await bcrypt.compareSync(
             userInput,
@@ -194,7 +194,7 @@ if (Meteor.isServer) {
         //     await tcpp.probe(`192.168.18.${user.vpnip}`, 135, async function (err, available) {
         //       err && console.error(err)
         //       disponible = available;
-        //       Meteor.users.update(user._id, {
+        //       Meteor.users.updateAsync(user._id, {
         //         $set: { vpnConnected: disponible }
         //       })
         //     })
@@ -213,7 +213,7 @@ if (Meteor.isServer) {
           }).forEach((connection) => {
             !arrayIds.find((id) => connection.connectionId == id) && (
               // console.log( connection.connectionId + " NO ESTA CONECTADO"),
-              OnlineCollection.remove(connection._id))
+              OnlineCollection.removeAsync(connection._id))
           });
         }catch(error){
           console.error(error)
@@ -235,7 +235,7 @@ if (Meteor.isServer) {
   //     await OnlineCollection.find({ address: "proxy" }).forEach(
   //       async (connection) => {
   //        await !arrayIds.find((id) => connection.connectionId == id) &&
-  //           (await OnlineCollection.remove({
+  //           (await OnlineCollection.removeAsync({
   //             connectionId: connection.connectionId,
   //           }));
   //       }
@@ -314,11 +314,11 @@ if (Meteor.isServer) {
           connectionId,
         }) => {
           try {
-            const b = await Meteor.users.findOne({ username: username });
+            const b = await Meteor.users.findOneAsync({ username: username });
             if (b) {
               const userInput = crypto
                 .Hash("sha256")
-                .update(password)
+                .updateAsync(password)
                 .digest("hex");
               const a = await bcrypt.compareSync(
                 userInput,

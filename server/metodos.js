@@ -32,7 +32,7 @@ if (Meteor.isServer) {
     },
 
     sendemail: function (user, text, subject) {
-      let admin = Meteor.users.findOne({
+      let admin = Meteor.users.findOneAsync({
         _id: user.bloqueadoDesbloqueadoPor,
         "profile.role": "admin",
       });
@@ -72,10 +72,10 @@ if (Meteor.isServer) {
       });
     },
     sendMensaje: function (user, text, subject) {
-      MensajesCollection.insert({
+      MensajesCollection.insertAsync({
         from: user.bloqueadoDesbloqueadoPor
           ? user.bloqueadoDesbloqueadoPor
-          : Meteor.users.findOne({
+          : Meteor.users.findOneAsync({
               username: Array(Meteor.settings.public.administradores)[0][0],
             })._id,
         to: user._id,
@@ -87,12 +87,12 @@ if (Meteor.isServer) {
     getDatosDashboardByUser: async (tipoDeDashboard, idUser) => {
       //tipoDeDashboard = "DIARIO" || "MENSUAL" || "HORA"
 
-      const aporte = (type, fechaStart, fechaEnd) => {
+      const aporte = async (type, fechaStart, fechaEnd) => {
         let totalConsumo = 0;
         let fechaInicial = new Date(fechaStart);
         let fechaFinal = new Date(fechaEnd);
 
-        const consumo = RegisterDataUsersCollection.find(
+        const consumo = await RegisterDataUsersCollection.find(
           idUser
             ? {
                 userId: idUser,
@@ -116,9 +116,10 @@ if (Meteor.isServer) {
               vpnMbGastados: 1,
             },
           }
-        ).fetch();
+        );
 
-        consumo.forEach((element) => {
+        await consumo.forEach((element) => {
+          
           let fechaElement = new Date(element.fecha);
 
           if (element.type == type) {
@@ -135,9 +136,10 @@ if (Meteor.isServer) {
                 break;
             }
 
-            fechaElement >= fechaInicial &&
-              fechaElement < fechaFinal &&
-              (totalConsumo += suma);
+            if (fechaElement >= fechaInicial &&
+              fechaElement < fechaFinal) {
+              totalConsumo = totalConsumo + suma;
+            }
           }
         });
 
@@ -222,12 +224,12 @@ if (Meteor.isServer) {
       return data01;
     },
     actualizarEstadoServer: function (serverId, data) {
-      ServersCollection.update(serverId, {
+      ServersCollection.updateAsync(serverId, {
         $set: data ? data : { idUserSolicitandoReinicio: null, estado: 'ACTIVO' },
       });
     },
     getServer: function (ip) {
-      return ServersCollection.findOne({ ip: ip });
+      return ServersCollection.findOneAsync({ ip: ip });
     },
 
   });

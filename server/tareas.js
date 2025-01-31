@@ -18,7 +18,7 @@ const guardarDatosConsumidosAll = async () => {
       { vpnMbGastados: { $gte: 1 } },
     ],
   });
-  await console.log("Count User Diarios " + users.count());
+  await console.log("Count User Diarios " + (await users.countAsync()));
   // await console.log("running every minute to 1 from 5");
 
   users.fetch().forEach( async user => {
@@ -33,7 +33,7 @@ const guardarDatosConsumidosAllMensual = async () => {
       { vpnMbGastados: { $gte: 1 } },
     ],
   });
-  await console.log("Count user Mensual" + users.count());
+  await console.log("Count user Mensual" + (await users.countAsync()));
   // await console.log("running every minute to 1 from 5");
 
   await users.forEach(async (user) => {
@@ -46,7 +46,7 @@ const actualizarSeries = async () => {
 //ACTUALIZANDO LAS SERIES Y LOS CAPITULOS
 TemporadasCollection.find({actualizar:true}).forEach(async (temporada) => {
 
-  let serie = await SeriesCollection.findOne({ _id: temporada.idSerie })
+  let serie = await SeriesCollection.findOneAsync({ _id: temporada.idSerie })
 
    Meteor.call(
      "insertSeriesByTemporadasURL",
@@ -176,7 +176,7 @@ if (Meteor.isServer) {
             if (!user) return; // Validación contra null
 
             try {
-              await Meteor.users.update(user._id, { $set: { baneado: true } });
+              await Meteor.users.updateAsync(user._id, { $set: { baneado: true } });
               await Meteor.call("registrarLog", "Bloqueo Proxy", user._id, "SERVER", `El servidor ${process.env.ROOT_URL} bloqueó automáticamente el proxy ${motivo}`);
               await Meteor.call("sendMensaje", user, {
                 text: `El servidor ${process.env.ROOT_URL} bloqueó automáticamente el proxy de ${user.profile.firstName} ${user.profile.lastName} ${motivo}`,
@@ -243,7 +243,7 @@ if (Meteor.isServer) {
       if (!user.vpn) return; // Si esta bloqueada la VPN que no actualice nada
   
       try {
-        await Meteor.users.update(user._id, { $set: { vpn: false } });
+        await Meteor.users.updateAsync(user._id, { $set: { vpn: false } });
         await Meteor.call("registrarLog", "Bloqueo VPN", user._id, "SERVER", `El servidor ${process.env.ROOT_URL} bloqueó automáticamente la VPN ${motivo}`);
        await Meteor.call("sendMensaje", user, {
           text: `El servidor ${process.env.ROOT_URL} bloqueó automáticamente la VPN de ${user.profile.firstName} ${user.profile.lastName} ${motivo}`,

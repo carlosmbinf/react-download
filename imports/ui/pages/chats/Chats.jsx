@@ -67,7 +67,7 @@ export default Chat = () => {
 
             let mensajesSinLeer = MensajesCollection.find(
                 { to: Meteor.userId(), from: element, leido: false }
-                , { sort: { createdAt: -1 }}).count()
+                , { sort: { createdAt: -1 }}).countAsync()
 
             list.push({
                 from: element,
@@ -77,7 +77,7 @@ export default Chat = () => {
                 subtitle: lastMensaje && lastMensaje.mensaje,
                 date: lastMensaje && lastMensaje.createdAt,
                 unread: mensajesSinLeer,
-                // unread: MensajesCollection.find({ $or: [{ $and: [{ from: element.from, to: Meteor.userId() }] }, { $and: [{ from: Meteor.userId(), to: element.from }] }], leido:false }, { sort: { createdAt: -1 } }).count(),
+                // unread: MensajesCollection.find({ $or: [{ $and: [{ from: element.from, to: Meteor.userId() }] }, { $and: [{ from: Meteor.userId(), to: element.from }] }], leido:false }, { sort: { createdAt: -1 } }).countAsync(),
             })
         })
 
@@ -88,8 +88,8 @@ export default Chat = () => {
         //     title: <p style={{ color: 'black', margin: 0 }}>{firstName + " " + lastName}</p>,
         //     subtitle: element.mensaje,
         //     date: element.createdAt,
-        //     unread: MensajesCollection.find({ from: iam ? element.to : element.from, to: Meteor.userId(), leido: false }).count(),
-        //     // unread: MensajesCollection.find({ $or: [{ $and: [{ from: element.from, to: Meteor.userId() }] }, { $and: [{ from: Meteor.userId(), to: element.from }] }], leido:false }, { sort: { createdAt: -1 } }).count(),
+        //     unread: MensajesCollection.find({ from: iam ? element.to : element.from, to: Meteor.userId(), leido: false }).countAsync(),
+        //     // unread: MensajesCollection.find({ $or: [{ $and: [{ from: element.from, to: Meteor.userId() }] }, { $and: [{ from: Meteor.userId(), to: element.from }] }], leido:false }, { sort: { createdAt: -1 } }).countAsync(),
         // })
 
         // Meteor.subscribe("mensajes");
@@ -129,8 +129,8 @@ export default Chat = () => {
         //         title: <p style={{ color: 'black', margin: 0 }}>{firstName + " " + lastName}</p>,
         //         subtitle: element.mensaje,
         //         date: element.createdAt,
-        //         unread: MensajesCollection.find({ from: iam ? element.to : element.from, to: Meteor.userId(), leido: false }).count(),
-        //         // unread: MensajesCollection.find({ $or: [{ $and: [{ from: element.from, to: Meteor.userId() }] }, { $and: [{ from: Meteor.userId(), to: element.from }] }], leido:false }, { sort: { createdAt: -1 } }).count(),
+        //         unread: MensajesCollection.find({ from: iam ? element.to : element.from, to: Meteor.userId(), leido: false }).countAsync(),
+        //         // unread: MensajesCollection.find({ $or: [{ $and: [{ from: element.from, to: Meteor.userId() }] }, { $and: [{ from: Meteor.userId(), to: element.from }] }], leido:false }, { sort: { createdAt: -1 } }).countAsync(),
         //     })
         // })
         return list;
