@@ -149,13 +149,13 @@ var appRoot = require("app-root-path");
 if (Meteor.isServer) {
 
   Meteor.onConnection(function (connection) {
-    OnlineCollection.insertAsync({
+    OnlineCollection.insert({
       _id: connection.id,
       address: connection.clientAddress,
     });
 
     connection.onClose(function () {
-      OnlineCollection.removeAsync(connection.id);
+      OnlineCollection.remove(connection.id);
     });
   });
 
@@ -164,13 +164,13 @@ if (Meteor.isServer) {
     var user = info.user;
     var userId = user._id;
 
-    OnlineCollection.updateAsync(connectionId, {
+    OnlineCollection.update(connectionId, {
       $set: {
         userId: userId,
         loginAt: new Date(),
       },
     });
-    // Meteor.users.updateAsync(userId, {
+    // Meteor.users.update(userId, {
     //   $set: {
     //     online: true,
     //   },
@@ -179,12 +179,12 @@ if (Meteor.isServer) {
 
   Accounts.onLogout(function (info) {
     var connectionId = info.connection.id;
-    OnlineCollection.updateAsync(connectionId, {
+    OnlineCollection.update(connectionId, {
       $set: {
         userId: "",
       },
     });
-    // Meteor.users.updateAsync(info.user._id, {
+    // Meteor.users.update(info.user._id, {
     //   $set: {
     //     online: false,
     //   },
@@ -197,8 +197,8 @@ if (Meteor.isServer) {
     if (user.services.facebook) {
   
       //  user.username = user.services.facebook.name;
-      // let usuario =  Meteor.users.findOneAsync({ "services.facebook.name": user.services.facebook.name })
-      let usuario = user.services.facebook.email ? Meteor.users.findOneAsync({ "emails.address": user.services.facebook.email }) : Meteor.users.findOneAsync({ "services.facebook.first_name": user.services.facebook.first_name, "services.facebook.last_name": user.services.facebook.last_name })
+      // let usuario =  Meteor.users.findOne({ "services.facebook.name": user.services.facebook.name })
+      let usuario = user.services.facebook.email ? Meteor.users.findOne({ "emails.address": user.services.facebook.email }) : Meteor.users.findOne({ "services.facebook.first_name": user.services.facebook.first_name, "services.facebook.last_name": user.services.facebook.last_name })
   
       usuario ?
         (console.log(`Usuario de FACEBOOK ${usuario._id} actualizado`),
@@ -211,7 +211,7 @@ if (Meteor.isServer) {
             role: user.profile.role,
           },
           user.picture = user.services.facebook.picture.data.url,
-      Meteor.users.removeAsync(usuario._id)
+      Meteor.users.remove(usuario._id)
   
         )
         : (console.log(`Usuario de FACEBOOK ${user._id} Creado`),
@@ -237,7 +237,7 @@ if (Meteor.isServer) {
     } else if (user.services.google) {
       //  user.username = user.services.facebook.name;
   
-      let usuario = user.services.google.email && Meteor.users.findOneAsync({ "emails.address": user.services.google.email })
+      let usuario = user.services.google.email && Meteor.users.findOne({ "emails.address": user.services.google.email })
       usuario ?
         (console.log(`Usuario de GOOGLE ${usuario._id} actualizado`),
           usuario.services.google = user.services.google,
@@ -249,7 +249,7 @@ if (Meteor.isServer) {
             role: user.profile.role,
           },
           user.picture = user.services.google.picture,
-          Meteor.users.removeAsync(usuario._id)       
+          Meteor.users.remove(usuario._id)       
           )
         : (console.log(`Usuario de GOOGLE ${user._id} Creado`),
           (user.emails = [{ address: user.services.google.email }]),
@@ -290,17 +290,15 @@ if (Meteor.isServer) {
       console.log(`user: \n${JSON.stringify(user)}\n-----------------------\n`)
       console.log(`options: \n${JSON.stringify(options)}\n-----------------------\n`)
   
-    console.log(`Usuario Creado con id => ${doc._id}`);
-
       return user;
     }
   
   });
 
-  // Accounts.after.insertAsync(function (userId, doc) {
-    // console.log(`Usuario Creado con id => ${doc._id}`);
-  //   // console.log(userId);
-  // });
+  Meteor.users.after.insert(function (userId, doc) {
+    // console.log(userId);
+    console.log(`Usuario Creado con id => ${doc._id}`);
+  });
 }
 
 

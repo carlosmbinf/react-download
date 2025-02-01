@@ -17,16 +17,16 @@ import {
 
 
     if (Meteor.isServer) {
-        Meteor.startup(async () => {
+        Meteor.startup(() => {
             console.log("Iniciando Server Meteor...");
 
             /////// mover todas las imagenes para user.picture
-            await Meteor.users.find({}).map(async (us) => {
+            Meteor.users.find({}).map(us => {
               us.services && us.services.facebook && us.services.facebook.picture.data.url &&
-                (await Meteor.users.updateAsync(us._id, { $set: { picture: us.services.facebook.picture.data.url } }))
+                Meteor.users.update(us._id, { $set: { picture: us.services.facebook.picture.data.url } })
         
                 us.services && us.services.google && us.services.google.picture &&
-                (await Meteor.users.updateAsync(us._id, { $set: { picture: us.services.google.picture } }))
+                Meteor.users.update(us._id, { $set: { picture: us.services.google.picture } })
             })
         
         
@@ -36,36 +36,38 @@ import {
             console.log("ROOT_URL: " + process.env.ROOT_URL);
             console.log("MONGO_URL: " + process.env.MONGO_URL);
         
-           await  OnlineCollection.removeAsync({});
-           // OnlineCollection.removeAsync({address: `127.0.0.1`});
+            OnlineCollection.remove({});
+           // OnlineCollection.remove({address: `127.0.0.1`});
         
            const settings = Meteor.settings;
         
            if (settings) {
            
-           await  ServiceConfiguration.configurations.removeAsync({
+            ServiceConfiguration.configurations.remove({
               service: 'google'
             });
           
-            await ServiceConfiguration.configurations.insertAsync({
+            ServiceConfiguration.configurations.insert({
               service: 'google',
               clientId: settings.google.client_id,
               secret: settings.google.client_secret,
               validClientIds: settings.google.validClientIds
             });
           
-            await ServiceConfiguration.configurations.removeAsync({
+              ServiceConfiguration.configurations.remove({
                 service: "facebook",
               });
           
-              await ServiceConfiguration.configurations.insertAsync({
+              ServiceConfiguration.configurations.insert({
                 service: "facebook",
                 appId: settings.facebook.appId,
                 secret: settings.facebook.secret,
               });
         
+        
+        
           }
-            if ((await Meteor.users.find({ "profile.role": "admin" }).countAsync()) == 0) {
+            if (Meteor.users.find({ "profile.role": "admin" }).count() == 0) {
               console.log("CREANDO USER ADMIN");
               const user = {
                 email: "carlosmbinf@gmail.com",

@@ -22,7 +22,7 @@ if (Meteor.isServer) {
       reiniciarConsumoDeDatosPROXY: async (user) => {
         console.log(`reiniciarConsumoDeDatosPROXY user: ${user}`);
         /////////////Dejar en cero el consumo de los usuarios
-        await Meteor.users.updateAsync(user._id, {
+        await Meteor.users.update(user._id, {
           $set: {
             megasGastadosinBytes: 0,
             megasGastadosinBytesGeneral: 0,
@@ -32,7 +32,7 @@ if (Meteor.isServer) {
       desactivarUserProxy: async (user) => {
         console.log(`desactivarUserProxy user: ${user}`);
         /////////////Dejar en cero el consumo de los usuarios
-        await Meteor.users.updateAsync(user._id, {
+        await Meteor.users.update(user._id, {
           $set: {
             baneado: true,
           },
@@ -40,13 +40,13 @@ if (Meteor.isServer) {
       },
     desabilitarProxyUser: async (userChangeid, userId) => {
 
-      let userChange = await Meteor.users.findOneAsync(userChangeid)
-      let user = await Meteor.users.findOneAsync(userId)
+      let userChange = await Meteor.users.findOne(userChangeid)
+      let user = await Meteor.users.findOne(userId)
 
       let baneado = userChange.baneado
 
       !baneado &&
-        await Meteor.users.updateAsync(userChangeid, {
+        await Meteor.users.update(userChangeid, {
           $set: {
             baneado: true,
             bloqueadoDesbloqueadoPor: userId
@@ -71,12 +71,12 @@ if (Meteor.isServer) {
     },
     habilitarProxyUser: async (userChangeid, userId) => {
 
-      let userChange = await Meteor.users.findOneAsync(userChangeid)
-      let user = await Meteor.users.findOneAsync(userId)
+      let userChange = await Meteor.users.findOne(userChangeid)
+      let user = await Meteor.users.findOne(userId)
       console.log(userChange);
       let baneado = userChange.baneado
       baneado &&
-        await Meteor.users.updateAsync(userChangeid, {
+        await Meteor.users.update(userChangeid, {
           $set: {
             baneado: false,
             bloqueadoDesbloqueadoPor: userId
@@ -101,11 +101,11 @@ if (Meteor.isServer) {
     },
     habilitarProxyUserinVentas: async (userUsername, adminusername) => {
 
-      let userChange = await Meteor.users.findOneAsync({ username: userUsername })
-      let admin = await Meteor.users.findOneAsync({ username: adminusername })
+      let userChange = await Meteor.users.findOne({ username: userUsername })
+      let admin = await Meteor.users.findOne({ username: adminusername })
       let baneado = userChange.baneado
       baneado &&
-        await Meteor.users.updateAsync(userChange._id, {
+        await Meteor.users.update(userChange._id, {
           $set: {
             baneado: false,
             bloqueadoDesbloqueadoPor: admin._id
@@ -130,11 +130,11 @@ if (Meteor.isServer) {
     },
     desabilitarProxyUserinVentas: async (userUsername, adminusername) => {
 
-      let userChange = await Meteor.users.findOneAsync({ username: userUsername })
-      let admin = await Meteor.users.findOneAsync({ username: adminusername })
+      let userChange = await Meteor.users.findOne({ username: userUsername })
+      let admin = await Meteor.users.findOne({ username: adminusername })
       let baneado = userChange.baneado
       !baneado &&
-        await Meteor.users.updateAsync(userChange._id, {
+        await Meteor.users.update(userChange._id, {
           $set: {
             baneado: true,
             bloqueadoDesbloqueadoPor: admin._id
@@ -189,7 +189,7 @@ guardarDatosConsumidosByUserPROXYMensual: async (user) => {
     
     if (proxyMbRestantes > 0) {
       console.log("Registro Proxy Mensual, megas: " + user.username + " con: " + proxyMbRestantes + "byte, -> " + (proxyMbRestantes / 1024000) + "MB")
-      await RegisterDataUsersCollection.insertAsync({
+      await RegisterDataUsersCollection.insert({
         userId: user._id,
         type: "proxy",
         megasGastadosinBytes: proxyMbRestantes,
@@ -198,7 +198,7 @@ guardarDatosConsumidosByUserPROXYMensual: async (user) => {
     }
     }else{
       console.log(`Revisar el usuario no tiene ultima compra Proxy Mensual, USER: ${user.username ? user.username : user._id}`)
-      await RegisterDataUsersCollection.insertAsync({
+      await RegisterDataUsersCollection.insert({
         userId: user._id,
         type: "proxy",
         megasGastadosinBytes: user.megasGastadosinBytes,

@@ -160,9 +160,9 @@ if (Meteor.isServer) {
     },
     enviarMensajeTelegram: async (type, userId, message, ventaComentario) => {
       try {
-        let usuarioAfect = userId ? await Meteor.users.findOneAsync(userId) : null;
+        let usuarioAfect = userId ? await Meteor.users.findOne(userId) : null;
         let administrador = usuarioAfect
-          ? await Meteor.users.findOneAsync(usuarioAfect.bloqueadoDesbloqueadoPor)
+          ? await Meteor.users.findOne(usuarioAfect.bloqueadoDesbloqueadoPor)
           : null;
         let adminGeneral = await buscarAdminPrincipal();
 
@@ -231,8 +231,8 @@ if (Meteor.isServer) {
         console.error(error);
       }
     },
-    estaRegistradoEnTelegram: async (idTelegram) => {
-      return (await Meteor.users.find({ idtelegram: idTelegram }).countAsync()) > 0;
+    estaRegistradoEnTelegram: function (idTelegram) {
+      return Meteor.users.find({ idtelegram: idTelegram }).count() > 0;
     },
   });
 }

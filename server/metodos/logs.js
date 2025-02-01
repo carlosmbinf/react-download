@@ -21,7 +21,7 @@ if (Meteor.isServer) {
     Meteor.methods({
       registrarLog: async (type, userAfectado, userAdmin, message) => {
         try {
-          let id = await LogsCollection.insertAsync({
+          let id = await LogsCollection.insert({
             type: type,
             userAfectado: userAfectado,
             userAdmin: userAdmin,

@@ -291,7 +291,7 @@ export const SchemaRegisterDataUsersCollection = new SimpleSchema({
   },
 });
 
-// RegisterDataUsersCollection.attachSchema(SchemaRegisterDataUsersCollection);
+RegisterDataUsersCollection.attachSchema(SchemaRegisterDataUsersCollection);
 
 export const SchemaVentasCollection = new SimpleSchema({
   adminId: {
@@ -345,7 +345,7 @@ export const SchemaVentasCollection = new SimpleSchema({
   },
 });
 
-// VentasCollection.attachSchema(SchemaVentasCollection);
+VentasCollection.attachSchema(SchemaVentasCollection);
 
 export const SchemaPreciosCollection = new SimpleSchema({
   userId: {
@@ -394,7 +394,7 @@ export const SchemaPreciosCollection = new SimpleSchema({
   },
 });
 
-// PreciosCollection.attachSchema(SchemaPreciosCollection);
+PreciosCollection.attachSchema(SchemaPreciosCollection);
 
 export const SchemaLogsCollection = new SimpleSchema({
   type: {
@@ -423,7 +423,7 @@ export const SchemaLogsCollection = new SimpleSchema({
   },
 });
 
-// LogsCollection.attachSchema(SchemaLogsCollection);
+LogsCollection.attachSchema(SchemaLogsCollection);
 
 export const SchemaOnlineCollection = new SimpleSchema({
   address: {
@@ -466,7 +466,7 @@ export const SchemaOnlineCollection = new SimpleSchema({
   },
 });
 
-// OnlineCollection.attachSchema(SchemaOnlineCollection);
+OnlineCollection.attachSchema(SchemaOnlineCollection);
 
 export const SchemaMensajesCollection = new SimpleSchema({
   from: {
@@ -503,7 +503,7 @@ export const SchemaMensajesCollection = new SimpleSchema({
   },
 });
 
-// MensajesCollection.attachSchema(SchemaMensajesCollection);
+MensajesCollection.attachSchema(SchemaMensajesCollection);
 export const SchemaTVCollection = new SimpleSchema({
   nombreTV: {
     type: String,
@@ -540,7 +540,7 @@ export const SchemaTVCollection = new SimpleSchema({
   },
 });
 
-// TVCollection.attachSchema(SchemaTVCollection);
+TVCollection.attachSchema(SchemaTVCollection);
 
 export const SchemaPelisCollection = new SimpleSchema({
   nombrePeli: {
@@ -715,7 +715,7 @@ export const SchemaPelisCollection = new SimpleSchema({
   "actors.$": { type: String },
 });
 
-// PelisCollection.attachSchema(SchemaPelisCollection);
+PelisCollection.attachSchema(SchemaPelisCollection);
 
 export const SchemaSeriesCollection = new SimpleSchema({
   nombre: {
@@ -817,7 +817,7 @@ export const SchemaSeriesCollection = new SimpleSchema({
   "actors.$": { type: String },
 });
 
-// SeriesCollection.attachSchema(SchemaSeriesCollection);
+SeriesCollection.attachSchema(SchemaSeriesCollection);
 
 export const SchemaTemporadasCollection = new SimpleSchema({
   idSerie: {
@@ -839,7 +839,7 @@ export const SchemaTemporadasCollection = new SimpleSchema({
   },
 });
 
-// TemporadasCollection.attachSchema(SchemaTemporadasCollection);
+TemporadasCollection.attachSchema(SchemaTemporadasCollection);
 
 
 export const SchemaCapitulosCollection = new SimpleSchema({
@@ -1005,7 +1005,7 @@ export const SchemaCapitulosCollection = new SimpleSchema({
   },  
 });
 
-// CapitulosCollection.attachSchema(SchemaCapitulosCollection);
+CapitulosCollection.attachSchema(SchemaCapitulosCollection);
 
 export const SchemaDescargaCollection = new SimpleSchema({
   idFile: {
@@ -1056,7 +1056,7 @@ export const SchemaDescargaCollection = new SimpleSchema({
   },
 });
 
-// DescargasCollection.attachSchema(SchemaDescargaCollection);
+DescargasCollection.attachSchema(SchemaDescargaCollection);
 
 export const SchemaServersCollection = new SimpleSchema({
   domain: {
@@ -1109,7 +1109,7 @@ export const SchemaServersCollection = new SimpleSchema({
   },
 });
 
-// ServersCollection.attachSchema(SchemaServersCollection);
+ServersCollection.attachSchema(SchemaServersCollection);
 
 export const SchemaFilesCollection = new SimpleSchema({
   nombre: {
@@ -1139,7 +1139,7 @@ export const SchemaFilesCollection = new SimpleSchema({
   },
 });
 
-// FilesCollection.attachSchema(SchemaFilesCollection);
+FilesCollection.attachSchema(SchemaFilesCollection);
 
 FilesCollection.allow({
   insert(doc) {

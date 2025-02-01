@@ -462,8 +462,8 @@ const compras = useTracker(() => {
                           >
                             <Avatar
                               alt={
-                                " " + (userActual &&
-                                userActual.profile) &&
+                                " " + userActual &&
+                                userActual.profile &&
                                 userActual.profile.firstName
                                   ? userActual.profile.firstName
                                   : userActual.profile.name
@@ -474,8 +474,8 @@ const compras = useTracker(() => {
                         ) : (
                           <Avatar
                             alt={
-                              (userActual &&
-                              userActual.profile) &&
+                              userActual &&
+                              userActual.profile &&
                               userActual.profile.firstName
                                 ? userActual.profile.firstName
                                 : userActual.profile.name
