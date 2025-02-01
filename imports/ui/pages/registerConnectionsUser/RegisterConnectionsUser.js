@@ -132,7 +132,7 @@ export default function RegisterConnectionsUser() {
     Meteor.subscribe("user", id,{fields:{
       '_id': 1,
       'profile': 1
-    }});
+    }}).ready();
     return Meteor.users.findOne(id)
   }
 
@@ -150,7 +150,7 @@ export default function RegisterConnectionsUser() {
           b &&
            a.push({
              id: register._id,
-             user: b.profile.firstName + " " + b.profile.lastName,
+             user: b.profile && (b.profile.firstName + " " + b.profile.lastName),
              address: register.address,
              hostname: register.hostname,
              loginAt: register.loginAt && register.loginAt.toString(),

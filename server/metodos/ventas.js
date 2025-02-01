@@ -20,7 +20,7 @@ if (Meteor.isServer) {
   console.log("Cargando Métodos de Ventas...");
   Meteor.methods({
     ultimaCompraByUserId: async (userId, type) => {
-      const venta = await VentasCollection.findOne(
+      const venta = await VentasCollection.findOneAsync(
         { userId, type },
         { sort: { createdAt: -1 }, limit: 1 }
       );
@@ -28,7 +28,7 @@ if (Meteor.isServer) {
     },
     actualizarPrecio: async (id, values) => {
       try {
-        await VentasCollection.update(id, {
+        await VentasCollection.updateAsync(id, {
           $set: {
             precio: values.precio,
             comentario: values.comentario,
@@ -53,9 +53,9 @@ if (Meteor.isServer) {
     getPrecioOficial: async (compra) => {
 
       try {
-        let adminPrincipal = await Meteor.users.findOne({ username: Meteor.settings.public.administradores[0] })
+        let adminPrincipal = await Meteor.users.findOneAsync({ username: Meteor.settings.public.administradores[0] })
 
-        let precioOficial = await PreciosCollection.findOne({
+        let precioOficial = await PreciosCollection.findOneAsync({
           userId: adminPrincipal._id,
           type: compra.type,
           megas: compra.megas
@@ -71,16 +71,16 @@ if (Meteor.isServer) {
     addVentasOnly: async (userChangeid, adminId, compra, type) => {
 
       ///////REVISAR EN ADDVENTASONLY  el descuento que se debe de hacer
-      let userChange = await Meteor.users.findOne(userChangeid)
-      // let admin = await Meteor.users.findOne(adminId)
-      // let precio = PreciosCollection.findOne(precioid)
-      let adminPrincipal = await Meteor.users.findOne({ username: Meteor.settings.public.administradores[0] })
+      let userChange = await Meteor.users.findOneAsync(userChangeid)
+      // let admin = await Meteor.users.findOneAsync(adminId)
+      // let precio = PreciosCollection.findOneAsync(precioid)
+      let adminPrincipal = await Meteor.users.findOneAsync({ username: Meteor.settings.public.administradores[0] })
 
       let precioOficial = await Meteor.call('getPrecioOficial', compra);
 
       try {
 
-        compra && await VentasCollection.insert({
+        compra && await VentasCollection.insertAsync({
           adminId: adminId,
           userId: userChangeid,
           precio: precioOficial ? precioOficial.precio : compra.precio,
@@ -101,14 +101,14 @@ if (Meteor.isServer) {
 
     },
     addVentasProxy: async (userChangeid, userId) => {
-      let userChange = await Meteor.users.findOne(userChangeid)
-      let user = await Meteor.users.findOne(userId)
-      // let precio = PreciosCollection.findOne(precioid)
+      let userChange = await Meteor.users.findOneAsync(userChangeid)
+      let user = await Meteor.users.findOneAsync(userId)
+      // let precio = PreciosCollection.findOneAsync(precioid)
       let precio;
 
       await userChange.isIlimitado
-        ? precio = await PreciosCollection.findOne({ userId: userId, type: "fecha-proxy" })
-        : precio = await PreciosCollection.findOne({ userId: userId, type: "megas", megas: userChange.megas })
+        ? precio = await PreciosCollection.findOneAsync({ userId: userId, type: "fecha-proxy" })
+        : precio = await PreciosCollection.findOneAsync({ userId: userId, type: "megas", megas: userChange.megas })
 
 
       try {
@@ -119,7 +119,7 @@ if (Meteor.isServer) {
           await Meteor.call("habilitarProxyUser", userChangeid, userId)
           precio && await Meteor.call("addVentasOnly", userChangeid, userId, precio, "PROXY")
 
-          //   await VentasCollection.insert({
+          //   await VentasCollection.insertAsync({
           //   adminId: userId,
           //   userId: userChangeid,
           //   precio: (precio.precio - user.descuentoproxy > 0) ? (precio.precio - user.descuentoproxy) : 0,
@@ -138,7 +138,7 @@ if (Meteor.isServer) {
     //eliminarVenta -- se le pasa el id de la venta
     eliminarVenta: async (id) => {
       try {
-        await VentasCollection.remove(id)
+        await VentasCollection.removeAsync(id)
         return "Venta Eliminada"
       } catch (error) {
         return error.message
@@ -147,9 +147,9 @@ if (Meteor.isServer) {
     },
     //changeStatusVenta -- cambia el estado de la venta, se le pasa ID de la venta
     changeStatusVenta: async (id) => {
-      let venta = await VentasCollection.findOne(id)
+      let venta = await VentasCollection.findOneAsync(id)
       try {
-        await VentasCollection.update(id, {
+        await VentasCollection.updateAsync(id, {
           $set: {
             cobradoAlAdmin: true,
             cobrado: !venta.cobrado

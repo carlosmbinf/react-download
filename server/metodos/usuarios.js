@@ -21,7 +21,7 @@ if (Meteor.isServer) {
   Meteor.methods({
     setConsumoProxy: async (user, status) => {
       try {
-        let count = await Meteor.users.update(
+        let count = await Meteor.users.updateAsync(
           user ? user : {},
           {
             $set: { contandoProxy: status },
@@ -75,7 +75,7 @@ if (Meteor.isServer) {
                 vpnMbRestantes / 1024000 +
                 "MB"
             );
-            await RegisterDataUsersCollection.insert({
+            await RegisterDataUsersCollection.insertAsync({
               userId: user._id,
               type: "vpn",
               vpnMbGastados: vpnMbRestantes,
@@ -88,7 +88,7 @@ if (Meteor.isServer) {
               user.username ? user.username : user._id
             }`
           );
-          await RegisterDataUsersCollection.insert({
+          await RegisterDataUsersCollection.insertAsync({
             userId: user._id,
             type: "vpn",
             vpnMbGastados: user.vpnMbGastados,
@@ -140,7 +140,7 @@ if (Meteor.isServer) {
                 proxyMbRestantes / 1024000 +
                 "MB"
             );
-            await RegisterDataUsersCollection.insert({
+            await RegisterDataUsersCollection.insertAsync({
               userId: user._id,
               type: "proxy",
               megasGastadosinBytes: proxyMbRestantes,
@@ -153,7 +153,7 @@ if (Meteor.isServer) {
               user.username ? user.username : user._id
             }`
           );
-          await RegisterDataUsersCollection.insert({
+          await RegisterDataUsersCollection.insertAsync({
             userId: user._id,
             type: "proxy",
             megasGastadosinBytes: user.megasGastadosinBytes,
@@ -204,7 +204,7 @@ if (Meteor.isServer) {
                 vpnMbRestantes / 1024000 +
                 "MB"
             );
-            await RegisterDataUsersCollection.insert({
+            await RegisterDataUsersCollection.insertAsync({
               userId: user._id,
               type: "vpn",
               vpnMbGastados: vpnMbRestantes,
@@ -217,7 +217,7 @@ if (Meteor.isServer) {
               user.username ? user.username : user._id
             }`
           );
-          await RegisterDataUsersCollection.insert({
+          await RegisterDataUsersCollection.insertAsync({
             userId: user._id,
             type: "vpn",
             vpnMbGastados: user.vpnMbGastados,
@@ -270,7 +270,7 @@ if (Meteor.isServer) {
                 proxyMbRestantes / 1024000 +
                 "MB"
             );
-            await RegisterDataUsersCollection.insert({
+            await RegisterDataUsersCollection.insertAsync({
               userId: user._id,
               type: "proxy",
               megasGastadosinBytes: proxyMbRestantes,
@@ -283,7 +283,7 @@ if (Meteor.isServer) {
               user.username ? user.username : user._id
             }`
           );
-          await RegisterDataUsersCollection.insert({
+          await RegisterDataUsersCollection.insertAsync({
             userId: user._id,
             type: "proxy",
             megasGastadosinBytes: user.megasGastadosinBytes,
@@ -335,7 +335,7 @@ if (Meteor.isServer) {
                 vpnMbRestantes / 1024000 +
                 "MB"
             );
-            await RegisterDataUsersCollection.insert({
+            await RegisterDataUsersCollection.insertAsync({
               userId: user._id,
               type: "vpn",
               vpnMbGastados: vpnMbRestantes,
@@ -348,7 +348,7 @@ if (Meteor.isServer) {
               user.username ? user.username : user._id
             }`
           );
-          await RegisterDataUsersCollection.insert({
+          await RegisterDataUsersCollection.insertAsync({
             userId: user._id,
             type: "vpn",
             vpnMbGastados: user.vpnMbGastados,
@@ -362,7 +362,7 @@ if (Meteor.isServer) {
       }
     },
     setOnlineVPN: function (id, datachange) {
-      return Meteor.users.update(id, { $set: datachange });
+      return Meteor.users.updateAsync(id, { $set: datachange });
     },
     addUser: function (user) {
       try {
@@ -383,15 +383,15 @@ if (Meteor.isServer) {
         .fetch();
     },
     updateUsersAll: function (id, datachange) {
-      return Meteor.users.update(id, { $set: datachange });
+      return Meteor.users.updateAsync(id, { $set: datachange });
     },
     getAdminPrincipal: async () => {
       ///////REVISAR EN ADDVENTASONLY  el descuento que se debe de hacer
-      // let admin = await Meteor.users.findOne(adminId)
-      // let precio = PreciosCollection.findOne(precioid)
+      // let admin = await Meteor.users.findOneAsync(adminId)
+      // let precio = PreciosCollection.findOneAsync(precioid)
 
       try {
-        let adminPrincipal = await Meteor.users.findOne({
+        let adminPrincipal = await Meteor.users.findOneAsync({
           username: Meteor.settings.public.administradores[0],
         });
         return adminPrincipal ? adminPrincipal : null;
@@ -436,9 +436,9 @@ if (Meteor.isServer) {
     },
     //changeNotificacionTelegram -- se le pasa el id del usuario a cambiar notificación de telegram
     changeNotificacionTelegram: function (id) {
-      let usuario = Meteor.users.findOne(id);
+      let usuario = Meteor.users.findOneAsync(id);
       try {
-         Meteor.users.update(id, { $set: {notificarByTelegram: !usuario.notificarByTelegram} });
+         Meteor.users.updateAsync(id, { $set: {notificarByTelegram: !usuario.notificarByTelegram} });
          console.log("Notificación de Telegram actualizada para el usuario: " + (usuario ? usuario.username : ""));
          return "Notificación de Telegram actualizada";
       } catch (error) {
@@ -448,7 +448,7 @@ if (Meteor.isServer) {
     changePasswordServer: function (id,userCambioId, password) {
       try {
         Accounts.setPassword(id, password);
-        Meteor.users.update(id, { $set: { "passvpn": password } });
+        Meteor.users.updateAsync(id, { $set: { "passvpn": password } });
         Meteor.call("registrarLog","Cambio de contraseña", id,userCambioId, "Cambio de contraseña");
         return "Contraseña actualizada";
       } catch (error) {

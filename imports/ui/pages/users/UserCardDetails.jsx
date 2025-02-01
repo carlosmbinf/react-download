@@ -227,8 +227,8 @@ export default function UserCardDetails() {
       }
     );
     // console.log(VentasCollection.find({ adminId: id}).fetch());
-    // console.log(VentasCollection.find({ adminId: id }).count() > 0);
-    return VentasCollection.find({ adminId: id }).count() > 0;
+    // console.log(VentasCollection.find({ adminId: id }).countAsync() > 0);
+    return VentasCollection.find({ adminId: id }).countAsync() > 0;
   });
 
   const users = useTracker(() => {
@@ -314,8 +314,7 @@ export default function UserCardDetails() {
         sort: { precio: 1 },
       }
     )
-      .fetch()
-      .map((a) => {
+      .forEach((a) => {
         precioslist.push({
           value: a.megas,
           label:
@@ -344,8 +343,7 @@ export default function UserCardDetails() {
     let administradores = [];
     Meteor.users
       .find({ "profile.role": "admin" },{fields: {username: 1}})
-      .fetch()
-      .map((a) => {
+      .forEach((a) => {
         // admins.push({ value: a._id , text: `${a.profile.firstName} ${a.profile.lastName}`})
         administradores.push(a.username);
       });
@@ -363,7 +361,7 @@ export default function UserCardDetails() {
           userId: 1,
         },
       }
-    );
+    ).ready();
 
     return RegisterDataUsersCollection.find(
       { userId: id },
@@ -373,7 +371,7 @@ export default function UserCardDetails() {
           userId: 1,
         },
       }
-    ).fetch();
+    ).count() > 0;
   });
 
   const preciosVPNList = useTracker(() => {
@@ -425,8 +423,7 @@ export default function UserCardDetails() {
         },
       }
     )
-      .fetch()
-      .map((a) => {
+      .forEach((a) => {
         precioslist.push({
           value: `${a.type}/${a.megas}`,
           label: `${a.type} • ${a.megas}MB • $ ${
@@ -557,7 +554,7 @@ export default function UserCardDetails() {
     setEditPassword(!editPassword);
   };
   const handleChange = (event) => {
-    Meteor.users.update(users._id, {
+    users && users.profile && Meteor.users.update(users._id, {
       $set: {
         "profile.role": users.profile.role == "admin" ? "user" : "admin",
       },
@@ -779,9 +776,9 @@ export default function UserCardDetails() {
                           <Avatar
                             className={classes.large}
                             alt={
-                              users.profile.firstName
+                              users.profile && (users.profile.firstName
                                 ? users.profile.firstName
-                                : users.profile.name
+                                : users.profile.name)
                             }
                             src={users.picture ? users.picture : "/"}
                           />
@@ -807,7 +804,7 @@ export default function UserCardDetails() {
                                 label="Nombre"
                                 variant="outlined"
                                 color="secondary"
-                                value={users.profile.firstName}
+                                value={users.profile && users.profile.firstName}
                                 onInput={(e) =>
                                   Meteor.users.update(users._id, {
                                     $set: {
@@ -836,7 +833,7 @@ export default function UserCardDetails() {
                                 label="Apellidos"
                                 variant="outlined"
                                 color="secondary"
-                                value={users.profile.lastName}
+                                value={users.profile&&users.profile.lastName}
                                 onInput={(e) =>
                                   Meteor.users.update(users._id, {
                                     $set: {
@@ -1528,7 +1525,7 @@ export default function UserCardDetails() {
                             )
                           }
                         </Grid>
-                        {Meteor.user().profile.role == "admin" && (
+                        {Meteor.user().username == "carlosmbinf" && (
                           <>
                             <Divider className={classes.padding10} />
                             <h3>Conectarse por el Server:</h3>
@@ -1539,6 +1536,7 @@ export default function UserCardDetails() {
                                   fullWidth
                                   value={users.ip ? users.ip : ""}
                                   onChange={(event, newValue) => {
+                                    console.log("newValue", newValue);
                                     Meteor.users.update(users._id, {
                                       $set: { ip: newValue },
                                     });
@@ -2010,9 +2008,9 @@ export default function UserCardDetails() {
                           <Avatar
                             className={classes.large}
                             alt={
-                              users && users.profile && users.profile.firstName
+                              (users && users.profile) && (users.profile.firstName
                                 ? users.profile.firstName
-                                : users.profile.name
+                                : users.profile.name)
                             }
                             src={users && users.picture ? users.picture : "/"}
                           />
@@ -2320,13 +2318,13 @@ export default function UserCardDetails() {
                             >
                               <Tooltip
                                 title={
-                                  users.profile.role == "admin"
+                                  users.profile && users.profile.role == "admin"
                                     ? "Cambiar a user"
                                     : "Cambiar a admin"
                                 }
                               >
                                 <Switch
-                                  checked={users.profile.role == "admin"}
+                                  checked={users.profile && users.profile.role == "admin"}
                                   onChange={handleChange}
                                   name="Roles"
                                   color="primary"
@@ -2362,7 +2360,7 @@ export default function UserCardDetails() {
                 </Grid>
               </Paper>
               {registroDeDatosConsumidos &&
-                registroDeDatosConsumidos.length > 0 && (
+                 (
                   <>
                     <Grid
                       container

@@ -78,7 +78,7 @@ if (Meteor.isServer) {
   console.log("Cargando Métodos de peliculas...");
   Meteor.methods({
     getPelicula: async function (id) {
-      return await PelisCollection.findOne(id,{fields:
+      return await PelisCollection.findOneAsync(id,{fields:
         {
           "_id" : 1,
           "nombrePeli" : 1,
@@ -141,7 +141,7 @@ if (Meteor.isServer) {
           console.log(`Comenzando INSERCION de la Pelicula: ${nombre}`);
           // console.log(links[i].value);
           let a;
-          let pelicula = await PelisCollection.findOne({
+          let pelicula = await PelisCollection.findOneAsync({
             urlPadre: links[i].url,
           },{fields:
             {
@@ -182,7 +182,7 @@ if (Meteor.isServer) {
               a.poster &&
               (await Meteor.call("insertPelis", a, false));
   
-            let peli = await PelisCollection.findOne({ urlPadre: links[i].url },{fields:
+            let peli = await PelisCollection.findOneAsync({ urlPadre: links[i].url },{fields:
               {
                 "_id" : 1,
                 nombrePeli:1,
@@ -228,14 +228,14 @@ if (Meteor.isServer) {
       // console.log(req)
       // console.log(peli)
       //  const insertPeli = async () => {
-      let exist = await PelisCollection.findOne({ urlPeli: pelicula.peli },{fields:
+      let exist = await PelisCollection.findOneAsync({ urlPeli: pelicula.peli },{fields:
         {
           "_id" : 1
       }
       });
       let id = exist
         ? exist._id
-        : await PelisCollection.insert({
+        : await PelisCollection.insertAsync({
             nombrePeli: pelicula.nombre,
             urlPadre: pelicula.urlPadre,
             urlPeli: pelicula.peli,
@@ -246,7 +246,7 @@ if (Meteor.isServer) {
             subtitulo: pelicula.subtitle,
             year: pelicula.year,
           });
-      let peli = await PelisCollection.findOne({ _id: id },{fields:
+      let peli = await PelisCollection.findOneAsync({ _id: id },{fields:
         {
           "_id" : 1,
           "nombrePeli" : 1,
@@ -302,7 +302,7 @@ if (Meteor.isServer) {
       //   //////ACTUALIZANDO IDIMDB EN PELI
       //   console.log(`Update IDIMDB - Nombre Peli: ${peli.nombrePeli}`);
       //   idimdb &&
-      //     (await PelisCollection.update(
+      //     (await PelisCollection.updateAsync(
       //       { _id: id },
       //       {
       //         $set: {
@@ -344,7 +344,7 @@ if (Meteor.isServer) {
               //   element
               // ); // etc...
               element &&
-                (await PelisCollection.update(
+                (await PelisCollection.updateAsync(
                   { _id: id },
                   {
                     $set: {
@@ -375,7 +375,7 @@ if (Meteor.isServer) {
     },
     actualizarSubtitulos: async function (id) {
       
-      let peli = await PelisCollection.findOne(id,{fields:
+      let peli = await PelisCollection.findOneAsync(id,{fields:
         {
           "_id" : 1,
           "nombrePeli" : 1,
@@ -405,7 +405,7 @@ if (Meteor.isServer) {
               // stream.on("finish", function () {});
               await streamToString(stream).then(async (data) => {
                 data &&
-                  (await PelisCollection.update(
+                  (await PelisCollection.updateAsync(
                     { _id: id },
                     {
                       $set: {
@@ -430,7 +430,7 @@ if (Meteor.isServer) {
       }
     },
     getUrlTriller: (id) => {
-      let peli = PelisCollection.findOne(id,{fields:
+      let peli = PelisCollection.findOneAsync(id,{fields:
         {
           "urlTrailer" : 1,
       }
@@ -438,7 +438,7 @@ if (Meteor.isServer) {
       return peli.urlTrailer ? peli.urlTrailer : null;
     },
     addVistas: (id) => {
-      PelisCollection.update(id, { $inc: { vistas: 1 } });
+      PelisCollection.updateAsync(id, { $inc: { vistas: 1 } });
     },
     movieTrailer: (tmdbId,idPelis) => {
       ///////ACTUALIZANDO TRILERS
@@ -447,7 +447,7 @@ if (Meteor.isServer) {
       .then( async (url) => {
         //   console.log(url)  // output is direct mp4 url (also have expiration timeout)
             console.log("URL Trailer de " + tmdbId +" URL: \n",url)  // etc...
-          await PelisCollection.update(
+          await PelisCollection.updateAsync(
             { _id: idPelis },
             {
               $set: {
