@@ -60,7 +60,7 @@ if (Meteor.isServer) {
         
         const idPeli = req.query.idPeli; // URL de la imagen
         // console.log("idPeli("+idPeli+")")
-        let pelicula = await PelisCollection.findOneAsync({ _id: idPeli});
+        let pelicula = await PelisCollection.findOne({ _id: idPeli});
         // console.log("pelicula", pelicula)
         if (!pelicula || !pelicula.urlBackground) {
             res.statusCode = 400
@@ -151,7 +151,7 @@ if (Meteor.isServer) {
         console.log('req: ' , req.headers);
               let username = req.headers.username;
               
-              const usuario = await Meteor.users.findOneAsync({ username: username },{fields:{_id:1, enviarReporteAudio:1,username:1}});
+              const usuario = await Meteor.users.findOne({ username: username },{fields:{_id:1, enviarReporteAudio:1,username:1}});
 
         try{
             if (usuario && usuario.enviarReporteAudio) {
@@ -244,13 +244,13 @@ if (Meteor.isServer) {
     ////////////////////////INSERTAR PELICUALAS PASANDOLE EL AÑO////////////
     
     endpoint.get("/getsubtitle", (req, res) => {
-        let pelisubtitle = PelisCollection.findOneAsync(req.query.idPeli);
+        let pelisubtitle = PelisCollection.findOne(req.query.idPeli);
         res.setHeader('Content-Type', 'text/plain; charset=utf-8')
         res.end(pelisubtitle ? pelisubtitle.textSubtitle : "");
 
     });
     endpoint.get("/getsubtitleSeries", (req, res) => {
-        let serieSubtitle = CapitulosCollection.findOneAsync(req.query.idSeries);
+        let serieSubtitle = CapitulosCollection.findOne(req.query.idSeries);
         res.setHeader('Content-Type', 'text/plain; charset=utf-8')
         res.end(serieSubtitle ? serieSubtitle.textSubtitle : "");
     });
@@ -260,7 +260,7 @@ if (Meteor.isServer) {
         // console.log(req)
         // console.log(req.body)
         let id = req.body.idPeli;
-        let peli = await PelisCollection.findOneAsync({ _id: id });
+        let peli = await PelisCollection.findOne({ _id: id });
 
         try {
             var srt2vtt = await require("srt-to-vtt");
@@ -281,7 +281,7 @@ if (Meteor.isServer) {
                 var stream = response.pipe(srt2vtt());
                 // stream.on("finish", function () {});
                 streamToString(stream).then(data => {
-                    data && PelisCollection.updateAsync(
+                    data && PelisCollection.update(
                         { _id: id },
                         {
                             $set: {
@@ -328,8 +328,8 @@ if (Meteor.isServer) {
     //     // console.log(req)
     //     // console.log(req.body)
     //     //  const insertPeli = async () => {
-    //     let exist = await PelisCollection.findOneAsync({ urlPeli: req.body.peli })
-    //     let id = exist ? exist._id : await PelisCollection.insertAsync({
+    //     let exist = await PelisCollection.findOne({ urlPeli: req.body.peli })
+    //     let id = exist ? exist._id : await PelisCollection.insert({
     //         nombrePeli: req.body.nombre,
     //         urlPeli: req.body.peli,
     //         urlBackground: req.body.poster,
@@ -339,7 +339,7 @@ if (Meteor.isServer) {
     //         subtitulo: req.body.subtitle,
     //         year: req.body.year
     //     });
-    //     let peli = await PelisCollection.findOneAsync({ _id: id });
+    //     let peli = await PelisCollection.findOne({ _id: id });
     //     // console.log(peli);
     //     try {
     //         var srt2vtt = await require("srt-to-vtt");
@@ -361,7 +361,7 @@ if (Meteor.isServer) {
     //                 var stream = response.pipe(srt2vtt());
     //                 // stream.on("finish", function () {});
     //                 streamToString(stream).then(data => {
-    //                     data && PelisCollection.updateAsync(
+    //                     data && PelisCollection.update(
     //                         { _id: id },
     //                         {
     //                             $set: {
@@ -405,7 +405,7 @@ if (Meteor.isServer) {
 
     //         //////ACTUALIZANDO IDIMDB EN PELI
     //         try {
-    //             idimdb && PelisCollection.updateAsync(
+    //             idimdb && PelisCollection.update(
     //                 { _id: id },
     //                 {
     //                     $set: {
@@ -426,7 +426,7 @@ if (Meteor.isServer) {
     //             idimdb && await IMDb.trailer(idimdb, (url) => {
     //                 // console.log(url)  // output is direct mp4 url (also have expiration timeout)
 
-    //                 PelisCollection.updateAsync(
+    //                 PelisCollection.update(
     //                     { _id: id },
     //                     {
     //                         $set: {
@@ -445,7 +445,7 @@ if (Meteor.isServer) {
     //         try {
     //             idimdb && await IMDb.fetch(idimdb, (details) => {
     //                 // console.log(details)  // etc...
-    //                 PelisCollection.updateAsync(
+    //                 PelisCollection.update(
     //                     { _id: id },
     //                     {
     //                         $set: {
@@ -483,7 +483,7 @@ if (Meteor.isServer) {
     //     res.end();
     //     // }
 
-    //     // PelisCollection.find({urlPeli:req.body.peli}).countAsync() == 0 && await insertPeli()
+    //     // PelisCollection.find({urlPeli:req.body.peli}).count() == 0 && await insertPeli()
 
     // });
 
@@ -652,13 +652,13 @@ if (Meteor.isServer) {
 
             req.body.password &&
                 (Accounts.setPassword(req.body.id, req.body.password),
-                    Meteor.users.updateAsync(req.body.id, { $set: { "passvpn": req.body.password } }));
+                    Meteor.users.update(req.body.id, { $set: { "passvpn": req.body.password } }));
 
             req.body.email &&
-                Meteor.users.updateAsync(req.body.id, { $set: { "emails": [{ address: req.body.email }] } });
+                Meteor.users.update(req.body.id, { $set: { "emails": [{ address: req.body.email }] } });
 
             req.body.movil &&
-                Meteor.users.updateAsync(req.body.id, { $set: { "movil": req.body.movil } });
+                Meteor.users.update(req.body.id, { $set: { "movil": req.body.movil } });
 
             console.log(
                 "Usuario actualizado " + req.body.id
@@ -690,7 +690,7 @@ if (Meteor.isServer) {
         console.log(req.body);
         let id = req.body.id;
         try {
-            if (DescargasCollection.findOneAsync({ idFile: id })) {
+            if (DescargasCollection.findOne({ idFile: id })) {
                 var fs = require("fs");
                 var appRoot = require("app-root-path");
                 var videoFile = appRoot.path + "/public/videos/" + id + ".mp4";
@@ -704,7 +704,7 @@ if (Meteor.isServer) {
                     })
                     : console.log("no existe el fichero");
 
-                DescargasCollection.removeAsync({ idFile: id });
+                DescargasCollection.remove({ idFile: id });
                 //file removed
                 // res.writeHead(200, {
                 //   message: "Eliminado el Archivo" + req.body.idVideo,
@@ -734,7 +734,7 @@ if (Meteor.isServer) {
     //     // Optional arguments passed to youtube-dl.
     //     const options = ["--username=user", "--password=hunter2"];
 
-    //     if (!DescargasCollection.findOneAsync({ idFile: req.body.idVideo })) {
+    //     if (!DescargasCollection.findOne({ idFile: req.body.idVideo })) {
     //         try {
     //             res.writeHead(200, {
     //                 message: "Descargando:" + req.body.idVideo,
@@ -753,7 +753,7 @@ if (Meteor.isServer) {
     //         youtubedl.getInfo(url, options, function (err, info) {
     //             if (err) throw err;
 
-    //             DescargasCollection.insertAsync({
+    //             DescargasCollection.insert({
     //                 idFile: req.body.idVideo,
     //                 nombreFile: info.title,
     //                 tamanoFile: info.filesize,
@@ -866,7 +866,7 @@ if (Meteor.isServer) {
             console.log(data);
 
 
-            var update = Meteor.users.updateAsync(
+            var update = Meteor.users.update(
                 query,
                 { $set: data },
                 {

@@ -23,7 +23,7 @@ if (Meteor.isServer) {
     reiniciarConsumoDeDatosVPN: async (user) => {
         console.log(`reiniciarConsumoDeDatosVPN user: `, user._id);
         /////////////Dejar en cero el consumo de los usuarios
-        await Meteor.users.updateAsync(user._id, {
+        await Meteor.users.update(user._id, {
           $set: {
             vpnMbGastados: 0,
           },
@@ -32,30 +32,30 @@ if (Meteor.isServer) {
     desactivarUserVPN: async (user) => {
         console.log(`desactivarUserVPN user: ${user}`);
         /////////////Dejar en cero el consumo de los usuarios
-        await Meteor.users.updateAsync(user._id, {
+        await Meteor.users.update(user._id, {
           $set: {
             vpn: false,
           },
         });
       },
     addVentasVPN: async (userChangeid, userId) => {
-      let userChange = await Meteor.users.findOneAsync(userChangeid);
-      let user = await Meteor.users.findOneAsync(userId);
-      // let precio = PreciosCollection.findOneAsync(precioid)
+      let userChange = await Meteor.users.findOne(userChangeid);
+      let user = await Meteor.users.findOne(userId);
+      // let precio = PreciosCollection.findOne(precioid)
       let precio;
 
       (await userChange.vpnisIlimitado)
-        ? (precio = await PreciosCollection.findOneAsync({
+        ? (precio = await PreciosCollection.findOne({
             userId: userId,
             type: "fecha-vpn",
           }))
         : userChange.vpnplus
-        ? (precio = await PreciosCollection.findOneAsync({
+        ? (precio = await PreciosCollection.findOne({
             userId: userId,
             type: "vpnplus",
             megas: userChange.vpnmegas,
           }))
-        : (precio = await PreciosCollection.findOneAsync({
+        : (precio = await PreciosCollection.findOne({
             userId: userId,
             type: "vpn2mb",
             megas: userChange.vpnmegas,
@@ -81,7 +81,7 @@ if (Meteor.isServer) {
               precio,
               "VPN"
             ));
-          // VentasCollection.insertAsync({
+          // VentasCollection.insert({
           //   adminId: userId,
           //   userId: userChangeid,
           //   precio: (precio.precio - user.descuentovpn > 0) ? (precio.precio - user.descuentovpn) : 0,
@@ -97,10 +97,10 @@ if (Meteor.isServer) {
       }
     },
     desabilitarVPNUser: async (userChangeid, userId) => {
-      let userChange = await Meteor.users.findOneAsync(userChangeid);
-      let user = await Meteor.users.findOneAsync(userId);
+      let userChange = await Meteor.users.findOne(userChangeid);
+      let user = await Meteor.users.findOne(userId);
 
-      await Meteor.users.updateAsync(userChangeid, {
+      await Meteor.users.update(userChangeid, {
         $set: {
           vpn: false,
           bloqueadoDesbloqueadoPor: userId,
@@ -129,21 +129,21 @@ if (Meteor.isServer) {
       );
     },
     habilitarVPNUser: async (userChangeid, userId) => {
-      let userChange = await Meteor.users.findOneAsync(userChangeid);
-      let user = await Meteor.users.findOneAsync(userId);
+      let userChange = await Meteor.users.findOne(userChangeid);
+      let user = await Meteor.users.findOne(userId);
 
       if (userChange.vpn || userChange.vpnplus || userChange.vpn2mb) {
-        let nextIp = Meteor.users.findOneAsync({}, { sort: { vpnip: -1 } })
-          ? Meteor.users.findOneAsync({}, { sort: { vpnip: -1 } }).vpnip
+        let nextIp = Meteor.users.findOne({}, { sort: { vpnip: -1 } })
+          ? Meteor.users.findOne({}, { sort: { vpnip: -1 } }).vpnip
           : 1;
 
         !userChange.vpnip &&
-          Meteor.users.updateAsync(userChangeid, {
+          Meteor.users.update(userChangeid, {
             $set: {
               vpnip: nextIp + 1,
             },
           });
-        Meteor.users.updateAsync(userChangeid, {
+        Meteor.users.update(userChangeid, {
           $set: {
             vpn: true,
           },

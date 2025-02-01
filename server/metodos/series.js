@@ -203,7 +203,7 @@ function groupFilesByEpisode(fileList,seriesName) {
       let temporada = null;
       let serie = null;
 
-      let exist = await CapitulosCollection.findOneAsync({ url: serieArg.url });
+      let exist = await CapitulosCollection.findOne({ url: serieArg.url });
       let id = null;
       if (exist) {
         console.log(
@@ -215,29 +215,29 @@ function groupFilesByEpisode(fileList,seriesName) {
           `El Capitulo ${serieArg.nombre} - ${serieArg.capitulo} no existe, agregandola...`
         );
 
-        serie = SeriesCollection.findOneAsync({ nombre: serieArg.nombre });
+        serie = SeriesCollection.findOne({ nombre: serieArg.nombre });
         let idSerie = serie
           ? serie._id
-          : await SeriesCollection.insertAsync({
+          : await SeriesCollection.insert({
               nombre: serieArg.nombre,
               urlBackground: serieArg.poster,
               anoLanzamiento: serieArg.year,
               descripcion: serieArg.nombre,
               mostrar: serieArg.mostrar,
             });
-        temporada = TemporadasCollection.findOneAsync({
+        temporada = TemporadasCollection.findOne({
           idSerie: idSerie,
           numeroTemporada: serieArg.temporada,
         });
         let idTemporada = temporada
           ? temporada._id
-          : await TemporadasCollection.insertAsync({
+          : await TemporadasCollection.insert({
               idSerie: idSerie,
               numeroTemporada: serieArg.temporada,
               url: eliminarNombreArchivo(serieArg.url),
             });
 
-        id = await CapitulosCollection.insertAsync({
+        id = await CapitulosCollection.insert({
           nombre: serieArg.nombreCapitulo,
           url: serieArg.url,
           urlBackground: serieArg.poster,
@@ -257,10 +257,10 @@ function groupFilesByEpisode(fileList,seriesName) {
         // }
       }
 
-      capitulo = await CapitulosCollection.findOneAsync({ _id: id });
+      capitulo = await CapitulosCollection.findOne({ _id: id });
       temporada =
-        capitulo && TemporadasCollection.findOneAsync({ _id: capitulo.idTemporada });
-      serie = temporada && SeriesCollection.findOneAsync({ _id: temporada.idSerie });
+        capitulo && TemporadasCollection.findOne({ _id: capitulo.idTemporada });
+      serie = temporada && SeriesCollection.findOne({ _id: temporada.idSerie });
       // console.log(peli);
       var srt2vtt = await require("srt-to-vtt");
       var fs = await require("fs");
@@ -285,7 +285,7 @@ function groupFilesByEpisode(fileList,seriesName) {
               // stream.on("finish", function () {});
               await streamToString(stream).then(async (data) => {
                 data &&
-                  (await CapitulosCollection.updateAsync(
+                  (await CapitulosCollection.update(
                     { _id: id },
                     {
                       $set: {
@@ -338,7 +338,7 @@ function groupFilesByEpisode(fileList,seriesName) {
       //   //////ACTUALIZANDO IDIMDB EN PELI
       //   console.log(`Update IDIMDB - Nombre Peli: ${peli.nombrePeli}`);
       //   idimdb &&
-      //     (await CapitulosCollection.updateAsync(
+      //     (await CapitulosCollection.update(
       //       { _id: id },
       //       {
       //         $set: {
@@ -359,7 +359,7 @@ function groupFilesByEpisode(fileList,seriesName) {
       //     (await IMDb.trailer(idimdb, async (url) => {
       //     //   console.log(url)  // output is direct mp4 url (also have expiration timeout)
       //         console.log("URL Trailer de " + idimdb +" URL: \n",url)  // etc...
-      //       await CapitulosCollection.updateAsync(
+      //       await CapitulosCollection.update(
       //         { _id: id },
       //         {
       //           $set: {
@@ -394,7 +394,7 @@ function groupFilesByEpisode(fileList,seriesName) {
               console.log("Se encontro el imdba de " + capitulo._id  ); // etc...
               console.log("Detalles de ", capitulo, " Detalles: \n", element); // etc...
               element &&
-                (await CapitulosCollection.updateAsync(
+                (await CapitulosCollection.update(
                   { _id: capitulo._id },
                   {
                     $set: {
@@ -405,7 +405,7 @@ function groupFilesByEpisode(fileList,seriesName) {
                   { multi: true }
                 ));
               element &&
-                (await SeriesCollection.updateAsync(
+                (await SeriesCollection.update(
                   { _id: serie._id },
                   {
                     $set: {
@@ -425,17 +425,17 @@ function groupFilesByEpisode(fileList,seriesName) {
       }
     },
     getUrlTrillerSeries: (id) => {
-      let serie = SeriesCollection.findOneAsync(id);
+      let serie = SeriesCollection.findOne(id);
       return serie.urlTrailer ? serie.urlTrailer : null;
     },
     addVistasSeries: (id) => {
-      CapitulosCollection.updateAsync(id, { $inc: { vistas: 1 } })
+      CapitulosCollection.update(id, { $inc: { vistas: 1 } })
     },
     changeStatusSubscripcion: (userId,AdminId) => {
-      let user = Meteor.users.findOneAsync(userId);
-      let admin = Meteor.users.findOneAsync(AdminId);
+      let user = Meteor.users.findOne(userId);
+      let admin = Meteor.users.findOne(AdminId);
       if(user && admin){
-        Meteor.users.updateAsync(userId, { $set: { subscipcionPelis: !user.subscipcionPelis } });
+        Meteor.users.update(userId, { $set: { subscipcionPelis: !user.subscipcionPelis } });
         Meteor.call(
           "registrarLog",
           "Servicio de Películas",
@@ -448,7 +448,7 @@ function groupFilesByEpisode(fileList,seriesName) {
       return false;
     }, 
     getSeriesClasificacion: () => {
-      let series = SeriesCollection.find({},{fields:{clasificacion:1}});
+      let series = SeriesCollection.find({},{fields:{clasificacion:1}}).fetch();
       let clasificacion = [];
       series.forEach((serie) => {
         serie.clasificacion.forEach((clas) => {
