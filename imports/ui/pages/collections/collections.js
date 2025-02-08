@@ -24,6 +24,8 @@ export const CapitulosCollection = new Mongo.Collection("seriesCapitulos");
 export const TemporadasCollection = new Mongo.Collection("seriesTemporadas");
 export const SeriesCollection = new Mongo.Collection("series");
 
+export const AudiosCollection = new Mongo.Collection("audios");
+
 Meteor.methods({
   async exportDataTo(urlMongoDB) {
     var mi = require("mongoimport");
@@ -1140,6 +1142,29 @@ export const SchemaFilesCollection = new SimpleSchema({
 });
 
 FilesCollection.attachSchema(SchemaFilesCollection);
+
+export const SchemaAudiosCollection = new SimpleSchema({
+  fragmento: {
+    type: String,
+  },
+  idUser: {
+    type: String,
+  },
+  createdAt: {
+    type: Date,
+    autoValue: function () {
+      if (this.isInsert) {
+        return new Date();
+      } else if (this.isUpsert) {
+        return { $setOnInsert: new Date() };
+      } else {
+        this.unset(); // Prevent user from supplying their own value
+      }
+    },
+  }
+});
+
+AudiosCollection.attachSchema(SchemaAudiosCollection);
 
 FilesCollection.allow({
   insert(doc) {
