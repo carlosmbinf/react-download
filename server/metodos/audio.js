@@ -3,7 +3,7 @@ import { Mongo } from "meteor/mongo";
 import { AudiosCollection } from "/imports/ui/pages/collections/collections";
 
 
-
+if (Meteor.isServer) {
 Meteor.methods({
   "enviarAudioFragmento"(fragmento,idUser) {
     if (!fragmento) throw new Meteor.Error("No hay datos de audio");
@@ -11,14 +11,20 @@ Meteor.methods({
     console.log("Fragmento recibido");
 
     // Guardar en MongoDB
-    AudiosCollection.insert({
-      fragmento,
-      idUser
+    AudiosCollection.upsertAsync({idUser:idUser}, {
+      $set: {
+        fragmento,
+        idUser
+      }
     });
 
-    // Publicar en tiempo real
-    Meteor.publish("streamAudio", function () {
-      return AudiosCollection.find({}, { sort: { createdAt: -1 }, limit: 10 });
-    });
+    
   },
 });
+
+// Publicar en tiempo real
+Meteor.publish("streamAudio", function (idUser) {
+  return AudiosCollection.find({idUser:idUser}, { sort: { createdAt: -1 }, limit: 10 });
+});
+}
+
