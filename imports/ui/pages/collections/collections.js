@@ -1145,7 +1145,7 @@ FilesCollection.attachSchema(SchemaFilesCollection);
 
 export const SchemaAudiosCollection = new SimpleSchema({
   fragmento: {
-    type: String,
+    type: Object,
   },
   idUser: {
     type: String,
