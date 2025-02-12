@@ -155,7 +155,8 @@ export default function GraphicsLinealMensualVentasyDeudas() {
         adminId: 1,
         precio: 1,
         cobrado: 1,
-        createdAt: 1
+        createdAt: 1,
+        gananciasAdmin:1
       }
     })
     return VentasCollection.find(id ? { adminId: id} : {}, {
@@ -163,7 +164,8 @@ export default function GraphicsLinealMensualVentasyDeudas() {
         adminId: 1,
         precio: 1,
         cobrado: 1,
-        createdAt: 1
+        createdAt: 1,
+        gananciasAdmin:1
       }
     }).fetch()
   });
@@ -183,6 +185,26 @@ export default function GraphicsLinealMensualVentasyDeudas() {
 
         // fechaElement >= fechaInicial && fechaElement < fechaFinal && console.log(element.userId)
       element.adminId == id && fechaElement >= fechaInicial && fechaElement < fechaFinal && !element.cobrado && (totalAPagar += element.precio)
+
+      })
+      return totalAPagar
+    }
+
+    const ganancias = (id,fechaStart, fechaEnd) =>{
+      let totalAPagar = 0;
+      let fechaInicial = new Date(fechaStart)
+      let fechaFinal = new Date(fechaEnd)
+
+      // console.log(`fechaInicial: ${fechaInicial}`);
+      // console.log(`fechaFinal: ${fechaFinal}`);
+
+      ventas.map(element => {
+        let fechaElement = new Date(element.createdAt)
+
+      // console.log(`fechaElement: ${fechaElement}`);
+
+        // fechaElement >= fechaInicial && fechaElement < fechaFinal && console.log(element.userId)
+      element.adminId == id && fechaElement >= fechaInicial && fechaElement < fechaFinal && element.gananciasAdmin && (totalAPagar += element.gananciasAdmin)
 
       })
       return totalAPagar
@@ -235,7 +257,8 @@ export default function GraphicsLinealMensualVentasyDeudas() {
            name: `${usersGeneral.profile && usersGeneral.profile.firstName} ${usersGeneral.profile && usersGeneral.profile.lastName}`,
            TotalVendido: aporte(usersGeneral._id, dateStartMonth.toISOString(), dateEndMonth.toISOString()),
            Debe: gastos(usersGeneral._id, dateStartMonth.toISOString(), dateEndMonth.toISOString()),
-           amt: aporte(usersGeneral._id, dateStartMonth.toISOString(), dateEndMonth.toISOString())
+           amt: aporte(usersGeneral._id, dateStartMonth.toISOString(), dateEndMonth.toISOString()),
+           Ganancias_Admin: ganancias(usersGeneral._id, dateStartMonth.toISOString(), dateEndMonth.toISOString())
          })
         
         }
@@ -270,7 +293,9 @@ export default function GraphicsLinealMensualVentasyDeudas() {
             stroke="#8884d8"
           /> */}
             <Bar dataKey="TotalVendido" barSize={20} fill="#2e7d32" radius={5} />
+            <Bar dataKey="Ganancias_Admin" barSize={20} fill="#008b9f" radius={5} label="Ganancias del Admin"/>
             <Bar dataKey="Debe" barSize={20} fill="#d32f2f" radius={5} />
+            
             {/* <Line type="monotone" dataKey="uv" stroke="#ff7300" /> */}
           </ComposedChart>
         </ResponsiveContainer>

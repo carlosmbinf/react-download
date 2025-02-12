@@ -164,7 +164,8 @@ export default function GraphicsLinealTotalVentasyDeudas() {
         adminId: 1,
         precio: 1,
         cobrado: 1,
-        createdAt: 1
+        createdAt: 1,
+        gananciasAdmin:1
       }
     })
     return VentasCollection.find(id ? { adminId: id} : {}, {
@@ -172,7 +173,8 @@ export default function GraphicsLinealTotalVentasyDeudas() {
         adminId: 1,
         precio: 1,
         cobrado: 1,
-        createdAt: 1
+        createdAt: 1,
+        gananciasAdmin:1
       }
     }).fetch()
   });
@@ -191,6 +193,16 @@ export default function GraphicsLinealTotalVentasyDeudas() {
 
       ventas.map(element => {
         element.adminId == id && (totalAPagar += element.precio)
+      })
+      return totalAPagar
+    }
+
+    
+    const ganancias = (id) =>{
+      let totalAPagar = 0;
+
+      ventas.map(element => {
+        element.adminId == id && (totalAPagar += element.gananciasAdmin)
       })
       return totalAPagar
     }
@@ -255,7 +267,8 @@ export default function GraphicsLinealTotalVentasyDeudas() {
            name: `${usersGeneral.profile && usersGeneral.profile.firstName} ${usersGeneral.profile && usersGeneral.profile.lastName}`,
            TotalVendido: aporte(usersGeneral._id),
            Debe: gastos(usersGeneral._id),
-           amt: aporte(usersGeneral._id)
+           amt: aporte(usersGeneral._id),
+           Ganancias_Admin: ganancias(usersGeneral._id)
          })
         
         }
@@ -290,6 +303,7 @@ export default function GraphicsLinealTotalVentasyDeudas() {
             stroke="#8884d8"
           /> */}
           <Bar dataKey="TotalVendido" barSize={20} fill="#2e7d32" radius={5}/>
+          <Bar dataKey="Ganancias_Admin" barSize={20} fill="#008b9f" radius={5}/>
           <Bar dataKey="Debe" barSize={20} fill="#d32f2f" radius={5}/>
           {/* <Line type="monotone" dataKey="uv" stroke="#ff7300" /> */}
         </ComposedChart>

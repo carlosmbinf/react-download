@@ -158,7 +158,8 @@ export default function GraphicsLinealVentasXMeses() {
         adminId: 1,
         precio: 1,
         cobrado: 1,
-        createdAt: 1
+        createdAt: 1,
+        gananciasAdmin:1
       }
     })
     return VentasCollection.find(id ? { adminId: id} : {}, {
@@ -166,7 +167,8 @@ export default function GraphicsLinealVentasXMeses() {
         adminId: 1,
         precio: 1,
         cobrado: 1,
-        createdAt: 1
+        createdAt: 1,
+        gananciasAdmin:1
       }
     }).fetch()
   });
@@ -218,6 +220,33 @@ export default function GraphicsLinealVentasXMeses() {
       return totalAPagar
     }
 
+    const ganancias = (fechaStart, fechaEnd) =>{
+      let totalAPagar = 0;
+      let fechaInicial = new Date(fechaStart)
+      let fechaFinal = new Date(fechaEnd)
+      
+      // console.log(`fechaStart: ${fechaStart}`);
+      // console.log(`fechaEnd: ${fechaEnd}`);
+      // console.log(`fechaInicial: ${fechaInicial}`);
+      // console.log(`fechaFinal: ${fechaFinal}`);
+
+      ventas.map(element => {
+      let fechaElement = new Date(element.createdAt)
+
+      // console.log(`fechaElement: ${fechaElement}`);
+      
+
+        // fechaElement >= fechaInicial && fechaElement < fechaFinal && console.log(element.userId)
+        if (id) {
+          element.adminId == id && fechaElement >= fechaInicial && fechaElement < fechaFinal && (totalAPagar += element.gananciasAdmin)
+        } else {
+          fechaElement >= fechaInicial && fechaElement < fechaFinal && (totalAPagar += element.gananciasAdmin)
+        }
+
+      })
+      return totalAPagar
+    }
+
   const datausers = useTracker(() => {
     let data01 = [];
 
@@ -247,6 +276,7 @@ export default function GraphicsLinealVentasXMeses() {
       data01.push({
         name: `${dateStartMonth.format("MMMM(YYYY)")}`,
         TotalVendido: aporte(dateStartMonth.toISOString(), dateEndMonth.toISOString()),
+        Ganancias_Admin: ganancias(dateStartMonth.toISOString(), dateEndMonth.toISOString())
         // Debe: gastos(usersGeneral._id, dateStartMonth.toISOString(), dateEndMonth.toISOString()),
         // amt: aporte(usersGeneral._id, dateStartMonth.toISOString(), dateEndMonth.toISOString())
       })
@@ -282,6 +312,12 @@ export default function GraphicsLinealVentasXMeses() {
             type="monotone"
             dataKey="TotalVendido"
             fill="#3f51b5"
+            stroke="#3f51b5"
+          />
+          <Area
+            type="monotone"
+            dataKey="Ganancias_Admin"
+            fill="#008b9f"
             stroke="#3f51b5"
           />
             {/* <Bar dataKey="TotalVendido" barSize={20} fill="#2e7d32" radius={5} />
