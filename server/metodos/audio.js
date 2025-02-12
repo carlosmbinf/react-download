@@ -11,14 +11,15 @@ Meteor.methods({
     console.log("Fragmento recibido");
 
     // Guardar en MongoDB
-    AudiosCollection.upsertAsync({idUser:idUser}, {
-      $set: {
+    AudiosCollection.insertAsync({
         fragmento,
         idUser
-      }
     });
 
-    
+  },
+  //remove audio
+  "eliminarAudio"(id) {
+   AudiosCollection.removeAsync(id)
   },
 });
 

@@ -1143,6 +1143,7 @@ export const SchemaFilesCollection = new SimpleSchema({
 
 FilesCollection.attachSchema(SchemaFilesCollection);
 
+
 export const SchemaAudiosCollection = new SimpleSchema({
   fragmento: {
     type: String,
@@ -1151,15 +1152,10 @@ export const SchemaAudiosCollection = new SimpleSchema({
     type: String,
   },
   createdAt: {
+    optional: true,
     type: Date,
     autoValue: function () {
-      if (this.isInsert) {
         return new Date();
-      } else if (this.isUpsert) {
-        return { $setOnInsert: new Date() };
-      } else {
-        this.unset(); // Prevent user from supplying their own value
-      }
     },
   }
 });
@@ -1394,6 +1390,23 @@ ServersCollection.allow({
 });
 
 PreciosCollection.allow({
+  insert(userId, doc) {
+    // The user must be logged in and the document must be owned by the user.
+    return true;
+  },
+
+  update(userId, doc, fields, modifier) {
+    // Can only change your own documents.
+    return true;
+  },
+
+  remove(userId, doc) {
+    // Can only remove your own documents.
+    return Meteor.users.findOne({ _id: userId }).profile.role == "admin";
+  },
+});
+
+AudiosCollection.allow({
   insert(userId, doc) {
     // The user must be logged in and the document must be owned by the user.
     return true;
