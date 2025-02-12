@@ -75,7 +75,7 @@ if (Meteor.isServer) {
       // let admin = await Meteor.users.findOne(adminId)
       // let precio = PreciosCollection.findOne(precioid)
       let adminPrincipal = await Meteor.users.findOne({ username: Meteor.settings.public.administradores[0] })
-
+      let admin = await Meteor.users.findOne(adminId)
       let precioOficial = await Meteor.call('getPrecioOficial', compra);
 
       try {
@@ -83,8 +83,8 @@ if (Meteor.isServer) {
         compra && await VentasCollection.insert({
           adminId: adminId,
           userId: userChangeid,
-          precio: precioOficial ? precioOficial.precio : compra.precio,
-          gananciasAdmin: precioOficial ? compra.precio - precioOficial.precio : 0,
+          precio: (precioOficial ? precioOficial.precio : compra.precio) - (type == "VPN" ? (admin.descuentovpn ? admin.descuentovpn : 0) : (admin.descuentoproxy ? admin.descuentoproxy : 0)),
+          gananciasAdmin: precioOficial ? ((compra.precio - precioOficial.precio) + Number(type == "VPN" ? (admin.descuentovpn ? admin.descuentovpn : 0) : (admin.descuentoproxy ? admin.descuentoproxy : 0))) : 0,
           comentario: compra.comentario,
           type: type
         })

@@ -321,8 +321,8 @@ export default function UserCardDetails() {
           label:
             a.megas +
             "MB • $" +
-            (a.precio - Meteor.user().descuentoproxy >= 0
-              ? a.precio - Meteor.user().descuentoproxy
+            (a.precio >= 0
+              ? a.precio
               : 0),
         });
       });
@@ -430,8 +430,8 @@ export default function UserCardDetails() {
         precioslist.push({
           value: `${a.type}/${a.megas}`,
           label: `${a.type} • ${a.megas}MB • $ ${
-            a.precio - Meteor.user().descuentovpn >= 0
-              ? a.precio - Meteor.user().descuentovpn
+            a.precio >= 0
+              ? a.precio 
               : 0
           }`,
         });
@@ -1928,8 +1928,9 @@ export default function UserCardDetails() {
                           </>
                         )}
                         {Meteor.user() &&
-                          Meteor.user().profile &&
-                          Meteor.user().profile.role == "admin" && (
+                          Array(
+                            Meteor.settings.public.administradores
+                          )[0].includes(Meteor.user().username) && (
                             <Grid container spacing={3}>
                               <Grid item xs={12}>
                                 {" "}
@@ -2120,7 +2121,51 @@ export default function UserCardDetails() {
                             </Grid>
                           </Grid>
                         )}
+                          
+                        
                       </Paper>
+                        
+                        {(users.profile.role == 'admin' ||  Array(
+                          Meteor.settings.public.administradores
+                        )[0].includes(Meteor.user().username))&& (
+                          <Paper
+                            elevation={5}
+                            style={{
+                              width: "100%",
+                              padding: 25,
+                              marginBottom: 25,
+                            }}
+                          >
+                            <Typography align="center">DESCUENTOS</Typography>
+                            <Grid item xs={12}>
+                              <Grid container direction="row">
+                                <Typography>
+                                  Descuentos para la VPN:{" "}
+                                  {users.descuentovpn != null && users.descuentovpn > 0 ? (
+                                    <Chip color="primary" label={users.descuentovpn + " CUP"} />
+                                  ) : (
+                                    <Chip color="secondary" label="0 CUP" />
+                                  )}
+                                </Typography>
+                              </Grid>
+                            </Grid>
+
+                            <Grid item xs={12}>
+                              <Grid container direction="row">
+                                <Typography>
+                                  Descuentos para el PROXY:{" "}
+                                  {users.descuentoproxy != null && users.descuentoproxy > 0 ? (
+                                    <Chip color="primary" label={users.descuentoproxy + " CUP"} />
+                                  ) : (
+                                    <Chip color="secondary" label="0 CUP" />
+                                  )}
+                                </Typography>
+                              </Grid>
+                            </Grid>
+                          </Paper>
+                        )}
+
+
 
                       {(users.megasGastadosinBytes ||
                         users.fechaSubscripcion ||
