@@ -7,10 +7,10 @@ const port = 3010;
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
-  cors: {
-    origin: "http://localhost:3000",  // Permitir solicitudes del cliente Meteor (puerto 3000)
-    methods: ["GET", "POST"],
-  },
+//   cors: {
+//     origin: "http://localhost:3000",  // Permitir solicitudes del cliente Meteor (puerto 3000)
+//     methods: ["GET", "POST"],
+//   },
 });
 
 app.get('/', (req, res) => {
