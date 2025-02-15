@@ -1,21 +1,30 @@
 // video-call-server/server.js
 
 const express = require('express');
-const http = require('http');
+const https = require('https');
 const socketIo = require('socket.io');
 const port = 3010;
-const app = express();
-const server = http.createServer(app);
+const fs = require('fs');
+
+const options = {
+    key: fs.readFileSync('/etc/letsencrypt/live/vidkar.com/privkey.pem'),
+    cert: fs.readFileSync('/etc/letsencrypt/live/vidkar.com/fullchain.pem')
+  };
+const server = https.createServer(options);
+
 const io = socketIo(server, {
 //   cors: {
 //     origin: "http://localhost:3000",  // Permitir solicitudes del cliente Meteor (puerto 3000)
 //     methods: ["GET", "POST"],
 //   },
 });
+// Carga los certificados SSL
 
-app.get('/', (req, res) => {
-  res.send('Servidor Socket.IO en ejecución');
-});
+
+
+// app.get('/', (req, res) => {
+//   res.send('Servidor Socket.IO en ejecución');
+// });
 
 // Manejo de eventos de conexión
 io.on('connection', (socket) => {
