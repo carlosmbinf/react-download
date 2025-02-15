@@ -7,10 +7,16 @@ const port = 3010;
 const fs = require('fs');
 
 const options = {
-    key: fs.readFileSync('/etc/letsencrypt/live/vidkar.com/privkey.pem'),
-    cert: fs.readFileSync('/etc/letsencrypt/live/vidkar.com/fullchain.pem')
+    // key: fs.readFileSync('/etc/letsencrypt/live/vidkar.com/privkey.pem'),
+    // cert: fs.readFileSync('/etc/letsencrypt/live/vidkar.com/fullchain.pem')
   };
 const server = https.createServer(options);
+
+if (server.listening) {
+    server.close(error => {
+        error && console.log(error);
+    })
+}
 
 const io = socketIo(server, {
 //   cors: {
