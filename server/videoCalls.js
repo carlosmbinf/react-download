@@ -58,6 +58,8 @@ if (!server.listening) {
     server.listen(port, () => {
         console.log('Servidor de VideoCalls escuchando en Port:', port);
       });
+}{
+    console.log('Servidor de VideoCalls ya está escuchando en Port:', port);
 }
 
 
