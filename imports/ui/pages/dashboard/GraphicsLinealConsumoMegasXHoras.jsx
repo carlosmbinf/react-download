@@ -12,6 +12,7 @@ import {
   Divider,
   Zoom,
   IconButton,
+  TextField,
 } from "@material-ui/core";
 import { Meteor } from "meteor/meteor";
 import { Tracker } from "meteor/tracker";
@@ -21,7 +22,12 @@ import { Link, useParams } from "react-router-dom";
 
 import moment from 'moment';
 import 'moment/locale/es';
-  
+
+
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
+
+
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -150,12 +156,12 @@ export default function GraphicsLinealConsumoMegasXHoras(options) {
   const bull = <span className={classes.bullet}>•</span>;
 
   let { id } = useParams();
-  
+
   moment.locale('es')
   const getDataUsers = async () => {
     try {
       const result = await new Promise((resolve, reject) => {
-        Meteor.call('getDatosDashboardByUser', "HORA", id, (error, result) => {
+        Meteor.call('getDatosDashboardByUser', "HORA", id, fechaMoment ? fechaMoment.toDate() : null, (error, result) => {
           if (error) {
             console.log("error", error);
             reject(error);
@@ -173,7 +179,8 @@ export default function GraphicsLinealConsumoMegasXHoras(options) {
   };
 
   const [datausers, setDataUsers] = useState(null);
-  
+  const [fechaMoment, setFechaMoment] = useState(null);
+
   useEffect(() => {
     const fetchData = async () => {
       const data = await getDataUsers();
@@ -181,44 +188,60 @@ export default function GraphicsLinealConsumoMegasXHoras(options) {
     };
 
     fetchData();
-  }, [id]);
+  }, [id, fechaMoment]);
 
   return (
+    <>
+    <Grid style={{ padding: 20 }} justify="center" container>
+      <LocalizationProvider dateAdapter={AdapterMoment}>
+        <DatePicker 
+        slotProps={{
+              field: { clearable: true },
+            }}
+            label="Seleccione el Dia a Buscar" 
+            onChange={moment => {
+              setFechaMoment(moment);
+            }} 
+            value={fechaMoment} />
+      </LocalizationProvider>
+    </Grid>
       <Zoom in={true}>
         <ResponsiveContainer>
-        <ComposedChart
-          // width={500}
-          // height={400}
-          data={datausers}
-          margin={{
-            top: 20,
-            right: 20,
-            bottom: 20,
-            left: 20,
-          }}
-        >
-          {/* <CartesianGrid stroke="#f5f5f5" /> */}
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip labelStyle={{ color: "rgb(102, 102, 102)" }} contentStyle={{ backgroundColor: "#2a323d5c", backdropFilter: "blur(30px)", borderRadius: 20 }} />
-          <Legend />
-          <Area
-            type="monotone"
-            dataKey="PROXY"
-            fill="#3f51b5"
-            stroke="#3f51b5"
-          />
-          <Area
-            type="monotone"
-            dataKey="VPN"
-            fill="#2e7d32"
-            stroke="#2e7d32"
-          />
-          {/* <Bar dataKey="TotalConsumo" barSize={20} fill="#2e7d32" radius={5} /> */}
-          {/* <Bar dataKey="VPN" barSize={20} fill="#d32f2f" radius={5} /> 
+          <ComposedChart
+            // width={500}
+            // height={400}
+            data={datausers}
+            margin={{
+              top: 20,
+              right: 20,
+              bottom: 20,
+              left: 20,
+            }}
+          >
+            {/* <CartesianGrid stroke="#f5f5f5" /> */}
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip labelStyle={{ color: "rgb(102, 102, 102)" }} contentStyle={{ backgroundColor: "#2a323d5c", backdropFilter: "blur(30px)", borderRadius: 20 }} />
+            <Legend />
+            <Area
+              type="monotone"
+              dataKey="PROXY"
+              fill="#3f51b5"
+              stroke="#3f51b5"
+            />
+            <Area
+              type="monotone"
+              dataKey="VPN"
+              fill="#2e7d32"
+              stroke="#2e7d32"
+            />
+            {/* <Bar dataKey="TotalConsumo" barSize={20} fill="#2e7d32" radius={5} /> */}
+            {/* <Bar dataKey="VPN" barSize={20} fill="#d32f2f" radius={5} /> 
             <Line type="monotone" dataKey="PROXY" stroke="#ff7300" /> */}
-        </ComposedChart>
+          </ComposedChart>
         </ResponsiveContainer>
       </Zoom>
-        );
+    </>
+
+  );
 }

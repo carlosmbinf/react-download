@@ -84,9 +84,8 @@ if (Meteor.isServer) {
       // console.log(text);
     },
 
-    getDatosDashboardByUser: async (tipoDeDashboard, idUser) => {
+    getDatosDashboardByUser: async (tipoDeDashboard, idUser, fechaDate) => {
       //tipoDeDashboard = "DIARIO" || "MENSUAL" || "HORA"
-
       const aporte = (type, fechaStart, fechaEnd) => {
         let totalConsumo = 0;
         let fechaInicial = new Date(fechaStart);
@@ -146,8 +145,8 @@ if (Meteor.isServer) {
 
       let data01 = [];
       if (tipoDeDashboard == "HORA") {
-        let dateStartDay = moment(new Date()).startOf("day");
-        let dateEndDay = moment(new Date()).endOf("day");
+        let dateStartDay = moment(fechaDate ? fechaDate : new Date()).startOf("day");
+        let dateEndDay = moment(new Date(fechaDate || "")).endOf("day");
 
         for (let hour = 0; hour < 24; hour++) {
           let dateStartHour = moment(dateStartDay).hour(hour).startOf("hour");
@@ -170,7 +169,7 @@ if (Meteor.isServer) {
           data01.push(hourlyData);
         }
       } else if (tipoDeDashboard == "DIARIO") {
-        let dateStartMonth = moment(new Date()).startOf("month");
+        let dateStartMonth = moment(fechaDate ? fechaDate : new Date()).startOf("month");
         let daysInMonth = dateStartMonth.daysInMonth();
 
         for (let day = 1; day <= daysInMonth; day++) {
