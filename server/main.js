@@ -11,6 +11,7 @@ import "./serverproxy3002";
 import "./tareas";
 import "./rutas";
 import "./bot";
+import "./videoCalls";
 
 var http = require("http");
 http.post = require("http-post");
