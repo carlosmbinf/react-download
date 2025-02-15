@@ -12,11 +12,7 @@ const options = {
   };
 const server = https.createServer(options);
 
-if (server.listening) {
-    server.close(error => {
-        error && console.log(error);
-    })
-}
+
 
 const io = socketIo(server, {
 //   cors: {
@@ -58,6 +54,10 @@ io.on('connection', (socket) => {
   });
 });
 
-server.listen(port, () => {
-  console.log('Servidor de VideoCalls escuchando en Port:', port);
-});
+if (!server.listening) {
+    server.listen(port, () => {
+        console.log('Servidor de VideoCalls escuchando en Port:', port);
+      });
+}
+
+
