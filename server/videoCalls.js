@@ -32,7 +32,7 @@ io.on('connection', (socket) => {
 
   // Recibir el video
   socket.on('send-video', (frameData) => {
-    console.log('Frame de video recibido de un cliente');
+    // console.log('Frame de video recibido de un cliente');
     // Enviar el frame a todos los clientes conectados, excepto al que lo envió
     socket.broadcast.emit('receive-video', frameData);
   });
