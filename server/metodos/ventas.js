@@ -69,7 +69,6 @@ if (Meteor.isServer) {
 
     },
     addVentasOnly: async (userChangeid, adminId, compra, type) => {
-
       ///////REVISAR EN ADDVENTASONLY  el descuento que se debe de hacer
       let userChange = await Meteor.users.findOne(userChangeid)
       // let admin = await Meteor.users.findOne(adminId)
@@ -78,18 +77,62 @@ if (Meteor.isServer) {
       let admin = await Meteor.users.findOne(adminId)
       let precioOficial = await Meteor.call('getPrecioOficial', compra);
 
+      console.log("Entrando a REALIZAR una COMPRA", `\nuserChange(${userChange?.username})`, `\nadmin(${admin?.username})`, `\ncompra(${JSON.stringify(compra)})`, `\ntype(${type})`)
+
       try {
+
+        let precio = 0; //es precio en el insert
+        let gananciasAdmin = 0; // es gananciasAdmin en el insert
+
+        if(type == "VPN"){
+          console.log("es VPN")
+          let preciototal = (precioOficial ? precioOficial.precio : compra.precio);
+          console.log("preciototal",preciototal);
+          let gananciasTotal = (precioOficial ? (compra.precio - precioOficial.precio) : 0);
+          console.log("gananciasTotal",gananciasTotal);
+          let descuento = (admin.descuentovpn ? admin.descuentovpn : 0);
+          console.log("descuento",descuento);
+          console.log ("calculo preciototal >= descuento => ",preciototal >= descuento);
+          if(preciototal >= descuento) {
+            console.log("La compra es mayor al descuento");
+            precio = preciototal - descuento;
+            gananciasAdmin = Number(gananciasTotal) + Number(descuento);
+          }else{
+            console.log("La compra es menor al descuento");
+            precio = 0;
+            gananciasAdmin = Number(gananciasTotal) + Number(preciototal);
+          }
+
+        }else{
+          console.log("es PROXY")
+          let preciototal = (precioOficial ? precioOficial.precio : compra.precio);
+          let gananciasTotal = (precioOficial ? (compra.precio - precioOficial.precio) : 0);
+          let descuento = (admin.descuentoproxy ? admin.descuentoproxy : 0);
+          console.log ("calculo preciototal >= descuento => ",preciototal >= descuento)
+          if(preciototal >= descuento) {
+            console.log("La compra es mayor al descuento")
+            precio = preciototal - descuento;
+            gananciasAdmin = Number(gananciasTotal) + Number(descuento)
+          }else{
+            console.log("La compra es menor al descuento")
+            precio = 0
+            gananciasAdmin = Number(gananciasTotal) + Number(preciototal)
+          }
+
+        }
+        console.log("precio", precio)
+        console.log("gananciasAdmin", gananciasAdmin)
 
         compra && await VentasCollection.insert({
           adminId: adminId,
           userId: userChangeid,
-          precio: (precioOficial ? precioOficial.precio : compra.precio) - (type == "VPN" ? (admin.descuentovpn ? admin.descuentovpn : 0) : (admin.descuentoproxy ? admin.descuentoproxy : 0)),
-          gananciasAdmin: precioOficial ? ((compra.precio - precioOficial.precio) + Number(type == "VPN" ? (admin.descuentovpn ? admin.descuentovpn : 0) : (admin.descuentoproxy ? admin.descuentoproxy : 0))) : 0,
+          precio: precio,
+          gananciasAdmin: gananciasAdmin,
           comentario: compra.comentario,
           type: type
         })
 
-        Meteor.call('enviarMensajeTelegram', "VENTAS", userChangeid, `Se ha realizado una venta de ${type} a ${userChange.username} por un precio de ${precioOficial ? precioOficial.precio : compra.precio}CUP`,
+        await Meteor.call('enviarMensajeTelegram', "VENTAS", userChangeid, `Se ha realizado una venta de ${type} a ${userChange.username} por un precio de ${precioOficial ? precioOficial.precio : compra.precio}CUP`,
           compra.comentario)
 
 
@@ -116,8 +159,8 @@ if (Meteor.isServer) {
           await Meteor.call("desabilitarProxyUser", userChangeid, userId)
           return null
         } else if (precio || Array(Meteor.settings.public.administradores)[0].includes(user.username)) {
-          await Meteor.call("habilitarProxyUser", userChangeid, userId)
           precio && await Meteor.call("addVentasOnly", userChangeid, userId, precio, "PROXY")
+          await Meteor.call("habilitarProxyUser", userChangeid, userId)
 
           //   await VentasCollection.insert({
           //   adminId: userId,

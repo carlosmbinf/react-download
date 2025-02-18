@@ -6,12 +6,23 @@ const socketIo = require('socket.io');
 const port = 3003;
 const app = express();
 const server = http.createServer(app);
+
 const io = socketIo(server, {
-  cors: {
+  cors: [{
     origin: "http://app.vidkar.com:3000",  // Permitir solicitudes del cliente Meteor (puerto 3000)
     methods: ["GET", "POST"],
-  },
+  },{
+    origin: "http://localhost:3000",  // Permitir solicitudes del cliente Meteor (puerto 3000)
+    methods: ["GET", "POST"],
+  },{
+    origin: "https://www.vidkar.com",  // Permitir solicitudes del cliente Meteor (puerto 3000)
+    methods: ["GET", "POST"],
+  },{
+    origin: "https://w59x5nmk-3000.brs.devtunnels.ms",  // Permitir solicitudes del cliente Meteor (puerto 3000)
+    methods: ["GET", "POST"],
+  }],
 });
+
 
 app.get('/', (req, res) => {
   res.send('Servidor Socket.IO en ejecución');
@@ -34,6 +45,7 @@ io.on('connection', (socket) => {
   socket.on('send-video', (frameData) => {
     // console.log('Frame de video recibido de un cliente');
     // Enviar el frame a todos los clientes conectados, excepto al que lo envió
+    console.log("reciviendo data de video: " , JSON.stringify(frameData));
     socket.broadcast.emit('receive-video', frameData);
   });
   
