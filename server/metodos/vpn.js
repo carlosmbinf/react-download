@@ -71,6 +71,9 @@ if (Meteor.isServer) {
             user.username
           )
         ) {
+          if(userChange.vpnplusConnected)
+            return "Debe esperar a que se desconecte el usuario de la VPN para poder Activarla Nuevamente"
+          
           await Meteor.call("habilitarVPNUser", userChangeid, userId);
 
           precio &&
