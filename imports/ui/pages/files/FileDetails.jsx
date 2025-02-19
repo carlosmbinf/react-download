@@ -290,7 +290,7 @@ export default function FileDetails() {
                           </FormControl>
                         </Grid>
                       </Grid>
-                      <Grid item xs={12} md={4}>
+                      <Grid item xs={12}>
                         <FormControl fullWidth variant="outlined">
                           <TextField
                             className={classes.margin}
@@ -303,7 +303,7 @@ export default function FileDetails() {
                             defaultValue={server.details}
                             // value={details}
                             multiline
-                            rowsMax={4}
+                            rowsMax={10}
                             rows={6}
                             onInput={(e) => setDetails(e.target.value)}
                             // InputProps={{

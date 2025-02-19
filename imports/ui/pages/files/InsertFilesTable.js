@@ -312,14 +312,14 @@ export default function InsertFilesTable(option) {
                   filterPlaceholder="Url"
                   filterMatchMode="contains"
                 />
-                <Column
+                {/* <Column
                   field="comentario"
                   header="Comentario"
                   body={comentarioBodyTemplate}
                   filter
                   filterPlaceholder="Comentario:"
                   filterMatchMode="contains"
-                />
+                /> */}
                 <Column
                   field="data"
                   header="Detalles"
