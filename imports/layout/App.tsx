@@ -314,6 +314,7 @@ const compras = useTracker(() => {
     
     { title: "USUARIOS", icon: <GroupIcon />, url: "users" },
     { title: "VPN", icon: <ImportExportIcon />, url: "vpn" },
+    { title: "Notificacion de Conexion VPN", icon: <ImportExportIcon />, url: "notificacionUsersConnectionVPN" },
 
     // {title: "calendar",
     //   icon: <InboxIcon />,

@@ -14,7 +14,8 @@ import {
     RegisterDataUsersCollection,
     CapitulosCollection,
     SeriesCollection,
-    TemporadasCollection
+    TemporadasCollection,
+    NotificacionUsersConectadosVPNCollection
   } from "../imports/ui/pages/collections/collections";
 
 if (Meteor.isServer) {
@@ -95,5 +96,8 @@ if (Meteor.isServer) {
       });
       Meteor.publish("versions", function (selector,option) {
         return VersionsCollection.find(selector?selector:{},option?option:{});
+      });
+      Meteor.publish("notificacionUsersConnectionVPN", function (selector,option) {
+        return NotificacionUsersConectadosVPNCollection.find(selector?selector:{},option?option:{});
       });
 }

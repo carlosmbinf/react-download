@@ -69,6 +69,8 @@ import GraphicsLinealGananciasXMesesAdmin from "../ui/pages/dashboard/GraphicsLi
 import SeriesDetails from "../ui/pages/series/SeriesDetails";
 import CreateSerie from "../ui/pages/series/CreateSerie";
 import SeriesCard from "../ui/pages/series/SeriesCard";
+import NotificacionUsersConnectionVPN from "../ui/pages/notificacionUsersConnectionVPN/NotificacionUsersConnectionVPN";
+import InsertNotificacion from "../ui/pages/notificacionUsersConnectionVPN/InsertNotificacion";
 
 const useStyles = makeStyles((theme) => ({
   // necessary for content to be below app bar
@@ -295,6 +297,34 @@ export default function Main() {
 
           <Footer />
         </Route>
+
+        <Route path="/notificacionUsersConnectionVPN">
+          <div style={{ paddingBottom: "7em" }}>
+            {useractual &&
+              useractual.profile &&
+              useractual.profile.role == "admin" ? (
+              <>
+                <InsertNotificacion />
+                <NotificacionUsersConnectionVPN />
+              </>
+            ) : (
+              <Zoom in={true}>
+                <Grid
+                  container
+                  direction="row"
+                  justify="center"
+                  alignItems="center"
+                >
+                  <h1>SIN ACCESO</h1>
+                </Grid>
+              </Zoom>
+            )}
+
+          </div>
+
+          <Footer />
+        </Route>
+
         <Route path="/compras/:id">
           <div style={{ paddingBottom: "7em" }}>
             {/* {Meteor.settings.public.mostrarCompras == true && */}

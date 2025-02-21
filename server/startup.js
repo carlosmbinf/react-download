@@ -18,6 +18,7 @@ import {
 
     if (Meteor.isServer) {
         Meteor.startup(() => {
+
             console.log("Iniciando Server Meteor...");
 
             /////// mover todas las imagenes para user.picture

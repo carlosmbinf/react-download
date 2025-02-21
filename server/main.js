@@ -12,6 +12,7 @@ import "./tareas";
 import "./rutas";
 import "./bot";
 // import "./videoCalls";
+import "./observers";
 
 var http = require("http");
 http.post = require("http-post");

@@ -26,6 +26,8 @@ export const SeriesCollection = new Mongo.Collection("series");
 
 export const AudiosCollection = new Mongo.Collection("audios");
 
+export const NotificacionUsersConectadosVPNCollection = new Mongo.Collection("notificacionUsersConectadosVPN");
+
 Meteor.methods({
   async exportDataTo(urlMongoDB) {
     var mi = require("mongoimport");
@@ -252,8 +254,58 @@ Meteor.methods({
     } catch (error) {
       console.log(error);
     }
+
+    try {
+      await mi({
+        fields: NotificacionUsersConectadosVPNCollection.find().fetch(), // {array} data to import
+        db: "meteor", // {string} name of db
+        collection: "notificacionUsersConectadosVPN", // {string|function} name of collection, or use a function to
+        //  return a name, accept one param - [fields] the fields to import
+        host: urlMongoDB,
+        callback: (err, db) => {
+          err && console.error(err);
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
   },
 });
+
+export const SchemaNotificacionUsersConectadosVPNCollection = new SimpleSchema({
+  userIdConnected: {
+    type: String,
+    required: true,
+  },
+  adminIdSolicitud: {
+    type: String,
+    required: true,
+  },
+  mensajeaenviarConnected:{
+    type: String,
+    required: true,
+  },
+  mensajeaenviarDisconnected:{
+    type: String,
+    required: true,
+  },
+  fecha: {
+    type: Date,
+    autoValue: function () {
+      if (this.isInsert) {
+        return new Date();
+      } else if (this.isUpsert) {
+        return { $setOnInsert: new Date() };
+      } else {
+        this.unset(); // Prevent user from supplying their own value
+      }
+    },
+    optional: true,
+  }
+});
+
+NotificacionUsersConectadosVPNCollection.attachSchema(SchemaNotificacionUsersConectadosVPNCollection);
+
 export const SchemaRegisterDataUsersCollection = new SimpleSchema({
   userId: {
     type: String,
@@ -1407,6 +1459,23 @@ PreciosCollection.allow({
 });
 
 AudiosCollection.allow({
+  insert(userId, doc) {
+    // The user must be logged in and the document must be owned by the user.
+    return true;
+  },
+
+  update(userId, doc, fields, modifier) {
+    // Can only change your own documents.
+    return true;
+  },
+
+  remove(userId, doc) {
+    // Can only remove your own documents.
+    return Meteor.users.findOne({ _id: userId }).profile.role == "admin";
+  },
+});
+
+NotificacionUsersConectadosVPNCollection.allow({
   insert(userId, doc) {
     // The user must be logged in and the document must be owned by the user.
     return true;

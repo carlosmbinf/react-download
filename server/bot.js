@@ -27,7 +27,7 @@ const registrarLog = async (campo, idUsuarioAfectado, admin, mensaje) => {
   await Meteor.call("registrarLog", campo, idUsuarioAfectado, admin, mensaje);
 };
 
-const estaRegistrado = async (campo, idTelegram) => {
+const estaRegistrado = async ( idTelegram) => {
   await Meteor.call("estaRegistradoEnTelegram", idTelegram);
 };
 
@@ -104,6 +104,14 @@ if (Meteor.isServer) {
             console.error(error);
           }
         }
+        console.error(error);
+      }
+    },
+    enviarMensajeDirecto: async (id,message) => {
+      let admin = await Meteor.users.findOne(id);
+      try {
+        admin.idtelegram && bot.telegram.sendMessage(admin.idtelegram, message);
+      } catch (error) {
         console.error(error);
       }
     },
