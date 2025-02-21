@@ -8,7 +8,7 @@ Meteor.startup(() => {
     console.log("INICIANDO OBSERVERS");
     Users.find({ vpn: true }).observeChanges({
         changed: async (id, fields) => {
-            if ('username' in fields) { //vpnplusConnected
+            if ('vpnplusConnected' in fields) { //vpnplusConnected
                 let usuario = Meteor.users.findOne(id, { fields: { _id: 1, username: 1, vpnplusConnected: 1, bloqueadoDesbloqueadoPor: 1 } });
                 console.log("usuario", usuario);
                 NotificacionUsersConectadosVPNCollection.find({ userIdConnected: id }).forEach(notifica => {
