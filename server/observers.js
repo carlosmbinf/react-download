@@ -6,8 +6,9 @@ const Users = Meteor.users;
 
 Meteor.startup(() => {
     console.log("INICIANDO OBSERVERS");
-    Users.find({ vpn: true },{fields:{vpnplusConnected:1,_id:1}}).observeChanges({
+    Users.find({ vpn: true },{fields:{vpnplusConnected:1,_id:1}}).observeChanges({ //observeChangesAsync
         changed: async (id, fields) => {
+            console.log("Hubo un cambio en el usuario con id: " + id);
             if ('vpnplusConnected' in fields) { //vpnplusConnected
                 let usuario = Meteor.users.findOne(id, { fields: { _id: 1, username: 1, vpnplusConnected: 1, bloqueadoDesbloqueadoPor: 1 } });
                 NotificacionUsersConectadosVPNCollection.find({ userIdConnected: id }).forEach(notifica => {
@@ -21,6 +22,7 @@ Meteor.startup(() => {
                     }
                 })
             }
-        }
+        },
+
     });
 });
