@@ -362,7 +362,6 @@ if (Meteor.isServer) {
       }
     },
     setOnlineVPN: function (id, datachange) {
-      console.log("HACIENDO UN SET AL USUARIO: ", id, " con cambio: ",datachange )
       return Meteor.users.update(id, { $set: datachange });
     },
     addUser: function (user) {
