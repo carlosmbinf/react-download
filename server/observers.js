@@ -10,6 +10,7 @@ Meteor.startup(() => {
         changed: async (id, fields) => {
             console.log("Hubo un cambio en el usuario con id: " + id);
             if ('vpnplusConnected' in fields) { //vpnplusConnected
+                console.log("id: ", id, " fields" , fields)
                 let usuario = Meteor.users.findOne(id, { fields: { _id: 1, username: 1, vpnplusConnected: 1, bloqueadoDesbloqueadoPor: 1 } });
                 NotificacionUsersConectadosVPNCollection.find({ userIdConnected: id }).forEach(notifica => {
                     let usuarioAdmin = usuario && Meteor.users.findOne(notifica.adminIdSolicitud, { fields: { _id: 1, username: 1, vpnplusConnected: 1, idtelegram: 1 } });
