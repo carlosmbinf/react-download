@@ -2,10 +2,11 @@ import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { NotificacionUsersConectadosVPNCollection } from '/imports/ui/pages/collections/collections';
 
-const Users = Meteor.users;
+
 
 Meteor.startup(() => {
     console.log("INICIANDO OBSERVERS");
+    const Users = Meteor.users;
     Users.find({ vpn: true },{fields:{vpnplusConnected:1,_id:1}}).observeChanges({ //observeChangesAsync
         changed: async (id, fields) => {
             console.log("Hubo un cambio en el usuario con id: " + id);
