@@ -142,7 +142,7 @@ export default function Main() {
                   xl={6}
                   justify="space-evenly"
                   alignItems="center"
-                  style={{ paddingTop: 50 }}
+                  style={{ paddingTop: 100 }}
                 >
                   <Chip
                     style={{ width: "90%" }}
@@ -201,7 +201,7 @@ export default function Main() {
                   xl={6}
                   justify="space-evenly"
                   alignItems="center"
-                  style={{ paddingTop: 50 }}
+                  style={{ paddingTop: 100 }}
                 >
                   <Chip
                     style={{ width: "90%" }}
