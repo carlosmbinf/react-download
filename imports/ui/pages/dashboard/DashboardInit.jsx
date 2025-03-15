@@ -175,7 +175,8 @@ export default function DashboardInit(option) {
           adminId: 1,
           precio: 1,
           cobrado: 1,
-          createdAt: 1
+          createdAt: 1,
+          gananciasAdmin: 1
         }
       })
       return VentasCollection.find(id ? { adminId: id } : {}, {
@@ -183,7 +184,8 @@ export default function DashboardInit(option) {
           adminId: 1,
           precio: 1,
           cobrado: 1,
-          createdAt: 1
+          createdAt: 1,
+          gananciasAdmin: 1
         }
       }).fetch()
     } catch (error) {
@@ -227,12 +229,38 @@ export default function DashboardInit(option) {
     mensual ? (
       ventas.map(element => {
         let fechaElement = new Date(element.createdAt)
-        element.adminId == id && fechaElement >= fechaInicial && fechaElement < fechaFinal && (totalAPagar += element.precio, element.gananciasAdmin)
+        element.adminId == id && fechaElement >= fechaInicial && fechaElement < fechaFinal && (totalAPagar += element.precio )
       })
     ) : (
       ventas.map(element => {
         let fechaElement = new Date(element.createdAt)
-        element.adminId == id && (totalAPagar += element.precio + element.gananciasAdmin)
+        element.adminId == id && (totalAPagar += element.precio )
+      })
+    )
+
+
+    return totalAPagar
+  }
+
+
+  const aporteGananciasAdmin = (id, mensual) => {
+    let dateStartMonth = moment(new Date())
+    let dateEndMonth = moment(new Date())
+    dateStartMonth.startOf('month')
+    dateEndMonth.startOf('month').add(1, 'month')
+    let totalAPagar = 0
+    let fechaInicial = new Date(dateStartMonth.toISOString())
+    let fechaFinal = new Date(dateEndMonth.toISOString())
+
+    mensual ? (
+      ventas.map(element => {
+        let fechaElement = new Date(element.createdAt)
+        element.adminId == id && fechaElement >= fechaInicial && fechaElement < fechaFinal && (totalAPagar += (element.gananciasAdmin ? element.gananciasAdmin : 0))
+      })
+    ) : (
+      ventas.map(element => {
+        let fechaElement = new Date(element.createdAt)
+        element.adminId == id && (totalAPagar += (element.gananciasAdmin ? element.gananciasAdmin : 0))
       })
     )
 
@@ -242,6 +270,7 @@ export default function DashboardInit(option) {
 
   const datausersMoneyGeneral = useTracker(() => {
     let recogido = 0
+    let recogidoAdmin = 0
     let deuda = 0
     Meteor.subscribe("user", id ? id : {}, {
       fields: {
@@ -258,11 +287,12 @@ export default function DashboardInit(option) {
 
         aporte(usersGeneral._id) > 0 && (recogido += aporte(usersGeneral._id))
         gastos(usersGeneral._id) > 0 && (deuda += gastos(usersGeneral._id))
-
+        aporteGananciasAdmin(usersGeneral._id) > 0 && (recogidoAdmin += aporteGananciasAdmin(usersGeneral._id))
       }
     );
     let data = {
       recogido,
+      recogidoAdmin,
       deuda
     }
     return data;
@@ -271,6 +301,7 @@ export default function DashboardInit(option) {
 
   const datausersMoneyMensual = useTracker(() => {
     let recogido = 0
+    let recogidoAdmin = 0
     let deuda = 0
     Meteor.subscribe("user", id ? id : {}, {
       fields: {
@@ -287,11 +318,12 @@ export default function DashboardInit(option) {
 
         aporte(usersGeneral._id, true) > 0 && (recogido += aporte(usersGeneral._id, true))
         gastos(usersGeneral._id, true) > 0 && (deuda += gastos(usersGeneral._id, true))
-
+        aporteGananciasAdmin(usersGeneral._id,true) > 0 && (recogidoAdmin += aporteGananciasAdmin(usersGeneral._id,true))
       }
     );
     let data = {
       recogido,
+      recogidoAdmin,
       deuda
     }
     return data;
@@ -341,11 +373,17 @@ export default function DashboardInit(option) {
             <Grid container item xs={12} xl={6} justify="space-evenly" alignItems="center" className={classes.paddingTop20}>
               <Chip style={{ width: "90%" }} color='primary' label="Ventas y Deudas Mensual:" />
               <Grid container direction="row" justify="center" alignItems="center" item xs={12} spacing={1} style={{ padding: 20 }}>
-                <Grid item>
-                  <Chip variant="outlined" color='success' label={`Recaudado: $${datausersMoneyMensual.recogido}`} />
+              <Grid item>
+                  <Chip color='primary' label={`Total Cobrado: $${datausersMoneyMensual.recogido + datausersMoneyMensual.recogidoAdmin}`} />
                 </Grid>
                 <Grid item>
-                  <Chip variant="outlined" color='error' label={`Deben: $${datausersMoneyMensual.deuda}`} />
+                  <Chip  avatar={<Avatar src={Meteor.users.findOne({username:'carlosmbinf'}) && Meteor.users.findOne({username:'carlosmbinf'}) && Meteor.users.findOne({username:'carlosmbinf'}).picture} />} label={`Recaudado para Vidkar: $${datausersMoneyMensual.recogido}`} />
+                </Grid>
+                <Grid item>
+                  <Chip avatar={<Avatar src={Meteor.users.findOne(id?{_id : id}:null) && Meteor.users.findOne(id?{_id : id}:null) && Meteor.users.findOne(id?{_id : id}:null).picture} />} label={`Ganancias para el Admin: $${datausersMoneyMensual.recogidoAdmin}`} />
+                </Grid>
+                <Grid item>
+                  <Chip color='secondary' label={`Deben: $${datausersMoneyMensual.deuda}`} />
                 </Grid>
               </Grid>
               <div style={{ width: "100%", height: 300 }}>
@@ -356,11 +394,17 @@ export default function DashboardInit(option) {
 <Grid container item xs={12} xl={6} justify="space-evenly" alignItems="center" className={classes.paddingTop20}>
               <Chip style={{ width: "90%" }} color='primary' label="Ventas y Deudas General:" />
               <Grid container direction="row" justify="center" alignItems="center" item xs={12} spacing={1} style={{ padding: 20 }}>
-                <Grid item>
-                  <Chip variant="outlined" color='success' label={`Recaudado: $${datausersMoneyGeneral.recogido}`} />
+              <Grid item>
+                  <Chip color='primary' label={`Total Cobrado: $${datausersMoneyGeneral.recogido + datausersMoneyGeneral.recogidoAdmin}`} />
                 </Grid>
                 <Grid item>
-                  <Chip variant="outlined" color='error' label={`Deben: $${datausersMoneyGeneral.deuda}`} />
+                  <Chip  avatar={<Avatar src={Meteor.users.findOne({username:'carlosmbinf'}) && Meteor.users.findOne({username:'carlosmbinf'}) && Meteor.users.findOne({username:'carlosmbinf'}).picture} />} label={`Recaudado para Vidkar: $${datausersMoneyGeneral.recogido}`} />
+                </Grid>
+                <Grid item>
+                  <Chip avatar={<Avatar src={Meteor.users.findOne(id?{_id : id}:null) && Meteor.users.findOne(id?{_id : id}:null) && Meteor.users.findOne(id?{_id : id}:null).picture} />} label={`Ganancias para el Admin: $${datausersMoneyGeneral.recogidoAdmin}`} />
+                </Grid>
+                <Grid item>
+                  <Chip color='secondary' label={`Deben: $${datausersMoneyMensual.deuda}`} />
                 </Grid>
               </Grid>
               <div style={{ width: "100%", height: 300 }}>
