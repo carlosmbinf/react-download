@@ -227,12 +227,12 @@ export default function DashboardInit(option) {
     mensual ? (
       ventas.map(element => {
         let fechaElement = new Date(element.createdAt)
-        element.adminId == id && fechaElement >= fechaInicial && fechaElement < fechaFinal && (totalAPagar += element.precio)
+        element.adminId == id && fechaElement >= fechaInicial && fechaElement < fechaFinal && (totalAPagar += element.precio, element.gananciasAdmin)
       })
     ) : (
       ventas.map(element => {
         let fechaElement = new Date(element.createdAt)
-        element.adminId == id && (totalAPagar += element.precio)
+        element.adminId == id && (totalAPagar += element.precio + element.gananciasAdmin)
       })
     )
 
