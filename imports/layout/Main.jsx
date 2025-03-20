@@ -71,6 +71,7 @@ import CreateSerie from "../ui/pages/series/CreateSerie";
 import SeriesCard from "../ui/pages/series/SeriesCard";
 import NotificacionUsersConnectionVPN from "../ui/pages/notificacionUsersConnectionVPN/NotificacionUsersConnectionVPN";
 import InsertNotificacion from "../ui/pages/notificacionUsersConnectionVPN/InsertNotificacion";
+import ListTransferUsuariosPorServer from "../ui/pages/servers/ListTransferUsuariosPorServer";
 
 const useStyles = makeStyles((theme) => ({
   // necessary for content to be below app bar
@@ -465,7 +466,10 @@ export default function Main() {
             Array(Meteor.settings.public.administradores)[0].includes(
               useractual.username
             ) ? (
+              <>
               <ServersDetails />
+              <ListTransferUsuariosPorServer/>
+              </>
             ) : (
               <Zoom in={true}>
                 <Grid

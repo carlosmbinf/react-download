@@ -1161,6 +1161,13 @@ export const SchemaServersCollection = new SimpleSchema({
       
     },
   },
+  usuariosAprobados: {
+    type: Array,
+    defaultValue: [],
+    optional: true,
+  },
+  "usuariosAprobados.$": { type: String },
+
 });
 
 ServersCollection.attachSchema(SchemaServersCollection);
