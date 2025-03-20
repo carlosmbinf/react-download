@@ -40,26 +40,40 @@ export default function ListTransferUsuariosPorServer() {
   })
 
   const listaDeUsusarios = useTracker(() => {
-    let ready = Meteor.user() && Meteor.subscribe("user",(Meteor.user().username == 'carlosmbinf' ? {} : {
-      $or: [
-        {
-          bloqueadoDesbloqueadoPor: Meteor.userId(),
-        },
-        {
-          _id: Meteor.userId(),
-        },
-      ]
-    }),{fields:{_id:1,username:1,bloqueadoDesbloqueadoPor:1}}).ready();
-    let list = ready && Meteor.users.find((Meteor.user().username == 'carlosmbinf' ? {} : {
-                              $or: [
-                                {
-                                  bloqueadoDesbloqueadoPor: Meteor.userId(),
-                                },
-                                {
-                                  _id: Meteor.userId(),
-                                },
-                              ]
-                            }), { fields: { _id: 1, username: 1 } }).fetch();
+    let ready = Meteor.user() && Meteor.subscribe("user",
+      Array(Meteor.settings.public.administradores)[0].includes(
+                            Meteor.user().username
+                          )
+                            ? { vpn: true }
+                            : {
+                                $or: [
+                                  {
+                                    bloqueadoDesbloqueadoPor: Meteor.userId(),
+                                  },
+                                  {
+                                    _id: Meteor.userId(),
+                                  },
+                                ],
+                                vpn: true,
+                              }
+                              ,{fields:{_id:1,username:1,bloqueadoDesbloqueadoPor:1}}).ready();
+    let list = ready && Meteor.users.find(
+      Array(Meteor.settings.public.administradores)[0].includes(
+                            Meteor.user().username
+                          )
+                            ? { vpn: true }
+                            : {
+                                $or: [
+                                  {
+                                    bloqueadoDesbloqueadoPor: Meteor.userId(),
+                                  },
+                                  {
+                                    _id: Meteor.userId(),
+                                  },
+                                ],
+                                vpn: true,
+                              }
+                              , { fields: { _id: 1, username: 1 } }).fetch();
     
     //limpiar list para que no contenta ningun dato de listaDeUsuariosEnServidor
     return list ? list.filter(element => listaDeUsuariosEnServidor ? !listaDeUsuariosEnServidor.includes(element.username):true).map(element => element.username) : []
