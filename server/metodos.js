@@ -228,6 +228,11 @@ if (Meteor.isServer) {
     getServer: function (ip) {
       return ServersCollection.findOne({ ip: ip });
     },
+    getusersPermitidos: function (filter,options) {
+      return ServersCollection
+        .find(filter ? filter : {}, options ? options : {})
+        .fetch();
+    },
 
   });
 }
