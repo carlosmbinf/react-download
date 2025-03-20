@@ -55,7 +55,7 @@ export default function ListTransferUsuariosPorServer() {
                                 ],
                                 vpn: true,
                               }
-                              ,{fields:{_id:1,username:1,bloqueadoDesbloqueadoPor:1}}).ready();
+                              ,{fields:{_id:1,username:1,bloqueadoDesbloqueadoPor:1,vpn:1}}).ready();
     let list = ready && Meteor.users.find(
       Array(Meteor.settings.public.administradores)[0].includes(
                             Meteor.user().username
