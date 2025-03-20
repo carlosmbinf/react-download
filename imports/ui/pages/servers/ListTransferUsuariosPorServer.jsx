@@ -35,7 +35,6 @@ export default function ListTransferUsuariosPorServer() {
   const listaDeUsuariosEnServidor = useTracker(() => {
     Meteor.subscribe("servers",{},{fields:{_id:1,usuariosAprobados:1}})
     let list = ServersCollection.findOne(id,{fields:{_id:1,usuariosAprobados:1}});
-    console.log(list&&list.usuariosAprobados)
     return list ? (list.usuariosAprobados?list.usuariosAprobados:[]) : []
   })
 
@@ -108,8 +107,6 @@ export default function ListTransferUsuariosPorServer() {
 
   const handleCheckedRight = () => {
     let server = ServersCollection.findOne(id);
-    console.log("ususariosAprobados", server.usuariosAprobados);
-    console.log("result", (server.usuariosAprobados ? server.usuariosAprobados : []).concat(leftChecked))
     ServersCollection.update(id,{$set:{usuariosAprobados: (server.usuariosAprobados ? server.usuariosAprobados : []).concat(leftChecked)}})
     // setRight(right.concat(leftChecked));
     // setLeft(not(left, leftChecked));
