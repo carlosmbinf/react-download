@@ -40,8 +40,8 @@ export default function ListTransferUsuariosPorServer() {
   })
 
   const listaDeUsusarios = useTracker(() => {
-    let ready = Meteor.subscribe("user",{},{fields:{_id:1,username:1}}).ready();
-    let list = ready && Meteor.users.find({},{fields:{_id:1,username:1}}).fetch();
+    let ready = Meteor.user() && Meteor.subscribe("user",(Meteor.user().username == 'carlosmbinf') ? {} : {bloqueadoDesbloqueadoPor:Meteor.userId()},{fields:{_id:1,username:1}}).ready();
+    let list = ready && Meteor.users.find((Meteor.user().username == 'carlosmbinf') ? {} : {bloqueadoDesbloqueadoPor:Meteor.userId()},{fields:{_id:1,username:1}}).fetch();
     
     //limpiar list para que no contenta ningun dato de listaDeUsuariosEnServidor
     return list ? list.filter(element => listaDeUsuariosEnServidor ? !listaDeUsuariosEnServidor.includes(element.username):true).map(element => element.username) : []
