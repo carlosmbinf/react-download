@@ -463,9 +463,8 @@ export default function Main() {
         <Route path="/servers/:id">
           <div style={{ paddingBottom: "7em" }}>
             {useractual &&
-            Array(Meteor.settings.public.administradores)[0].includes(
-              useractual.username
-            ) ? (
+            useractual.profile &&
+            useractual.profile.role == "admin" ? (
               <>
               <ServersDetails />
               <ListTransferUsuariosPorServer/>
@@ -489,9 +488,8 @@ export default function Main() {
         <Route path="/servers">
           <div style={{ paddingBottom: "7em" }}>
             {useractual &&
-            Array(Meteor.settings.public.administradores)[0].includes(
-              useractual.username
-            ) ? (
+            useractual.profile &&
+            useractual.profile.role == "admin" ? (
               <CreateServers />
             ) : (
               <Zoom in={true}>
