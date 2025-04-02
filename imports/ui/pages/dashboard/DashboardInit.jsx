@@ -404,7 +404,7 @@ export default function DashboardInit(option) {
                   <Chip avatar={<Avatar src={Meteor.users.findOne(id?{_id : id}:null) && Meteor.users.findOne(id?{_id : id}:null) && Meteor.users.findOne(id?{_id : id}:null).picture} />} label={`Ganancias para el Admin: $${datausersMoneyGeneral.recogidoAdmin}`} />
                 </Grid>
                 <Grid item>
-                  <Chip color='secondary' label={`Deben: $${datausersMoneyMensual.deuda}`} />
+                  <Chip color='secondary' label={`Deben: $${datausersMoneyGeneral.deuda}`} />
                 </Grid>
               </Grid>
               <div style={{ width: "100%", height: 300 }}>
