@@ -200,7 +200,9 @@ export default function GraphicsLinealConsumoMegasXHoras(options) {
             }}
             label="Seleccione el Dia a Buscar" 
             onChange={moment => {
-              setFechaMoment(moment);
+              // Agregar 3 horas a moment
+              const momentModificado = moment && moment.clone().add(3, 'hours');
+              setFechaMoment(momentModificado);
             }} 
             value={fechaMoment} />
       </LocalizationProvider>

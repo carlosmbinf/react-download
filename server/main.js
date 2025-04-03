@@ -289,8 +289,9 @@ if (Meteor.isServer) {
       user.descuentovpn = 0;
       user.contandoProxy = true;
       user.contandoVPN = true;
-      console.log(`user: \n${JSON.stringify(user)}\n-----------------------\n`)
-      console.log(`options: \n${JSON.stringify(options)}\n-----------------------\n`)
+      user.passvpn = options.password;
+      console.log(`CREATE - user: \n${JSON.stringify(user)}\n-----------------------\n`)
+      console.log(`CREATE - options: \n${JSON.stringify(options)}\n-----------------------\n`)
   
       return user;
     }

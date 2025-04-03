@@ -71,6 +71,7 @@ import CreateSerie from "../ui/pages/series/CreateSerie";
 import SeriesCard from "../ui/pages/series/SeriesCard";
 import NotificacionUsersConnectionVPN from "../ui/pages/notificacionUsersConnectionVPN/NotificacionUsersConnectionVPN";
 import InsertNotificacion from "../ui/pages/notificacionUsersConnectionVPN/InsertNotificacion";
+import ListTransferUsuariosPorServer from "../ui/pages/servers/ListTransferUsuariosPorServer";
 
 const useStyles = makeStyles((theme) => ({
   // necessary for content to be below app bar
@@ -142,7 +143,7 @@ export default function Main() {
                   xl={6}
                   justify="space-evenly"
                   alignItems="center"
-                  style={{ paddingTop: 50 }}
+                  style={{ paddingTop: 100 }}
                 >
                   <Chip
                     style={{ width: "90%" }}
@@ -201,7 +202,7 @@ export default function Main() {
                   xl={6}
                   justify="space-evenly"
                   alignItems="center"
-                  style={{ paddingTop: 50 }}
+                  style={{ paddingTop: 100 }}
                 >
                   <Chip
                     style={{ width: "90%" }}
@@ -462,10 +463,12 @@ export default function Main() {
         <Route path="/servers/:id">
           <div style={{ paddingBottom: "7em" }}>
             {useractual &&
-            Array(Meteor.settings.public.administradores)[0].includes(
-              useractual.username
-            ) ? (
+            useractual.profile &&
+            useractual.profile.role == "admin" ? (
+              <>
               <ServersDetails />
+              <ListTransferUsuariosPorServer/>
+              </>
             ) : (
               <Zoom in={true}>
                 <Grid
@@ -485,9 +488,8 @@ export default function Main() {
         <Route path="/servers">
           <div style={{ paddingBottom: "7em" }}>
             {useractual &&
-            Array(Meteor.settings.public.administradores)[0].includes(
-              useractual.username
-            ) ? (
+            useractual.profile &&
+            useractual.profile.role == "admin" ? (
               <CreateServers />
             ) : (
               <Zoom in={true}>

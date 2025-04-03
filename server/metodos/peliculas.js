@@ -135,8 +135,8 @@ if (Meteor.isServer) {
             .replace(/%20/g, " ")
             .replace(/\./g, " ")
             .replace(`/`, "")
-            .replace(`(${year})`, "")
-            .replace(`%28${year}%29`, "");
+            .replace(`(${year})`, "");
+            // .replace(`%28${year}%29`, "");
 
           console.log(`Comenzando INSERCION de la Pelicula: ${nombre}`);
           // console.log(links[i].value);
