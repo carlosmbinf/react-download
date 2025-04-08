@@ -306,7 +306,7 @@ export default function ServerTable(option) {
     return (
       <React.Fragment>
         <span className="p-column-title">Estado del Servidor</span>
-        <Chip color="primary" label={rowData.estado} />
+        <Chip color={rowData.estado == 'ACTIVO' ? "primary":"secondary"} label={rowData.estado} />
       </React.Fragment>
     );
   };
@@ -379,8 +379,7 @@ export default function ServerTable(option) {
               reinciarServer(rowData.id);
             }}
           >
-            {rowData.estado == 'ACTIVO' ? <RestartAltIcon fontSize="large" />
-            :<CircularProgress color="secondary" />}
+            {rowData.estado == 'PENDIENTE_A_REINICIAR' ? <CircularProgress color="secondary" /> :<RestartAltIcon fontSize="large" />}
           </IconButton>
       </React.Fragment>
     );

@@ -1147,7 +1147,7 @@ export const SchemaServersCollection = new SimpleSchema({
   },
   estado:{
     type: String,
-    defaultValue: "ACTIVO", //ACTIVO, INACTIVO, PENDIENTE_A_REINICIAR
+    defaultValue: "INACTIVO", //ACTIVO, INACTIVO, PENDIENTE_A_REINICIAR
     optional: true,
   },
   lastUpdate: {

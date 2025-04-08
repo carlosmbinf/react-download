@@ -1,11 +1,23 @@
 import { Meteor } from "meteor/meteor";
-import { LogsCollection, PelisCollection, RegisterDataUsersCollection, SeriesCollection, TemporadasCollection, VentasCollection } from "../imports/ui/pages/collections/collections";
+import { LogsCollection, PelisCollection, RegisterDataUsersCollection, SeriesCollection, ServersCollection, TemporadasCollection, VentasCollection } from "../imports/ui/pages/collections/collections";
 import moment from 'moment';
 
 var cron = require("node-cron");
 
 ///////METODOS//////
 
+const inabilitarServerSiNoEstaConectadoElServer = async () => {
+  const servidores = await ServersCollection.find({}).fetch();
+
+  await servidores.forEach(async (server) => {
+    const serverId = server._id;
+    const isConnected = server.lastUpdate > moment().subtract(1, "minutes").toDate();
+    if (!isConnected && server.estado !== "INACTIVO") {
+      await ServersCollection.update(serverId, { $set: { estado: "INACTIVO" } });
+    }
+  }
+  );
+}
 
 const ultimaCompraByUserId = async (userId, type) => {
   return await Meteor.call("ultimaCompraByUserId",userId, type)
@@ -305,7 +317,7 @@ if (Meteor.isServer) {
     //////////Cerrar proxys a las 12 y 00 //////////////
     cron
       .schedule(
-        "0 0 * * *",
+        "0 * * * *",
         async () => {
           try {
             await Meteor.call('closeproxy', function (error, result) {
@@ -321,6 +333,25 @@ if (Meteor.isServer) {
           }
 
         },
+        {
+          scheduled: true,
+          timezone: "America/Havana",
+        }
+      )
+      .start();
+
+
+  } catch (error) {
+    console.log(error);
+  }
+
+  //INABILITAR LOS SERVIDORES QUE NO ESTAN CONECTADOS
+  try {
+    //////////Cerrar proxys a las 12 y 00 //////////////
+    cron
+      .schedule(
+        "* * * * *",
+       inabilitarServerSiNoEstaConectadoElServer,
         {
           scheduled: true,
           timezone: "America/Havana",
