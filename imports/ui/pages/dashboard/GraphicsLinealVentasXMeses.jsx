@@ -318,7 +318,7 @@ export default function GraphicsLinealVentasXMeses() {
             type="monotone"
             dataKey="Ganancias_Admin"
             fill="#008b9f"
-            stroke="#3f51b5"
+            stroke="#008b9f"
           />
             {/* <Bar dataKey="TotalVendido" barSize={20} fill="#2e7d32" radius={5} />
             <Bar dataKey="Debe" barSize={20} fill="#d32f2f" radius={5} /> */}
