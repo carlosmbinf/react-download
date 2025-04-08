@@ -15,6 +15,7 @@ import {
   Zoom,
   IconButton,
   Chip,
+  CircularProgress,
 } from "@material-ui/core";
 import { Meteor } from "meteor/meteor";
 import { Tracker } from "meteor/tracker";
@@ -43,7 +44,7 @@ import ListAltIcon from "@material-ui/icons/ListAlt";
 import DeleteIcon from "@material-ui/icons/Delete";
 import CheckIcon from '@material-ui/icons/Check';
 import BlockIcon from '@material-ui/icons/Block';
-
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
 //Collections
 import {
   DescargasCollection,
@@ -160,6 +161,24 @@ export default function ServerTable(option) {
 
   const statuses = ["ACTIVO", "INACTIVO" , "PENDIENTE_A_REINICIAR"];
   const activado = ["TRUE", "FALSE"];
+
+  const reinciarServer = (idServer) => {
+    console.log(idServer);
+    Meteor.call(
+      'actualizarEstadoServer',
+      idServer,
+      {
+        estado: 'PENDIENTE_A_REINICIAR',
+        idUserSolicitandoReinicio: Meteor.userId(),
+      },
+      (error, result) => {
+        if (error) {
+          console.log(error.message);
+        }
+      },
+    );
+  }
+
   const onStatusChange = (e) => {
     dt.current.filter(e.value, "estado", "equals");
     setSelectedEstado(e.value);
@@ -347,6 +366,26 @@ export default function ServerTable(option) {
       </React.Fragment>
     );
   };
+
+  const reiniciarBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title"></span>
+          <IconButton
+            aria-label="reset"
+            color="primary"
+            disabled={rowData.estado != 'ACTIVO'}
+            onClick={() => {
+              reinciarServer(rowData.id);
+            }}
+          >
+            {rowData.estado == 'ACTIVO' ? <RestartAltIcon fontSize="large" />
+            :<CircularProgress color="secondary" />}
+          </IconButton>
+      </React.Fragment>
+    );
+  };
+
   const thumbnailBodyTemplate = (rowData) => {
     
     return (
@@ -452,8 +491,8 @@ export default function ServerTable(option) {
                   body={connectionsCountsBodyTemplate}
                   reorderable={true}
                 /> */}
+                <Column field="REINICIAR" header="REINICIAR" body={reiniciarBodyTemplate}/>
                 <Column field="urlReal" header="" body={urlBodyTemplate}/>
-
                 {Array(Meteor.settings.public.administradores)[0].includes(Meteor.user().username) && (
                   <Column
                     field="eliminar"
@@ -461,6 +500,7 @@ export default function ServerTable(option) {
                     body={eliminarBodyTemplate}
                   />
                 )}
+                
               </DataTable>
             </div>
           </div>
