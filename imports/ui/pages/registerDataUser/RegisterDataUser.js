@@ -267,6 +267,27 @@ const registerBodyTemplate = (rowData) => {
       </React.Fragment>
     );
   };
+  const eliminarBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title"></span>
+        <Tooltip
+          title={"Eliminar"}
+        >
+          <IconButton
+            // disabled
+            aria-label="delete"
+            color="primary"
+            onClick={() => {
+              RegisterDataUsersCollection.remove(rowData.id);
+            }}
+          >
+            <DeleteIcon fontSize="large" />
+          </IconButton>
+        </Tooltip>
+      </React.Fragment>
+    );
+  };
   return (
     <>
       <Grid item style={{ textAlign: "center" }}>
@@ -363,7 +384,13 @@ const registerBodyTemplate = (rowData) => {
                   filterPlaceholder="Search"
                   filterMatchMode="contains"
                 />
-                
+                {Array(Meteor.settings.public.administradores)[0].includes(Meteor.user().username) && (
+                  <Column
+                    field="eliminar"
+                    header=""
+                    body={eliminarBodyTemplate}
+                  />
+                )}
               </DataTable>
             </div>
           </div>
