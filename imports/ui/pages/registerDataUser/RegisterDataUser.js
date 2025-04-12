@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
@@ -15,6 +15,7 @@ import {
   Zoom,
   IconButton,
   Chip,
+  TextField,
 } from "@material-ui/core";
 import { Meteor } from "meteor/meteor";
 import { Tracker } from "meteor/tracker";
@@ -122,32 +123,45 @@ const useStyles = makeStyles((theme) => ({
 
 export default function RegisterDataUserTable(options) {
   let { id } = useParams();
-  const classes = useStyles();
   const [open, setOpen] = React.useState(true);
+  const [countRegisterDataUser, setCountRegisterDataUser] = React.useState(100);
+  const classes = useStyles();
   const dt = React.useRef(null);
   const history = useHistory();
-  
+  var registerDataUserSubs;
+  let usersSubs;
+  useEffect(() => {
+        
+    return () => {
+      usersSubs.stop();
+      registerDataUserSubs.stop();
+    }
+  }, [countRegisterDataUser]);
+
 const user = (id) =>{
-Meteor.subscribe("user",id,{fields:{
-  'profile.firstName': 1,
-  'profile.lastName': 1
-}});
 return Meteor.users.findOne(id)
 }
   const registroDeDatos = useTracker(() => {
 
+    usersSubs = Meteor.subscribe("user",{},{fields:{
+      'profile.firstName': 1,
+      'profile.lastName': 1,
+      bloqueadoDesbloqueadoPor: 1,
+    }});
+    usersSubs.ready();
     if (id) {
-      Meteor.subscribe("registerDataUser", { userId: id,type: options.type })
+      registerDataUserSubs = Meteor.subscribe("registerDataUser", { userId: id,type: options.type },{limit: countRegisterDataUser});
     } else if (Array(Meteor.settings.public.administradores)[0].includes(Meteor.user().username)) {
-      Meteor.subscribe("registerDataUser",{type: options.type});
+      registerDataUserSubs = Meteor.subscribe("registerDataUser",{type: options.type},{limit: countRegisterDataUser});
     } else {
-      Meteor.subscribe("user", { 'bloqueadoDesbloqueadoPor': Meteor.userId() }, { fields: { 'bloqueadoDesbloqueadoPor': 1 } });
-
       let usuariosMios = Meteor.users.find({ 'bloqueadoDesbloqueadoPor': Meteor.userId() }, { fields: { 'bloqueadoDesbloqueadoPor': 1 } })
-      usuariosMios.map(element => Meteor.subscribe("registerDataUser", { userId: element._id, type: options.type }))
+      // usuariosMios.map(element => {
+      //   registerDataUserSubs = Meteor.subscribe("registerDataUser", { userId: element._id, type: options.type },{limit: countRegisterDataUser})
+      // })
+      registerDataUserSubs = Meteor.subscribe("registerDataUser", { userId: { $in: usuariosMios.fetch().map(element => element._id) }, type: options.type },{limit: countRegisterDataUser})
     }
-    
-    
+    registerDataUserSubs.ready();
+
     let a = [];
     try {
       RegisterDataUsersCollection.find(
@@ -160,8 +174,9 @@ return Meteor.users.findOne(id)
             type: options.type
           }), {
         sort: {
-          fecha: -1
-        }
+          fecha: -1,
+        },
+        limit: countRegisterDataUser
       }).map(
          (register) => {
            // Meteor.users.findOne(register.userAfectado) = await Meteor.users.findOne(register.userAfectado);
@@ -170,7 +185,7 @@ return Meteor.users.findOne(id)
            let b = user(register.userId);
            a.push({
              id: register._id,
-             user: b.profile.firstName + " " + b.profile.lastName,
+             user: b && b.profile ? (b.profile.firstName + " " + b.profile.lastName) : "",
              vpnMbGastados: (register.vpnMbGastados?Number.parseFloat(
               register.vpnMbGastados / 1000000):0)
             .toFixed(2),
@@ -182,7 +197,10 @@ return Meteor.users.findOne(id)
            });
          }
        );
-    } catch (error) {}
+    } catch (error) {
+       console.log(error) 
+      }
+
      return a;
 
   });
@@ -253,7 +271,30 @@ const registerBodyTemplate = (rowData) => {
     <>
       <Grid item style={{ textAlign: "center" }}>
         <h1>{options.type == 'vpn' ? "Registro de Datos en la VPN" : 'Registro de Datos en el Proxy'}</h1>
+        <TextField
+                // fullWidth
+                className={classes.margin}
+                id="countRegisterDataUser"
+                name="countRegisterDataUser"
+                label="Cantidad de Registros"
+                variant="outlined"
+                color="secondary"
+                value={countRegisterDataUser}
+                type="number"
+                onInput={(e) => {
+                  setCountRegisterDataUser(e.target.value?Number(e.target.value):0)
+                }}
+                // InputProps={{
+                //   readOnly: true,
+                //   startAdornment: (
+                //     <InputAdornment position="start">
+                //       <AccountCircleIcon />
+                //     </InputAdornment>
+                //   ),
+                // }}
+              />
       </Grid>
+      
       <Zoom in={true}>
         <div style={{ width: "100%", padding: 20 }}>
           <div className="datatable-responsive-demo">
