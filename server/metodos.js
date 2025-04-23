@@ -193,7 +193,7 @@ if (Meteor.isServer) {
           data01.push(dailyData);
         }
       } else if (tipoDeDashboard == "MENSUAL") {
-        for (let month = 11; month >= 0; month--) {
+        for (let month = 5; month >= 0; month--) {
           let dateStartMonth = moment(new Date())
             .startOf("month")
             .subtract(month, "months")
