@@ -48,6 +48,7 @@ import BlockIcon from '@material-ui/icons/Block';
 import {
   DescargasCollection,
   OnlineCollection,
+  ServersCollection,
 } from "../collections/collections";
 import { useHistory } from "react-router-dom";
 import dateFormat from "dateformat";
@@ -130,6 +131,7 @@ export default function UsersTableVPN(option) {
   const dt = React.useRef(null);
   const history = useHistory();
   const [selectedVPN, setSelectedVPN] = React.useState(null);
+  const [selectedConexionesVPN, setSelectedConexionesVPN] = React.useState(null);
   const [selectedContandoVPN, setSelectedContandoVPN] = React.useState(null);
 
   const statusesContandoVPN = ["true", "false"];
@@ -140,6 +142,21 @@ export default function UsersTableVPN(option) {
   //   return OnlineCollection.find({"userId" : Meteor.userId()}).fetch();
   // });
   const statusesVPN = ["PLUS", "2MB", "false"];
+  // const conexionesVPN = ["192.168.1.1", "false"];
+
+  const conexionesVPN = useTracker(() => {
+    Meteor.subscribe("servers", {active:true});
+    // Meteor.subscribe("conexiones");
+    let a = [];
+
+    ServersCollection.find().map(s => {
+      a.push(s.ip);
+    })
+
+    return a;
+  });
+
+
   const statuses = ["ONLINE", "DISCONECTED"];
   const statusesRole = ["admin", "user"];
   const statusesLimites = ["Ilimitado", "Megas", "Fecha"];
@@ -151,6 +168,10 @@ export default function UsersTableVPN(option) {
   const onVPNChange = (e) => {
     dt.current.filter(e.value, "vpntype", "equals");
     setSelectedVPN(e.value);
+  };
+  const onConexionVPNChange = (e) => {
+    dt.current.filter(e.value, "vpntype", "equals");
+    setSelectedConexionesVPN(e.value);
   };
   const onRoleChange = (e) => {
     dt.current.filter(e.value, "role", "equals");
@@ -169,6 +190,10 @@ export default function UsersTableVPN(option) {
     return <span className={`customer-badge`}><Chip onClick={() => { }} color="primary" label={option} /></span>;
     // ;
   };
+  const vpnItemConexionesTemplate = (option) => {
+    return <span className={`customer-badge`}><Chip onClick={() => { }} color="primary" label={option} /></span>;
+    // ;
+  };
   const roleItemTemplate = (option) => {
     return <span className={`customer-badge`}><Chip onClick={() => { }} color="primary" label={option} /></span>;
     // ;
@@ -183,6 +208,17 @@ export default function UsersTableVPN(option) {
       options={statusesVPN}
       onChange={onVPNChange}
       itemTemplate={vpnItemTemplate}
+      placeholder="Select"
+      className="p-column-filter"
+      showClear
+    />
+  );
+  const vpnConexionesFilter = (
+    <Dropdown
+      value={selectedConexionesVPN}
+      options={conexionesVPN}
+      onChange={onConexionVPNChange}
+      itemTemplate={vpnItemConexionesTemplate}
       placeholder="Select"
       className="p-column-filter"
       showClear
@@ -224,9 +260,10 @@ export default function UsersTableVPN(option) {
   );
 
   const usersRegister = useTracker(() => {
-    Meteor.subscribe("user", { $or: [{ vpn2mb: true }, { vpnplus: true },{"profile.role":"admin"}] });
+    Meteor.subscribe("user", option.selector?option.selector:{});
     // Meteor.subscribe("conexiones");
     let a = [];
+    a.push("DESCONECTADO")
 
     Meteor.users.find(option.selector?option.selector:{}, {
       sort: { vpnMbGastados: -1, vpnip: -1, 'profile.firstName': 1, 'profile.lastName': 1 }
@@ -260,8 +297,8 @@ export default function UsersTableVPN(option) {
           vpnmegas: data.vpnmegas,
           contandoVPN: data.contandoVPN,
           vpnfechaSubscripcion: data.vpnfechaSubscripcion,
-          vpnisIlimitado: data.vpnisIlimitado
-
+          vpnisIlimitado: data.vpnisIlimitado,
+          conexionesVPN: data.conexionesVPN ? data.conexionesVPN : ""
 
         })
     );
@@ -281,6 +318,16 @@ export default function UsersTableVPN(option) {
       <React.Fragment>
         <span className="p-column-title">VPN TYPE</span>
         <Chip color={rowData.vpntype =="false" ? "secondary" : "primary"} label={rowData.vpntype == "false" ? <BlockIcon /> : rowData.vpntype} />
+      </React.Fragment>
+    );
+  };
+    const vpnConexionBodyTemplate = (rowData) => {
+    return (
+      <React.Fragment>
+        <span className="p-column-title">Conexiones</span>
+        {(rowData.conexionesVPN && rowData.conexionesVPN.length > 0 )
+        ? rowData.conexionesVPN.map(item => <Chip color="primary" label={item} />)
+        : <Chip color="primary" label={ "DESCONECTADO"} />}
       </React.Fragment>
     );
   };
@@ -499,7 +546,7 @@ export default function UsersTableVPN(option) {
                 // reorderableColumns={true}
                 // resizableColumns={true}
               >
-                <Column field="img" header="IMG" body={thumbnailBodyTemplate} />
+                {/* <Column field="img" header="IMG" body={thumbnailBodyTemplate} /> */}
                 {/* <Column
                   field="id"
                   body={iDBodyTemplate}
@@ -603,13 +650,22 @@ export default function UsersTableVPN(option) {
                 {Array(Meteor.settings.public.administradores)[0].includes(Meteor.user().username) && (
                 <Column field="urlReal" header="" body={urlBodyTemplate} />
                 )}
-                {Array(Meteor.settings.public.administradores)[0].includes(Meteor.user().username) && (
+
+                <Column
+                  field="conexionesVPN"
+                  header="Conexiones"
+                  body={vpnConexionBodyTemplate}
+                  filter
+                  filterElement={vpnConexionesFilter}
+                />
+
+                {/* {Array(Meteor.settings.public.administradores)[0].includes(Meteor.user().username) && (
                   <Column
                     field="eliminar"
                     header=""
                     body={eliminarBodyTemplate}
                   />
-                )}
+                )} */}
               </DataTable>
             </div>
           </div>
