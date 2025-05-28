@@ -170,7 +170,7 @@ export default function UsersTableVPN(option) {
     setSelectedVPN(e.value);
   };
   const onConexionVPNChange = (e) => {
-    dt.current.filter(e.value, "vpntype", "equals");
+    dt.current.filter(e.value, "conexionesVPNdata", "contains");
     setSelectedConexionesVPN(e.value);
   };
   const onRoleChange = (e) => {
