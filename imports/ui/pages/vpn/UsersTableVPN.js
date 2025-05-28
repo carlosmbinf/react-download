@@ -152,7 +152,7 @@ export default function UsersTableVPN(option) {
     ServersCollection.find().map(s => {
       a.push(s.ip);
     })
-
+    a.push("DESCONECTADO");
     return a;
   });
 
@@ -263,7 +263,6 @@ export default function UsersTableVPN(option) {
     Meteor.subscribe("user", option.selector?option.selector:{});
     // Meteor.subscribe("conexiones");
     let a = [];
-    a.push("DESCONECTADO")
 
     Meteor.users.find(option.selector?option.selector:{}, {
       sort: { vpnMbGastados: -1, vpnip: -1, 'profile.firstName': 1, 'profile.lastName': 1 }
