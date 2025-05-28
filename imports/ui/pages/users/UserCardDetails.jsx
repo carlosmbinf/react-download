@@ -2402,7 +2402,7 @@ export default function UserCardDetails() {
                     </Grid>
                   </Paper>
                 </Grid>
-                
+
                 <Grid item xs={12} md={(registroDeDatosConsumidos &&
                     registroDeDatosConsumidos.length > 0) ? 6 : 12}>
                   {registroDeDatosConsumidos &&
@@ -2414,7 +2414,6 @@ export default function UserCardDetails() {
                           xs={12}
                           justify="space-evenly"
                           alignItems="center"
-                          style={{ paddingTop: 50 }}
                         >
                           <Chip
                             style={{ width: "90%" }}
@@ -2431,7 +2430,7 @@ export default function UserCardDetails() {
                           xs={12}
                           justify="space-evenly"
                           alignItems="center"
-                          style={{ paddingTop: 50 }}
+                          style={{ paddingTop: 90 }}
                         >
                           <Chip
                             style={{ width: "90%" }}
@@ -2449,7 +2448,7 @@ export default function UserCardDetails() {
                           xs={12}
                           justify="space-evenly"
                           alignItems="center"
-                          style={{ paddingTop: 50 }}
+                          style={{ paddingTop: 90 }}
                         >
                           <Chip
                             style={{ width: "90%" }}
