@@ -297,8 +297,8 @@ export default function UsersTableVPN(option) {
           contandoVPN: data.contandoVPN,
           vpnfechaSubscripcion: data.vpnfechaSubscripcion,
           vpnisIlimitado: data.vpnisIlimitado,
-          conexionesVPN: data.conexionesVPN ? data.conexionesVPN : ""
-
+          conexionesVPN: data.conexionesVPN ? data.conexionesVPN : "",
+          conexionesVPNdata: data.conexionesVPN ? data.conexionesVPN.toString() : ""
         })
     );
 
@@ -651,7 +651,7 @@ export default function UsersTableVPN(option) {
                 )}
 
                 <Column
-                  field="conexionesVPN"
+                  field="conexionesVPNdata"
                   header="Conexiones"
                   body={vpnConexionBodyTemplate}
                   filter
