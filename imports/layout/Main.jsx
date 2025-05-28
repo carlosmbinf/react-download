@@ -462,9 +462,9 @@ export default function Main() {
 
         <Route path="/servers/:id">
           <div style={{ paddingBottom: "7em" }}>
-            {useractual &&
-            useractual.profile &&
-            useractual.profile.role == "admin" ? (
+            {Array(Meteor.settings.public.administradores)[0].includes(
+                    Meteor.user().username
+                  ) ? (
               <>
               <ServersDetails />
               <ListTransferUsuariosPorServer/>
