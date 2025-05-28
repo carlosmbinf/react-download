@@ -298,7 +298,7 @@ export default function UsersTableVPN(option) {
           vpnfechaSubscripcion: data.vpnfechaSubscripcion,
           vpnisIlimitado: data.vpnisIlimitado,
           conexionesVPN: data.conexionesVPN ? data.conexionesVPN : "",
-          conexionesVPNdata: data.conexionesVPN ? data.conexionesVPN.toString() : ""
+          conexionesVPNdata: data.conexionesVPN ? data.conexionesVPN.toString() : "DESCONECTADO"
         })
     );
 
