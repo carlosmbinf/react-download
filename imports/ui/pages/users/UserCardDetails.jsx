@@ -2402,6 +2402,7 @@ export default function UserCardDetails() {
                     </Grid>
                   </Paper>
                 </Grid>
+                
                 <Grid item xs={12} md={(registroDeDatosConsumidos &&
                     registroDeDatosConsumidos.length > 0) ? 6 : 12}>
                   {registroDeDatosConsumidos &&
